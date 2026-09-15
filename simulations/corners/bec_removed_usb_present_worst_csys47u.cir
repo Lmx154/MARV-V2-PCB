@@ -1,45 +1,132 @@
-MARV P3 source-handover corner - LM66100 threshold behavioral model, not vendor silicon
+MARV P3 source-handover corner - TPS2121 behavioral model, not vendor silicon
 * Self-contained (no .include elsewhere in this repo): duplicates the same
-* orpath/reg subckts as integrated_power.cir. See that file's orpath
-* comments for the dead-band timer and why every nonlinearity in the state
-* path is a tanh rather than a ?:/min/max clamp.
+* muxctl/muxpath/reg subckts as integrated_power.cir. See that file's
+* comments for why every nonlinearity in the state path is a tanh rather
+* than a ?:/min/max clamp.
 *
 * P3 is 5 V-only: the two sources are 5V_IN (J3, BEC/boost, 0.10 ohm, 3 A
-* limit) and USB (J4, 0.35 ohm, no limit), each through an LM66100 into
-* V5_SYS -- no cell/battery path. Exactly one of them is the SURVIVOR
-* (present for the whole run) and the other is the OTHER source (removed or
-* inserted at t=15 ms); which is which is swapped in by
-* tools/run_power_checks.py substituting the SURVIVOR/OTHER SOURCE BLOCK
-* text below. Both blocks always drive into the same node names (srv/osrc,
-* instances Xsurvivoror/Xotheror, top-level source Vsrv/Vother) so every
-* .meas statement is invariant across the substitutions:
+* limit) and USB (J4, 0.35 ohm, no limit), both entering ONE TPS2121
+* priority power mux (U25) whose OUT is V5_SYS -- no cell/battery path.
+* IN1 = 5V_IN is the priority input, IN2 = USB the fallback.
+* Exactly one of them is the SURVIVOR (present for the whole run) and the
+* other is the OTHER source (removed, inserted, or held over-voltage at
+* t=15 ms); which is which is swapped in by tools/run_power_checks.py
+* substituting the SURVIVOR / OTHER SOURCE / ROLE BLOCK text below. Both
+* source blocks always drive into the same node names (srv/osrc, instances
+* Xsurvivoror/Xotheror, top-level source Vsrv/Vother) and the ROLE BLOCK
+* only decides which of them the controller treats as IN1, so every .meas
+* statement is invariant across the substitutions:
 *   bec_removed_usb_present (on-disk default): USB survives, 5V_IN removed.
 *   usb_removed_bec_present: 5V_IN survives, USB removed.
 *   usb_insert_bec_present: 5V_IN survives, USB absent then inserted.
+*   bec_ov_6v5 / bec_2s_8v4: USB survives, 5V_IN held above the OV1 trip
+*     for the whole run (a mis-set BEC, and a 2S pack plugged into J3).
 *   Same hooks also produce the reverse-current corner in RESULTS.md (USB
-*   inserted onto an already-present 5V_IN): the reverse current into the
-*   5V_IN path is directly measurable through Vsrv (the SURVIVOR block's
-*   own top-level source), the same i(V)-style measurement this file's
-*   removed predecessor used for its cell branch.
-* RON uses the datasheet value nearest 5 V (~110 mOhm) for both sources.
-* IRCB=1 A is the datasheet's upper reverse-activation-current bound
-* (0.5-1 A). VSYS bulk cap defaults to the schematic-nominal 20 uF ceramic
-* (C8+C9); the worst-case corner substitutes the derated 14 uF value. A
-* separate polymer branch (Cpoly+Rpolyesr) models C19, 220 uF nominal /
-* 176 uF at the same -20% derating, with its 40 mOhm ESR in series.
-.param R5VIN=0.10 RUSB=0.35 VON=0.250 VOFF=0.080 VFWD=1.1 TON=40u TOFF=2u IRCB=1
-.param RONHI=0.110 CSYS=47u CPOLY=176u ILOAD=0.5
+*   inserted onto an already-present 5V_IN): current into the 5V_IN path is
+*   directly measurable through Vsrv (the SURVIVOR block's own top-level
+*   source).
+*
+* DEVICE NUMBERS, all from TPS2120/TPS2121 datasheet SLVSEA3F (rev F, Aug
+* 2020), and all of them typical unless a corner substitutes otherwise:
+*   RONHI 56 mOhm  - Sec 7.5 ON-RESISTANCE, TPS2121, VINx >= 5 V, 25 C
+*                    (70 mOhm max at 25 C, 85 mOhm to 85 C, 100 mOhm to
+*                    125 C; the worst-case corner substitutes 100 mOhm).
+*   TSW 100 us     - Sec 7.5 tSW, the switchover time that applies with
+*                    CP2 < VREF. The board ties CP2 to GND, so the 5 us
+*                    tFSW fast-switchover path is deliberately NOT used and
+*                    must not be modeled here.
+*   TRCB 10 us     - Sec 7.5 tRCB, fast reverse-current blocking response.
+*   IRCB 1 A       - Sec 7.5 IRCB typ (0.2 / 1 / 2 A); worst case 2 A.
+*   VRCB 25 mV     - Sec 7.5 VRCB release voltage (0 / 25 / 50 mV).
+*   VUVR/VUVF      - Sec 7.5 VUV,INx 2.65 V rising / 2.55 V falling.
+*   VOVR 5.862 V   - Sec 9.3.5 / 10.2.4.2: OV1 engages when the OV1 divider
+*   VOVF 5.751 V     node reaches VREF. Board divider R44 45.3k / R45 10k
+*                    gives 10/55.3 = 0.180832, so VREF 1.06 V rising maps to
+*                    5.862 V on 5V_IN and 1.04 V falling to 5.751 V.
+*   VPRR 4.494 V   - Sec 10.2.4.1 Eq.5: PR1 divider R42 32.4k / R43 10k
+*   VPRF 4.410 V     gives 10/42.4 = 0.235849, so VREF 1.06 V rising maps to
+*                    4.494 V and 1.04 V falling to 4.410 V on 5V_IN. The divider
+*                    is centred on the RISING edge so that even at the stacked
+*                    worst case (5V_IN at its 4.75 V minimum, VREF at its 1.10 V
+*                    maximum) the rising threshold is 4.664 V and IN1 is still
+*                    selected inside the declared input window.
+*   VCMP 280 mV    - Sec 7.5 VCOMP, the highest-voltage comparator offset
+*                    used only when PR1 has already fallen below VREF.
+* NOT MODELED: the SS-programmed startup slew (C70 100 nF -> 780 V/s, ~6.4 ms
+* to 5 V per Table 9-1), gate/loop dynamics, current limiting (ILM 1.49 A,
+* never approached by the modeled loads), thermal shutdown, and any bench
+* measurement. Every predicate below is evaluated from 2 ms, after startup.
+* VSYS bulk cap defaults to the schematic-nominal 20 uF ceramic (C8+C9); the
+* worst-case corner substitutes the derated 14 uF value. A separate polymer
+* branch (Cpoly+Rpolyesr) models C19, 220 uF nominal / 176 uF at the same
+* -20% derating, with its 40 mOhm ESR in series.
+.param R5VIN=0.10 RUSB=0.35
+.param RONHI=0.100 TSW=100u TRCB=10u IRCB=2 VRCB=0.050
+.param VUVR=2.65 VUVF=2.55 VOVR=5.862 VOVF=5.751 VPRR=4.494 VPRF=4.410 VCMP=0.280
+.param CSYS=47u CPOLY=176u ILOAD=0.5
 
-.subckt orpath in out params: von=0.15 voff=0.035 vfwd=0.5 tond=40u toffd=2u ron=0.15 ircb=1
+* ---------------------------------------------------------------------------
+* muxctl: the TPS2121's shared channel-selection logic. Unlike the LM66100
+* pair it replaces, selection is NOT a per-channel decision: one controller
+* looks at both inputs and enables exactly one channel, so priority has to be
+* modeled at the top level. Ports are (IN1 IN2 EN1 EN2); EN1/EN2 are 0..1
+* conduction commands consumed by the two muxpath instances.
+* Implements Table 9-3 for the CP2 < VREF rows (the board grounds CP2):
+*   IN1 drives OUT if IN1 is valid AND (PR1 > VREF, or IN2 is invalid, or the
+*   VCOMP comparator picks IN1); otherwise IN2 drives OUT if IN2 is valid.
+* Each comparator is a 1 us first-order latch whose threshold slides between
+* its rising and falling value, which reproduces the datasheet hysteresis
+* without a discontinuity for the solver to step across.
+* ---------------------------------------------------------------------------
+.subckt muxctl in1 in2 en1 en2 params: vuvr=2.65 vuvf=2.55 vovr=5.862 vovf=5.751 vprr=4.494 vprf=4.410 vcmp=0.280 tresp=1u
+Cuv1 uv1 0 1
+Ruv1bleed uv1 0 1e9
+Buv1th uv1th 0 V=vuvr-(vuvr-vuvf)*v(uv1)
+Buv1 0 uv1 I=(0.5*(1+tanh((v(in1)-v(uv1th))/0.010))-v(uv1))/tresp
+Cuv2 uv2 0 1
+Ruv2bleed uv2 0 1e9
+Buv2th uv2th 0 V=vuvr-(vuvr-vuvf)*v(uv2)
+Buv2 0 uv2 I=(0.5*(1+tanh((v(in2)-v(uv2th))/0.010))-v(uv2))/tresp
+* OV1 only: the board grounds OV2, so the USB channel has no overvoltage cut.
+Cov1 ov1 0 1
+Rov1bleed ov1 0 1e9
+Bov1th ov1th 0 V=vovr-(vovr-vovf)*v(ov1)
+Bov1 0 ov1 I=(0.5*(1+tanh((v(in1)-v(ov1th))/0.010))-v(ov1))/tresp
+Cpr pr 0 1
+Rprbleed pr 0 1e9
+Bprth prth 0 V=vprr-(vprr-vprf)*v(pr)
+Bpr 0 pr I=(0.5*(1+tanh((v(in1)-v(prth))/0.010))-v(pr))/tresp
+Bvc vc 0 V=0.5*(1+tanh((v(in1)-v(in2)-vcmp)/0.010))
+Bvld1 vld1 0 V=v(uv1)*(1-v(ov1))
+Bvld2 vld2 0 V=v(uv2)
+Ben1 en1 0 V=v(vld1)*(v(pr)+(1-v(pr))*(1-(1-v(vc))*v(vld2)))
+Ben2 en2 0 V=v(vld2)*(1-v(en1))
+.ends
+
+* ---------------------------------------------------------------------------
+* muxpath: one TPS2121 channel (IN1->OUT or IN2->OUT), ports (IN OUT EN).
+* THERE IS NO BODY DIODE. The channel is a pair of back-to-back FETs and
+* Sec 9.3.6 says reverse-current blocking is always on for both channels, so
+* a de-selected input neither sources nor sinks -- that is the property this
+* replaces the LM66100 model for, and it means the hold-up capacitance, not a
+* forward-biased diode, carries the load across a switchover.
+*   rcb = reverse-blocking latch. Trips when the reverse drop implies a
+*     reverse current above IRCB (v(out,in) > ircb*ron), releases when
+*     v(out,in) falls back inside VRCB; time constant TRCB.
+*   st  = conduction fraction. Follows the commanded state with time
+*     constant TSW turning on and TRCB turning off; the rate is a tanh blend
+*     of the two, not a ?:, so the Jacobian stays continuous.
+* ---------------------------------------------------------------------------
+.subckt muxpath in out en params: ron=0.056 tsw=100u trcb=10u ircb=1 vrcb=0.025
+Crcb rcb 0 1
+Rrcbbleed rcb 0 1e9
+Brcbth rcbth 0 V=ircb*ron-(ircb*ron-vrcb)*v(rcb)
+Brcb 0 rcb I=(0.5*(1+tanh((v(out,in)-v(rcbth))/0.005))-v(rcb))/trcb
+Bcmd cmd 0 V=v(en)*(1-v(rcb))
 Cst st 0 1
 Rstbleed st 0 1e9
-Bg stg 0 V=0.5*(1+tanh((v(st)-0.95)/0.02))
-Bth sth 0 V=von-(von+voff)*0.5*(1+tanh((v(st)-0.88)/0.01))
-Ba sta 0 V=0.5*(1+tanh((v(in,out)-v(sth))/0.010))
-Bup st 0 I=(v(sta)/tond)*tanh((v(st)-1)/0.01)
-Bdown st 0 I=((1-v(sta))/toffd)*(0.1+0.45*(1-tanh((v(st)-0.89)/0.01)))*tanh(v(st)/0.01)
-Bfet in out I=max(v(in,out)*v(stg)/ron,-ircb)
-Bdiode in out I=max(v(in,out)-vfwd,0)/0.05
+Bst 0 st I=(v(cmd)-v(st))*(1/trcb+(1/tsw-1/trcb)*0.5*(1+tanh((v(cmd)-v(st))/0.01)))
+Bfet in out I=max(v(in,out)*v(st)/ron,-ircb)
 .ends
 
 .subckt reg in out params: setpoint=3.3 eta=0.9 vmin=2.5 rout=0.05 imax=0.8 cout=33u drop=0
@@ -57,34 +144,43 @@ Rbleed out 0 100k
 
 * --- SURVIVOR SOURCE BLOCK: usb_survivor ---
 * USB present for the whole run (no current limit): the surviving source in
-* bec_removed_usb_present. Held at 4.6 V vs. the OTHER block's 5.4 V: per
-* DESIGN_SPEC "Source behaviour", near-equal sources share naturally rather
-* than one cleanly dominating, so a voltage split (a plausible tolerance
-* stack-up, not a designed hierarchy) is used here to give the precondition
-* below ("survivor was blocked pre-removal") a well-defined answer. A
-* smaller (0.4 V) split leaves the two sources' OR-ed contributions on
-* 'sys'/'srv' close enough together that, once the losing FET's timer
-* happens to latch during the simultaneous t=0 startup race, the resulting
-* small reverse-conducting differential (~0.05-0.1 V) never clears the
-* worst-case VOFF=0.080 V release threshold and the FET sticks on; the 0.8 V
-* split here was verified (by trace inspection) to release cleanly even at
-* worst-case VON/VOFF/VFWD and 0.8 A load.
-Vsrv vsrv0 0 4.6
+* bec_removed_usb_present and in both over-voltage corners. Held at the same
+* 5.0 V as the OTHER source. The LM66100 model this file replaces had to
+* split the two sources 4.6 V / 5.4 V to make the pre-event state
+* well-defined, because that part had no priority mechanism and near-equal
+* sources shared. The TPS2121 decides by PR1/OV1/VCOMP, not by which source
+* happens to be higher, so the split is removed and both sources sit at
+* their nominal 5.0 V -- a strictly harder case for the model, not a weaker
+* one.
+Vsrv vsrv0 0 5.0
 Rsrvres vsrv0 srv {RUSB}
-Xsurvivoror srv sys orpath params: von={VON} voff={VOFF} vfwd={VFWD} tond={TON} toffd={TOFF} ron={RONHI} ircb={IRCB}
+Csrvfilt srv 0 1.1u
+Xsurvivoror srv sys ensrv muxpath params: ron={RONHI} tsw={TSW} trcb={TRCB} ircb={IRCB} vrcb={VRCB}
 * --- END SURVIVOR SOURCE BLOCK ---
 
 * --- OTHER SOURCE BLOCK: bec_removed ---
-* 5V_IN present from t=0 at 5.4 V (see the SURVIVOR block comment on the
-* voltage split), removed (100 us ramp) at t=15 ms; decays through its own
-* C17-class pre-OR filter cap and a 100k bleed. Current-limited like
-* integrated_power.cir's B5vinlim (0.10 ohm slope, 3 A hard clamp).
-Vother vother0 0 PWL(0 5.4 15m 5.4 15.1m 0)
+* 5V_IN present from t=0 at 5.0 V, removed (100 us ramp) at t=15 ms.
+* Current-limited like integrated_power.cir's B5vinlim (0.10 ohm slope, 3 A
+* hard clamp). Cosrcfilt is the REAL 5V_IN node capacitance, not a token
+* filter cap: C16 100 nF + C67/C68 2 x 4.7 uF + C69 100 uF + C71 100 nF =
+* ~110 uF. That value is load-bearing for this corner. With only the old
+* 100 nF pre-OR cap the node has so little charge that the still-conducting
+* IN1 channel pins it to V5_SYS as the rail recovers, the PR1 divider never
+* stays below VREF, and the model latches into a half-conducting state that
+* the hardware cannot reach; with the real bulk the reverse current needed
+* to drag 110 uF up exceeds IRCB, RCB trips within tRCB, and IN1 stays off.
+Vother vother0 0 PWL(0 5.0 15m 5.0 15.1m 0)
 Botherlim vother0 osrc I=min(max(v(vother0,osrc)/R5VIN,0),3.0)
-Cosrcfilt osrc 0 100n
+Cosrcfilt osrc 0 110u
 Rosrcbleed osrc 0 100k
-Xotheror osrc sys orpath params: von={VON} voff={VOFF} vfwd={VFWD} tond={TON} toffd={TOFF} ron={RONHI} ircb={IRCB}
+Xotheror osrc sys enoth muxpath params: ron={RONHI} tsw={TSW} trcb={TRCB} ircb={IRCB} vrcb={VRCB}
 * --- END OTHER SOURCE BLOCK ---
+
+* --- ROLE BLOCK: other_is_in1 ---
+* Default roles: the OTHER source is 5V_IN = IN1 (priority) and the SURVIVOR
+* is USB = IN2. usb_removed_bec_present / usb_insert_bec_present swap this.
+Xmuxctl osrc srv enoth ensrv muxctl params: vuvr={VUVR} vuvf={VUVF} vovr={VOVR} vovf={VOVF} vprr={VPRR} vprf={VPRF} vcmp={VCMP}
+* --- END ROLE BLOCK ---
 
 Csys sys 0 {CSYS}
 Cpoly sys polyesr {CPOLY}
@@ -96,25 +192,27 @@ Iload v3v3 0 {ILOAD}
 .options method=gear reltol=0.001
 .tran 0.5u 30m uic
 .meas tran vsys_min MIN v(sys) FROM=2m TO=30m
+.meas tran vsys_max MAX v(sys) FROM=2m TO=30m
 .meas tran v3v3_min MIN v(v3v3) FROM=2m TO=30m
 .meas tran v3v3_max MAX v(v3v3) FROM=2m TO=30m
 * i(Vsrv) is negative for forward (survivor-sourcing) current and positive
 * for reverse current flowing into the survivor (SPICE source convention),
 * so the reverse-current peak is the MAXIMUM of i(Vsrv), not the minimum.
-* Meaningful only for the reverse-current corner, where the SURVIVOR SOURCE
-* BLOCK is substituted to the unlimited 5V_IN variant (see RESULTS.md); for
-* the handover cases it stays near zero because USB_SURVIVOR_BLOCK and
-* FIVEVIN_SURVIVOR_BLOCK are not the removed/inserted path.
 .meas tran rev_peak MAX i(Vsrv) FROM=2m TO=30m
 .meas tran rev_dur INTEG par('(i(Vsrv)>0.02) ? 1 : 0') FROM=14m TO=25m
-* Handover-validity precondition: for the removed-source cases, the survivor
-* orpath (Xsurvivoror) must actually have been blocked (conduction fraction
-* stg ~ 0) by the higher-voltage source before the 15 ms removal event, and
-* that source (osrc, after the OTHER SOURCE BLOCK substitution) must itself
-* have been established; for the insert case, the survivor-fed sys rail must
-* already be running. Otherwise the row measures nothing meaningful (see
-* tools/run_power_checks.py).
-.meas tran fet_pre MAX v(xsurvivoror.stg) FROM=12m TO=14m
+* Handover-validity precondition, per case (see tools/run_power_checks.py):
+*   fet_pre  - survivor channel conduction just before the 15 ms event. For
+*              bec_removed_usb_present this must be ~0 (5V_IN has priority,
+*              so the USB channel is held off); for usb_removed_bec_present
+*              it must be ~1 (5V_IN IS the survivor and holds priority).
+*   oth_pre  - the other channel's conduction just before the event.
+*   oth_max  - the other channel's conduction over the whole evaluated run;
+*              this is how the over-voltage corners assert that IN1 is
+*              rejected, since in those corners the OTHER source is 5V_IN.
+*   src_pre / sys_pre - the other source, and the sys rail, were established.
+.meas tran fet_pre MAX v(xsurvivoror.st) FROM=12m TO=14m
+.meas tran oth_pre MAX v(xotheror.st) FROM=12m TO=14m
+.meas tran oth_max MAX v(xotheror.st) FROM=2m TO=30m
 .meas tran src_pre MIN v(osrc) FROM=5m TO=14m
 .meas tran sys_pre MIN v(sys) FROM=5m TO=14m
 * Reporting-only measures for the standing reverse-current corner (USB
@@ -122,5 +220,5 @@ Iload v3v3 0 {ILOAD}
 * the insertion transient.
 .meas tran rev_avg AVG par('(i(Vsrv)>0) ? i(Vsrv) : 0') FROM=20m TO=30m
 .meas tran sys_avg AVG v(sys) FROM=20m TO=30m
-.meas tran fet_avg AVG v(xsurvivoror.stg) FROM=20m TO=30m
+.meas tran fet_avg AVG v(xsurvivoror.st) FROM=20m TO=30m
 .end

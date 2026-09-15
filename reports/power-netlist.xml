@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-15T08:08:52</date>
+    <date>2026-09-15T09:36:07</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -22,9 +22,9 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="2" name="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/">
+    <sheet number="2" name="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/">
       <title_block>
-        <title>POWER 1 / 5 V in, USB, source isolation</title>
+        <title>POWER 1 / 5 V in, USB, priority power mux</title>
         <company/>
         <rev>P0 - REVIEW ONLY</rev>
         <date>2026-09-14</date>
@@ -159,11 +159,11 @@
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
       <tstamps>a29d896b-4be5-5eb3-b029-e59f4825ec3a</tstamps>
       <units>
         <unit name="A">
@@ -175,7 +175,7 @@
       </units>
     </comp>
     <comp ref="C16">
-      <value>100n / 16 V</value>
+      <value>100n / 16 V X7R, J3 HF bypass</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
@@ -183,11 +183,11 @@
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
       <tstamps>4333ef61-fe49-5f4c-a629-0307b9161981</tstamps>
       <units>
         <unit name="A">
@@ -198,20 +198,189 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J3">
-      <value>5 V in: 2S-6S BEC or 1S BMS/boost module, 3 A</value>
-      <footprint>Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical</footprint>
+    <comp ref="C67">
+      <value>4.7u / 10 V X7R, J3 bulk</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>765ae6ed-2e6e-5a7c-acae-66f30e11ff3e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C68">
+      <value>4.7u / 10 V X7R, J3 bulk</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>bdb81cc8-3b00-57f0-bcf1-b52a5e997ee0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C69">
+      <value>100u / 10 V polymer, J3 bulk</value>
+      <footprint>Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>93bf1d5e-8db2-5a18-bd01-d9385a1d2460</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C70">
+      <value>100n / 16 V X7R, SS soft-start</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>b40a133d-ed1e-5a8b-b9bd-cd119e192be1</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C71">
+      <value>100n / 16 V X7R, IN1 bypass at U25</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>af709eb8-c896-5866-9549-e918ab5a2927</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C72">
+      <value>100n / 16 V X7R, IN2 bypass at U25</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>97c8e552-c6d8-526c-a0cd-82ea4b63105a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D23">
+      <value>SMAJ5.0A, 5.0 V standoff uni-directional TVS</value>
+      <footprint>Diode_SMD:D_SMA</footprint>
+      <datasheet>https://www.littelfuse.com/media?resourcetype=datasheets&amp;itemid=75e32973-b177-4ee3-a0ff-cedaf1abdb93&amp;filename=smaj-datasheet</datasheet>
+      <fields>
+        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Datasheet">https://www.littelfuse.com/media?resourcetype=datasheets&amp;itemid=75e32973-b177-4ee3-a0ff-cedaf1abdb93&amp;filename=smaj-datasheet</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Diode" part="SMAJ5.0A" description="400W unidirectional Transient Voltage Suppressor, 5.0Vr, SMA(DO-214AC)"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="unidirectional diode TVS voltage suppressor"/>
+      <property name="ki_fp_filters" value="D*SMA*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>58a0bcf9-757b-5723-865a-c1f29c924d0d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J3">
+      <value>5 V IN, 4.75-5.5 V, XT30 (BEC/BMS/boost module)</value>
+      <footprint>Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
       <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
       <tstamps>460dbbf0-bd2d-58ef-9380-3290ab571490</tstamps>
       <units>
         <unit name="A">
@@ -232,11 +401,11 @@
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="USB_C_Receptacle_USB2.0_16P" description="USB 2.0-only 16P Type-C Receptacle connector"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="usb universal serial bus type-C USB2.0"/>
       <property name="ki_fp_filters" value="USB*C*Receptacle*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
       <tstamps>c5834587-dacb-5617-ac31-6e778152e2d6</tstamps>
       <units>
         <unit name="A">
@@ -271,11 +440,11 @@
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
       <tstamps>4dabb975-39c0-558f-8391-6bc406b0d074</tstamps>
       <units>
         <unit name="A">
@@ -295,11 +464,11 @@
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
       <tstamps>f29c716c-3dba-5bdd-bb78-2e66dc8b8409</tstamps>
       <units>
         <unit name="A">
@@ -310,8 +479,8 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R15">
-      <value>100k status pullup</value>
+    <comp ref="R42">
+      <value>32.4k / 1%, PR1 top (5V_IN)</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
@@ -319,12 +488,12 @@
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
-      <tstamps>9f59cbed-b2f1-56bc-9bc4-09b110aca161</tstamps>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>57646033-a250-529f-9b3d-eb3e9b366d0f</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -334,8 +503,8 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R17">
-      <value>100k status pullup</value>
+    <comp ref="R43">
+      <value>10k / 1%, PR1 bottom</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
@@ -343,12 +512,12 @@
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
-      <tstamps>65b9d1d3-d3ea-5594-82fb-1169f99e9db0</tstamps>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>a4963788-a495-5738-886c-fba457ef6773</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -358,60 +527,133 @@
         </unit>
       </units>
     </comp>
-    <comp ref="U3">
-      <value>LM66100DCKR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-363_SC-70-6</footprint>
-      <datasheet>https://www.ti.com/lit/ds/symlink/lm66100.pdf</datasheet>
+    <comp ref="R44">
+      <value>45.3k / 1%, OV1 top (5V_IN)</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-363_SC-70-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/lm66100.pdf</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="MARV_Power" part="LM66100_OR" description="Ideal Diode With Input Polarity Protection 1.5 - 5.5V  Input Voltage, 1.5A Output Current, Ron 141 mOhm, SC-70-6"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
-      <property name="ki_keywords" value="Texas Instruments"/>
-      <property name="ki_fp_filters" value="*SC?70*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
-      <tstamps>bda7ee44-8799-5b1c-868c-19759fb48d6f</tstamps>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>2a256f14-eaf8-5967-b898-b5ffafb8ad01</tstamps>
       <units>
         <unit name="A">
           <pins>
             <pin num="1"/>
-            <pin num="3"/>
-            <pin num="4"/>
             <pin num="2"/>
-            <pin num="6"/>
-            <pin num="5"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="U5">
-      <value>LM66100DCKR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-363_SC-70-6</footprint>
-      <datasheet>https://www.ti.com/lit/ds/symlink/lm66100.pdf</datasheet>
+    <comp ref="R45">
+      <value>10k / 1%, OV1 bottom</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-363_SC-70-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/lm66100.pdf</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="MARV_Power" part="LM66100_OR" description="Ideal Diode With Input Polarity Protection 1.5 - 5.5V  Input Voltage, 1.5A Output Current, Ron 141 mOhm, SC-70-6"/>
-      <property name="Sheetname" value="POWER 1 / 5 V in, USB, source isolation"/>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
-      <property name="ki_keywords" value="Texas Instruments"/>
-      <property name="ki_fp_filters" value="*SC?70*"/>
-      <sheetpath names="/POWER 1 / 5 V in, USB, source isolation/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
-      <tstamps>c59f7431-dd2e-548a-9a79-687420bd5707</tstamps>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>ec5b777a-81ab-5687-8a53-399e10e9091c</tstamps>
       <units>
         <unit name="A">
           <pins>
             <pin num="1"/>
-            <pin num="3"/>
-            <pin num="4"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R46">
+      <value>80.6k / 1%, ILM -&gt; 1.49 A</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>938903b9-ed5a-5ebd-a027-15f65cf39dbc</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R47">
+      <value>10k / 1%, ST pull-up (open drain)</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>f45c2188-dba2-5771-8712-d24b7a00d3bb</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U25">
+      <value>TPS2121RUXR</value>
+      <footprint>Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/tps2121.pdf</datasheet>
+      <fields>
+        <field name="Footprint">Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps2121.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="MARV_Power" part="TPS2121RUX" description="2.8-22 V dual-input single-output priority power MUX, seamless switchover, reverse-current blocking on both inputs, adjustable OV / priority / current limit, VQFN-HR-12 (RUX0012A)"/>
+      <property name="Sheetname" value="POWER 1 / 5 V in, USB, priority power mux"/>
+      <property name="Sheetfile" value="power_sources.kicad_sch"/>
+      <property name="ki_keywords" value="power mux ORing priority ideal diode reverse current blocking Texas Instruments"/>
+      <property name="ki_fp_filters" value="*VQFN*HR*12*"/>
+      <sheetpath names="/POWER 1 / 5 V in, USB, priority power mux/" tstamps="/64b29d64-2a12-57e8-ba50-dc7768239a62/"/>
+      <tstamps>3b1da9ce-76f9-5e1e-9406-3324dde44ab1</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="7"/>
             <pin num="2"/>
             <pin num="6"/>
             <pin num="5"/>
+            <pin num="4"/>
+            <pin num="3"/>
+            <pin num="12"/>
+            <pin num="1"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
           </pins>
         </unit>
       </units>
@@ -1011,7 +1253,7 @@
       </units>
     </comp>
     <comp ref="J6">
-      <value>UART_GPS</value>
+      <value>UART_GPS (DS-009: VCC/TX/RX/GND)</value>
       <footprint>Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal</footprint>
       <fields>
         <field name="Footprint">Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal</field>
@@ -1037,7 +1279,7 @@
       </units>
     </comp>
     <comp ref="J7">
-      <value>UART_ELRS</value>
+      <value>UART_ELRS (DS-009: VCC/TX/RX/GND)</value>
       <footprint>Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal</footprint>
       <fields>
         <field name="Footprint">Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal</field>
@@ -1063,7 +1305,7 @@
       </units>
     </comp>
     <comp ref="J9">
-      <value>I2C_MAG</value>
+      <value>I2C_MAG (DS-009: VCC/SCL/SDA/GND)</value>
       <footprint>Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal</footprint>
       <fields>
         <field name="Footprint">Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal</field>
@@ -1915,7 +2157,7 @@
       </units>
     </comp>
     <comp ref="R27">
-      <value>10k / 1%, 5V_IN top</value>
+      <value>22k / 1%, 5V_IN top</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
@@ -1939,7 +2181,7 @@
       </units>
     </comp>
     <comp ref="R28">
-      <value>15k / 1%, 5V_IN bottom</value>
+      <value>10k / 1%, 5V_IN bottom</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
@@ -2561,6 +2803,102 @@
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/BOARD 2 / IMU, barometer, high-g/" tstamps="/867ac724-23aa-592e-98a0-700378e56bd2/"/>
       <tstamps>408e7c40-9974-50b8-9f67-d530e51a4f92</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R48">
+      <value>10k, IMU_ACC_CS pull-up</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
+      <property name="Sheetfile" value="sensors.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/BOARD 2 / IMU, barometer, high-g/" tstamps="/867ac724-23aa-592e-98a0-700378e56bd2/"/>
+      <tstamps>5895f09b-1cb9-5b7a-b147-c8515dc72c8e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R49">
+      <value>10k, IMU_GYR_CS pull-up</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
+      <property name="Sheetfile" value="sensors.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/BOARD 2 / IMU, barometer, high-g/" tstamps="/867ac724-23aa-592e-98a0-700378e56bd2/"/>
+      <tstamps>819ecd7e-eab4-5741-b3c9-c5d58142f804</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R50">
+      <value>10k, BARO_CS pull-up</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
+      <property name="Sheetfile" value="sensors.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/BOARD 2 / IMU, barometer, high-g/" tstamps="/867ac724-23aa-592e-98a0-700378e56bd2/"/>
+      <tstamps>288ebf12-e00e-5ae3-8af1-3f98255dd869</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R51">
+      <value>10k, HG_ACC_CS pull-up</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
+      <property name="Sheetfile" value="sensors.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/BOARD 2 / IMU, barometer, high-g/" tstamps="/867ac724-23aa-592e-98a0-700378e56bd2/"/>
+      <tstamps>9619c71c-052e-5347-83d2-5c04ee868561</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -3419,6 +3757,24 @@
         <pin num="2" name="" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="Diode" part="SMAJ5.0A">
+      <description>400W unidirectional Transient Voltage Suppressor, 5.0Vr, SMA(DO-214AC)</description>
+      <docs>https://www.littelfuse.com/media?resourcetype=datasheets&amp;itemid=75e32973-b177-4ee3-a0ff-cedaf1abdb93&amp;filename=smaj-datasheet</docs>
+      <footprints>
+        <fp>D*SMA*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">SMAJ5.0A</field>
+        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Datasheet">https://www.littelfuse.com/media?resourcetype=datasheets&amp;itemid=75e32973-b177-4ee3-a0ff-cedaf1abdb93&amp;filename=smaj-datasheet</field>
+        <field name="Description">400W unidirectional Transient Voltage Suppressor, 5.0Vr, SMA(DO-214AC)</field>
+      </fields>
+      <pins>
+        <pin num="1" name="A1" type="passive"/>
+        <pin num="2" name="A2" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="MARV_Power" part="BMI088_SPI">
       <description>Accelerometer, Gyroscope, 6-Axis Sensor, I2C / SPI interface, LGA-16</description>
       <docs>https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf</docs>
@@ -3451,26 +3807,32 @@
         <pin num="16" name="INT1" type="bidirectional"/>
       </pins>
     </libpart>
-    <libpart lib="MARV_Power" part="LM66100_OR">
-      <description>Ideal Diode With Input Polarity Protection 1.5 - 5.5V  Input Voltage, 1.5A Output Current, Ron 141 mOhm, SC-70-6</description>
-      <docs>https://www.ti.com/lit/ds/symlink/lm66100.pdf</docs>
+    <libpart lib="MARV_Power" part="TPS2121RUX">
+      <description>2.8-22 V dual-input single-output priority power MUX, seamless switchover, reverse-current blocking on both inputs, adjustable OV / priority / current limit, VQFN-HR-12 (RUX0012A)</description>
+      <docs>https://www.ti.com/lit/ds/symlink/tps2121.pdf</docs>
       <footprints>
-        <fp>*SC?70*</fp>
+        <fp>*VQFN*HR*12*</fp>
       </footprints>
       <fields>
         <field name="Reference">U</field>
-        <field name="Value">LM66100DCK</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-363_SC-70-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/lm66100.pdf</field>
-        <field name="Description">Ideal Diode With Input Polarity Protection 1.5 - 5.5V  Input Voltage, 1.5A Output Current, Ron 141 mOhm, SC-70-6</field>
+        <field name="Value">TPS2121RUXR</field>
+        <field name="Footprint">Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps2121.pdf</field>
+        <field name="Description">2.8-22 V dual-input single-output priority power MUX, seamless switchover, reverse-current blocking on both inputs, adjustable OV / priority / current limit, VQFN-HR-12 (RUX0012A)</field>
       </fields>
       <pins>
-        <pin num="1" name="VIN" type="power_in"/>
-        <pin num="2" name="GND" type="power_in"/>
-        <pin num="3" name="~{CE}" type="input"/>
-        <pin num="4" name="NC" type="no_connect"/>
-        <pin num="5" name="ST" type="open_collector"/>
-        <pin num="6" name="VOUT" type="passive"/>
+        <pin num="1" name="OUT" type="passive"/>
+        <pin num="2" name="IN2" type="power_in"/>
+        <pin num="3" name="CP2" type="input"/>
+        <pin num="4" name="OV2" type="input"/>
+        <pin num="5" name="OV1" type="input"/>
+        <pin num="6" name="PR1" type="input"/>
+        <pin num="7" name="IN1" type="power_in"/>
+        <pin num="8" name="OUT" type="passive"/>
+        <pin num="9" name="ST" type="open_collector"/>
+        <pin num="10" name="ILM" type="passive"/>
+        <pin num="11" name="SS" type="passive"/>
+        <pin num="12" name="GND" type="power_in"/>
       </pins>
     </libpart>
     <libpart lib="MARV_Sensors" part="ADXL375">
@@ -3765,6 +4127,9 @@
     <library logical="Device">
       <uri>${KICAD10_SYMBOL_DIR}/Device.kicad_sym</uri>
     </library>
+    <library logical="Diode">
+      <uri>${KICAD10_SYMBOL_DIR}/Diode.kicad_sym</uri>
+    </library>
     <library logical="MARV_Power">
       <uri>${KIPRJMOD}/MARV_Power.kicad_sym</uri>
     </library>
@@ -3796,6 +4161,11 @@
   <nets>
     <net code="1" name="5V_IN" class="Default">
       <node ref="C16" pin="1" pintype="passive"/>
+      <node ref="C67" pin="1" pintype="passive"/>
+      <node ref="C68" pin="1" pintype="passive"/>
+      <node ref="C69" pin="1" pintype="passive"/>
+      <node ref="C71" pin="1" pintype="passive"/>
+      <node ref="D23" pin="1" pinfunction="A1_1" pintype="passive"/>
       <node ref="J13" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J13" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J13" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
@@ -3804,11 +4174,14 @@
       <node ref="J13" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="J13" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="J13" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
-      <node ref="J3" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R27" pin="1" pintype="passive"/>
-      <node ref="U3" pin="1" pinfunction="VIN_1" pintype="power_in"/>
+      <node ref="R42" pin="1" pintype="passive"/>
+      <node ref="R44" pin="1" pintype="passive"/>
+      <node ref="U25" pin="7" pinfunction="IN1_7" pintype="power_in"/>
     </net>
     <net code="2" name="BARO_CS" class="Default">
+      <node ref="R50" pin="2" pintype="passive"/>
       <node ref="U20" pin="22" pinfunction="GPIO22_22" pintype="bidirectional"/>
       <node ref="U22" pin="6" pinfunction="CSB_6" pintype="input"/>
     </net>
@@ -3846,7 +4219,7 @@
       <node ref="U20" pin="65" pinfunction="VREG_FB_65" pintype="passive"/>
     </net>
     <net code="9" name="ELRS_RX" class="Default">
-      <node ref="J7" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="J7" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="6" pinfunction="GPIO8_6" pintype="bidirectional"/>
     </net>
     <net code="10" name="ELRS_TX" class="Default">
@@ -3910,11 +4283,18 @@
       <node ref="C64" pin="2" pintype="passive"/>
       <node ref="C65" pin="2" pintype="passive"/>
       <node ref="C66" pin="2" pintype="passive"/>
+      <node ref="C67" pin="2" pintype="passive"/>
+      <node ref="C68" pin="2" pintype="passive"/>
+      <node ref="C69" pin="2" pintype="passive"/>
       <node ref="C7" pin="2" pintype="passive"/>
+      <node ref="C70" pin="2" pintype="passive"/>
+      <node ref="C71" pin="2" pintype="passive"/>
+      <node ref="C72" pin="2" pintype="passive"/>
       <node ref="C8" pin="2" pintype="passive"/>
       <node ref="C9" pin="2" pintype="passive"/>
       <node ref="D20" pin="1" pinfunction="K_1" pintype="passive"/>
       <node ref="D21" pin="1" pinfunction="K_1" pintype="passive"/>
+      <node ref="D23" pin="2" pinfunction="A2_2" pintype="passive"/>
       <node ref="J10" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J10" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="J10" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
@@ -3929,20 +4309,23 @@
       <node ref="J14" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="J14" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="J14" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
-      <node ref="J3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="J3" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J4" pin="A1" pinfunction="GND_A1" pintype="passive"/>
       <node ref="J4" pin="A12" pinfunction="GND_A12" pintype="passive"/>
       <node ref="J4" pin="B1" pinfunction="GND_B1" pintype="passive"/>
       <node ref="J4" pin="B12" pinfunction="GND_B12" pintype="passive"/>
       <node ref="J4" pin="SH" pinfunction="SHIELD_SH" pintype="passive"/>
-      <node ref="J6" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="J7" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="J9" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="J6" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="J7" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="J9" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="Q20" pin="2" pinfunction="S_2" pintype="passive"/>
       <node ref="R28" pin="2" pintype="passive"/>
       <node ref="R30" pin="2" pintype="passive"/>
       <node ref="R34" pin="2" pintype="passive"/>
       <node ref="R4" pin="2" pintype="passive"/>
+      <node ref="R43" pin="2" pintype="passive"/>
+      <node ref="R45" pin="2" pintype="passive"/>
+      <node ref="R46" pin="2" pintype="passive"/>
       <node ref="R5" pin="2" pintype="passive"/>
       <node ref="R8" pin="2" pintype="passive"/>
       <node ref="R9" pin="2" pintype="passive"/>
@@ -3963,8 +4346,9 @@
       <node ref="U23" pin="4" pinfunction="GND_4" pintype="power_in"/>
       <node ref="U23" pin="5" pinfunction="GND_5" pintype="power_in"/>
       <node ref="U24" pin="4" pinfunction="GND_4" pintype="power_in"/>
-      <node ref="U3" pin="2" pinfunction="GND_2" pintype="power_in"/>
-      <node ref="U5" pin="2" pinfunction="GND_2" pintype="power_in"/>
+      <node ref="U25" pin="12" pinfunction="GND_12" pintype="power_in"/>
+      <node ref="U25" pin="3" pinfunction="CP2_3" pintype="input"/>
+      <node ref="U25" pin="4" pinfunction="OV2_4" pintype="input"/>
       <node ref="U7" pin="4" pinfunction="PGND_4" pintype="power_in"/>
       <node ref="U7" pin="7" pinfunction="PSNS_7" pintype="input"/>
       <node ref="U8" pin="2" pinfunction="GND_2" pintype="passive"/>
@@ -3972,7 +4356,7 @@
       <node ref="Y1" pin="4" pinfunction="G_4" pintype="passive"/>
     </net>
     <net code="13" name="GPS_RX" class="Default">
-      <node ref="J6" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="J6" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="11" pinfunction="GPIO12_11" pintype="bidirectional"/>
     </net>
     <net code="14" name="GPS_TX" class="Default">
@@ -3980,6 +4364,7 @@
       <node ref="U20" pin="12" pinfunction="GPIO13_12" pintype="bidirectional"/>
     </net>
     <net code="15" name="HG_ACC_CS" class="Default">
+      <node ref="R51" pin="2" pintype="passive"/>
       <node ref="U20" pin="17" pinfunction="GPIO17_17" pintype="bidirectional"/>
       <node ref="U23" pin="7" pinfunction="CS_7" pintype="input"/>
     </net>
@@ -3988,6 +4373,7 @@
       <node ref="U23" pin="8" pinfunction="INT1_8" pintype="output"/>
     </net>
     <net code="17" name="IMU_ACC_CS" class="Default">
+      <node ref="R48" pin="2" pintype="passive"/>
       <node ref="U20" pin="20" pinfunction="GPIO20_20" pintype="bidirectional"/>
       <node ref="U21" pin="14" pinfunction="~{CSB1}_14" pintype="input"/>
     </net>
@@ -3996,6 +4382,7 @@
       <node ref="U21" pin="16" pinfunction="INT1_16" pintype="bidirectional"/>
     </net>
     <net code="19" name="IMU_GYR_CS" class="Default">
+      <node ref="R49" pin="2" pintype="passive"/>
       <node ref="U20" pin="21" pinfunction="GPIO21_21" pintype="bidirectional"/>
       <node ref="U21" pin="5" pinfunction="~{CSB2}_5" pintype="input"/>
     </net>
@@ -4020,7 +4407,7 @@
       <node ref="U20" pin="28" pinfunction="GPIO27_28" pintype="bidirectional"/>
     </net>
     <net code="25" name="MAG_SCL" class="Default">
-      <node ref="J9" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="J9" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R26" pin="2" pintype="passive"/>
       <node ref="U20" pin="4" pinfunction="GPIO7_4" pintype="bidirectional"/>
     </net>
@@ -4065,120 +4452,118 @@
       <node ref="J10" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="R10" pin="2" pintype="passive"/>
       <node ref="SW1" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U12" pin="3" pinfunction="EN_3" pintype="input"/>
       <node ref="U20" pin="35" pinfunction="RUN_35" pintype="input"/>
       <node ref="U7" pin="5" pinfunction="PG_5" pintype="output"/>
     </net>
-    <net code="36" name="QSPI_SCLK" class="Default">
+    <net code="36" name="PWR_SRC_ST" class="Default">
+      <node ref="R47" pin="2" pintype="passive"/>
+      <node ref="U20" pin="48" pinfunction="GPIO39_48" pintype="bidirectional"/>
+      <node ref="U25" pin="9" pinfunction="ST_9" pintype="open_collector"/>
+    </net>
+    <net code="37" name="QSPI_SCLK" class="Default">
       <node ref="U20" pin="71" pinfunction="QSPI_SCLK_71" pintype="output"/>
       <node ref="U24" pin="6" pinfunction="CLK_6" pintype="input"/>
     </net>
-    <net code="37" name="QSPI_SD0" class="Default">
+    <net code="38" name="QSPI_SD0" class="Default">
       <node ref="U20" pin="72" pinfunction="QSPI_SD0_72" pintype="bidirectional"/>
       <node ref="U24" pin="5" pinfunction="DI/IO_{0}_5" pintype="bidirectional"/>
     </net>
-    <net code="38" name="QSPI_SD1" class="Default">
+    <net code="39" name="QSPI_SD1" class="Default">
       <node ref="U20" pin="74" pinfunction="QSPI_SD1_74" pintype="bidirectional"/>
       <node ref="U24" pin="2" pinfunction="DO/IO_{1}_2" pintype="bidirectional"/>
     </net>
-    <net code="39" name="QSPI_SD2" class="Default">
+    <net code="40" name="QSPI_SD2" class="Default">
       <node ref="U20" pin="73" pinfunction="QSPI_SD2_73" pintype="bidirectional"/>
       <node ref="U24" pin="3" pinfunction="~{WP}/IO_{2}_3" pintype="bidirectional"/>
     </net>
-    <net code="40" name="QSPI_SD3" class="Default">
+    <net code="41" name="QSPI_SD3" class="Default">
       <node ref="U20" pin="70" pinfunction="QSPI_SD3_70" pintype="bidirectional"/>
       <node ref="U24" pin="7" pinfunction="~{HOLD}/~{RESET}/IO_{3}_7" pintype="bidirectional"/>
     </net>
-    <net code="41" name="QSPI_SS" class="Default">
+    <net code="42" name="QSPI_SS" class="Default">
       <node ref="R24" pin="1" pintype="passive"/>
       <node ref="U20" pin="75" pinfunction="~{QSPI_SS}_75" pintype="output"/>
     </net>
-    <net code="42" name="SD_CLK" class="Default">
+    <net code="43" name="SD_CLK" class="Default">
       <node ref="J11" pin="5" pinfunction="CLK_5" pintype="input"/>
       <node ref="U20" pin="40" pinfunction="GPIO32_40" pintype="bidirectional"/>
     </net>
-    <net code="43" name="SD_CMD" class="Default">
+    <net code="44" name="SD_CMD" class="Default">
       <node ref="J11" pin="3" pinfunction="CMD_3" pintype="input"/>
       <node ref="R36" pin="2" pintype="passive"/>
       <node ref="U20" pin="42" pinfunction="GPIO33_42" pintype="bidirectional"/>
     </net>
-    <net code="44" name="SD_D0" class="Default">
+    <net code="45" name="SD_D0" class="Default">
       <node ref="J11" pin="7" pinfunction="DAT0_7" pintype="bidirectional"/>
       <node ref="R37" pin="2" pintype="passive"/>
       <node ref="U20" pin="43" pinfunction="GPIO34_43" pintype="bidirectional"/>
     </net>
-    <net code="45" name="SD_D1" class="Default">
+    <net code="46" name="SD_D1" class="Default">
       <node ref="J11" pin="8" pinfunction="DAT1_8" pintype="bidirectional"/>
       <node ref="R38" pin="2" pintype="passive"/>
       <node ref="U20" pin="44" pinfunction="GPIO35_44" pintype="bidirectional"/>
     </net>
-    <net code="46" name="SD_D2" class="Default">
+    <net code="47" name="SD_D2" class="Default">
       <node ref="J11" pin="1" pinfunction="DAT2_1" pintype="bidirectional"/>
       <node ref="R39" pin="2" pintype="passive"/>
       <node ref="U20" pin="45" pinfunction="GPIO36_45" pintype="bidirectional"/>
     </net>
-    <net code="47" name="SD_D3" class="Default">
+    <net code="48" name="SD_D3" class="Default">
       <node ref="J11" pin="2" pinfunction="DAT3/CD_2" pintype="bidirectional"/>
       <node ref="R40" pin="2" pintype="passive"/>
       <node ref="U20" pin="46" pinfunction="GPIO37_46" pintype="bidirectional"/>
     </net>
-    <net code="48" name="SD_DET" class="Default">
+    <net code="49" name="SD_DET" class="Default">
       <node ref="J11" pin="9" pinfunction="DET_B_9" pintype="passive"/>
       <node ref="R41" pin="2" pintype="passive"/>
       <node ref="U20" pin="47" pinfunction="GPIO38_47" pintype="bidirectional"/>
     </net>
-    <net code="49" name="SENS_MISO" class="Default">
+    <net code="50" name="SENS_MISO" class="Default">
       <node ref="U20" pin="16" pinfunction="GPIO16_16" pintype="bidirectional"/>
       <node ref="U21" pin="10" pinfunction="SDO2_10" pintype="passive"/>
       <node ref="U21" pin="15" pinfunction="SDO1_15" pintype="output"/>
       <node ref="U22" pin="5" pinfunction="SDO/ADDR_5" pintype="bidirectional"/>
       <node ref="U23" pin="12" pinfunction="SDO/ALT_ADDRESS_12" pintype="bidirectional"/>
     </net>
-    <net code="50" name="SENS_MOSI" class="Default">
+    <net code="51" name="SENS_MOSI" class="Default">
       <node ref="U20" pin="19" pinfunction="GPIO19_19" pintype="bidirectional"/>
       <node ref="U21" pin="9" pinfunction="SDI/SDA_9" pintype="bidirectional"/>
       <node ref="U22" pin="4" pinfunction="SDI/SDA_4" pintype="bidirectional"/>
       <node ref="U23" pin="13" pinfunction="SDA/SDI/SDIO_13" pintype="bidirectional"/>
     </net>
-    <net code="51" name="SENS_SCK" class="Default">
+    <net code="52" name="SENS_SCK" class="Default">
       <node ref="U20" pin="18" pinfunction="GPIO18_18" pintype="bidirectional"/>
       <node ref="U21" pin="8" pinfunction="SCK/SCL_8" pintype="input"/>
       <node ref="U22" pin="2" pinfunction="SCK_2" pintype="input"/>
       <node ref="U23" pin="14" pinfunction="SCL/SCLK_14" pintype="input"/>
     </net>
-    <net code="52" name="SWCLK" class="Default">
+    <net code="53" name="SWCLK" class="Default">
       <node ref="J10" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="33" pinfunction="SWCLK_33" pintype="input"/>
     </net>
-    <net code="53" name="SWDIO" class="Default">
+    <net code="54" name="SWDIO" class="Default">
       <node ref="J10" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="34" pinfunction="SWDIO_34" pintype="bidirectional"/>
     </net>
-    <net code="54" name="U3_STATUS" class="Default">
-      <node ref="R15" pin="2" pintype="passive"/>
-      <node ref="U3" pin="5" pinfunction="ST_5" pintype="open_collector"/>
-    </net>
-    <net code="55" name="U5_STATUS" class="Default">
-      <node ref="R17" pin="2" pintype="passive"/>
-      <node ref="U5" pin="5" pinfunction="ST_5" pintype="open_collector"/>
-    </net>
-    <net code="56" name="U7_FB" class="Default">
+    <net code="55" name="U7_FB" class="Default">
       <node ref="R7" pin="2" pintype="passive"/>
       <node ref="R8" pin="1" pintype="passive"/>
       <node ref="U7" pin="9" pinfunction="FB_9" pintype="input"/>
     </net>
-    <net code="57" name="U7_SCONF" class="Default">
+    <net code="56" name="U7_SCONF" class="Default">
       <node ref="R9" pin="1" pintype="passive"/>
       <node ref="U7" pin="10" pinfunction="S-CONF_10" pintype="input"/>
     </net>
-    <net code="58" name="U7_SS" class="Default">
+    <net code="57" name="U7_SS" class="Default">
       <node ref="C13" pin="1" pintype="passive"/>
       <node ref="U7" pin="8" pinfunction="NR/SS_8" pintype="output"/>
     </net>
-    <net code="59" name="U7_SW" class="Default">
+    <net code="58" name="U7_SW" class="Default">
       <node ref="L2" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U7" pin="2" pinfunction="SW_2" pintype="power_out"/>
     </net>
-    <net code="60" name="U7_VO" class="Default">
+    <net code="59" name="U7_VO" class="Default">
       <node ref="C10" pin="1" pintype="passive"/>
       <node ref="C11" pin="1" pintype="passive"/>
       <node ref="C12" pin="1" pintype="passive"/>
@@ -4186,51 +4571,70 @@
       <node ref="L2" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="U7" pin="3" pinfunction="VO_3" pintype="input"/>
     </net>
-    <net code="61" name="USB_CC1" class="Default">
+    <net code="60" name="U25_ILM" class="Default">
+      <node ref="R46" pin="1" pintype="passive"/>
+      <node ref="U25" pin="10" pinfunction="ILM_10" pintype="passive"/>
+    </net>
+    <net code="61" name="U25_OV1" class="Default">
+      <node ref="R44" pin="2" pintype="passive"/>
+      <node ref="R45" pin="1" pintype="passive"/>
+      <node ref="U25" pin="5" pinfunction="OV1_5" pintype="input"/>
+    </net>
+    <net code="62" name="U25_PR1" class="Default">
+      <node ref="R42" pin="2" pintype="passive"/>
+      <node ref="R43" pin="1" pintype="passive"/>
+      <node ref="U25" pin="6" pinfunction="PR1_6" pintype="input"/>
+    </net>
+    <net code="63" name="U25_SS" class="Default">
+      <node ref="C70" pin="1" pintype="passive"/>
+      <node ref="U25" pin="11" pinfunction="SS_11" pintype="passive"/>
+    </net>
+    <net code="64" name="USB_CC1" class="Default">
       <node ref="J4" pin="A5" pinfunction="CC1_A5" pintype="bidirectional"/>
       <node ref="R4" pin="1" pintype="passive"/>
     </net>
-    <net code="62" name="USB_CC2" class="Default">
+    <net code="65" name="USB_CC2" class="Default">
       <node ref="J4" pin="B5" pinfunction="CC2_B5" pintype="bidirectional"/>
       <node ref="R5" pin="1" pintype="passive"/>
     </net>
-    <net code="63" name="USB_DM" class="Default">
+    <net code="66" name="USB_DM" class="Default">
       <node ref="J4" pin="A7" pinfunction="D-_A7" pintype="bidirectional"/>
       <node ref="J4" pin="B7" pinfunction="D-_B7" pintype="bidirectional"/>
       <node ref="U8" pin="3" pinfunction="I/O2_3" pintype="passive"/>
     </net>
-    <net code="64" name="USB_DM_MCU" class="Default">
+    <net code="67" name="USB_DM_MCU" class="Default">
       <node ref="R23" pin="1" pintype="passive"/>
       <node ref="U8" pin="4" pinfunction="I/O2_4" pintype="passive"/>
     </net>
-    <net code="65" name="USB_DM_RP" class="Default">
+    <net code="68" name="USB_DM_RP" class="Default">
       <node ref="R23" pin="2" pintype="passive"/>
       <node ref="U20" pin="66" pinfunction="USB_DM_66" pintype="bidirectional"/>
     </net>
-    <net code="66" name="USB_DP" class="Default">
+    <net code="69" name="USB_DP" class="Default">
       <node ref="J4" pin="A6" pinfunction="D+_A6" pintype="bidirectional"/>
       <node ref="J4" pin="B6" pinfunction="D+_B6" pintype="bidirectional"/>
       <node ref="U8" pin="1" pinfunction="I/O1_1" pintype="passive"/>
     </net>
-    <net code="67" name="USB_DP_MCU" class="Default">
+    <net code="70" name="USB_DP_MCU" class="Default">
       <node ref="R22" pin="1" pintype="passive"/>
       <node ref="U8" pin="6" pinfunction="I/O1_6" pintype="passive"/>
     </net>
-    <net code="68" name="USB_DP_RP" class="Default">
+    <net code="71" name="USB_DP_RP" class="Default">
       <node ref="R22" pin="2" pintype="passive"/>
       <node ref="U20" pin="67" pinfunction="USB_DP_67" pintype="bidirectional"/>
     </net>
-    <net code="69" name="USB_VBUS" class="Default">
+    <net code="72" name="USB_VBUS" class="Default">
       <node ref="C7" pin="1" pintype="passive"/>
+      <node ref="C72" pin="1" pintype="passive"/>
       <node ref="J4" pin="A4" pinfunction="VBUS_A4" pintype="passive"/>
       <node ref="J4" pin="A9" pinfunction="VBUS_A9" pintype="passive"/>
       <node ref="J4" pin="B4" pinfunction="VBUS_B4" pintype="passive"/>
       <node ref="J4" pin="B9" pinfunction="VBUS_B9" pintype="passive"/>
       <node ref="R29" pin="1" pintype="passive"/>
-      <node ref="U5" pin="1" pinfunction="VIN_1" pintype="power_in"/>
+      <node ref="U25" pin="2" pinfunction="IN2_2" pintype="power_in"/>
       <node ref="U8" pin="5" pinfunction="VBUS_5" pintype="passive"/>
     </net>
-    <net code="70" name="V3V3_ANA" class="Default">
+    <net code="73" name="V3V3_ANA" class="Default">
       <node ref="C26" pin="1" pintype="passive"/>
       <node ref="C40" pin="1" pintype="passive"/>
       <node ref="C50" pin="1" pintype="passive"/>
@@ -4245,7 +4649,10 @@
       <node ref="C59" pin="1" pintype="passive"/>
       <node ref="C60" pin="1" pintype="passive"/>
       <node ref="C61" pin="1" pintype="passive"/>
-      <node ref="R20" pin="1" pintype="passive"/>
+      <node ref="R48" pin="1" pintype="passive"/>
+      <node ref="R49" pin="1" pintype="passive"/>
+      <node ref="R50" pin="1" pintype="passive"/>
+      <node ref="R51" pin="1" pintype="passive"/>
       <node ref="U12" pin="5" pinfunction="OUT_5" pintype="power_out"/>
       <node ref="U20" pin="59" pinfunction="ADC_AVDD_59" pintype="power_in"/>
       <node ref="U21" pin="11" pinfunction="VDDIO_11" pintype="power_in"/>
@@ -4256,9 +4663,7 @@
       <node ref="U23" pin="3" pinfunction="RESERVED_3" pintype="passive"/>
       <node ref="U23" pin="6" pinfunction="VS_6" pintype="power_in"/>
     </net>
-    <net code="71" name="V3V3_SYS" class="Default">
-      <node ref="C20" pin="1" pintype="passive"/>
-      <node ref="C21" pin="1" pintype="passive"/>
+    <net code="74" name="V3V3_SYS" class="Default">
       <node ref="C22" pin="1" pintype="passive"/>
       <node ref="C23" pin="1" pintype="passive"/>
       <node ref="C24" pin="1" pintype="passive"/>
@@ -4280,10 +4685,9 @@
       <node ref="FB1" pin="2" pintype="passive"/>
       <node ref="J10" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J11" pin="4" pinfunction="VDD_4" pintype="power_in"/>
-      <node ref="J6" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
-      <node ref="J7" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J9" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R10" pin="1" pintype="passive"/>
+      <node ref="R20" pin="1" pintype="passive"/>
       <node ref="R25" pin="1" pintype="passive"/>
       <node ref="R26" pin="1" pintype="passive"/>
       <node ref="R35" pin="1" pintype="passive"/>
@@ -4293,6 +4697,7 @@
       <node ref="R39" pin="1" pintype="passive"/>
       <node ref="R40" pin="1" pintype="passive"/>
       <node ref="R41" pin="1" pintype="passive"/>
+      <node ref="R47" pin="1" pintype="passive"/>
       <node ref="R7" pin="1" pintype="passive"/>
       <node ref="U20" pin="15" pinfunction="IOVDD_15" pintype="passive"/>
       <node ref="U20" pin="24" pinfunction="IOVDD_24" pintype="passive"/>
@@ -4307,95 +4712,85 @@
       <node ref="U20" pin="76" pinfunction="IOVDD_76" pintype="passive"/>
       <node ref="U24" pin="8" pinfunction="VCC_8" pintype="power_in"/>
     </net>
-    <net code="72" name="V5_SYS" class="Default">
+    <net code="75" name="V5_SYS" class="Default">
       <node ref="BZ1" pin="1" pinfunction="+_1" pintype="passive"/>
       <node ref="C17" pin="1" pintype="passive"/>
       <node ref="C19" pin="1" pintype="passive"/>
+      <node ref="C20" pin="1" pintype="passive"/>
+      <node ref="C21" pin="1" pintype="passive"/>
       <node ref="C25" pin="1" pintype="passive"/>
       <node ref="C8" pin="1" pintype="passive"/>
       <node ref="C9" pin="1" pintype="passive"/>
       <node ref="D22" pin="1" pinfunction="K_1" pintype="passive"/>
-      <node ref="R15" pin="1" pintype="passive"/>
-      <node ref="R17" pin="1" pintype="passive"/>
+      <node ref="J6" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J7" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U12" pin="1" pinfunction="IN_1" pintype="power_in"/>
-      <node ref="U12" pin="3" pinfunction="EN_3" pintype="input"/>
-      <node ref="U3" pin="3" pinfunction="~{CE}_3" pintype="input"/>
-      <node ref="U3" pin="6" pinfunction="VOUT_6" pintype="passive"/>
-      <node ref="U5" pin="3" pinfunction="~{CE}_3" pintype="input"/>
-      <node ref="U5" pin="6" pinfunction="VOUT_6" pintype="passive"/>
+      <node ref="U25" pin="1" pinfunction="OUT_1" pintype="passive"/>
+      <node ref="U25" pin="8" pinfunction="OUT_8" pintype="passive"/>
       <node ref="U7" pin="1" pinfunction="EN/SYNC_1" pintype="input"/>
       <node ref="U7" pin="6" pinfunction="VIN_6" pintype="power_in"/>
     </net>
-    <net code="73" name="VBUS_SENSE" class="Default">
+    <net code="76" name="VBUS_SENSE" class="Default">
       <node ref="C49" pin="1" pintype="passive"/>
       <node ref="R29" pin="2" pintype="passive"/>
       <node ref="R30" pin="1" pintype="passive"/>
       <node ref="U20" pin="52" pinfunction="GPIO41/ADC1_52" pintype="bidirectional"/>
     </net>
-    <net code="74" name="VIN_SENSE" class="Default">
+    <net code="77" name="VIN_SENSE" class="Default">
       <node ref="C48" pin="1" pintype="passive"/>
       <node ref="R27" pin="2" pintype="passive"/>
       <node ref="R28" pin="1" pintype="passive"/>
       <node ref="U20" pin="49" pinfunction="GPIO40/ADC0_49" pintype="bidirectional"/>
     </net>
-    <net code="75" name="VREG_AVDD" class="Default">
+    <net code="78" name="VREG_AVDD" class="Default">
       <node ref="C41" pin="1" pintype="passive"/>
       <node ref="R20" pin="2" pintype="passive"/>
       <node ref="U20" pin="61" pinfunction="VREG_AVDD_61" pintype="power_in"/>
     </net>
-    <net code="76" name="VREG_LX" class="Default">
+    <net code="79" name="VREG_LX" class="Default">
       <node ref="L20" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U20" pin="63" pinfunction="VREG_LX_63" pintype="power_out"/>
     </net>
-    <net code="77" name="XIN" class="Default">
+    <net code="80" name="XIN" class="Default">
       <node ref="C46" pin="1" pintype="passive"/>
       <node ref="U20" pin="30" pinfunction="XIN_30" pintype="input"/>
       <node ref="Y1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="78" name="XOUT" class="Default">
+    <net code="81" name="XOUT" class="Default">
       <node ref="R21" pin="1" pintype="passive"/>
       <node ref="U20" pin="31" pinfunction="XOUT_31" pintype="output"/>
     </net>
-    <net code="79" name="XTAL_DRV" class="Default">
+    <net code="82" name="XTAL_DRV" class="Default">
       <node ref="C47" pin="1" pintype="passive"/>
       <node ref="R21" pin="2" pintype="passive"/>
       <node ref="Y1" pin="3" pinfunction="3_3" pintype="passive"/>
     </net>
-    <net code="80" name="unconnected-(J4-SBU1-PadA8)" class="Default">
+    <net code="83" name="unconnected-(J4-SBU1-PadA8)" class="Default">
       <node ref="J4" pin="A8" pinfunction="SBU1_A8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="81" name="unconnected-(J4-SBU2-PadB8)" class="Default">
+    <net code="84" name="unconnected-(J4-SBU2-PadB8)" class="Default">
       <node ref="J4" pin="B8" pinfunction="SBU2_B8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="82" name="unconnected-(J10-Pin_6-Pad6)" class="Default">
+    <net code="85" name="unconnected-(J10-Pin_6-Pad6)" class="Default">
       <node ref="J10" pin="6" pinfunction="Pin_6_6" pintype="passive+no_connect"/>
     </net>
-    <net code="83" name="unconnected-(J10-Pin_7-Pad7)" class="Default">
+    <net code="86" name="unconnected-(J10-Pin_7-Pad7)" class="Default">
       <node ref="J10" pin="7" pinfunction="Pin_7_7" pintype="passive+no_connect"/>
     </net>
-    <net code="84" name="unconnected-(J10-Pin_8-Pad8)" class="Default">
+    <net code="87" name="unconnected-(J10-Pin_8-Pad8)" class="Default">
       <node ref="J10" pin="8" pinfunction="Pin_8_8" pintype="passive+no_connect"/>
     </net>
-    <net code="85" name="unconnected-(U3-NC-Pad4)" class="Default">
-      <node ref="U3" pin="4" pinfunction="NC_4" pintype="no_connect"/>
-    </net>
-    <net code="86" name="unconnected-(U5-NC-Pad4)" class="Default">
-      <node ref="U5" pin="4" pinfunction="NC_4" pintype="no_connect"/>
-    </net>
-    <net code="87" name="unconnected-(U12-NC-Pad4)" class="Default">
+    <net code="88" name="unconnected-(U12-NC-Pad4)" class="Default">
       <node ref="U12" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
-    <net code="88" name="unconnected-(U20-GPIO1-Pad78)" class="Default">
+    <net code="89" name="unconnected-(U20-GPIO1-Pad78)" class="Default">
       <node ref="U20" pin="78" pinfunction="GPIO1_78" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="89" name="unconnected-(U20-GPIO30-Pad38)" class="Default">
+    <net code="90" name="unconnected-(U20-GPIO30-Pad38)" class="Default">
       <node ref="U20" pin="38" pinfunction="GPIO30_38" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="90" name="unconnected-(U20-GPIO31-Pad39)" class="Default">
+    <net code="91" name="unconnected-(U20-GPIO31-Pad39)" class="Default">
       <node ref="U20" pin="39" pinfunction="GPIO31_39" pintype="bidirectional+no_connect"/>
-    </net>
-    <net code="91" name="unconnected-(U20-GPIO39-Pad48)" class="Default">
-      <node ref="U20" pin="48" pinfunction="GPIO39_48" pintype="bidirectional+no_connect"/>
     </net>
     <net code="92" name="unconnected-(U20-GPIO42/ADC2-Pad53)" class="Default">
       <node ref="U20" pin="53" pinfunction="GPIO42/ADC2_53" pintype="bidirectional+no_connect"/>
