@@ -77,11 +77,6 @@ def symbol(libid):
 def pins(sym):
     return [p for unit in children(sym, 'symbol') for p in children(unit, 'pin')]
 
-# Locally derived symbols: (upstream symbol, {pin: new electrical type}). Emitted into MARV_Power.kicad_sym.
-# BMI088_SPI: SDO2 is retyped passive so the accelerometer and gyroscope data outputs, which are high-Z
-# while deselected, can share one MISO net without an ERC conflict.
-DERIVED={'MARV_Power:BMI088_SPI':('Sensor_Motion:BMI088',{'10':'passive'})}
-
 # Locally authored symbols with no upstream KiCad equivalent, emitted into MARV_Power.kicad_sym verbatim.
 #
 # TPS2121RUX - TI TPS2121, dual-input single-output priority power mux (datasheet SLVSEA3F, Aug 2018 /
@@ -97,7 +92,7 @@ DERIVED={'MARV_Power:BMI088_SPI':('Sensor_Motion:BMI088',{'10':'passive'})}
 CUSTOM={'MARV_Power:TPS2121RUX':'''(symbol "TPS2121RUX" (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (duplicate_pin_numbers_are_jumpers no)
  (property "Reference" "U" (at -10.16 16.51 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) (justify left)))
  (property "Value" "TPS2121RUXR" (at -10.16 13.97 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) (justify left)))
- (property "Footprint" "Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm" (at 0 -19.05 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
+ (property "Footprint" "MARV_Packages:Texas_VQFN-HR-12_2x2.5mm_P0.5mm" (at 0 -19.05 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
  (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps2121.pdf" (at 0 -21.59 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
  (property "Description" "2.8-22 V dual-input single-output priority power MUX, seamless switchover, reverse-current blocking on both inputs, adjustable OV / priority / current limit, VQFN-HR-12 (RUX0012A)" (at 0 -24.13 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
  (property "ki_keywords" "power mux ORing priority ideal diode reverse current blocking Texas Instruments" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27))))
@@ -138,15 +133,7 @@ class Sheet:
         self.items.append(f'(global_label {q(net)} (shape passive) (at {x} {y} {angle}) (effects (font (size 0.9 0.9)) (justify {"right" if angle==180 else "left"})) (uuid {uid(self.name+"lab"+str(self.n))}))')
     def add(self,ref,libid,value,x,y,nets,foot=None,refofs=None,vlab=False):
         x,y=round(round(x/1.27)*1.27,5),round(round(y/1.27)*1.27,5)
-        source,retype=DERIVED.get(libid,(libid,None))
-        sym=symbol(source)
-        if retype:
-            for p in pins(sym):
-                if unquote(first(p,'number')[1]) in retype: p[1]=retype[unquote(first(p,'number')[1])]
-            name,base=libid.split(':')[1],source.split(':')[1]
-            for unit in children(sym,'symbol'):
-                unit[1]=q(unquote(unit[1]).replace(base,name))
-            sym[1]=q(name)
+        sym=symbol(libid)
         if libid not in self.libs:
             embedded=copy.deepcopy(sym); embedded[1]=q(libid)
             self.libs[libid]=embedded
@@ -220,11 +207,11 @@ MCU_GPIO=[
  ('17','GPIO17','HG_ACC_CS','ADXL375 CS'),
  ('18','GPIO18','SENS_SCK','SPI0 SCK'),
  ('19','GPIO19','SENS_MOSI','SPI0 TX'),
- ('20','GPIO20','IMU_ACC_CS','BMI088 CSB1'),
- ('21','GPIO21','IMU_GYR_CS','BMI088 CSB2'),
+ ('20','GPIO20','IMU_CS','ICM-45686 AP_CS'),
+ ('21','GPIO21',None,'spare'),
  ('22','GPIO22','BARO_CS','BMP581 CSB'),
- ('23','GPIO23','IMU_ACC_INT','BMI088 INT1'),
- ('25','GPIO24','IMU_GYR_INT','BMI088 INT3'),
+ ('23','GPIO23','IMU_INT1','ICM-45686 INT1'),
+ ('25','GPIO24','IMU_INT2','ICM-45686 INT2/FSYNC/CLKIN'),
  ('26','GPIO25','BARO_INT','BMP581 INT'),
  ('27','GPIO26','LED_STAT','green status LED'),
  ('28','GPIO27','LED_WARN','red warning LED'),
@@ -266,7 +253,7 @@ def mcu_sheet():
     nets.update({'66':'USB_DM_RP','67':'USB_DP_RP'})
     nets.update({'70':'QSPI_SD3','71':'QSPI_SCLK','72':'QSPI_SD0','73':'QSPI_SD2','74':'QSPI_SD1','75':'QSPI_SS'})
     nets.update({pin:net for pin,gpio,net,fn in MCU_GPIO})
-    s.add('U20','MCU_RaspberryPi:RP2354B','RP2354B',200,150,nets,'Package_DFN_QFN:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm',refofs=(152,234),vlab=True)
+    s.add('U20','MCU_RaspberryPi:RP2354B','RP2354B',200,150,nets,'MARV_Packages:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm',refofs=(152,234),vlab=True)
 
     left=[(25+35*c,40+28*r) for r in range(8) for c in range(4)]
     for i in range(8):
@@ -341,12 +328,13 @@ def mcu_sheet():
 def sensors_sheet():
     s=Sheet('sensors','BOARD 2 / IMU, barometer, high-g',6)
     s.note('All three sensors run 4-wire SPI on the shared SENS_SCK / SENS_MOSI / SENS_MISO bus with one chip select each,\n'
-           'and are powered from V3V3_ANA (TPS7A20 LDO) with 100 nF + 1 uF at every supply pin per datasheet.',15,10,1.6)
-    s.add('U21','MARV_Power:BMI088_SPI','BMI088 6-axis IMU',90,85,
-          {'1':None,'2':'GND','3':ANA,'4':'GND','5':'IMU_GYR_CS','6':'GND','7':'GND','8':'SENS_SCK',
-           '9':'SENS_MOSI','10':'SENS_MISO','11':ANA,'12':'IMU_GYR_INT','13':None,'14':'IMU_ACC_CS',
-           '15':'SENS_MISO','16':'IMU_ACC_INT'},
-          'Package_LGA:Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering',refofs=(75,120),vlab=True)
+           'and are powered from V3V3_ANA (TPS7A20 LDO). Every supply pin on this sheet gets 100 nF + 1 uF: BMP581 and\n'
+           'ADXL375 because their own datasheets call for the pair, the ICM-45686 as a deliberate addition - its\n'
+           'datasheet BOM (DS-000577 Rev 1.0 Table 11) lists 0.1 uF only.',15,10,1.6)
+    s.add('U21','MARV_Sensors:ICM-45686','ICM-45686 6-axis IMU',90,85,
+          {'1':'SENS_MISO','2':None,'3':None,'4':'IMU_INT1','5':ANA,'6':'GND','7':None,'8':ANA,
+           '9':'IMU_INT2','10':None,'11':None,'12':'IMU_CS','13':'SENS_SCK','14':'SENS_MOSI'},
+          None,refofs=(75,120),vlab=True)
     s.add('U22','MARV_Sensors:BMP581','BMP581 barometer',220,85,
           {'1':ANA,'2':'SENS_SCK','3':'GND','4':'SENS_MOSI','5':'SENS_MISO','6':'BARO_CS','7':'BARO_INT',
            '8':'GND','9':'GND','10':ANA},None,refofs=(205,120),vlab=True)
@@ -354,26 +342,36 @@ def sensors_sheet():
           {'1':ANA,'2':'GND','3':ANA,'4':'GND','5':'GND','6':ANA,'7':'HG_ACC_CS','8':'HG_ACC_INT',
            '9':None,'10':None,'11':'GND','12':'SENS_MISO','13':'SENS_MOSI','14':'SENS_SCK'},
           None,refofs=(330,120),vlab=True)
-    grid=[(x,y) for y in (170,198) for x in (30,65,160,195,290,325)]
     for ref,(x,y),val in zip(
-        ['C50','C51','C54','C55','C58','C59','C52','C53','C56','C57','C60','C61'],grid,
+        ['C50','C51','C54','C55','C58','C59','C52','C53','C56','C57','C60','C61'],
+        [(30,170),(65,170),(160,170),(195,170),(290,170),(325,170),
+         (30,198),(65,198),(160,198),(195,198),(290,198),(325,198)],
         ['100n / 16 V X7R, U21 VDD','1u / 10 V X7R, U21 VDD','100n / 16 V X7R, U22 VDD','1u / 10 V X7R, U22 VDD',
          '100n / 16 V X7R, U23 VS','1u / 10 V X7R, U23 VS','100n / 16 V X7R, U21 VDDIO','1u / 10 V X7R, U21 VDDIO',
          '100n / 16 V X7R, U22 VDDIO','1u / 10 V X7R, U22 VDDIO','100n / 16 V X7R, U23 VDD_IO','1u / 10 V X7R, U23 VDD_IO']):
         s.passive(ref,'C',val,x,y,ANA,'GND')
-    for ref,(x,y),net in zip(['R48','R49','R50','R51'],[(100,170),(130,170),(100,198),(130,198)],
-                             ['IMU_ACC_CS','IMU_GYR_CS','BARO_CS','HG_ACC_CS']):
+    for ref,(x,y),net in zip(['R48','R50','R51'],[(100,170),(100,198),(130,198)],
+                             ['IMU_CS','BARO_CS','HG_ACC_CS']):
         s.passive(ref,'R','10k, %s pull-up'%net,x,y,ANA,net)
-    s.note('R48-R51: 10k pull-ups to V3V3_ANA on the four SPI chip selects (IMU_ACC_CS, IMU_GYR_CS, BARO_CS,\n'
-           'HG_ACC_CS). Same rationale as R35 on FLASH_CS1 (BOARD 3): every sensor is held deselected before the\n'
-           'RP2354B drives the pin, so a GPIO left floating through reset, BOOTSEL or a debugger halt cannot open a\n'
-           'transaction on the shared SENS_SCK / SENS_MOSI / SENS_MISO bus or leave two SDO drivers on SENS_MISO.\n'
-           'They bias to V3V3_ANA, the same rail as every VDDIO pin on this sheet, so there is no pull-up current\n'
-           'path into an unpowered I/O supply and no CS pin is pulled above its own VDDIO during rail sequencing.',230,225,1.3)
-    s.note('U21 BMI088 (datasheet Sec 6.2): PS tied to GND selects SPI. CSB1 = accelerometer (IMU_ACC_CS), CSB2 = gyroscope\n'
-           '(IMU_GYR_CS); SDO1 is the accelerometer data output and SDO2 the gyroscope one, both high-Z while deselected, so\n'
-           'they share SENS_MISO (the symbol is Sensor_Motion:BMI088 with SDO2 retyped passive so ERC accepts that). INT1 = accelerometer interrupt, INT3 = gyroscope interrupt; INT2 and INT4 are unused and\n'
-           'left open. VDD and VDDIO are both on V3V3_ANA; GNDA and GNDIO are the same board ground.',15,225,1.3)
+    s.note('R48, R50, R51: 10k pull-ups to V3V3_ANA on the three SPI chip selects (IMU_CS, BARO_CS, HG_ACC_CS). R49\n'
+           '(the former second IMU chip-select pull-up) is removed along with that net - the ICM-45686 has a single\n'
+           'chip select. Same rationale as R35 on FLASH_CS1 (BOARD 3): every sensor is held deselected before the RP2354B\n'
+           'drives the pin, so a GPIO left floating through reset, BOOTSEL or a debugger halt cannot open a\n'
+           'transaction on the shared SENS_SCK / SENS_MOSI / SENS_MISO bus. They bias to V3V3_ANA, the same rail as\n'
+           'every VDDIO pin on this sheet, so there is no pull-up current path into an unpowered I/O supply and no CS\n'
+           'pin is pulled above its own VDDIO during rail sequencing.',230,225,1.3)
+    s.note('U21 ICM-45686 (TDK InvenSense DS-000577 Rev 1.0, Table 10 "Signal Descriptions" / Figure 4 pin-out, Single\n'
+           'Interface SPI mode, Figure 10): AP_CS (pin 12) = IMU_CS, AP_SCLK (13) = SENS_SCK, AP_SDA/AP_SDIO/AP_SDI (14)\n'
+           '= SENS_MOSI, AP_SDO/AP_AD0 (1) = SENS_MISO. INT1 (4) = IMU_INT1. INT2/FSYNC/CLKIN (9) = IMU_INT2 - typed\n'
+           'bidirectional because FSYNC/CLKIN are host-driven inputs while INT2 is a chip output; only the INT2\n'
+           'function is used here. VDD (8) and VDDIO (5) are both on V3V3_ANA; GND (6) is the only ground pin. Pins 2,\n'
+           '3, 7, 10 and 11 (RESV) are all left No Connect: Table 10 allows No Connect / VDDIO / GND for every RESV\n'
+           'pin, and the Single-Interface SPI typical application schematic (Figure 10) shows all five left unterminated\n'
+           '(internal pull enabled by default, per the per-pin notes in Table 10); they are only needed for the AUX1 or\n'
+           'I2C-master dual-interface modes, neither of which this board uses. C50 (VDD) and C52 (VDDIO) are the 100 nF\n'
+           'X7R of Table 11 "Bill of Materials" (C1/C2 in the datasheet); C51 (VDD) and C53 (VDDIO) add 1 uF on top of\n'
+           'them. The datasheet BOM lists 0.1 uF only; this board keeps 100 nF + 1 uF per supply pin for consistency\n'
+           'with U22/U23 and common flight-controller practice.',15,225,1.3)
     s.note('U22 BMP581: CSB = BARO_CS, SDI = SENS_MOSI, SDO = SENS_MISO, SCK = SENS_SCK, INT = BARO_INT. VDDIO and VDD on\n'
            'V3V3_ANA, all three VSS pins to GND.\n'
            'U23 ADXL375: CS = HG_ACC_CS, SDA/SDI = SENS_MOSI, SDO = SENS_MISO, SCL/SCLK = SENS_SCK, INT1 = HG_ACC_INT.\n'
@@ -393,7 +391,7 @@ def storage_sheet():
     s.passive('C63','C','1u / 10 V X7R, U24 VCC',250,75,V3,'GND')
     s.add('J11','Connector:Micro_SD_Card_Det2','microSD, Molex 104031-0811 push-push',110,175,
           {'1':'SD_D2','2':'SD_D3','3':'SD_CMD','4':V3,'5':'SD_CLK','6':'GND','7':'SD_D0','8':'SD_D1',
-           '9':'SD_DET','10':'GND','SH':'GND'},'Connector_Card:microSD_HC_Molex_104031-0811',refofs=(88,150))
+           '9':'SD_DET','10':'GND','SH':'GND'},'MARV_Packages:microSD_HC_Molex_104031-0811',refofs=(88,150))
     grid=[(x,y) for y in (150,185) for x in (215,250,285)]
     for ref,(x,y),net in zip(['R36','R37','R38','R39','R40','R41'],grid,
                              ['SD_CMD','SD_D0','SD_D1','SD_D2','SD_D3','SD_DET']):
@@ -441,7 +439,10 @@ def build():
     # the "+" marker, so pin 1 = GND and pin 2 = +5 V. Verified in
     # /usr/share/kicad/footprints/Connector_AMASS.pretty/AMASS_XT30PW-M_1x02_P2.50mm_Horizontal.kicad_mod
     # (pad 1 at x=0 next to the "-" text at x=+3; pad 2 at x=-5 next to the "+" text at x=-8).
-    src.add('J3','Connector_Generic:Conn_01x02','5 V IN, 4.75-5.5 V, XT30 (BEC/BMS/boost module)',35,95,{'1':'GND','2':'5V_IN'},'Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal')
+    # That footprint (and six others - see LIBRARIES.md) is vendored byte-for-byte into
+    # MARV_Packages.pretty/ with only its (model ...) node repointed at a project-local STEP, so the
+    # project is self-contained for layout; the pads/courtyard are unchanged from the KiCad original.
+    src.add('J3','Connector_Generic:Conn_01x02','5 V IN, 4.75-5.5 V, XT30 (BEC/BMS/boost module)',35,95,{'1':'GND','2':'5V_IN'},'MARV_Packages:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal')
     src.add('D23','Diode:SMAJ5.0A','SMAJ5.0A, 5.0 V standoff uni-directional TVS',40,50,{'1':'5V_IN','2':'GND'},'Diode_SMD:D_SMA')
     src.passive('C16','C','100n / 16 V X7R, J3 HF bypass',30,140,'5V_IN','GND')
     src.passive('C67','C','4.7u / 10 V X7R, J3 bulk',65,140,'5V_IN','GND')
@@ -456,14 +457,14 @@ def build():
     src.add('U25','MARV_Power:TPS2121RUX','TPS2121RUXR',270,90,
             {'7':'5V_IN','2':'USB_VBUS','6':'U25_PR1','5':'U25_OV1','4':'GND','3':'GND',
              '1':'V5_SYS','8':'V5_SYS','9':'PWR_SRC_ST','10':'U25_ILM','11':'U25_SS','12':'GND'},
-            'Package_DFN_QFN:Texas_VQFN-HR-12_2x2.5mm_P0.5mm')
+            'MARV_Packages:Texas_VQFN-HR-12_2x2.5mm_P0.5mm')
     src.passive('C71','C','100n / 16 V X7R, IN1 bypass at U25',315,45,'5V_IN','GND')
     src.passive('C72','C','100n / 16 V X7R, IN2 bypass at U25',355,45,'USB_VBUS','GND')
     src.passive('R46','R','80.6k / 1%, ILM -> 1.49 A',315,85,'U25_ILM','GND')
     src.passive('R47','R','10k / 1%, ST pull-up (open drain)',355,85,'V3V3_SYS','PWR_SRC_ST')
     src.passive('C70','C','100n / 16 V X7R, SS soft-start',315,125,'U25_SS','GND')
 
-    src.add('J4','Connector:USB_C_Receptacle_USB2.0_16P','USB_C_PROGRAM_POWER',55,215,{'A1':'GND','A4':'USB_VBUS','A5':'USB_CC1','A6':'USB_DP','A7':'USB_DM','A8':None,'A9':'USB_VBUS','A12':'GND','B1':'GND','B4':'USB_VBUS','B5':'USB_CC2','B6':'USB_DP','B7':'USB_DM','B8':None,'B9':'USB_VBUS','B12':'GND','S1':'GND'},'Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12')
+    src.add('J4','Connector:USB_C_Receptacle_USB2.0_16P','USB_C_PROGRAM_POWER',55,215,{'A1':'GND','A4':'USB_VBUS','A5':'USB_CC1','A6':'USB_DP','A7':'USB_DM','A8':None,'A9':'USB_VBUS','A12':'GND','B1':'GND','B4':'USB_VBUS','B5':'USB_CC2','B6':'USB_DP','B7':'USB_DM','B8':None,'B9':'USB_VBUS','B12':'GND','S1':'GND'},'MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12')
     src.passive('R4','R','5.1k / 1%',120,195,'USB_CC1','GND')
     src.passive('R5','R','5.1k / 1%',120,240,'USB_CC2','GND')
     src.passive('C7','C','1u / 10 V',25,275,'USB_VBUS','GND')
@@ -496,8 +497,9 @@ def build():
 
     out=Sheet('power_3v3','POWER 2 / 3.3 V system buck and analog LDO',3)
     out.note('AVIONICS ONLY: 300 mA continuous / 500 mA short peak, provisional. NO SERVO POWER.',15,15,2)
-    out.add('U7','Regulator_Switching:TPS62913','TPS62913RPUR',95,70,{'1':'V5_SYS','2':'U7_SW','3':'U7_VO','4':'GND','5':'PWR_GOOD','6':'V5_SYS','7':'GND','8':'U7_SS','9':'U7_FB','10':'U7_SCONF'})
-    out.passive('L2','L','2.2u / Isat 7 A, DCR 13.5 mOhm (Coilcraft XGL4030-222MEC or equiv)',175,50,'U7_SW','U7_VO',foot='Inductor_SMD:L_Coilcraft_XxL4030')
+    out.add('U7','Regulator_Switching:TPS62913','TPS62913RPUR',95,70,{'1':'V5_SYS','2':'U7_SW','3':'U7_VO','4':'GND','5':'PWR_GOOD','6':'V5_SYS','7':'GND','8':'U7_SS','9':'U7_FB','10':'U7_SCONF'},
+            'MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm')
+    out.passive('L2','L','2.2u / Isat 7 A, DCR 13.5 mOhm (Coilcraft XGL4030-222MEC or equiv)',175,50,'U7_SW','U7_VO',foot='MARV_Packages:L_Coilcraft_XxL4030')
     out.passive('FB1','FerriteBead','8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv)',175,90,'U7_VO','V3V3_SYS',foot='Inductor_SMD:L_0603_1608Metric')
     for ref,x in [('C8',25),('C9',25)]:
         out.passive(ref,'C','10u / 10 V X7S',x,55 if ref=='C8' else 105,'V5_SYS','GND')
@@ -517,7 +519,7 @@ def build():
     out.add('U12','Regulator_Linear:TPS7A20xxxDBV','TPS7A2033PDBVR',95,200,{'1':'V5_SYS','2':'GND','3':'PWR_GOOD','4':None,'5':'V3V3_ANA'})
     out.passive('C25','C','1u / 10 V X7R, LDO input',55,195,'V5_SYS','GND')
     out.passive('C26','C','1u / 10 V X7R, LDO output, ESR <=100 mOhm',150,195,'V3V3_ANA','GND')
-    out.note('3V3_ANA feeds BMI088, BMP581, ADXL375 and the RP2354B ADC_AVDD pin (100 nF at each pin on the MCU sheet); VREG_AVDD is filtered\n'
+    out.note('3V3_ANA feeds ICM-45686, BMP581, ADXL375 and the RP2354B ADC_AVDD pin (100 nF at each pin on the MCU sheet); VREG_AVDD is filtered\n'
              'from V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is on PWR_GOOD rather than V5_SYS:\n'
              'the analog rail therefore starts only once the TPS62913 declares V3V3_SYS in regulation, and drops with it, which removes the\n'
              'window where the sensors were biased from an unregulated V5_SYS while the MCU was still held in reset.',15,240,1.3)

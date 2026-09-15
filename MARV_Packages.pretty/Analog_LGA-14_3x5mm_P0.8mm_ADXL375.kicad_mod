@@ -41,6 +41,6 @@
 	(pad "13" smd roundrect (at 1.0975 -2) (size 1.145 0.55) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.136364))
 	(pad "14" smd roundrect (at 0 -2.0975) (size 0.25 1.145) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25))
 	(embedded_fonts no)
-	(model "${KICAD10_3DMODEL_DIR}/Package_LGA.3dshapes/LGA-14_3x5mm_P0.8mm_LayoutBorder1x6y.step"
+	(model "${KIPRJMOD}/MARV_Packages.3dshapes/ADXL375.step"
 		(offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )

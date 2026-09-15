@@ -35,4 +35,4 @@ These are behavioral models (muxctl/muxpath comparator logic for the TPS2121, as
 - Logging and actuator-disturbance tests, and no-airflow enclosure thermal soak.
 - Final MPNs, effective capacitance, inductor saturation/temperature and PCB layout.
 
-References: [RP2350/RP2354 datasheet](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf), [BMI088 datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf), [BMP581 datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf), [ADXL375 datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL375.PDF).
+References: [RP2350/RP2354 datasheet](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf), [ICM-45686 datasheet](https://invensense.tdk.com/download-resource/ds-000577-icm-45686-datasheet-0), [BMP581 datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf), [ADXL375 datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL375.PDF).

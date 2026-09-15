@@ -40,14 +40,18 @@ expected={
  ('R27','1'):'5V_IN',('R27','2'):'VIN_SENSE',('R28','1'):'VIN_SENSE',('R28','2'):'GND',
  ('C48','1'):'VIN_SENSE',
  ('R29','1'):'USB_VBUS',('R29','2'):'VBUS_SENSE',('R30','1'):'VBUS_SENSE',('R30','2'):'GND',
- # sensor chip-select pull-ups, biased to the rail the sensor VDDIO pins run from
- ('R48','1'):'V3V3_ANA',('R48','2'):'IMU_ACC_CS',('R49','1'):'V3V3_ANA',('R49','2'):'IMU_GYR_CS',
+ # sensor chip-select pull-ups, biased to the rail the sensor VDDIO pins run from. R49 (the former
+ # second IMU chip-select pull-up) is removed: the ICM-45686 (U21) has a single chip select.
+ ('R48','1'):'V3V3_ANA',('R48','2'):'IMU_CS',
  ('R50','1'):'V3V3_ANA',('R50','2'):'BARO_CS',('R51','1'):'V3V3_ANA',('R51','2'):'HG_ACC_CS',
  ('U20','48'):'PWR_SRC_ST',                                       # GPIO39 reads the mux status pin
- # sensor supplies on the analog rail
- ('U21','3'):'V3V3_ANA',('U21','11'):'V3V3_ANA',('U22','1'):'V3V3_ANA',('U22','10'):'V3V3_ANA',
+ # sensor supplies on the analog rail. U21 is the ICM-45686 (LGA-14): VDDIO=5, VDD=8, GND=6.
+ ('U21','5'):'V3V3_ANA',('U21','8'):'V3V3_ANA',('U22','1'):'V3V3_ANA',('U22','10'):'V3V3_ANA',
  ('U23','1'):'V3V3_ANA',('U23','6'):'V3V3_ANA',('U23','3'):'V3V3_ANA',('U23','11'):'GND',
- ('U21','7'):'GND',
+ ('U21','6'):'GND',
+ # U21 decoupling caps: C50/C51 on VDD (pin 8), C52/C53 on VDDIO (pin 5)
+ ('C50','1'):'V3V3_ANA',('C50','2'):'GND',('C51','1'):'V3V3_ANA',('C51','2'):'GND',
+ ('C52','1'):'V3V3_ANA',('C52','2'):'GND',('C53','1'):'V3V3_ANA',('C53','2'):'GND',
  # logging supplies on the system rail
  ('U24','8'):'V3V3_SYS',('U24','4'):'GND',('J11','4'):'V3V3_SYS',('J11','6'):'GND',('J11','SH'):'GND',
  # port naming: the module TX lands on an MCU UART RX pin, the module RX on an MCU TX pin
@@ -95,11 +99,12 @@ assert nets['FLASH_CS1']=={('U20','77'),('U24','1'),('R35','2')},nets['FLASH_CS1
 # microSD 4-bit bus and card detect
 for mcu,sd in [('40','5'),('42','3'),('43','7'),('44','8'),('45','1'),('46','2'),('47','9')]:
     assert pin_net[('U20',mcu)]==pin_net[('J11',sd)],(mcu,sd)
-# shared sensor SPI: one MISO, one MOSI, one clock, four distinct chip selects
-assert {('U21','15'),('U21','10'),('U22','5'),('U23','12'),('U20','16')} <= nets['SENS_MISO']
-assert {('U21','9'),('U22','4'),('U23','13'),('U20','19')} <= nets['SENS_MOSI']
-assert {('U21','8'),('U22','2'),('U23','14'),('U20','18')} <= nets['SENS_SCK']
-assert len({pin_net[p] for p in [('U21','14'),('U21','5'),('U22','6'),('U23','7')]})==4
+# shared sensor SPI: one MISO, one MOSI, one clock, three distinct chip selects (ICM-45686 has a
+# single chip select, unlike the two-CS BMI088 it replaced)
+assert {('U21','1'),('U22','5'),('U23','12'),('U20','16')} <= nets['SENS_MISO']
+assert {('U21','14'),('U22','4'),('U23','13'),('U20','19')} <= nets['SENS_MOSI']
+assert {('U21','13'),('U22','2'),('U23','14'),('U20','18')} <= nets['SENS_SCK']
+assert len({pin_net[p] for p in [('U21','12'),('U22','6'),('U23','7')]})==3
 components={c.get('ref'):c for c in root.find('components')}
 # the temporary MCU-interface headers are gone
 assert not {'J5','J8'} & set(components),'J5/J8 still present'

@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "Bosch BMP581, 10-pin 2.0x2.0 mm LGA; recommended land pattern from BST-BMP581-DS004 rev 1.13")
+	(descr "Bosch BMP581, 10-pin 2.0x2.0 mm LGA; recommended land pattern from BST-BMP581-DS004 rev 1.13. 3D model is a dimensional stand-in: KiCad's ST_HLGA-10_2x2mm_P0.5mm_LayoutBorder3x2y.step copied to MARV_Packages.3dshapes/BMP581.step and rotated 90 deg about Z so its pin-1 dimple lands on the pad-1 corner; same body and pad count, but its 3x2 border layout is the transpose of the BMP581's, so four of the ten model pads sit 0.25 mm inboard of their copper. See MARV_Packages.3dshapes/PROVENANCE.md")
 	(tags "Bosch BMP581 LGA-10 pressure sensor")
 	(property "Reference" "REF**" (at 0 -2.1 0) (layer "F.SilkS")
 		(effects (font (size 1 1) (thickness 0.15))))
@@ -36,4 +36,8 @@
 	(pad "9" smd roundrect (at 0.7625 0) (size 0.325 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25))
 	(pad "10" smd roundrect (at 0.7625 -0.5) (size 0.325 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.25))
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/MARV_Packages.3dshapes/BMP581.step"
+		(offset (xyz 0 0 0))
+		(scale (xyz 1 1 1))
+		(rotate (xyz 0 0 90)))
 )
