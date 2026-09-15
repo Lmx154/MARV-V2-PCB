@@ -1,0 +1,26 @@
+ERC report (2026-09-15T08:08:49, Encoding UTF8)
+Report includes: Errors, Warnings
+
+***** Sheet /
+
+***** Sheet /POWER 1 / 5 V in, USB, source isolation/
+
+***** Sheet /POWER 2 / 3.3 V system buck and analog LDO/
+
+***** Sheet /POWER 3 / peripheral ports/
+
+***** Sheet /BOARD 1 / RP2354B/
+
+***** Sheet /BOARD 2 / IMU, barometer, high-g/
+
+***** Sheet /BOARD 3 / log flash and microSD/
+
+***** Sheet /BOARD 4 / PWM outputs/
+
+ ** ERC messages: 0  Errors 0  Warnings 0
+
+ ** Ignored checks:
+    - Global label only appears once in the schematic
+    - Four connection points are joined together
+    - SPICE model issue
+    - Assigned footprint doesn't match footprint filters

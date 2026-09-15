@@ -1,0 +1,126 @@
+MARV P3 source-handover corner - LM66100 threshold behavioral model, not vendor silicon
+* Self-contained (no .include elsewhere in this repo): duplicates the same
+* orpath/reg subckts as integrated_power.cir. See that file's orpath
+* comments for the dead-band timer and why every nonlinearity in the state
+* path is a tanh rather than a ?:/min/max clamp.
+*
+* P3 is 5 V-only: the two sources are 5V_IN (J3, BEC/boost, 0.10 ohm, 3 A
+* limit) and USB (J4, 0.35 ohm, no limit), each through an LM66100 into
+* V5_SYS -- no cell/battery path. Exactly one of them is the SURVIVOR
+* (present for the whole run) and the other is the OTHER source (removed or
+* inserted at t=15 ms); which is which is swapped in by
+* tools/run_power_checks.py substituting the SURVIVOR/OTHER SOURCE BLOCK
+* text below. Both blocks always drive into the same node names (srv/osrc,
+* instances Xsurvivoror/Xotheror, top-level source Vsrv/Vother) so every
+* .meas statement is invariant across the substitutions:
+*   bec_removed_usb_present (on-disk default): USB survives, 5V_IN removed.
+*   usb_removed_bec_present: 5V_IN survives, USB removed.
+*   usb_insert_bec_present: 5V_IN survives, USB absent then inserted.
+*   Same hooks also produce the reverse-current corner in RESULTS.md (USB
+*   inserted onto an already-present 5V_IN): the reverse current into the
+*   5V_IN path is directly measurable through Vsrv (the SURVIVOR block's
+*   own top-level source), the same i(V)-style measurement this file's
+*   removed predecessor used for its cell branch.
+* RON uses the datasheet value nearest 5 V (~110 mOhm) for both sources.
+* IRCB=1 A is the datasheet's upper reverse-activation-current bound
+* (0.5-1 A). VSYS bulk cap defaults to the schematic-nominal 20 uF ceramic
+* (C8+C9); the worst-case corner substitutes the derated 14 uF value. A
+* separate polymer branch (Cpoly+Rpolyesr) models C19, 220 uF nominal /
+* 176 uF at the same -20% derating, with its 40 mOhm ESR in series.
+.param R5VIN=0.10 RUSB=0.35 VON=0.150 VOFF=0.035 VFWD=0.5 TON=40u TOFF=2u IRCB=1
+.param RONHI=0.110 CSYS=20u CPOLY=220u ILOAD=0.5
+
+.subckt orpath in out params: von=0.15 voff=0.035 vfwd=0.5 tond=40u toffd=2u ron=0.15 ircb=1
+Cst st 0 1
+Rstbleed st 0 1e9
+Bg stg 0 V=0.5*(1+tanh((v(st)-0.95)/0.02))
+Bth sth 0 V=von-(von+voff)*0.5*(1+tanh((v(st)-0.88)/0.01))
+Ba sta 0 V=0.5*(1+tanh((v(in,out)-v(sth))/0.010))
+Bup st 0 I=(v(sta)/tond)*tanh((v(st)-1)/0.01)
+Bdown st 0 I=((1-v(sta))/toffd)*(0.1+0.45*(1-tanh((v(st)-0.89)/0.01)))*tanh(v(st)/0.01)
+Bfet in out I=max(v(in,out)*v(stg)/ron,-ircb)
+Bdiode in out I=max(v(in,out)-vfwd,0)/0.05
+.ends
+
+.subckt reg in out params: setpoint=3.3 eta=0.9 vmin=2.5 rout=0.05 imax=0.8 cout=33u drop=0
+Bvalid vld 0 V=0.5*(1+tanh((v(in)-vmin)/0.010))
+Btarget target 0 V=min(setpoint,v(in)-drop)*v(vld)
+Rsoft target control 1k
+Csoft control 0 200n
+Bdrive 0 drive I=v(vld)*min(max((v(control)-v(out))/rout,0),imax)
+Vsense drive out 0
+Binput in 0 I=max(v(out),0)*max(i(Vsense),0)/(eta*max(v(in),0.5))
+Resr out cap 0.015
+Cout cap 0 {cout}
+Rbleed out 0 100k
+.ends
+
+* --- SURVIVOR SOURCE BLOCK: usb_survivor ---
+* USB present for the whole run (no current limit): the surviving source in
+* bec_removed_usb_present. Held at 4.6 V vs. the OTHER block's 5.4 V: per
+* DESIGN_SPEC "Source behaviour", near-equal sources share naturally rather
+* than one cleanly dominating, so a voltage split (a plausible tolerance
+* stack-up, not a designed hierarchy) is used here to give the precondition
+* below ("survivor was blocked pre-removal") a well-defined answer. A
+* smaller (0.4 V) split leaves the two sources' OR-ed contributions on
+* 'sys'/'srv' close enough together that, once the losing FET's timer
+* happens to latch during the simultaneous t=0 startup race, the resulting
+* small reverse-conducting differential (~0.05-0.1 V) never clears the
+* worst-case VOFF=0.080 V release threshold and the FET sticks on; the 0.8 V
+* split here was verified (by trace inspection) to release cleanly even at
+* worst-case VON/VOFF/VFWD and 0.8 A load.
+Vsrv vsrv0 0 4.6
+Rsrvres vsrv0 srv {R5VIN}
+Xsurvivoror srv sys orpath params: von={VON} voff={VOFF} vfwd={VFWD} tond={TON} toffd={TOFF} ron={RONHI} ircb={IRCB}
+* --- END SURVIVOR SOURCE BLOCK ---
+
+* --- OTHER SOURCE BLOCK: bec_removed ---
+* 5V_IN present from t=0 at 5.4 V (see the SURVIVOR block comment on the
+* voltage split), removed (100 us ramp) at t=15 ms; decays through its own
+* C17-class pre-OR filter cap and a 100k bleed. Current-limited like
+* integrated_power.cir's B5vinlim (0.10 ohm slope, 3 A hard clamp).
+Vother vother0 0 PWL(0 0 15m 0 15.1m 5.4 30m 5.4)
+Rotherres vother0 osrc {RUSB}
+Cosrcfilt osrc 0 100n
+Rosrcbleed osrc 0 100k
+Xotheror osrc sys orpath params: von={VON} voff={VOFF} vfwd={VFWD} tond={TON} toffd={TOFF} ron={RONHI} ircb={IRCB}
+* --- END OTHER SOURCE BLOCK ---
+
+Csys sys 0 {CSYS}
+Cpoly sys polyesr {CPOLY}
+Rpolyesr polyesr 0 0.04
+Vbuckin sys buckin 0
+Xbuck buckin v3v3 reg setpoint=3.33 eta=0.92 vmin=3.0 rout=0.05 imax=3 cout=66u drop=0.15
+Iload v3v3 0 {ILOAD}
+
+.options method=gear reltol=0.001
+.tran 0.5u 30m uic
+.meas tran vsys_min MIN v(sys) FROM=2m TO=30m
+.meas tran v3v3_min MIN v(v3v3) FROM=2m TO=30m
+.meas tran v3v3_max MAX v(v3v3) FROM=2m TO=30m
+* i(Vsrv) is negative for forward (survivor-sourcing) current and positive
+* for reverse current flowing into the survivor (SPICE source convention),
+* so the reverse-current peak is the MAXIMUM of i(Vsrv), not the minimum.
+* Meaningful only for the reverse-current corner, where the SURVIVOR SOURCE
+* BLOCK is substituted to the unlimited 5V_IN variant (see RESULTS.md); for
+* the handover cases it stays near zero because USB_SURVIVOR_BLOCK and
+* FIVEVIN_SURVIVOR_BLOCK are not the removed/inserted path.
+.meas tran rev_peak MAX i(Vsrv) FROM=2m TO=30m
+.meas tran rev_dur INTEG par('(i(Vsrv)>0.02) ? 1 : 0') FROM=14m TO=25m
+* Handover-validity precondition: for the removed-source cases, the survivor
+* orpath (Xsurvivoror) must actually have been blocked (conduction fraction
+* stg ~ 0) by the higher-voltage source before the 15 ms removal event, and
+* that source (osrc, after the OTHER SOURCE BLOCK substitution) must itself
+* have been established; for the insert case, the survivor-fed sys rail must
+* already be running. Otherwise the row measures nothing meaningful (see
+* tools/run_power_checks.py).
+.meas tran fet_pre MAX v(xsurvivoror.stg) FROM=12m TO=14m
+.meas tran src_pre MIN v(osrc) FROM=5m TO=14m
+.meas tran sys_pre MIN v(sys) FROM=5m TO=14m
+* Reporting-only measures for the standing reverse-current corner (USB
+* inserted onto a present 5V_IN): steady-state window 20-30 ms, well after
+* the insertion transient.
+.meas tran rev_avg AVG par('(i(Vsrv)>0) ? i(Vsrv) : 0') FROM=20m TO=30m
+.meas tran sys_avg AVG v(sys) FROM=20m TO=30m
+.meas tran fet_avg AVG v(xsurvivoror.stg) FROM=20m TO=30m
+.end

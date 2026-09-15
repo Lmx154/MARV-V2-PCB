@@ -1,0 +1,39 @@
+MARV V2 - illustrative shared versus dedicated source impedance
+* Three independent hypothetical configurations, not regulator macromodels.
+* Loads are INPUT currents, not servo output currents.
+* Fixed current approximation omits converter constant-power behavior,
+* battery chemistry, protection trips, BEC current limits and feedback loops.
+* Dedicated-cell case assumes actuators have a different energy source.
+
+* A: 5 V BEC, 0.20 ohm aggregate impedance, 0.5 A electronics,
+* additional 3 A actuator demand for 20 ms.
+Vbec bec_source 0 5
+Rbec bec_source bec_bus 0.20
+Rbec_esr bec_bus bec_cap 0.03
+Cbec bec_cap 0 470u
+Ibec_logic bec_bus 0 0.5
+Ibec_servo bec_bus 0 PULSE(0 3 10m 10u 10u 20m 50m)
+
+* B: 3.2 V cell, 0.15 ohm aggregate impedance, 0.6 A electronics,
+* additional 4 A input demand from an external servo boost converter.
+Vcell shared_source 0 3.2
+Rcell shared_source shared_bus 0.15
+Rcell_esr shared_bus shared_cap 0.03
+Ccell shared_cap 0 470u
+Icell_logic shared_bus 0 0.6
+Icell_servo shared_bus 0 PULSE(0 4 10m 10u 10u 20m 50m)
+
+* C: same cell model dedicated to electronics; actuators powered elsewhere.
+Vded dedicated_source 0 3.2
+Rded dedicated_source dedicated_bus 0.15
+Rded_esr dedicated_bus dedicated_cap 0.03
+Cded dedicated_cap 0 470u
+Ided dedicated_bus 0 0.6
+
+.tran 1u 40m
+.meas tran bec_before FIND v(bec_bus) AT=5m
+.meas tran bec_min MIN v(bec_bus) FROM=9m TO=35m
+.meas tran shared_before FIND v(shared_bus) AT=5m
+.meas tran shared_min MIN v(shared_bus) FROM=9m TO=35m
+.meas tran dedicated_min MIN v(dedicated_bus) FROM=9m TO=35m
+.end

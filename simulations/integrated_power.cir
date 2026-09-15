@@ -1,0 +1,146 @@
+MARV P3 integrated power - BEHAVIORAL architectural model, not vendor silicon
+* Efficiencies, impedance, current limits, bandwidth and handover are assumptions.
+* No EMI, USB enumeration, IC fault dynamics or switch losses.
+* 5 V-only P3: two sources, 5V_IN (J3, BEC/boost) and USB (J4), each through an
+* LM66100 (U3/U5, CE tied to VOUT) into V5_SYS -- no cell/battery path anywhere.
+* U3/U5 are each modeled as the orpath subckt below: a hysteretic VON/VOFF
+* comparator plus body diode, not an instantaneous ideal diode. See orpath
+* comments and simulations/README.md for what this can and cannot show.
+* U7 TPS62913 (buck, V5_SYS->V3V3_SYS) and U12 TPS7A20 (LDO, V5_SYS->V3V3_ANA)
+* are modeled by the reg/ldo subckts below.
+.param R5VIN=0.10 RUSB=0.35 ETA_BUCK=0.92 COUT=66u
+.param RONHI=0.110 VON=0.150 VOFF=0.035 VFWD=0.5 TON=40u TOFF=2u IRCB=1
+.param CSYS=20u CPOLY=220u ILO=0.5 IHI=0.8 ILDO=10m
+* Measurement window: the span over which a source is guaranteed present in
+* the on-disk default (nominal) timing -- 5V_IN 5-40 ms, USB 30-55 ms, so a
+* source is present continuously from 5 ms to 55 ms. usb_only/bec_only
+* corners substitute TMSTART/TMEND to their own source's presence window.
+* TFIRST is the arrival time of whichever source is first in the corner
+* (5V_IN at 5 ms by default); the load schedule below is written relative to
+* it so no source is ever loaded before it has had time to establish -- an
+* always-on sink on an undriven rail would pull it far negative.
+.param TFIRST=5m TMSTART=6.5m TMEND=54.9m
+
+.subckt orpath in out params: von=0.15 voff=0.035 vfwd=0.5 tond=40u toffd=2u ron=0.15 ircb=1
+* LM66100 datasheet (SLVSEZ8A): FET ON when v(in)-v(out) > von, but only
+* after the turn-on time tond; FET OFF within toffd once v(out)-v(in) > voff;
+* body diode conducts in->out with drop vfwd while the FET is off.
+* tond is a DEAD TIME, not a time constant: the part does not conduct for
+* most of it. Node 'st' is therefore a TIMER, not a conduction fraction. It
+* ramps linearly 0->1 in tond while the turn-on condition holds and resets at
+* 1/toffd when it does not; conduction is the separate mapping 'stg' below,
+* which is zero until the timer is ~90% expired. For tond=40u that is ~36 us
+* of dead band (body diode carries the load) followed by a ~4 us ramp to full
+* RON conduction.
+* NUMERICS: every nonlinearity in the state path is a tanh, not a ?:/min/max,
+* so ngspice's timestep does not collapse when a handover dip drives a
+* downstream regulator across its vmin comparator; see the smoothed vmin
+* comparator in the reg/ldo subckts.
+Cst st 0 1
+Rstbleed st 0 1e9
+* stg = conduction fraction: a C-infinity stand-in for min(max((v(st)-0.9)*10,
+* 0),1). <1e-3 below st=0.89, 0.5 at st=0.95, >0.999 at st=1, so the FET is
+* fully off for the first ~0.9*tond and then ramps over the last ~0.1*tond.
+Bg stg 0 V=0.5*(1+tanh((v(st)-0.95)/0.02))
+* sth = comparator trip point, carrying the datasheet VON/VOFF hysteresis:
+* +von while the FET is still fully off (st<0.87), sliding to -voff once the
+* timer is essentially expired (st>0.89), which is what makes the part latch.
+Bth sth 0 V=von-(von+voff)*0.5*(1+tanh((v(st)-0.88)/0.01))
+* sta = comparator output in [0,1] (10 mV smoothing width).
+Ba sta 0 V=0.5*(1+tanh((v(in,out)-v(sth))/0.010))
+* Timer: +1/tond while sta is high, -1/toffd while it is low, so an aborted
+* turn-on (condition lost before expiry) resets in <= toffd. Soft end stops
+* (tanh) keep st parked exactly at 0 or 1 instead of on a Jacobian kink.
+Bup st 0 I=(v(sta)/tond)*tanh((v(st)-1)/0.01)
+Bdown st 0 I=((1-v(sta))/toffd)*(0.1+0.45*(1-tanh((v(st)-0.89)/0.01)))*tanh(v(st)/0.01)
+* FET channel: bidirectional RON scaled by the conduction fraction stg;
+* reverse current while stg has not yet collapsed is bounded by ircb
+* (datasheet: reverse current can reach 0.5-1 A before blocking completes
+* within toffd).
+Bfet in out I=max(v(in,out)*v(stg)/ron,-ircb)
+* Body diode: forward-only (in->out), independent of the timer. It carries
+* the load through the whole tond dead band; that drop (vfwd + 50 mOhm) is
+* what sets the VSYS floor during a handover.
+Bdiode in out I=max(v(in,out)-vfwd,0)/0.05
+.ends
+
+.subckt reg in out params: setpoint=3.3 eta=0.9 vmin=2.5 rout=0.05 imax=0.8 cout=33u drop=0
+* Startup target ramps through an assumed 200 us filter.
+* vld is the VIN-valid (UVLO) flag: 0 below vmin, 1 above, continuous (tanh)
+* rather than a hard ?: step so ngspice's timestep does not collapse if a
+* handover dip lets VIN reach vmin.
+Bvalid vld 0 V=0.5*(1+tanh((v(in)-vmin)/0.010))
+* Dropout clamp: the regulator cannot make more than (VIN-drop); drop=0
+* (default) reproduces the old undropped behavior for callers that do not
+* set it.
+Btarget target 0 V=min(setpoint,v(in)-drop)*v(vld)
+Rsoft target control 1k
+Csoft control 0 200n
+Bdrive 0 drive I=v(vld)*min(max((v(control)-v(out))/rout,0),imax)
+Vsense drive out 0
+* max(v(out),0): a transient UVLO dropout could otherwise swing v(out) negative and reverse the input-current term.
+Binput in 0 I=max(v(out),0)*max(i(Vsense),0)/(eta*max(v(in),0.5))
+Resr out cap 0.015
+Cout cap 0 {cout}
+Rbleed out 0 100k
+.ends
+
+.subckt ldo in out params: setpoint=3.3 vmin=2.5 drop=0.2 imax=0.05 cout=1u
+* TPS7A20-class LDO: VOUT = min(setpoint, VIN-drop) once VIN>=vmin; ideal
+* pass-through current (Iin=Iout), so P_loss = (VIN-VOUT)*IOUT falls out of
+* the power balance directly rather than an assumed efficiency.
+Bvalid vld 0 V=0.5*(1+tanh((v(in)-vmin)/0.010))
+Btarget target 0 V=min(setpoint,v(in)-drop)*v(vld)
+Rsoft target control 1k
+Csoft control 0 200n
+Bdrive 0 drive I=v(vld)*min(max((v(control)-v(out))/0.05,0),imax)
+Vsense drive out 0
+Binput in 0 I=max(i(Vsense),0)
+Cout out 0 {cout}
+Rbleed out 0 100k
+.ends
+
+* Nominal timing (on-disk default): 5V_IN present 5-40 ms, USB present
+* 30-55 ms -- overlap 30-40 ms, and each is the sole source for a window
+* (5V_IN alone 5-30 ms, USB alone 40-55 ms). usb_only/bec_only corners zero
+* out one source's amplitude and adjust TMSTART/TMEND to that source's own
+* presence window.
+Vin5vinsrc v5vinsrc0 0 PWL(0 0 5m 0 5.1m 5.0 40m 5.0 40.1m 0)
+* 5V_IN: external 2S-6S -> 5.0 V / 3 A BEC or 1S BMS/boost module. Modeled as
+* a 0.10 ohm output impedance plus a 3 A hard current limit (behavioral
+* clamp), not a vendor regulator model.
+B5vinlim v5vinsrc0 v5vin I=min(max(v(v5vinsrc0,v5vin)/R5VIN,0),3.0)
+C5vinfilt v5vin 0 100n
+R5vinbleed v5vin 0 1meg
+Vinusbsrc usbsrc0 0 PWL(0 0 30m 0 30.1m 5.0 55m 5.0 55.1m 0)
+* USB: plain 5 V rail through cable/connector resistance; no current limit
+* (USB compliance/negotiation is a firmware/operational matter, not modeled
+* here).
+Rusb usbsrc0 usb {RUSB}
+X5vinor v5vin sys orpath params: von={VON} voff={VOFF} vfwd={VFWD} tond={TON} toffd={TOFF} ron={RONHI} ircb={IRCB}
+Xusbor usb sys orpath params: von={VON} voff={VOFF} vfwd={VFWD} tond={TON} toffd={TOFF} ron={RONHI} ircb={IRCB}
+Csys sys 0 {CSYS}
+Cpoly sys polyesr {CPOLY}
+Rpolyesr polyesr 0 0.04
+Vbuckin sys buckin 0
+Xbuck buckin v3v3sys reg setpoint=3.33 eta={ETA_BUCK} vmin=3.0 rout=0.05 imax=3 cout={COUT} drop=0.15
+Vldoin sys ldoin 0
+Xldo ldoin v3v3ana ldo setpoint=3.3 vmin=2.5 drop=0.2 imax=0.05 cout=1u
+* Load schedule relative to TFIRST (see above): zero until the first source
+* has had time to establish, then baseline, then the 500->800->500 mA step
+* well inside even the shortest single-source active window (usb_only's
+* 25 ms), back to baseline through the end of the run.
+Iloadsys v3v3sys 0 PWL(0 0 {TFIRST+0.2m} 0 {TFIRST+0.3m} 0.03 {TFIRST+6m} 0.03 {TFIRST+6.01m} {ILO} {TFIRST+11m} {ILO} {TFIRST+11.01m} {IHI} {TFIRST+16m} {IHI} {TFIRST+16.01m} {ILO} 60m {ILO})
+Iloadana v3v3ana 0 PWL(0 0 {TFIRST+0.2m} 0 {TFIRST+0.3m} {ILDO} 60m {ILDO})
+.options method=gear reltol=0.001
+.tran 1u 60m uic
+.meas tran vout_min MIN v(v3v3sys) FROM={TMSTART} TO={TMEND}
+.meas tran vout_max MAX v(v3v3sys) FROM={TMSTART} TO={TMEND}
+.meas tran ana_min MIN v(v3v3ana) FROM={TMSTART} TO={TMEND}
+.meas tran vsys_min MIN v(sys) FROM={TMSTART} TO={TMEND}
+* FROM/TO=12m-14m falls inside the pure 500 mA (ILO) plateau (TFIRST+6.01m
+* to TFIRST+11m = 11.01-16 ms at the default TFIRST=5m), not the earlier
+* 0.03 A baseline segment or the 0.8 A peak.
+.meas tran buck_loss AVG par('v(sys)*i(Vbuckin)-v(v3v3sys)*i(v.xbuck.vsense)') FROM=12m TO=14m
+.meas tran ldo_loss AVG par('v(sys)*i(Vldoin)-v(v3v3ana)*i(v.xldo.vsense)') FROM=12m TO=14m
+.end

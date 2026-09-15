@@ -1,0 +1,14 @@
+# KiCad per-user / transient files
+*.kicad_prl
+*-backups/
+_autosave-*
+fp-info-cache
+*.lck
+*.kicad_sch-bak
+*.kicad_pcb-bak
+# Python
+__pycache__/
+*.pyc
+# ngspice scratch
+simulations/corners/*.log
+simulations/*.log

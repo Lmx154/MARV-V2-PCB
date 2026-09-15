@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "MARV_Packages")(type "KiCad")(uri "${KIPRJMOD}/MARV_Packages.pretty")(options "")(descr "Project-local footprints used by MARV V2"))
+)

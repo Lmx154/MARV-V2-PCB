@@ -1,0 +1,14 @@
+MARV P3 - lumped enclosure thermal sensitivity, NOT a measured thermal model
+* Voltage = degrees C, current = watts, R = K/W, C = J/K.
+* RENC is whole-board-to-environment resistance, not datasheet IC thetaJA.
+* PLOSS is TPS62913 buck + TPS7A20 LDO conversion heat only; PLOAD is electronics load heat.
+* Board is one isothermal node. Local IC gradients require separate validation.
+.param AMBIENT=60 PLOAD=0.99 PLOSS=0.103066 RENC=20 CBOARD=10
+Vambient ambient 0 {AMBIENT}
+Rpath board ambient {RENC}
+Cboard board ambient {CBOARD} IC=0
+Iheat 0 board PWL(0 0 1 {PLOAD+PLOSS})
+.tran 1 3600 uic
+.meas tran board_10min FIND v(board) AT=600
+.meas tran board_60min FIND v(board) AT=3600
+.end
