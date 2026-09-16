@@ -115,19 +115,23 @@ CUSTOM={'MARV_Power:TPS2121RUX':'''(symbol "TPS2121RUX" (exclude_from_sim no) (i
  (embedded_fonts no))'''}
 
 # Passive package policy.  The board is a single-sided square that has to stay
-# at or under 50 mm (DESIGN_SPEC "Envelope"), so every passive is now the
-# SMALLEST package its rating allows rather than the smallest hand-solderable
-# one; all of the packages below are JLCPCB assembly parts (1 % for R,
-# X5R/X7R for C).  Package is derived from the value string, which always
-# starts "<capacitance> / <voltage> V":
+# at or under 50 mm (DESIGN_SPEC "Envelope"), so every passive is the SMALLEST
+# package its rating AND its supply chain allow rather than the smallest
+# hand-solderable one; all of the packages below are JLCPCB assembly parts
+# (1 % for R, X5R/X7R for C).  Package is derived from the value string, which
+# always starts "<capacitance> / <voltage> V":
 #
-#   R   any value ................................. 0201
+#   R   any value ................................. 0402
 #   C   <= 4.7 uF, <= 16 V ........................ 0402
 #   C   > 4.7 uF .. 22 uF, <= 16 V ................ 0603
 #
-# REWORK: 0201 resistors (0.6 x 0.3 mm) and 22 uF 0603 ceramics are machine
-# placement only - JLC assembles them, a bench iron does not rework them.
-# That is the deliberate trade for the 50 mm single-sided envelope.
+# WHY 0402 AND NOT 0201 FOR THE RESISTORS: JLCPCB's Basic library starts at
+# 0402 - it carries no 0201 resistor of any value, so every 0201 line is an
+# Extended part with a per-unique-part setup fee, and the 0.1 % values the U7
+# feedback divider needs do not exist in 0201 at all (reports/jlc-audit.md
+# sections 1 and 6).  Moving the whole resistor set to 0402 makes 8 of the 13
+# values Basic, removes that fee, and makes the divider buildable.  0402 is
+# also hand-reworkable, which 0201 is not.
 # A capacitor rated above 16 V (anything on VBAT, the bootstrap cap, the
 # crystal load caps) or larger than 22 uF must pass an explicit foot= at the
 # call site and keeps the larger body its voltage / DC-bias derating needs:
@@ -135,6 +139,7 @@ CUSTOM={'MARV_Power:TPS2121RUX':'''(symbol "TPS2121RUX" (exclude_from_sim no) (i
 # C76/C77/C80 (22u/25 V, 0805), C66 (47u/6.3 V, 0805), C19 (100u/6.3 V
 # polymer, EIA-3528 B case).  The two exceptions are enforced below by raising rather than
 # guessing.
+RES_PACKAGE='Resistor_SMD:R_0402_1005Metric'
 CAP_PACKAGE=[(4.7e-6,'C_0402_1005Metric'),(22e-6,'C_0603_1608Metric')]
 SI_MULT={'p':1e-12,'n':1e-9,'u':1e-6}
 OTHER_PACKAGE={'L':'Inductor_SMD:L_6.3x6.3_H3','Fuse':'Fuse:Fuse_1206_3216Metric',
@@ -142,7 +147,7 @@ OTHER_PACKAGE={'L':'Inductor_SMD:L_6.3x6.3_H3','Fuse':'Fuse:Fuse_1206_3216Metric
 
 def passive_footprint(kind,value):
     if kind=='R':
-        return 'Resistor_SMD:R_0201_0603Metric'
+        return RES_PACKAGE
     if kind!='C':
         return OTHER_PACKAGE[kind]
     # a DNP part carries its fit state in the Value field (see Sheet.add);
@@ -158,6 +163,50 @@ def passive_footprint(kind,value):
         if farads<=limit*1.001:          # tolerance: 100*1e-9 > 100e-9 in binary floats
             return 'Capacitor_SMD:'+pkg
     raise ValueError((value,'capacitor above 22 uF needs an explicit footprint'))
+
+# ---------------------------------------------------------------------------
+# LCSC part numbers.  tools/jlc/lcsc_map.csv is the single place a JLCPCB part
+# choice lives (reports/jlc-audit.md section 5).  The generator reads it here
+# and stamps the chosen C-number onto every symbol as a hidden "LCSC" property,
+# so the schematic, the kicadxml netlist and therefore tools/jlc/export_jlc.py
+# all carry the part number instead of re-deriving it from a value string.
+#
+# Two keys, checked in this order:
+#   1. ref_override  - a comma-separated designator list on the map row; use it
+#                      when one (spec, footprint) line must not share a part.
+#   2. (spec, footprint) where spec is the Value string up to its first comma,
+#                      which is the electrically meaningful part of it.
+# A missing entry is NOT an error here (a part can be added to the schematic
+# before it is sourced); export_jlc.py is what refuses to ship without one.
+LCSC_MAP_PATH = ROOT / 'tools' / 'jlc' / 'lcsc_map.csv'
+_LCSC_BY_KEY, _LCSC_BY_REF = {}, {}
+
+def load_lcsc_map(path=None):
+    import csv
+    _LCSC_BY_KEY.clear(); _LCSC_BY_REF.clear()
+    p = Path(path) if path else LCSC_MAP_PATH
+    if not p.exists():
+        return
+    with p.open(newline='', encoding='utf-8') as f:
+        for row in csv.DictReader(f):
+            spec = (row.get('spec') or '').strip()
+            code = (row.get('lcsc') or '').strip()
+            if not code or spec.startswith('#'):
+                continue
+            for r in (row.get('ref_override') or '').split(','):
+                r = r.strip()
+                if r:
+                    _LCSC_BY_REF[r] = code
+            fp = (row.get('footprint') or '').strip()
+            if spec and fp:
+                _LCSC_BY_KEY[(spec, fp)] = code
+
+def lcsc_for(ref, value, footprint):
+    if ref in _LCSC_BY_REF:
+        return _LCSC_BY_REF[ref]
+    return _LCSC_BY_KEY.get((value.split(',', 1)[0].strip(), footprint), '')
+
+load_lcsc_map()
 
 class Sheet:
     def __init__(self, name, title, page):
@@ -176,12 +225,17 @@ class Sheet:
     def label(self,net,x,y,angle=0):
         self.n+=1
         self.items.append(f'(global_label {q(net)} (shape passive) (at {x} {y} {angle}) (effects (font (size 0.9 0.9)) (justify {"right" if angle==180 else "left"})) (uuid {uid(self.name+"lab"+str(self.n))}))')
-    def add(self,ref,libid,value,x,y,nets,foot=None,refofs=None,vlab=False,dnp=False):
+    def add(self,ref,libid,value,x,y,nets,foot=None,refofs=None,vlab=False,dnp=False,lcsc=None):
         """dnp=True marks the symbol DO NOT POPULATE and excludes it from the
         BOM: KiCad's own `(dnp yes)` / `(in_bom no)` symbol attributes, which
         ERC, the netlist export, the BOM and pcbnew all read.  The net list is
         unchanged - a DNP part still owns its nets and its land pattern, it is
-        simply not fitted.  See the U24 flash-socket note on BOARD 3."""
+        simply not fitted.  See the U24 flash-socket note on BOARD 3.
+
+        lcsc= overrides the tools/jlc/lcsc_map.csv lookup for this one symbol;
+        lcsc='' suppresses the property entirely (board features, THT parts
+        the order ships unpopulated).  The property is hidden - it is order
+        data, not schematic content."""
         x,y=round(round(x/1.27)*1.27,5),round(round(y/1.27)*1.27,5)
         sym=symbol(libid)
         if libid not in self.libs:
@@ -195,7 +249,11 @@ class Sheet:
             rx,ry,vy=refofs[0],refofs[1],refofs[1]+2.54
         else:
             rx=x-7.62; ry=y-29.21 if ref=='J4' else y-16.51; vy=y-26.67 if ref=='J4' else y-13.97
-        for key,val,xx,yy,hide in [('Reference',ref,rx,ry,False),('Value',value,rx,vy,False),('Footprint',fp,x,y,True),('Datasheet',props.get('Datasheet',''),x,y,True)]:
+        code=lcsc if lcsc is not None else lcsc_for(ref,value,fp)
+        fields=[('Reference',ref,rx,ry,False),('Value',value,rx,vy,False),('Footprint',fp,x,y,True),('Datasheet',props.get('Datasheet',''),x,y,True)]
+        if code:
+            fields.append(('LCSC',code,x,y,True))
+        for key,val,xx,yy,hide in fields:
             inst+=f' (property {q(key)} {q(val)} (at {xx} {yy} 0) (effects (font (size 1 1)) (justify left) {"(hide yes)" if hide else ""}))'
         seen_connections=set()
         for p in pins(sym):
@@ -220,10 +278,10 @@ class Sheet:
         inst+=f' (instances (project "MARV-V2" (path "/{uid("power-root")}/{self.id}" (reference {q(ref)}) (unit 1)))))'
         self.items.append(inst)
         self.bom.append((ref,value,fp,self.name,'DNP' if dnp else 'populated'))
-    def passive(self,ref,kind,value,x,y,a,b,foot=None,dnp=False):
+    def passive(self,ref,kind,value,x,y,a,b,foot=None,dnp=False,lcsc=None):
         if foot is None:
             foot=passive_footprint(kind,value)
-        self.add(ref,'Device:'+kind,value,x,y,{'1':a,'2':b},foot,dnp=dnp)
+        self.add(ref,'Device:'+kind,value,x,y,{'1':a,'2':b},foot,dnp=dnp,lcsc=lcsc)
     def render(self):
         return f'(kicad_sch (version 20250114) (generator "eeschema") (uuid {self.id}) (paper "A3") (title_block (title {q(self.title)}) (date "2026-09-14") (rev "P0 - REVIEW ONLY")) (lib_symbols '+ '\n'.join(dump(s) for s in self.libs.values())+')\n'+'\n'.join(self.items)+'\n(embedded_fonts no))\n'
 
@@ -322,15 +380,21 @@ def mcu_sheet():
     s.passive('R22','R','27 / 1%, USB D+ series',*left[18],'USB_DP_MCU','USB_DP_RP')
     s.passive('R23','R','27 / 1%, USB D- series',*left[19],'USB_DM_MCU','USB_DM_RP')
     s.passive('R21','R','1k / 1%, crystal drive limit',*left[20],'XOUT','XTAL_DRV')
-    s.passive('C46','C','15p / 50 V C0G',*left[21],'XIN','GND',foot='Capacitor_SMD:C_0402_1005Metric')
-    s.add('Y1','Device:Crystal_GND24','12 MHz ABM8-272-T3, CL 10 pF',*left[22],{'1':'XIN','2':'GND','3':'XTAL_DRV','4':'GND'},'Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm')
-    s.passive('C47','C','15p / 50 V C0G',*left[23],'XTAL_DRV','GND',foot='Capacitor_SMD:C_0402_1005Metric')
+    s.passive('C46','C','18p / 50 V C0G',*left[21],'XIN','GND',foot='Capacitor_SMD:C_0402_1005Metric')
+    s.add('Y1','Device:Crystal_GND24','12 MHz TAXM12M4RFBCCT2T, CL 12 pF',*left[22],{'1':'XIN','2':'GND','3':'XTAL_DRV','4':'GND'},'Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm')
+    s.passive('C47','C','18p / 50 V C0G',*left[23],'XTAL_DRV','GND',foot='Capacitor_SMD:C_0402_1005Metric')
     s.passive('R24','R','1k, BOOTSEL strap',*left[24],'QSPI_SS','BOOT_BTN')
     s.passive('R25','R','4.7k, I2C1 SDA pull-up',*left[25],V3,'MAG_SDA')
     s.passive('R26','R','4.7k, I2C1 SCL pull-up',*left[26],V3,'MAG_SCL')
     s.add('SW1','Switch:SW_Push','RESET (RUN to GND)',*left[27],{'1':'PWR_GOOD','2':'GND'},'Button_Switch_SMD:SW_SPST_B3U-1000P')
     s.add('SW2','Switch:SW_Push','BOOTSEL (via R24)',40,left[28][1],{'1':'BOOT_BTN','2':'GND'},'Button_Switch_SMD:SW_SPST_B3U-1000P')
-    s.note('Crystal circuit per design guide Sec 4: ABM8-272-T3, 15 pF each side (7.5 pF series + ~3 pF stray = 10.5 pF vs CL 10 pF),\n'
+    s.note('Crystal circuit per design guide Sec 4. Y1 IS TAXM12M4RFBCCT2T (LCSC C133337), 12 MHz, SMD 3225 4-pad, CL = 12 pF - the\n'
+           'ABM8-272-T3 the earlier revision named is not orderable at JLCPCB in any form (reports/jlc-audit.md section 1).\n'
+           'LOAD CAPS FOLLOW THE CRYSTAL, NOT THE OTHER WAY ROUND: CL = C46*C47/(C46+C47) + Cstray, so C46/C47 are 18 pF C0G each\n'
+           '(2 x 18 pF in series = 9 pF, plus ~3 pF of XIN/XTAL_DRV pin and trace stray = 12 pF, matching CL exactly). They were\n'
+           '15 pF against the old CL 10 pF part; leaving 15 pF on a CL 12 pF crystal gives 10.5 pF of load, i.e. an under-loaded\n'
+           'oscillator running fast by roughly the trim sensitivity of the part. The ~3 pF stray is the design-guide estimate and is\n'
+           'the one term here that is not a datasheet number - if the board is ever pulled for frequency, that is the term to measure.\n'
            '1 k in the XOUT leg to limit drive with a 50 ohm ESR crystal. C38 is the single design-guide decoupling exception (pins 68+69 share it).\n'
            'VREG_AVDD RC = 33 ohm + 4.7 uF (design guide Sec 2.1), taken from V3V3_SYS; VREG_FB is tied to DVDD, VREG_PGND to GND, EP to GND.',15,247,1.3)
 
@@ -491,9 +555,9 @@ def storage_sheet():
            'split in DESIGN_SPEC.\n'
            'U24, C62 AND C63 ARE DNP - NOT FITTED BY DEFAULT AND NOT IN THE BOM. The land is on the BACK of the board\n'
            '(B.Cu) as a user expansion: firmware and logs use the RP2354B in-package 2 MB flash and the J11 microSD.\n'
-           'U24 IS A SOCKET, NOT ONE PART: the 150-mil SOIC-8 land takes either a W25Q64JVSSIQ NOR flash or an\n'
-           'APS6404L-3SQR-SN 8 MB QSPI PSRAM - see the U24 note below. R35 stays POPULATED.',15,10,1.6)
-    s.add('U24','Memory_Flash:W25Q32JVSS','DNP: W25Q64JVSSIQ, 64 Mbit QSPI NOR (optional back-side expansion)',95,75,
+           'U24 IS A SOCKET, NOT ONE PART: the 150-mil SOIC-8 land takes either a W25Q32JVSNIQ NOR flash or an\n'
+           'APS6404L-SQN-SN 8 MB QSPI PSRAM - see the U24 note below. FIT ONE PART ONLY. R35 stays POPULATED.',15,10,1.6)
+    s.add('U24','Memory_Flash:W25Q32JVSS','DNP: W25Q32JVSNIQ, 32 Mbit QSPI NOR or APS6404L-SQN-SN 8 MB PSRAM (optional back-side expansion)',95,75,
           {'1':'FLASH_CS1','2':'QSPI_SD1','3':'QSPI_SD2','4':'GND','5':'QSPI_SD0','6':'QSPI_SCLK','7':'QSPI_SD3','8':V3},
           'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm',refofs=(85,100),vlab=True,dnp=True)
     # R35 stays POPULATED on the front: it is the FLASH_CS1 idle pull-up, and
@@ -515,13 +579,18 @@ def storage_sheet():
            'DI/IO0 = QSPI_SD0, DO/IO1 = QSPI_SD1, WP/IO2 = QSPI_SD2, HOLD/IO3 = QSPI_SD3. Only the chip select differs -\n'
            'FLASH_CS1 comes from GPIO0 (QMI CS1n), pulled up to V3V3_SYS by R35 so the part is deselected before the MCU\n'
            'drives it. QSPI_SS (the internal die) keeps its own strap on the MCU sheet.\n'
-           'U24 SOCKET - OPTIONAL PSRAM OR SECOND FLASH. The land is Package_SO:SOIC-8_3.9x4.9mm_P1.27mm (150 mil), which\n'
-           'fits BOTH the default W25Q64JVSSIQ (Winbond, 64 Mbit = 8 MB NOR flash, SOIC-8 150 mil) and the\n'
-           'APS6404L-3SQR-SN (AP Memory, 64 Mbit = 8 MB QSPI pseudo-SRAM, SOP-8 150 mil). The two are pin-identical on\n'
+           'U24 SOCKET - OPTIONAL PSRAM OR SECOND FLASH. FIT ONE PART ONLY: this is one land, not two positions.\n'
+           'The land is Package_SO:SOIC-8_3.9x4.9mm_P1.27mm, i.e. 150 mil / 3.9 mm SOIC-8 body. THE DEFAULT FIT IS\n'
+           'W25Q32JVSNIQ (Winbond, 32 Mbit = 4 MB NOR flash, LCSC C5355146) or, for PSRAM, APS6404L-SQN-SN (AP Memory,\n'
+           '64 Mbit = 8 MB QSPI pseudo-SRAM, LCSC C5360304). THE 64 Mbit W25Q64JVSSIQ THE EARLIER REVISION NAMED DOES NOT\n'
+           'FIT THIS LAND: Winbond package code SS is SOIC-8 208 mil (5.28 mm body), and the 150 mil member of that family\n'
+           'is the SN suffix, W25Q64JVSNIQ, which is not stocked at JLCPCB. See DESIGN_SPEC "Back side" for the verified\n'
+           'compatible-parts list - every entry there is package-checked, and package codes in this family are NOT\n'
+           'interchangeable by capacity. The two default parts are pin-identical on\n'
            'this bus: 1 CE#/CS#, 2 SO/SIO1, 3 SIO2 (WP# on the flash), 4 VSS/GND, 5 SI/SIO0, 6 SCLK, 7 SIO3 (HOLD# on the\n'
            'flash), 8 VCC - so no board change is needed to swap them. The RP2350 QMI supports a PSRAM on CS1 with its own\n'
            'timing/chip-select registers (RP2350 datasheet Sec 12.14 QMI, M1_TIMING/M1_RFMT/M1_WFMT), which is what makes\n'
-           'the alternative real rather than mechanical. Fit the W25Q64 flash for log space or the PSRAM for\n'
+           'the alternative real rather than mechanical. Fit the flash for log space or the PSRAM for\n'
            'XIP-addressable RAM - neither is fitted at build.\n'
            'DNP / BACK SIDE. U24, C62 and C63 carry (dnp yes) + (in_bom no): the land pattern, the nets and R35 are on\n'
            'the board, the parts are not bought and not placed. The socket and its two bypass caps sit on B.Cu under\n'
@@ -529,9 +598,9 @@ def storage_sheet():
            'a single-sided assembly because nothing DNP is reflowed. A B.SilkS legend beside the land says what fits.\n'
            'CONSEQUENCE FOR THE BUDGET: the 25 mA QSPI-flash burst is NOT in the V3V3_SYS load budget any more\n'
            '(DESIGN_SPEC "Rails and load budget"); add it back if the socket is populated.\n'
-           'SYMBOL SUBSTITUTION: KiCad 10 ships no W25Q64JVSS symbol (Memory_Flash has W25Q16JVSS, W25Q32JVSS, W25Q128JV*\n'
-           'only). U24 therefore uses Memory_Flash:W25Q32JVSS, whose pinout is identical across the whole W25Q JV family;\n'
-           'the Value field carries the real MPN. See LIBRARIES.md.',15,245,1.3)
+           'SYMBOL: U24 uses Memory_Flash:W25Q32JVSS, which is now the exact symbol for the default fit as well as being\n'
+           'pinout-identical across the whole W25Q JV family and to the APS6404L PSRAM on this bus; the Value field\n'
+           'carries the real MPN. See LIBRARIES.md.',15,245,1.3)
     s.note('J11: DET_A to GND and DET_B to SD_DET with a 10k pull-up, so the input reads low with a card inserted. The\n'
            'shield goes to GND. 100 nF + 10 uF + 47 uF sit at the socket (DESIGN_SPEC "Rails": SD transients stay on the\n'
            'buck rail). 10k pull-ups on CMD and DAT0-DAT3 are the SD-standard idle bias and also keep DAT3/CD high for\n'
@@ -560,8 +629,8 @@ def build():
     src.passive('C74','C','100n / 50 V X7R 0402, VIN HF bypass',65,50,'VBAT','GND',foot='Capacitor_SMD:C_0402_1005Metric')
     src.passive('R52','R','100k / 1%, EN to VIN',100,50,'VBAT','U26_EN')
     src.passive('C75','C','100n / 50 V X7R 0402, bootstrap',135,50,'U26_BST','U26_SW',foot='Capacitor_SMD:C_0402_1005Metric')
-    src.passive('L3','L','4.7u, Isat 4.4 A, DCR 31.5 mOhm max (Coilcraft XGL4030-472MEC)',125,100,'U26_SW','5V_IN',
-                foot='MARV_Packages:L_Coilcraft_XxL4030')
+    src.passive('L3','L','4.7u, Isat 6.0 A (30 %), DCR 46 mOhm max (CJIANG FTC404030S4R7MGCA)',125,100,'U26_SW','5V_IN',
+                foot='MARV_Packages:L_Changjiang_FTC404030S')
     src.passive('C76','C','22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT',30,140,'5V_IN','GND',foot='Capacitor_SMD:C_0805_2012Metric')
     src.passive('C77','C','22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT',65,140,'5V_IN','GND',foot='Capacitor_SMD:C_0805_2012Metric')
     src.passive('C80','C','22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT (3rd: >=44 uF after DC-bias derating, AP63205 EVB guide)',100,140,'5V_IN','GND',foot='Capacitor_SMD:C_0805_2012Metric')
@@ -634,15 +703,26 @@ def build():
              'connection with a series element, so a VBAT transient reaches the EN clamp through 100k rather than\n'
              'directly, and so a UVLO divider (Eq.1/Eq.2) or a start-delay cap (Eq.3) can be added later without\n'
              'touching the VBAT copper. Device UVLO is 3.5 V typ rising regardless.\n'
-             'L3: Coilcraft XGL4030-472MEC, 4.7 uH +/-20%, DCR 31.5 mOhm max, Isat 3.2 A at 20% / 4.4 A at 30% drop,\n'
-             'Irms 4.8 A at 20 C rise (Coilcraft Doc 1575-1). Isat(20%) clears the AP63205 high-side peak current limit\n'
-             'at its 3.1 A maximum, so the inductor does not saturate even in a current-limit or hiccup event; DCR is\n'
-             'inside the datasheet\'s "less than 100 mOhm" guidance. 4.0 x 4.0 x 3.1 mm. THIS ONE CANNOT SHRINK THE\n'
-             'WAY L2 DID: L2 is now an XGL3020 (3.0 x 3.0 x 2.0) because the TPS62913 runs it at ~1 A, but L3 has to\n'
-             'clear the AP63205 3.1 A high-side limit, and Isat(20%) = 3.2 A is the floor that sets the 4 x 4 body.\n'
-             'If height ever has to come out of here, the XGL4020 series shares this land pattern at 2.0 mm tall -\n'
-             'but a 2.0 mm core stores less energy, so its 4.7 uH Isat is lower: check it against the 3.1 A limit\n'
-             'from the XGL4020 datasheet before making that swap.\n'
+             'L3: CJIANG FTC404030S4R7MGCA, 4.7 uH +/-20% at 1 MHz / 1.0 Vrms, DCR 41 mOhm typ / 46 max, Irms 4.3 A typ /\n'
+             '4.0 A worst case, Isat 7.0 A typ / 6.0 A worst case, 4.1 x 4.1 x 3.0 mm molded metal-composite, shielded\n'
+             '(SZ CJIANG FTC series datasheet Rev 7.0 2025/11/05). CRITERIA ARE THE DATASHEET\'S NOTES 3 AND 4: Irms is the DC\n'
+             'current for an approximate 40 C rise, Isat the DC current for an approximate 30% drop in L0; Note 7 makes the usable\n'
+             'rating the LESSER of the two, so L3 is Irms-limited at 4.0 A. Isat(30%) = 6.0 A worst case clears the AP63205\n'
+             'high-side peak current limit at its 3.1 A maximum by 94%, so the inductor does not saturate even in a current-limit\n'
+             'or hiccup event, and Irms 4.0 A clears the 2.39 A operating peak. DCR is inside the datasheet\'s\n'
+             '"less than 100 mOhm" guidance: 46 mOhm max costs ~0.18 W at 2 A against the XGL4030\'s ~0.13 W.\n'
+             'IT REPLACES THE COILCRAFT XGL4030-472MEC, which is orderable at JLCPCB (C7159276) but had 357 pieces in stock at\n'
+             '$7.82 each - 15% of the per-board component cost standing on one reel (reports/jlc-audit.md section 6). The FTC part\n'
+             'is a STRICT IMPROVEMENT on the number that sized this inductor: worst-case Isat 6.0 A against the XGL\'s 3.2 A at 20% /\n'
+             '4.4 A at 30%. What it costs is DCR (31.5 -> 46 mOhm max) and AEC-Q200 grading - the CJIANG sheet tests to AEC-Q200\n'
+             'METHODS but does not claim the qualification, and carries the usual "not warranted for aircraft equipment" clause.\n'
+             'VOLTAGE: datasheet Note 8 gives a 20 V DC withstand. In the on-time L3 sees VIN - VOUT, which at a full 6S pack\n'
+             '(25.2 V) is 20.2 V - AT the rating. Below 5S this is not close. FLAGGED IN DESIGN_SPEC "Open items".\n'
+             '4 x 4 x 3.0 mm. THIS ONE STILL CANNOT SHRINK THE WAY L2 DID: L2 is 3.0 x 3.0 x 2.0 because the TPS62913 runs it at\n'
+             '~1 A, but L3 has to clear the AP63205 3.1 A high-side limit and carry a 2.39 A operating peak, and no 3 x 3 part at\n'
+             '4.7 uH holds DCR under 50 mOhm at that current - the nearest, FTC303020D4R7MBCA (LCSC C48888332, Isat 4.0 A worst\n'
+             'case, Irms 3.8 A), is 60 mOhm typ. If height ever has to come out of here, FTC404020S4R7MGCA is the same 4 x 4 land\n'
+             'at 2.0 mm tall, but a 2.0 mm core stores less energy: Isat falls to 5.5 A worst case and DCR rises to 58 mOhm max.\n'
              'Ripple at 25.2 V in / 2 A out is 0.78 A pk-pk (Eq.7), peak 2.39 A (Eq.8).\n'
              'DERATING CAVEAT: C73 and C76/C77/C80 are the datasheet nominal values, and ceramic DC-bias derating is NOT\n'
              'in them - a 10 uF/50 V 0805 at 25 V and a 22 uF/25 V 0805 at 5 V both lose roughly half. The EVB user\n'
@@ -657,8 +737,8 @@ def build():
     out.note('AVIONICS ONLY: 300 mA continuous / 500 mA short peak, provisional. NO SERVO POWER.',15,15,2)
     out.add('U7','Regulator_Switching:TPS62913','TPS62913RPUR',95,70,{'1':'V5_SYS','2':'U7_SW','3':'U7_VO','4':'GND','5':'PWR_GOOD','6':'V5_SYS','7':'GND','8':'U7_SS','9':'U7_FB','10':'U7_SCONF'},
             'MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm')
-    out.passive('L2','L','2.2u / Isat 2.2 A (20 %), DCR 30.5 mOhm (Coilcraft XGL3020-222MEC)',175,50,'U7_SW','U7_VO',
-                foot='MARV_Packages:L_Coilcraft_XGL3020')
+    out.passive('L2','L','2.2u / Isat 5.5 A (30 %), DCR 45 mOhm max (CJIANG FTC303020D2R2MBCA)',175,50,'U7_SW','U7_VO',
+                foot='MARV_Packages:L_Changjiang_FTC303020D')
     out.passive('FB1','FerriteBead','8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv)',175,90,'U7_VO','V3V3_SYS',foot='Inductor_SMD:L_0603_1608Metric')
     for ref,x in [('C8',25),('C9',25)]:
         out.passive(ref,'C','10u / 10 V X7S 0603',x,55 if ref=='C8' else 105,'V5_SYS','GND')
@@ -670,24 +750,40 @@ def build():
     for ref,x in [('C23',245),('C24',310)]:
         out.passive(ref,'C','22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)',x,75,'V3V3_SYS','GND')
     out.passive('C13','C','470n / 16 V X7R 0402, NR/SS soft-start + noise filter (5 ms)',95,125,'U7_SS','GND')
-    out.passive('R7','R','15.8k / 0.1%',245,105,'V3V3_SYS','U7_FB')
-    out.passive('R8','R','4.99k / 0.1%',310,105,'U7_FB','GND')
+    out.passive('R7','R','10k / 0.1%',245,105,'V3V3_SYS','U7_FB')
+    out.passive('R8','R','3.16k / 0.1%',310,105,'U7_FB','GND')
     out.passive('R9','R','6.04k / 1%, S-CONF: 2.2 MHz + triangle SSM, discharge off, no sync',175,120,'U7_SCONF','GND')
     out.passive('R10','R','100k',245,155,'V3V3_SYS','PWR_GOOD')
-    out.note('PASSIVE PACKAGES (DESIGN_SPEC "Physical design"): resistors are 0201, ceramics <= 4.7 uF are 0402 and the\n'
-             '10-22 uF ceramics are 0603. C10/C11/C12 (1st-stage COUT) and C23/C24 (post-bead Cf) are 22 uF / 10 V X5R\n'
+    out.note('PASSIVE PACKAGES (DESIGN_SPEC "Physical design"): resistors are 0402, ceramics <= 4.7 uF are 0402 and the\n'
+             '10-22 uF ceramics are 0603. RESISTORS ARE 0402, NOT 0201: JLCPCB has no Basic 0201 resistor of any value, so\n'
+             'every 0201 line carried a per-unique-part Extended setup fee, and the 0.1 % values the U7 divider needs are not\n'
+             'stocked in 0201 at all - see reports/jlc-audit.md. 0402 makes 8 of the 13 resistor values Basic and is\n'
+             'hand-reworkable, which 0201 is not. C10/C11/C12 (1st-stage COUT) and C23/C24 (post-bead Cf) are 22 uF / 10 V X5R\n'
              '0603 (GRM188R61A226ME15): at 3.3 V DC bias an X5R 22 uF 0603 keeps roughly 60 % of its nominal value, so\n'
              'the 66 uF nominal of the first stage is ~40 uF effective and the 44 uF post-bead stage is ~26 uF. The\n'
              'ngspice decks still carry the NOMINAL 66 uF (simulations/*.cir COUT), so the modelled rail is optimistic\n'
              'by that margin - an open item, not a result. Do not read the effective value off the BOM either.\n'
-             '0201 resistors and 22 uF 0603 ceramics are machine-place parts - JLC assembles them, a bench iron does not.\n'
+             'The 22 uF 0603 ceramics remain machine-place parts - JLC assembles them, a bench iron will not rework one.\n'
              'C19, THE V5_SYS BULK, IS 100 uF / 6.3 V POLYMER IN AN EIA-3528-21 (B) CASE, down from 220 uF / 10 V in an EIA-7343-31 (D)\n'
              'case: 8.9 x 4.9 mm of courtyard became 4.3 x 3.2 mm. The handover decks (simulations/source_handover.cir CPOLY, and the\n'
              'integrated deck) were re-run at 100 uF nominal / 80 uF derated and every predicate still passes - V5_SYS holds well above\n'
              'the 3.5 V floor across the 100 us TPS2121 switchover - which is what licenses the smaller case. ESR must stay <= 40 mOhm\n'
              '(the value modelled): Panasonic 6TPE100MAZB or a KEMET T520/T530 B case. 6.3 V on a 5.0 V rail is a 1.26x derating, the\n'
              'normal polymer figure; a tantalum electrolytic would need 2x and would not qualify.',245,163,1.25)
-    out.note('V3V3_SYS feedback (TPS62913 datasheet Sec 8.2.2.2.6, Eq.8): VOUT = VFB x (1 + R1/R2); VFB = 0.8 V typ, 0.792-0.812 V spec (Sec 6.5).\nR2 = 4.99 kOhm (<=5 kOhm per datasheet noise guidance). R1 = R2 x (VOUT/VFB - 1) = 4.99k x (3.3/0.8 - 1) = 4.99k x 3.125 = 15.59 kOhm -> nearest 1% E96 = 15.8 kOhm.\nActual VOUT = 0.8 V x (1 + 15.8k/4.99k) = 3.33 V nominal (3.30-3.38 V across VFB tolerance).',15,180,1.3)
+    out.note('V3V3_SYS feedback (TPS62913 datasheet Sec 8.2.2.2.6, Eq.8): VOUT = VFB x (1 + R1/R2); VFB = 0.8 V typ, 0.792-0.812 V spec (Sec 6.5).\n'
+             'R2 = 3.16 kOhm (<=5 kOhm per datasheet noise guidance). R1 = R2 x (VOUT/VFB - 1) = 3.16k x 3.1625 = 9.99 kOhm -> E96 10.0 kOhm.\n'
+             'Actual VOUT = 0.8 V x (1 + 10k/3.16k) = 0.8 x 4.16456 = 3.3316 V nominal, +0.05% off the 3.33 V the decks model.\n'
+             'THE PAIR IS 10k / 3.16k, NOT 15.8k / 4.99k, BECAUSE OF WHAT IS BUYABLE: 15.8 kOhm does not exist at 0.1 % in 0201 at\n'
+             'JLCPCB at any stock level, so the divider as previously specified could not be built (reports/jlc-audit.md section 6).\n'
+             'Both halves are now Yageo RT0402BRD07 thin film, 0.1 % / 25 ppm, 0402: R7 = RT0402BRD0710KL (LCSC C190095),\n'
+             'R8 = RT0402BRD073K16L (LCSC C852759). SAME SERIES ON PURPOSE - a divider cares about the RATIO, and two parts from\n'
+             'one thin-film series track each other far better than their individual 25 ppm/C tempcos suggest.\n'
+             'WINDOW, worst case, 0.1 % on BOTH resistors stacked with the VFB spec: ratio 10.01k/3.15684k = 3.17093 at one end and\n'
+             '9.99k/3.16316k = 3.15825 at the other, so VOUT spans 0.792 x 4.15825 = 3.293 V to 0.812 x 4.17093 = 3.387 V.\n'
+             'That is 3.29-3.39 V, not the 3.30-3.38 V the old text quoted - the old figure was the VFB term alone with the resistors\n'
+             'treated as exact. Both windows sit inside the 3.135-3.60 V predicate the ngspice decks assert on V3V3_SYS.\n'
+             'Divider current rises from 160 uA (0.8 V / 4.99k) to 253 uA (0.8 V / 3.16k): 0.3 % of the 80 mA typical rail load, and\n'
+             'the lower impedance is the direction the TPS62913 noise guidance points anyway.',15,180,1.3)
     out.note('S-CONF = 6.04 kOhm to GND (Table 7-1): 2.2 MHz switching, triangle spread-spectrum ON, output discharge OFF, no external sync.\n2.2 MHz + 2.2uH matches the VIN=5V/VOUT<=3.3V design table (Table 8-2). TPS62913 runs fixed-frequency PWM at all loads, no light-load skip mode (Sec 7.4.1) -- forced PWM is inherent; there is no separate MODE pin on this device.\nVO (pin 3) senses the node between L1 and the ferrite bead (device internal loop); the FB divider senses V3V3_SYS after the bead for low-noise remote regulation (Sec 7.1 / 8.2.2.2.4).',15,215,1.3)
     out.add('U12','Regulator_Linear:TPS7A20xxxDBV','TPS7A2033PDBVR',95,200,{'1':'V5_SYS','2':'GND','3':'PWR_GOOD','4':None,'5':'V3V3_ANA'})
     out.passive('C25','C','1u / 10 V X7R 0402, LDO input',55,195,'V5_SYS','GND')
@@ -696,23 +792,26 @@ def build():
              'from V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is on PWR_GOOD rather than V5_SYS:\n'
              'the analog rail therefore starts only once the TPS62913 declares V3V3_SYS in regulation, and drops with it, which removes the\n'
              'window where the sensors were biased from an unregulated V5_SYS while the MCU was still held in reset.',15,240,1.3)
-    out.note('L2 INDUCTOR - Coilcraft XGL3020-222MEC, 3.0 x 3.0 x 2.0 mm (Coilcraft Doc 1776 Rev. 02/19/26): 2.2 uH +/-20%,\n'
-             'DCR 30.5 mOhm typ / 36.5 max, Isat 1.5 A at 10% / 2.2 A at 20% / 2.85 A at 30% inductance drop, Irms 5.0 A at 20 C rise.\n'
-             'It replaces the XGL4030-222MEC (4.0 x 4.0 x 3.1 mm, Isat 7 A): same 2.2 uH, 1.1 mm shorter, 7 mm2 less board, and L2\n'
-             'is no longer the tallest part. OPERATING POINT: dIL = VOUT x (1 - VOUT/VIN)/(L x fsw) = 3.3 x 0.34/(2.2u x 2.2M)\n'
-             '= 0.23 A pk-pk nominal, 0.29 A at the -20% inductance limit, so at the 0.8 A design load the peak inductor current\n'
-             'is ~0.95 A and stays under ~1.05 A with VIN/fsw/L tolerances stacked. Isat(20%) = 2.2 A is ~2.1x that, and Irms\n'
-             '5.0 A is far above the 0.8 A DC: saturation is the constraint here, not self-heating.\n'
-             'THE FAULT CASE IS DELIBERATELY NOT COVERED. The TPS62913 high-side current limit is ~4.5 A, ABOVE Isat(30%) = 2.85 A,\n'
-             'so a hard short on V3V3_SYS does drive this inductor into saturation before the IC limits - the opposite of the rule\n'
-             'used for L3/U26, where Isat(20%) clears the AP63205 limit. Accepted, for two reasons: the XGL is a moulded COMPOSITE\n'
-             'core that SOFT-saturates (the datasheet quotes 10/20/30% inductance-drop currents, not a knee, because the roll-off is\n'
-             'gradual), so there is no ferrite-style collapse and the cycle-by-cycle limit still acts, just on a larger ripple; and\n'
-             'this rail is 300 mA continuous / 500 mA peak, an order below that limit. Sizing L2 for a 4.5 A fault means carrying a\n'
-             '4 x 4 x 3.1 mm part to survive a condition that is already a board failure. RE-CHECK IF THE 3.3 V BUDGET EVER EXCEEDS\n'
-             '~1.5 A CONTINUOUS: the operating peak then approaches Isat(10%) and L2 has to go back up to the XGL4030.\n'
-             'ORIENTATION: MARV_Packages:L_Coilcraft_XGL3020 pad 1 is the terminal-start (short-lead) side - the bar next to the C\n'
-             'in the part marking. PUT U7_SW ON PAD 1: the datasheet asks for the high dv/dt node on the start lead (EMI).',15,250,1.2)
+    out.note('L2 INDUCTOR - CJIANG FTC303020D2R2MBCA, 3.0 x 3.0 x 2.0 mm molded metal-composite (SZ CJIANG FTC series datasheet\n'
+             'Rev 7.0 2025/11/05, the sheet LCSC serves for C7423318): 2.2 uH +/-20% at 1 MHz / 1.0 Vrms, DCR 37 mOhm typ / 45 max,\n'
+             'Irms 4.7 A typ / 4.3 A worst case, Isat 6.0 A typ / 5.5 A worst case. THE CRITERIA ARE THE DATASHEET\'S OWN NOTES 3 AND 4:\n'
+             'Irms is the DC current for an approximate 40 C rise, Isat the DC current for an approximate 30% drop in L0. Note 7:\n'
+             'the usable rated current is the LESSER of the two, so this part is Irms-limited at 4.3 A, not saturation-limited.\n'
+             'It replaces the Coilcraft XGL3020-222MEC, which is NOT ORDERABLE AT JLCPCB in any value (reports/jlc-audit.md section 6).\n'
+             'Same 3.0 x 3.0 x 2.0 envelope, same shielded (closed magnetic circuit) construction, DCR 30.5 typ / 36.5 max -> 37 typ /\n'
+             '45 max mOhm, which costs ~4 mW at the 0.8 A design load and is not a thermal factor.\n'
+             'OPERATING POINT: dIL = VOUT x (1 - VOUT/VIN)/(L x fsw) = 3.3 x 0.34/(2.2u x 2.2M) = 0.23 A pk-pk nominal, 0.29 A at the\n'
+             '-20% inductance limit, so at the 0.8 A design load the peak inductor current is ~0.95 A and stays under ~1.05 A with\n'
+             'VIN/fsw/L tolerances stacked. Isat(30%) = 5.5 A worst case is ~5.2x that.\n'
+             'THE FAULT CASE IS NOW COVERED, WHICH IT WAS NOT WITH THE XGL3020. The TPS62913 high-side current limit is ~4.5 A. The\n'
+             'XGL3020 saturated at 2.85 A (30%), BELOW that limit, so a hard short on V3V3_SYS drove the old inductor into saturation\n'
+             'before the IC limited, and the note here used to argue that away on soft-saturation and rail-size grounds. The FTC303020D\n'
+             'saturates at 5.5 A worst case, ABOVE the ~4.5 A limit, so L2 now obeys the same rule as L3/U26: the IC limits first. The\n'
+             'argument that used to be needed is gone, not weakened - do not re-derive it.\n'
+             'RE-CHECK IF THE 3.3 V BUDGET EVER EXCEEDS ~3 A CONTINUOUS: the binding number then becomes Irms 4.3 A, not Isat.\n'
+             'VOLTAGE: datasheet Note 8 gives a 20 V DC withstand. L2 sees VIN - VOUT = 1.7 V across it, two orders inside that.\n'
+             'ORIENTATION: the FTC303020D is a symmetric two-terminal molded part with no start-lead marking, so unlike the XGL there\n'
+             'is no preferred pad for the SW node - either way round is correct. Keep U7_SW on pad 1 anyway so the layout is unchanged.',15,250,1.2)
     out.add('U8','Power_Protection:USBLC6-2SC6','USBLC6-2SC6',245,220,{'1':'USB_DP','2':'GND','3':'USB_DM','4':'USB_DM_MCU','5':'USB_VBUS','6':'USB_DP_MCU'})
 
     periph=Sheet('power_periph','POWER 3 / IO array',4)

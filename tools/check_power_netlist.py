@@ -140,6 +140,29 @@ expected.update({('U25','1'):'V5_SYS',('U25','2'):'USB_VBUS',('U25','3'):'GND',(
 for pin,net in expected.items():
  assert pin_net.get(pin)==net,(pin,net,pin_net.get(pin))
 assert nets['U7_FB']=={('U7','9'),('R7','2'),('R8','1')}
+# ...and the divider is checked by VALUE as well as by topology, because the setpoint it
+# programmes is what every ngspice deck asserts against (setpoint 3.33 V) and what
+# DESIGN_SPEC quotes.  TPS62913 datasheet Sec 8.2.2.2.6 Eq.8: VOUT = VFB x (1 + R1/R2),
+# VFB = 0.8 V typ / 0.792-0.812 V over the Sec 6.5 spec.  R1 = R7 (V3V3_SYS -> FB),
+# R2 = R8 (FB -> GND).  Both are 0.1 % thin film in 0402; 15.8k/4.99k was unbuildable
+# because no 0.1 % 15.8k exists in 0201 (reports/jlc-audit.md section 6).
+_VALUES={c.get('ref'):(c.findtext('value') or '') for c in root.find('components')}
+_RVAL={'k':1e3,'M':1e6,'R':1.0,'':1.0}
+def _ohms(v):
+    import re as _re
+    m=_re.match(r'\s*([\d.]+)\s*([kMR]?)\s*/\s*([\d.]+)%\s*$', v)
+    assert m, ('resistor value must read "<R>[k|M] / <tol>%"', v)
+    return float(m.group(1))*_RVAL[m.group(2)], float(m.group(3))
+_r1,_t1=_ohms(_VALUES['R7']); _r2,_t2=_ohms(_VALUES['R8'])
+assert _r2<=5000.0, ('TPS62913 Sec 8.2.2.2.6 wants R2 <= 5 kOhm for noise', _r2)
+assert _t1<=0.1 and _t2<=0.1, ('FB divider must be 0.1 % on both halves', _t1, _t2)
+_vnom=0.8*(1+_r1/_r2)
+assert abs(_vnom-3.33)<=3.33*0.003, ('FB divider off the 3.33 V setpoint by >0.3 %', _vnom)
+# worst case across 0.1 % on BOTH resistors stacked with the VFB spec
+_vmin=0.792*(1+(_r1*0.999)/(_r2*1.001))
+_vmax=0.812*(1+(_r1*1.001)/(_r2*0.999))
+assert 3.135<=_vmin and _vmax<=3.60, ('V3V3_SYS outside the deck predicate window', _vmin, _vmax)
+assert (_r1,_r2)==(10000.0,3160.0), ('FB divider is documented as 10k / 3.16k', _r1, _r2)
 assert {('J4','A4'),('J4','A9'),('J4','B4'),('J4','B9')} <= nets['USB_VBUS']
 # parts retired by earlier revisions and by this one must be gone, symbol and all:
 # U3/U5 the LM66100 OR-ing pair; J3's XT30 input network D23/C16/C67/C68/C69 (the 5 V input itself is

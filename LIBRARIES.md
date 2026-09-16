@@ -6,14 +6,14 @@ is nothing to install globally.
 
 Every footprint the board uses that is not a plain passive now resolves inside
 the project: `MARV_Packages.pretty/` holds the footprints, and all of them
-point at a STEP file in `MARV_Packages.3dshapes/` via `${KIPRJMOD}`. Eight of those
+point at a STEP file in `MARV_Packages.3dshapes/` via `${KIPRJMOD}`. Nine of those
 footprints are byte-for-byte copies of official KiCad footprints, vendored so
-the project carries its own 3D model (seven of them) or a courtyard/silkscreen
-trimmed for a tight edge fit (the IO array); their pads are unchanged from the
-KiCad originals (only `descr`, the `(model ...)` node where repointed,
-courtyard/silkscreen where noted, and the per-item uuids differ). One more,
-`L_Coilcraft_XGL3020` (L2), is project-authored from the vendor's own
-recommended land pattern and points at the vendor's own STEP. Two further
+the project carries its own 3D model (eight of them, including L2 and L3 —
+`L_Changjiang_FTC303020D` and `L_Changjiang_FTC404030S`, both taken from
+KiCad's own `Inductor_SMD.pretty`) or a courtyard/silkscreen trimmed for a
+tight edge fit (the IO array); their pads are unchanged from the KiCad
+originals (only `descr`, the `(model ...)` node where repointed,
+courtyard/silkscreen where noted, and the per-item uuids differ). Two further
 footprints are project-authored solder-pad rows (`PadRow_1x03/08_P2.00mm`, for
 J3 and J10) and one is a mechanical hole (`MountingHole_4.0mm_Grommet`), which
 by design carry no 3D model at all — as does `TestPoint:TestPoint_Pad_1.0x1.0mm`
@@ -32,7 +32,7 @@ Model provenance, licences and SHA256 sums:
 | RP2354A / RP2354B | `RP2354A` / `RP2354B` in `MCU_RaspberryPi` (KiCad 10 official; 60-pin QFN 7x7 mm / 80-pin QFN 10x10 mm, both with 2 MB stacked flash) |
 | AP63205WU (U26) | `AP63205WU` in `Regulator_Switching` (KiCad 10 official, TSOT-23-6) |
 | WS2812C-2020 (D20) | `WS2812B-2020` in `LED` — **use the `-2020` symbol, not plain `WS2812B`**: only the 2020 symbol has the WS2812C-2020 pin order (1 DO, 2 GND, 3 DI, 4 VDD). The 5050 `WS2812B` symbol is 1 VDD, 2 DOUT, 3 VSS, 4 DIN and would wire the part backwards. |
-| W25Q64JVSSIQ / APS6404L-3SQR-SN (U24) | `W25Q32JVSS` in `Memory_Flash` — **substitute symbol**: KiCad 10 ships no W25Q64 symbol at all (`W25Q16JVSS`, `W25Q32JVSS`, `W25Q128JVE/JVP/JVS` only). The whole W25Q JV family shares one 8-pin pinout (1 CS#, 2 DO/IO1, 3 WP#/IO2, 4 GND, 5 DI/IO0, 6 CLK, 7 HOLD#/IO3, 8 VCC), which is also the APS6404L PSRAM pinout, so the symbol is electrically correct; the real MPN lives in the Value field. |
+| W25Q32JVSNIQ / APS6404L-SQN-SN (U24, DNP socket) | `W25Q32JVSS` in `Memory_Flash` — **substitute symbol**: KiCad 10 ships no W25Q64 symbol at all (`W25Q16JVSS`, `W25Q32JVSS`, `W25Q128JVE/JVP/JVS` only). The whole W25Q JV family shares one 8-pin pinout (1 CS#, 2 DO/IO1, 3 WP#/IO2, 4 GND, 5 DI/IO0, 6 CLK, 7 HOLD#/IO3, 8 VCC), which is also the APS6404L PSRAM pinout, so the symbol is electrically correct; the real MPN lives in the Value field. |
 | Mounting holes (H1-H4) | `MountingHole` in `Mechanical` (no pins) |
 
 Press `A` in the Schematic Editor and search these names. The project-local
@@ -58,10 +58,10 @@ All rows below are `MARV_Packages:<name>`.
 | J6/J7/J8 | `PinHeader_1x14_P2.54mm_Vertical_IORow` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`), courtyard trimmed to the body across the row so the three abutting columns (GND \| POWER \| SIGNAL) land exactly on the 2.54 mm grid | `PinHeader_1x14_P2.54mm_Vertical_IORow.step` | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x14_P2.54mm_Vertical.step` |
 | TP1-TP10 | `TestPoint:TestPoint_Pad_1.0x1.0mm` | KiCad official, used directly (not vendored into `MARV_Packages.pretty`) on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`) | — (pads only) | none by design |
 | H1-H4 | `MountingHole_4.0mm_Grommet` | project-authored | — (mechanical) | none by design |
-| L3 | `L_Coilcraft_XxL4030` | vendored KiCad official | `L_Coilcraft_XxL4030.step`, `offset 0 0 0.1`, `rotate -90 0 0` | Coilcraft manufacturer model (XGL4030 series body) |
+| L3 | `L_Changjiang_FTC404030S` | vendored KiCad official (`Inductor_SMD.pretty`) | `L_Changjiang_FTC404030S.step`, no offset/rotate | KiCad-authored model for the CJIANG FTC404030S body (FTC404030S4R7MGCA is L3) |
 | J4 | `USB_C_Receptacle_HRO_TYPE-C-31-M-12` | vendored KiCad official | `USB_C_Receptacle_HRO_TYPE-C-31-M-12.step`, `offset 0 -1.05 0`, `rotate 0 0 180` | **EasyEDA/LCSC-contributed, not HRO's**; check against the HRO drawing before trusting it mechanically |
 | J11 | `microSD_HC_Molex_104031-0811` | vendored KiCad official | `microSD_HC_Molex_104031-0811.step`, `offset 0.092 -0.3 1.4456`, `rotate -90 0 180` | Molex manufacturer model, via TraceParts |
-| L2 | `L_Coilcraft_XGL3020` | project-authored from the Recommended Land Pattern of Coilcraft Doc 1776 Rev. 02/19/26 | `L_Coilcraft_XxL3020.step`, `offset 0 0 0`, `rotate -90 0 0` | Coilcraft manufacturer model (XGL3020 series body) |
+| L2 | `L_Changjiang_FTC303020D` | vendored KiCad official (`Inductor_SMD.pretty`) | `L_Changjiang_FTC303020D.step`, no offset/rotate | KiCad-authored model for the CJIANG FTC303020D body (FTC303020D2R2MBCA is L2) |
 
 ### Project-authored pad rows and the grommet hole
 
@@ -142,9 +142,9 @@ pin-1 marker — is what makes a bare unpopulated land usable.
 **Compatible parts for the U24 socket:** any 3.3 V QSPI NOR flash or PSRAM in
 SOIC-8 150 mil with the standard pinout (CS# DO WP# GND DI CLK HOLD# VCC). Both
 families share the socket; only one part can be fitted. **Flash (firmware
-currently expects this for logging if a chip is fitted):** Winbond W25Q16JVSSIQ
-/ W25Q32JVSSIQ / W25Q64JVSSIQ (150 mil; W25Q128JVSIQ is 208 mil and does NOT
-fit); GigaDevice GD25Q32C / GD25Q64C (SOIC-8 150 mil variants); Macronix
+currently expects this for logging if a chip is fitted):** Winbond W25Q32JVSNIQ (LCSC C5355146, SOIC-8 150 mil per the LCSC listing;
+the Winbond "SS"/"S" suffixes are 208 mil and do NOT fit, so W25Q64JVSSIQ and
+W25Q128JVSIQ are excluded); GigaDevice GD25Q32C / GD25Q64C (SOIC-8 150 mil variants); Macronix
 MX25L3233F / MX25L6433F (SOP-8 150 mil). **PSRAM:** APS6404L-3SQR-SN /
 ESP-PSRAM64H / IPS6404L-SQ / LY68L6400 (SOP-8 150 mil, same pinout as the flash
 family).
@@ -173,24 +173,14 @@ F.Fab outline, then **verified end-to-end** by exporting a one-footprint test
 board with `kicad-cli pcb export step --include-pads` and measuring where the
 model's solder features landed relative to the real copper:
 
-- **L3 Coilcraft XGL4030** — model box 4.30 x 4.30 x 3.10 mm with its height on
-  the model's Y axis and the terminations at Y = -0.1. `rotate -90 0 0` stands it
-  up, `offset 0 0 0.1` puts the termination underside on the board. Checked: the
-  two terminals land at x = +/-1.195, y = +/-1.625, inside the +/-1.185 x 0.98 x 3.4 mm
-  pads; body top at 3.10 mm.
-- **L2 Coilcraft XGL3020** — same family, same convention, one difference: model
-  box 3.20 x 3.20 x 2.00 mm (the *maximum* body, against a 3.0 x 3.0 nominal
-  F.Fab outline) with its height on model Y and the bottom already at Y = 0, so
-  `rotate -90 0 0` alone is right and **no offset is needed**. Checked the same
-  way, by exporting a one-footprint board with `kicad-cli pcb export step
-  --include-pads` and measuring against the copper: body x and y both
-  -1.600 .. +1.600 (centred on the pads), the two terminal faces at
-  x = 0.565 .. 1.065 and -1.065 .. -0.565, y = +/-1.350 — i.e. terminal centres
-  exactly on the +/-0.815 pad centres, 0.18 mm inboard of each pad edge in x and
-  0.15 mm in y — and the body top 2.000 mm above the board surface. The model's
-  lowest face sits 0.085 mm above the board top in that export, which is KiCad's
-  own model placement offset, not a footprint error: the already-verified
-  XGL4030 measures the identical 0.085 mm in the same export.
+- **L2/L3 CJIANG inductors** need no entry here: both footprints and their
+  `(model ...)` nodes are unmodified copies of KiCad's own
+  `Inductor_SMD.pretty` / `Inductor_SMD.3dshapes`, authored and aligned by
+  KiCad's footprint generator with `offset 0 0 0` / `rotate 0 0 0`, so there is
+  no vendor-STEP alignment problem to solve — unlike the Coilcraft XGL3020/XGL4030
+  models this replaced, which were hand-aligned from raw vendor STEPs (see
+  `MARV_Packages.3dshapes/PROVENANCE.md` section 1 history for why those are
+  gone).
 - **J11 Molex microSD** — model box 11.99 x 1.61 x 11.53 mm, height on Y again,
   in-plane axes both reversed relative to the footprint. `rotate -90 0 180`,
   `offset 0.092 -0.3 1.4456`. Checked: all eight contact tails land on pad
@@ -305,34 +295,23 @@ settles in seconds:
   vias under the input/output capacitor grounds. FB (pin 1) is a *sense* input on
   this fixed-output part and must be routed to the 5V_IN copper at the output
   capacitors, not to the SW node.
-- **L2 `L_Coilcraft_XGL3020` is project-authored, not vendored.** KiCad 10 ships
-  no XGL3020 footprint, so the land pattern is transcribed from the Recommended
-  Land Pattern on page 3 of **Coilcraft Document 1776-3, Revised 02/19/26**: two
-  pads **0.86 mm (X) x 3.0 mm (Y) at x = ±0.815** (1.63 mm centre-to-centre,
-  0.77 mm inner gap, 2.49 mm outer extent), roundrect, F.Cu/F.Paste/F.Mask. The
-  F.Fab outline is the **nominal** 3.0 x 3.0 body (the datasheet tolerance is
-  ±0.2 and the vendor STEP is drawn at the 3.2 x 3.2 maximum), the courtyard is
-  3.5 x 3.5, and the two F.SilkS lines sit at y = ±1.72 — 0.16 mm clear of the
-  pad ends, which is the tightest thing in the footprint, because the pads are
-  as long as the body is wide and there is nowhere else for silk to go.
-  **Pad 1 is the terminal-start side** and carries an F.Fab bar inside the left
-  body edge reproducing the bar the part is marked with next to the `C` of its
-  dash number: the datasheet says that bar indicates the terminal direction and
-  the start (short) lead, and asks for the high dv/dt node there for lowest EMI,
-  so **U7_SW goes on pad 1**. Nothing electrical depends on it — a two-terminal
-  inductor works either way round — so this is an EMI preference, not a
-  polarity. The 4.7 uH L3 keeps the bigger `L_Coilcraft_XxL4030`: its floor is
-  the AP63205's 3.1 A current-limit ceiling, which the 3.1 mm body is what
-  buys.
-  The XGL3020 datasheet itself is **not committed** (vendor datasheets are not
-  redistributable here); it was fetched 2026-09-16 from
-  `https://www.coilcraft.com/getmedia/fee1ff20-0e12-4f38-8784-9e56e5878423/xgl3020.pdf`
-  (reached from the XGL3020-222 product page), **315930 bytes**, SHA256
-  `4f211b1f8560ccbb3dc9c0c6c579b24087bd8df50f77ebad4f2e19aa467cad91`,
-  3 pages, Coilcraft Document 1776-1/2/3 Revised 02/19/26. Its XGL3020-222 row:
-  2.2 uH ±20 %, DCR 30.5 mOhm typ / 36.5 mOhm max, SRF 55 MHz typ, Isat 1.5 A
-  (10 % drop) / 2.2 A (20 %) / 2.85 A (30 %), Irms 5.0 A (20 °C rise) / 7.1 A
-  (40 °C rise), 2.0 mm max height, AEC-Q200, MSL 1.
+- **L2 and L3 are now CJIANG parts on KiCad-native footprints, not Coilcraft
+  parts on a project-authored one.** L2 is `L_Changjiang_FTC303020D`
+  (CJIANG FTC303020D2R2MBCA, 2.2 uH) and L3 is `L_Changjiang_FTC404030S`
+  (CJIANG FTC404030S4R7MGCA, 4.7 uH); both footprints and their 3D models are
+  unmodified copies of KiCad's own `Inductor_SMD.pretty` /
+  `Inductor_SMD.3dshapes` (see the footprint table above and
+  `MARV_Packages.3dshapes/PROVENANCE.md` section 3), so — unlike the Coilcraft
+  XGL3020/XGL4030 land patterns this replaced — there is no project-authored
+  land pattern or hand-derived alignment to document here. Both CJIANG parts
+  are symmetric two-terminal molded bodies with no start-lead marking (unlike
+  the Coilcraft XGL series), so there is no preferred pad for the SW node
+  either way round; `tools/build_power.py` keeps U7_SW on pad 1 regardless, so
+  layout is unchanged. Values, DCR/Isat/Irms ratings, the JLC stocking reason
+  for both substitutions and the full CJIANG datasheet citation (SZ CJIANG FTC
+  series datasheet Rev 7.0, 2025/11/05) are in DESIGN_SPEC.md's "Rails and load
+  budget" (L2/U7) and U26 (L3) paragraphs — this file only tracks footprints
+  and 3D models, not electrical rationale.
 - D20 WS2812C-2020 land pattern: the KiCad `LED_WS2812B-2020_PLCC4_2.0x2.0mm`
   pads (0.7 x 0.7 at ±0.915, ±0.55) reproduce every dimension the WS2812C-2020
   datasheet's "PCB Solder Pad" figure gives — pad height 0.70, vertical gap 0.40,

@@ -1613,7 +1613,7 @@ def floorplan(B, comps):
     B.anchor("SW2", 0, ("cyc", mcu_x0 - 5.0), ("cymin", j4[3] + 0.4))  # BOOT
     B.place("D20", mcu_x0 - 0.8, -HY + 2.2, 0)              # RGB LED
     B.place("C79", mcu_x0 - 0.8, -HY + 4.4, 0)  # WS2812 bypass, at the LED
-    B.place("R55", mcu_x0 + 1.1, -HY + 4.4, 0)  # 100 R LED_DATA series R
+    B.place("R55", mcu_x0 + 1.3, -HY + 4.4, 0)  # 100 R LED_DATA series R
 
     # ---------------- TOP edge ----------------
     # microSD, card ejecting +Y (upward), left of centre and above the left

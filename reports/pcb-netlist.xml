@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-16T09:03:02</date>
+    <date>2026-09-16T10:22:56</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -136,11 +136,13 @@
       <value>1u / 10 V X7R 0402</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -160,11 +162,13 @@
       <value>100n / 16 V X7R, SS soft-start</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -184,11 +188,13 @@
       <value>100n / 16 V X7R, IN1 bypass at U25</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -208,11 +214,13 @@
       <value>100n / 16 V X7R, IN2 bypass at U25</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -232,11 +240,13 @@
       <value>10u / 50 V X5R 0805 GRM21BR61H106KE43, VIN bulk</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
+        <field name="LCSC">C440198</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C440198"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -256,11 +266,13 @@
       <value>100n / 50 V X7R 0402, VIN HF bypass</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C307331</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C307331"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -280,11 +292,13 @@
       <value>100n / 50 V X7R 0402, bootstrap</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C307331</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C307331"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -304,11 +318,13 @@
       <value>22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
+        <field name="LCSC">C45783</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C45783"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -328,11 +344,13 @@
       <value>22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
+        <field name="LCSC">C45783</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C45783"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -352,11 +370,13 @@
       <value>22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT (3rd: &gt;=44 uF after DC-bias derating, AP63205 EVB guide)</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
+        <field name="LCSC">C45783</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C45783"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -407,11 +427,13 @@
       <footprint>MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12</footprint>
       <datasheet>https://www.usb.org/sites/default/files/documents/usb_type-c.zip</datasheet>
       <fields>
+        <field name="LCSC">C165948</field>
         <field name="Footprint">MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12</field>
         <field name="Datasheet">https://www.usb.org/sites/default/files/documents/usb_type-c.zip</field>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="USB_C_Receptacle_USB2.0_16P" description="USB 2.0-only 16P Type-C Receptacle connector"/>
+      <property name="LCSC" value="C165948"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="usb universal serial bus type-C USB2.0"/>
@@ -443,14 +465,16 @@
       </units>
     </comp>
     <comp ref="L3">
-      <value>4.7u, Isat 4.4 A, DCR 31.5 mOhm max (Coilcraft XGL4030-472MEC)</value>
-      <footprint>MARV_Packages:L_Coilcraft_XxL4030</footprint>
+      <value>4.7u, Isat 6.0 A (30 %), DCR 46 mOhm max (CJIANG FTC404030S4R7MGCA)</value>
+      <footprint>MARV_Packages:L_Changjiang_FTC404030S</footprint>
       <fields>
-        <field name="Footprint">MARV_Packages:L_Coilcraft_XxL4030</field>
+        <field name="LCSC">C39676083</field>
+        <field name="Footprint">MARV_Packages:L_Changjiang_FTC404030S</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="L" description="Inductor"/>
+      <property name="LCSC" value="C39676083"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="inductor choke coil reactor magnetic"/>
@@ -468,13 +492,15 @@
     </comp>
     <comp ref="R4">
       <value>5.1k / 1%</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25905</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25905"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -492,13 +518,15 @@
     </comp>
     <comp ref="R5">
       <value>5.1k / 1%</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25905</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25905"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -516,13 +544,15 @@
     </comp>
     <comp ref="R42">
       <value>32.4k / 1%, PR1 top (5V_IN)</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C22369333</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C22369333"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -540,13 +570,15 @@
     </comp>
     <comp ref="R43">
       <value>10k / 1%, PR1 bottom</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -564,13 +596,15 @@
     </comp>
     <comp ref="R44">
       <value>45.3k / 1%, OV1 top (5V_IN)</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C137977</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C137977"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -588,13 +622,15 @@
     </comp>
     <comp ref="R45">
       <value>10k / 1%, OV1 bottom</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -612,13 +648,15 @@
     </comp>
     <comp ref="R46">
       <value>80.6k / 1%, ILM -&gt; 1.49 A</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C2998147</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C2998147"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -636,13 +674,15 @@
     </comp>
     <comp ref="R47">
       <value>10k / 1%, ST pull-up (open drain)</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -660,13 +700,15 @@
     </comp>
     <comp ref="R52">
       <value>100k / 1%, EN to VIN</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -687,11 +729,13 @@
       <footprint>MARV_Packages:Texas_VQFN-HR-12_2x2.5mm_P0.5mm</footprint>
       <datasheet>https://www.ti.com/lit/ds/symlink/tps2121.pdf</datasheet>
       <fields>
+        <field name="LCSC">C485916</field>
         <field name="Footprint">MARV_Packages:Texas_VQFN-HR-12_2x2.5mm_P0.5mm</field>
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps2121.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="MARV_Power" part="TPS2121RUX" description="2.8-22 V dual-input single-output priority power MUX, seamless switchover, reverse-current blocking on both inputs, adjustable OV / priority / current limit, VQFN-HR-12 (RUX0012A)"/>
+      <property name="LCSC" value="C485916"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="power mux ORing priority ideal diode reverse current blocking Texas Instruments"/>
@@ -722,11 +766,13 @@
       <footprint>Package_TO_SOT_SMD:TSOT-23-6</footprint>
       <datasheet>https://www.diodes.com/assets/Datasheets/AP63200-AP63201-AP63203-AP63205.pdf</datasheet>
       <fields>
+        <field name="LCSC">C2071056</field>
         <field name="Footprint">Package_TO_SOT_SMD:TSOT-23-6</field>
         <field name="Datasheet">https://www.diodes.com/assets/Datasheets/AP63200-AP63201-AP63203-AP63205.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="Regulator_Switching" part="AP63205WU" description="2A, 1.1MHz Buck DC/DC Converter, fixed 5.0V output voltage, TSOT-23-6"/>
+      <property name="LCSC" value="C2071056"/>
       <property name="Sheetname" value="POWER 1 / ESC pad row, VBAT buck, USB, priority power mux"/>
       <property name="Sheetfile" value="power_sources.kicad_sch"/>
       <property name="ki_keywords" value="2A Buck DC/DC"/>
@@ -750,11 +796,13 @@
       <value>10u / 10 V X7S 0603</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C96446</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C96446"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -774,11 +822,13 @@
       <value>10u / 10 V X7S 0603</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C96446</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C96446"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -798,11 +848,13 @@
       <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C86295</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C86295"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -822,11 +874,13 @@
       <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C86295</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C86295"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -846,11 +900,13 @@
       <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C86295</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C86295"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -870,11 +926,13 @@
       <value>470n / 16 V X7R 0402, NR/SS soft-start + noise filter (5 ms)</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C471404</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C471404"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -894,11 +952,13 @@
       <value>2.2n / 50 V X7R, VIN-PGND HF bypass</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1531</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1531"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -918,11 +978,13 @@
       <value>100u / 6.3 V polymer, ESR &lt;= 40 mOhm (e.g. Panasonic 6TPE100MAZB or KEMET T520/T530 B case)</value>
       <footprint>Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B</footprint>
       <fields>
+        <field name="LCSC">C79109</field>
         <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C79109"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -942,11 +1004,13 @@
       <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C86295</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C86295"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -966,11 +1030,13 @@
       <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C86295</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C86295"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -990,11 +1056,13 @@
       <value>1u / 10 V X7R 0402, LDO input</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1014,11 +1082,13 @@
       <value>1u / 10 V X7R 0402, LDO output, ESR &lt;=100 mOhm</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1038,11 +1108,13 @@
       <value>8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv)</value>
       <footprint>Inductor_SMD:L_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C3764407</field>
         <field name="Footprint">Inductor_SMD:L_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="FerriteBead" description="Ferrite bead"/>
+      <property name="LCSC" value="C3764407"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="L ferrite bead inductor filter"/>
@@ -1059,14 +1131,16 @@
       </units>
     </comp>
     <comp ref="L2">
-      <value>2.2u / Isat 2.2 A (20 %), DCR 30.5 mOhm (Coilcraft XGL3020-222MEC)</value>
-      <footprint>MARV_Packages:L_Coilcraft_XGL3020</footprint>
+      <value>2.2u / Isat 5.5 A (30 %), DCR 45 mOhm max (CJIANG FTC303020D2R2MBCA)</value>
+      <footprint>MARV_Packages:L_Changjiang_FTC303020D</footprint>
       <fields>
-        <field name="Footprint">MARV_Packages:L_Coilcraft_XGL3020</field>
+        <field name="LCSC">C7423318</field>
+        <field name="Footprint">MARV_Packages:L_Changjiang_FTC303020D</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="L" description="Inductor"/>
+      <property name="LCSC" value="C7423318"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="inductor choke coil reactor magnetic"/>
@@ -1083,14 +1157,16 @@
       </units>
     </comp>
     <comp ref="R7">
-      <value>15.8k / 0.1%</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <value>10k / 0.1%</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C190095</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C190095"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -1107,14 +1183,16 @@
       </units>
     </comp>
     <comp ref="R8">
-      <value>4.99k / 0.1%</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <value>3.16k / 0.1%</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C852759</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C852759"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -1132,13 +1210,15 @@
     </comp>
     <comp ref="R9">
       <value>6.04k / 1%, S-CONF: 2.2 MHz + triangle SSM, discharge off, no sync</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25913</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25913"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -1156,13 +1236,15 @@
     </comp>
     <comp ref="R10">
       <value>100k</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -1183,11 +1265,13 @@
       <footprint>MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm</footprint>
       <datasheet>https://www.ti.com/lit/ds/symlink/tps62912.pdf</datasheet>
       <fields>
+        <field name="LCSC">C5189914</field>
         <field name="Footprint">MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm</field>
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps62912.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="Regulator_Switching" part="TPS62913" description="2.2MHz or 1MHz, 3A, Low Noise, Low Ripple, Buck Converter with Integrated Ferrite Bead Filter Compensation, VQFN-HR"/>
+      <property name="LCSC" value="C5189914"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="step-down high psrr adjustable"/>
@@ -1216,11 +1300,13 @@
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <datasheet>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</datasheet>
       <fields>
+        <field name="LCSC">C2687116</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
         <field name="Datasheet">https://www.st.com/resource/en/datasheet/usblc6-2.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="Power_Protection" part="USBLC6-2SC6" description="Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"/>
+      <property name="LCSC" value="C2687116"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="usb ethernet video"/>
@@ -1245,11 +1331,13 @@
       <footprint>Package_TO_SOT_SMD:SOT-23-5</footprint>
       <datasheet>https://www.ti.com/lit/ds/symlink/tps7a20.pdf</datasheet>
       <fields>
+        <field name="LCSC">C2862740</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23-5</field>
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps7a20.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="Regulator_Linear" part="TPS7A20xxxDBV" description="300 mA Low Dropout Voltage Regulator, Fixed Output, 1.6..6.0Vin, Low-Noise (7μV RMS), 6.5μA IQ LDO, SOT-23"/>
+      <property name="LCSC" value="C2862740"/>
       <property name="Sheetname" value="POWER 2 / 3.3 V system buck and analog LDO"/>
       <property name="Sheetfile" value="power_3v3.kicad_sch"/>
       <property name="ki_keywords" value="Single Output LDO Low-Iq Texas-Instruments"/>
@@ -1272,11 +1360,13 @@
       <value>10u / 10 V X7R 0603</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C96446</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C96446"/>
       <property name="Sheetname" value="POWER 3 / IO array"/>
       <property name="Sheetfile" value="power_periph.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1296,11 +1386,13 @@
       <value>10u / 10 V X7R 0603</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C96446</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C96446"/>
       <property name="Sheetname" value="POWER 3 / IO array"/>
       <property name="Sheetfile" value="power_periph.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1320,11 +1412,13 @@
       <value>10u / 10 V X7R 0603</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C96446</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C96446"/>
       <property name="Sheetname" value="POWER 3 / IO array"/>
       <property name="Sheetfile" value="power_periph.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1344,11 +1438,13 @@
       <value>IO array signal column (innermost)</value>
       <footprint>MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</footprint>
       <fields>
+        <field name="LCSC">C2905490</field>
         <field name="Footprint">MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C2905490"/>
       <property name="Sheetname" value="POWER 3 / IO array"/>
       <property name="Sheetfile" value="power_periph.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -1380,11 +1476,13 @@
       <value>IO array power column (5V / 3V3 per row)</value>
       <footprint>MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</footprint>
       <fields>
+        <field name="LCSC">C2905490</field>
         <field name="Footprint">MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C2905490"/>
       <property name="Sheetname" value="POWER 3 / IO array"/>
       <property name="Sheetfile" value="power_periph.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -1416,11 +1514,13 @@
       <value>IO array GND column (board edge)</value>
       <footprint>MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</footprint>
       <fields>
+        <field name="LCSC">C2905490</field>
         <field name="Footprint">MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C2905490"/>
       <property name="Sheetname" value="POWER 3 / IO array"/>
       <property name="Sheetfile" value="power_periph.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -1452,11 +1552,13 @@
       <value>100n / 16 V X7R, IOVDD pin 5</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1476,11 +1578,13 @@
       <value>100n / 16 V X7R, IOVDD pin 15</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1500,11 +1604,13 @@
       <value>100n / 16 V X7R, IOVDD pin 24</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1524,11 +1630,13 @@
       <value>100n / 16 V X7R, IOVDD pin 29</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1548,11 +1656,13 @@
       <value>100n / 16 V X7R, IOVDD pin 41</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1572,11 +1682,13 @@
       <value>100n / 16 V X7R, IOVDD pin 50</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1596,11 +1708,13 @@
       <value>100n / 16 V X7R, IOVDD pin 60</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1620,11 +1734,13 @@
       <value>100n / 16 V X7R, IOVDD pin 76</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1644,11 +1760,13 @@
       <value>100n / 16 V X7R, pins 68+69</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1668,11 +1786,13 @@
       <value>4.7u / 10 V X5R 0402, VREG_VIN</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C23733</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C23733"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1692,11 +1812,13 @@
       <value>100n / 16 V X7R, ADC_AVDD</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1716,11 +1838,13 @@
       <value>4.7u / 10 V X5R 0402, VREG_AVDD</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C23733</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C23733"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1740,11 +1864,13 @@
       <value>100n / 16 V X7R, DVDD pin 10</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1764,11 +1890,13 @@
       <value>100n / 16 V X7R, DVDD pin 32</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1788,11 +1916,13 @@
       <value>100n / 16 V X7R, DVDD pin 51</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1812,11 +1942,13 @@
       <value>4.7u / 10 V X5R 0402, DVDD bulk</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C23733</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C23733"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1833,14 +1965,16 @@
       </units>
     </comp>
     <comp ref="C46">
-      <value>15p / 50 V C0G</value>
+      <value>18p / 50 V C0G</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C541431</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C541431"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1857,14 +1991,16 @@
       </units>
     </comp>
     <comp ref="C47">
-      <value>15p / 50 V C0G</value>
+      <value>18p / 50 V C0G</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C541431</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C541431"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1884,11 +2020,13 @@
       <value>100n / 16 V X7R, ADC0</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1908,11 +2046,13 @@
       <value>100n / 16 V X7R, ADC1</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1932,11 +2072,13 @@
       <value>100n / 16 V X7R, ADC2 filter</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1956,11 +2098,13 @@
       <value>100n / 16 V X7R, D20 VDD</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1981,11 +2125,13 @@
       <footprint>MARV_Packages:LED_WS2812B-2020_PLCC4_2.0x2.0mm</footprint>
       <datasheet>https://cdn-shop.adafruit.com/product-files/4684/4684_WS2812B-2020_V1.3_EN.pdf</datasheet>
       <fields>
+        <field name="LCSC">C2976072</field>
         <field name="Footprint">MARV_Packages:LED_WS2812B-2020_PLCC4_2.0x2.0mm</field>
         <field name="Datasheet">https://cdn-shop.adafruit.com/product-files/4684/4684_WS2812B-2020_V1.3_EN.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="WS2812B-2020" description="RGB LED with integrated controller, 2.0 x 2.0 mm, 12 mA"/>
+      <property name="LCSC" value="C2976072"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel Nano addressable"/>
@@ -2116,11 +2262,13 @@
       <value>3.3u, 0806 AOTA-B201610S3R3</value>
       <footprint>Inductor_SMD:L_Murata_DFE201610P</footprint>
       <fields>
+        <field name="LCSC">C48783272</field>
         <field name="Footprint">Inductor_SMD:L_Murata_DFE201610P</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="L" description="Inductor"/>
+      <property name="LCSC" value="C48783272"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="inductor choke coil reactor magnetic"/>
@@ -2138,13 +2286,15 @@
     </comp>
     <comp ref="R20">
       <value>33 / 1%, VREG_AVDD filter</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25105</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25105"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2162,13 +2312,15 @@
     </comp>
     <comp ref="R21">
       <value>1k / 1%, crystal drive limit</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C11702</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C11702"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2186,13 +2338,15 @@
     </comp>
     <comp ref="R22">
       <value>27 / 1%, USB D+ series</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C2909343</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C2909343"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2210,13 +2364,15 @@
     </comp>
     <comp ref="R23">
       <value>27 / 1%, USB D- series</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C2909343</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C2909343"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2234,13 +2390,15 @@
     </comp>
     <comp ref="R24">
       <value>1k, BOOTSEL strap</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C11702</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C11702"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2258,13 +2416,15 @@
     </comp>
     <comp ref="R25">
       <value>4.7k, I2C1 SDA pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25900</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25900"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2282,13 +2442,15 @@
     </comp>
     <comp ref="R26">
       <value>4.7k, I2C1 SCL pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25900</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25900"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2306,13 +2468,15 @@
     </comp>
     <comp ref="R27">
       <value>100k / 1%, VBAT top</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2330,13 +2494,15 @@
     </comp>
     <comp ref="R28">
       <value>10k / 1%, VBAT bottom</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2354,13 +2520,15 @@
     </comp>
     <comp ref="R29">
       <value>10k / 1%, VBUS top</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2378,13 +2546,15 @@
     </comp>
     <comp ref="R30">
       <value>15k / 1%, VBUS bottom</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25756</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25756"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2402,13 +2572,15 @@
     </comp>
     <comp ref="R53">
       <value>1k / 1%, CURR series</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C11702</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C11702"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2426,13 +2598,15 @@
     </comp>
     <comp ref="R54">
       <value>1k, ESC telemetry series</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C11702</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C11702"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2450,13 +2624,15 @@
     </comp>
     <comp ref="R55">
       <value>100 / 1%, WS2812 data series</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25076</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25076"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2476,11 +2652,13 @@
       <value>RESET (RUN to GND)</value>
       <footprint>Button_Switch_SMD:SW_SPST_B3U-1000P</footprint>
       <fields>
+        <field name="LCSC">C231329</field>
         <field name="Footprint">Button_Switch_SMD:SW_SPST_B3U-1000P</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value="C231329"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -2499,11 +2677,13 @@
       <value>BOOTSEL (via R24)</value>
       <footprint>Button_Switch_SMD:SW_SPST_B3U-1000P</footprint>
       <fields>
+        <field name="LCSC">C231329</field>
         <field name="Footprint">Button_Switch_SMD:SW_SPST_B3U-1000P</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value="C231329"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -2523,11 +2703,13 @@
       <footprint>MARV_Packages:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm</footprint>
       <datasheet>https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf</datasheet>
       <fields>
+        <field name="LCSC">C39843328</field>
         <field name="Footprint">MARV_Packages:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm</field>
         <field name="Datasheet">https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="MCU_RaspberryPi" part="RP2354B" description="A microcontroller by Raspberry Pi, dual CPU architecture (ARM Cortex-M33 / RISC-V Hazard3), 150MHz, 2MB flash, 520KB SRAM, 12 PIO state machines, VQFN-80"/>
+      <property name="LCSC" value="C39843328"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="RPi Pico USB QSPI I2C UART ADC SC1512"/>
@@ -2623,14 +2805,16 @@
       </units>
     </comp>
     <comp ref="Y1">
-      <value>12 MHz ABM8-272-T3, CL 10 pF</value>
+      <value>12 MHz TAXM12M4RFBCCT2T, CL 12 pF</value>
       <footprint>Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm</footprint>
       <fields>
+        <field name="LCSC">C133337</field>
         <field name="Footprint">Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="Crystal_GND24" description="Four pin crystal, GND on pins 2 and 4"/>
+      <property name="LCSC" value="C133337"/>
       <property name="Sheetname" value="BOARD 1 / RP2354B"/>
       <property name="Sheetfile" value="mcu.kicad_sch"/>
       <property name="ki_keywords" value="quartz ceramic resonator oscillator"/>
@@ -2652,11 +2836,13 @@
       <value>100n / 16 V X7R, U21 VDD</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2676,11 +2862,13 @@
       <value>1u / 10 V X7R 0402, U21 VDD</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2700,11 +2888,13 @@
       <value>100n / 16 V X7R, U21 VDDIO</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2724,11 +2914,13 @@
       <value>1u / 10 V X7R 0402, U21 VDDIO</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2748,11 +2940,13 @@
       <value>100n / 16 V X7R, U22 VDD</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2772,11 +2966,13 @@
       <value>1u / 10 V X7R 0402, U22 VDD</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2796,11 +2992,13 @@
       <value>100n / 16 V X7R, U22 VDDIO</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2820,11 +3018,13 @@
       <value>1u / 10 V X7R 0402, U22 VDDIO</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2844,11 +3044,13 @@
       <value>100n / 16 V X7R, U23 VS</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2868,11 +3070,13 @@
       <value>1u / 10 V X7R 0402, U23 VS</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2892,11 +3096,13 @@
       <value>100n / 16 V X7R, U23 VDD_IO</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2916,11 +3122,13 @@
       <value>1u / 10 V X7R 0402, U23 VDD_IO</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -2938,13 +3146,15 @@
     </comp>
     <comp ref="R48">
       <value>10k, IMU_CS pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2962,13 +3172,15 @@
     </comp>
     <comp ref="R50">
       <value>10k, BARO_CS pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -2986,13 +3198,15 @@
     </comp>
     <comp ref="R51">
       <value>10k, HG_ACC_CS pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3243,11 +3457,13 @@
       <footprint>MARV_Packages:InvenSense_LGA-14_2.5x3mm_P0.5mm_ICM45686</footprint>
       <datasheet>https://invensense.tdk.com/download-resource/ds-000577-icm-45686-datasheet-0</datasheet>
       <fields>
+        <field name="LCSC">C22459454</field>
         <field name="Footprint">MARV_Packages:InvenSense_LGA-14_2.5x3mm_P0.5mm_ICM45686</field>
         <field name="Datasheet">https://invensense.tdk.com/download-resource/ds-000577-icm-45686-datasheet-0</field>
         <field name="Description"/>
       </fields>
       <libsource lib="MARV_Sensors" part="ICM-45686" description="High-performance 6-axis MotionTracking IMU (3-axis gyro + 3-axis accel), I3C/I2C/SPI, 14-pin LGA"/>
+      <property name="LCSC" value="C22459454"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="IMU gyroscope accelerometer 6-axis SPI I2C I3C InvenSense TDK MotionTracking BalancedGyro"/>
@@ -3280,11 +3496,13 @@
       <footprint>MARV_Packages:Bosch_LGA-10_2x2mm_BMP581</footprint>
       <datasheet>https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf</datasheet>
       <fields>
+        <field name="LCSC">C5362283</field>
         <field name="Footprint">MARV_Packages:Bosch_LGA-10_2x2mm_BMP581</field>
         <field name="Datasheet">https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf</field>
         <field name="Description"/>
       </fields>
       <libsource lib="MARV_Sensors" part="BMP581" description="High-performance barometric pressure sensor, I2C/I3C/SPI, LGA-10"/>
+      <property name="LCSC" value="C5362283"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="barometer pressure temperature I2C I3C SPI Bosch"/>
@@ -3313,11 +3531,13 @@
       <footprint>MARV_Packages:Analog_LGA-14_3x5mm_P0.8mm_ADXL375</footprint>
       <datasheet>https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL375.PDF</datasheet>
       <fields>
+        <field name="LCSC">C579466</field>
         <field name="Footprint">MARV_Packages:Analog_LGA-14_3x5mm_P0.8mm_ADXL375</field>
         <field name="Datasheet">https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL375.PDF</field>
         <field name="Description"/>
       </fields>
       <libsource lib="MARV_Sensors" part="ADXL375" description="3-axis, +/-200 g digital accelerometer, I2C/SPI, 14-terminal LGA"/>
+      <property name="LCSC" value="C579466"/>
       <property name="Sheetname" value="BOARD 2 / IMU, barometer, high-g"/>
       <property name="Sheetfile" value="sensors.kicad_sch"/>
       <property name="ki_keywords" value="accelerometer high-g shock I2C SPI MEMS"/>
@@ -3349,11 +3569,13 @@
       <value>100n / 16 V X7R, U24 VCC (fitted; socket is optional)</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -3373,11 +3595,13 @@
       <value>1u / 10 V X7R 0402, U24 VCC (fitted; socket is optional)</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C52923</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C52923"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -3397,11 +3621,13 @@
       <value>100n / 16 V X7R, at the socket</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
+        <field name="LCSC">C1525</field>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -3421,11 +3647,13 @@
       <value>10u / 10 V X7R 0603, at the socket</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
+        <field name="LCSC">C96446</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C96446"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -3445,11 +3673,13 @@
       <value>47u / 6.3 V X5R 0805, at the socket</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
+        <field name="LCSC">C16780</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C16780"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -3470,11 +3700,13 @@
       <footprint>MARV_Packages:microSD_HC_Molex_104031-0811</footprint>
       <datasheet>https://www.hirose.com/en/product/document?clcode=&amp;productname=&amp;series=DM3&amp;documenttype=Catalog&amp;lang=en&amp;documentid=D49662_en</datasheet>
       <fields>
+        <field name="LCSC">C585350</field>
         <field name="Footprint">MARV_Packages:microSD_HC_Molex_104031-0811</field>
         <field name="Datasheet">https://www.hirose.com/en/product/document?clcode=&amp;productname=&amp;series=DM3&amp;documenttype=Catalog&amp;lang=en&amp;documentid=D49662_en</field>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="Micro_SD_Card_Det2" description="Micro SD Card Socket with two card detection pins"/>
+      <property name="LCSC" value="C585350"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="connector SD microsd"/>
@@ -3501,13 +3733,15 @@
     </comp>
     <comp ref="R35">
       <value>10k, FLASH_CS1 pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3525,13 +3759,15 @@
     </comp>
     <comp ref="R36">
       <value>10k, SD_CMD pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3549,13 +3785,15 @@
     </comp>
     <comp ref="R37">
       <value>10k, SD_D0 pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3573,13 +3811,15 @@
     </comp>
     <comp ref="R38">
       <value>10k, SD_D1 pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3597,13 +3837,15 @@
     </comp>
     <comp ref="R39">
       <value>10k, SD_D2 pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3621,13 +3863,15 @@
     </comp>
     <comp ref="R40">
       <value>10k, SD_D3 pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3645,13 +3889,15 @@
     </comp>
     <comp ref="R41">
       <value>10k, SD_DET pull-up</value>
-      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
+        <field name="LCSC">C25744</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C25744"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -3668,7 +3914,7 @@
       </units>
     </comp>
     <comp ref="U24">
-      <value>DNP: W25Q64JVSSIQ, 64 Mbit QSPI NOR (optional back-side expansion)</value>
+      <value>DNP: W25Q32JVSNIQ, 32 Mbit QSPI NOR or APS6404L-SQN-SN 8 MB PSRAM (optional back-side expansion)</value>
       <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
       <datasheet>http://www.winbond.com/resource-files/w25q32jv%20revg%2003272018%20plus.pdf</datasheet>
       <fields>
