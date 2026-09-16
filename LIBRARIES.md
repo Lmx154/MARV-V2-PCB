@@ -53,8 +53,7 @@ All rows below are `MARV_Packages:<name>`.
 | D20 | `LED_WS2812B-2020_PLCC4_2.0x2.0mm` | vendored KiCad official | `LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | FreeCAD-generated (`tools/3d/gen_ws2812c_2020.py`) from the WS2812C-2020 datasheet page 2; this KiCad install ships no 2020 body even though its own footprint references one |
 | J3 | `PadRow_1x08_P2.00mm` | project-authored | — (pads only) | none by design |
 | J10 | `PadRow_1x03_P2.00mm` | project-authored | — (pads only) | none by design |
-| J6 | `PinHeader_2x16_P2.54mm_Vertical_IOArray` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`) | `PinHeader_2x16_P2.54mm_Vertical_IOArray.step` (project copy of KiCad's PinHeader_2x16 model) | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_2x16_P2.54mm_Vertical.step` |
-| J12-J14 | `PinHeader_1x04_P2.54mm_Vertical_ServoRow` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`), courtyard trimmed so three rows abut on the 2.54 mm grid | `PinHeader_1x04_P2.54mm_Vertical_ServoRow.step` | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x04_P2.54mm_Vertical.step` |
+| J6/J7/J8 | `PinHeader_1x14_P2.54mm_Vertical_IORow` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`), courtyard trimmed to the body across the row so the three abutting columns (GND \| POWER \| SIGNAL) land exactly on the 2.54 mm grid | `PinHeader_1x14_P2.54mm_Vertical_IORow.step` | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x14_P2.54mm_Vertical.step` |
 | TP1-TP10 | `TestPoint:TestPoint_Pad_1.0x1.0mm` | KiCad official, used directly (not vendored into `MARV_Packages.pretty`) | — (pads only) | none by design |
 | H1-H4 | `MountingHole_4.0mm_Grommet` | project-authored | — (mechanical) | none by design |
 | L3 | `L_Coilcraft_XxL4030` | vendored KiCad official (shared with L2) | `L_Coilcraft_XxL4030.step` | Coilcraft manufacturer model (XGL4030 series body) |
@@ -79,9 +78,8 @@ text at layout, and mark pad 1, because the same footprint serves J3 (ESC,
 fixed and pad-shaped. The 1x04 member (`PadRow_1x04_P2.00mm`, formerly J6/J7/J9)
 and the 1x02 member (`PadRow_1x02_P2.00mm`, gone with the buzzer before it) are
 both retired; regenerate either from the same rules if a solder-pad row of that
-size is ever needed again. Every other external signal now leaves on the J6 IO
-array (`PinHeader_2x16_P2.54mm_Vertical_IOArray`, below) or the servo block
-(`PinHeader_1x04_P2.54mm_Vertical_ServoRow`) instead of a solder pad row.
+size is ever needed again. Every other external signal now leaves on the J6/J7/J8
+IO block (`PinHeader_1x14_P2.54mm_Vertical_IORow`, below) instead of a solder pad row.
 
 **J3 pitch is an assumption.** MicoAir publishes no pad drawing for the AM32
 4-in-1 ESC's FC row, so 2.00 mm is a best guess. The pad **order** (CURR, TX, M4,
@@ -92,8 +90,10 @@ silkscreen. Confirm the pitch against the physical ESC before fab.
 no annular ring) for a 3 mm silicone grommet, a **5.0 mm diameter all-layer
 copper keepout zone** (tracks/vias/pads/copperpour all not allowed), a 2.5 mm
 radius F.Fab circle showing that keepout, a 2.0 mm radius Cmts.User circle for
-the hole itself and a **4.0 mm radius (8.0 mm diameter) F.CrtYd** for the grommet
-flange, which is the real top-side keep-clear. No 3D model.
+the hole itself and a **3.25 mm radius (6.5 mm diameter) F.CrtYd** for the grommet
+flange, which is the real top-side keep-clear — the flange itself, not the flange
+plus a hand-clearance margin; the 8.0 mm diameter courtyard this replaces was
+costing the board 68 mm2 of placeable area across the four holes. No 3D model.
 
 ### Flash / PSRAM socket (U24)
 
@@ -204,19 +204,25 @@ settles in seconds:
 - The ADXL375 footprint follows Figure 38 of the Rev. B datasheet rather than
   KiCad's generic 3 x 5 mm LGA footprint. Place the sensor close to a rigid PCB
   mounting point and keep its orientation marker visible.
-- J6 IO array (`PinHeader_2x16_P2.54mm_Vertical_IOArray`) is a vendored copy of
-  KiCad's stock `PinHeader_2x16_P2.54mm_Vertical` (`descr` node in the
-  footprint file has the full rationale). Two changes, pads/drills/fab
-  layer/3D model otherwise untouched: the **courtyard is trimmed to the
-  plastic body across the two pin columns** (+-0 mm side margin instead of the
-  stock 0.5 mm) because the block has to fit between the board edge and the
-  Ø8 mm H1/H4 grommet-flange keepouts with nothing to spare — `tools/setup_pcb.py`
-  computes this as a 4.24 mm copper strip that needs `x < -19.30` mm, which the
-  stock courtyard does not clear below 50 mm board size; and the **silkscreen
-  outline is dropped** because the per-row labels (silk T0/R0/T1/R1/SDA/SCL/...,
-  `PAD_LABELS["J6"]`) need that band — the board draws the end ticks and the
-  pin-1 mark at board level instead. Its 3D model is a project copy in
-  `MARV_Packages.3dshapes`, like every other vendored footprint on this page.
+- The IO block (`PinHeader_1x14_P2.54mm_Vertical_IORow`) is a vendored copy of
+  KiCad's stock `PinHeader_1x14_P2.54mm_Vertical` (`descr` node in the
+  footprint file has the full rationale), used three times on the right board
+  edge — J6 (signal, innermost), J7 (power) and J8 (GND, at the board edge) —
+  so it replaces both the old 2x16 left-edge array and the separate
+  `PinHeader_1x04_..._ServoRow` servo block from the previous revision. Two
+  changes, pads/drills/fab layer/3D model otherwise untouched: the
+  **courtyard is trimmed to the plastic body across the row** (+-1.2 mm,
+  a hair inside the stock part's own +-1.27 mm half-body because the 0.05 mm
+  stroke width counts in the courtyard bounding box) instead of the stock
+  body-plus-0.5-mm margin, because three abutting stock courtyards would
+  otherwise overlap by 1.0 mm each — `tools/setup_pcb.py` (`IO_CRTYD`)
+  computes the trimmed rectangle so the three columns land exactly on the
+  2.54 mm grid; and the **silkscreen outline is dropped** because the
+  per-row labels (silk T0/R0/T1/R1/SDA/SCL/S5-S8/A44-A47 on J6,
+  5V/3V3 on J7, `PAD_LABELS["J6"]`/`PAD_LABELS["J7"]`) need that band — the
+  board draws the end ticks and the pin-1 mark at board level instead. Its
+  3D model is a project copy in `MARV_Packages.3dshapes`, like every other
+  vendored footprint on this page.
 - U26 AP63205WU (VBAT buck): keep the C73/C74 input loop and the SW node tight —
   VIN, GND and the SW/L3 loop are the high-di/dt path, and the datasheet asks for
   vias under the input/output capacitor grounds. FB (pin 1) is a *sense* input on

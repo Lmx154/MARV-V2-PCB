@@ -3,7 +3,7 @@
 	(generator "marv-v2-project")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "MARV V2 mounting hole: 4.0 mm NPTH for a 3 mm silicone grommet, 5.0 mm diameter copper keepout (all layers) and an 8.0 mm diameter front courtyard for the grommet flange. No 3D model.")
+	(descr "MARV V2 mounting hole: 4.0 mm NPTH for a 3 mm silicone grommet, 5.0 mm diameter copper keepout (all layers) and a 6.5 mm diameter front courtyard for the grommet flange -- the flange itself, not the flange plus a hand clearance; the 8.0 mm courtyard this replaces was costing the board 68 mm2 of placeable area across the four holes. No 3D model.")
 	(tags "mountinghole NPTH grommet 4mm")
 	(property "Reference" "REF**" (at 0 -5 0) (layer "F.SilkS") (uuid "3050e0e1-c8b8-594e-82ae-86b49287f09c") (effects (font (size 1 1) (thickness 0.15))))
 	(property "Value" "MountingHole_4.0mm_Grommet" (at 0 5 0) (layer "F.Fab") (uuid "575e6e6b-a351-536b-ba69-5f990d54308d") (effects (font (size 1 1) (thickness 0.15))))
@@ -11,7 +11,7 @@
 	(duplicate_pad_numbers_are_jumpers no)
 	(fp_circle (center 0 0) (end 2 0) (stroke (width 0.15) (type solid)) (fill no) (layer "Cmts.User") (uuid "18961ded-86fa-5fce-98a3-71da36977ba3"))
 	(fp_circle (center 0 0) (end 2.5 0) (stroke (width 0.1) (type solid)) (fill no) (layer "F.Fab") (uuid "182f5cd4-4437-576a-8998-d8637941f44e"))
-	(fp_circle (center 0 0) (end 4 0) (stroke (width 0.05) (type solid)) (fill no) (layer "F.CrtYd") (uuid "fbedf293-05aa-56a2-a828-51261dad3b1a"))
+	(fp_circle (center 0 0) (end 3.25 0) (stroke (width 0.05) (type solid)) (fill no) (layer "F.CrtYd") (uuid "fbedf293-05aa-56a2-a828-51261dad3b1a"))
 	(fp_text user "${REFERENCE}" (at 0 3.2 0) (layer "F.Fab") (uuid "ead0b654-cfb1-539b-b686-86105e080be2") (effects (font (size 0.8 0.8) (thickness 0.12))))
 	(pad "" np_thru_hole circle (at 0 0) (size 4 4) (drill 4) (layers "*.Cu" "*.Mask") (uuid "5b581aa4-fe76-58b1-827c-0001fc133eee"))
 	(zone

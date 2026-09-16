@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-16T01:32:23</date>
+    <date>2026-09-16T03:27:30</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -119,24 +119,6 @@
         <rev>P0 - REVIEW ONLY</rev>
         <date>2026-09-14</date>
         <source>storage.kicad_sch</source>
-        <comment number="1" value=""/>
-        <comment number="2" value=""/>
-        <comment number="3" value=""/>
-        <comment number="4" value=""/>
-        <comment number="5" value=""/>
-        <comment number="6" value=""/>
-        <comment number="7" value=""/>
-        <comment number="8" value=""/>
-        <comment number="9" value=""/>
-      </title_block>
-    </sheet>
-    <sheet number="8" name="/BOARD 4 / servo outputs PWM5-8/" tstamps="/63f709d8-c925-5723-86e3-07f918d28adf/">
-      <title_block>
-        <title>BOARD 4 / servo outputs PWM5-8</title>
-        <company/>
-        <rev>P0 - REVIEW ONLY</rev>
-        <date>2026-09-14</date>
-        <source>actuators.kicad_sch</source>
         <comment number="1" value=""/>
         <comment number="2" value=""/>
         <comment number="3" value=""/>
@@ -1359,55 +1341,109 @@
       </units>
     </comp>
     <comp ref="J6">
-      <value>IO array 2x16 (signal | power/GND)</value>
-      <footprint>MARV_Packages:PinHeader_2x16_P2.54mm_Vertical_IOArray</footprint>
+      <value>IO array signal column (innermost)</value>
+      <footprint>MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</footprint>
       <fields>
-        <field name="Footprint">MARV_Packages:PinHeader_2x16_P2.54mm_Vertical_IOArray</field>
+        <field name="Footprint">MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="Connector_Generic" part="Conn_02x16_Odd_Even" description="Generic connector, double row, 02x16, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value="POWER 3 / IO array"/>
       <property name="Sheetfile" value="power_periph.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
-      <property name="ki_fp_filters" value="Connector*:*_2x??_*"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
       <sheetpath names="/POWER 3 / IO array/" tstamps="/a37f6ba3-6a13-5152-99c8-874772176748/"/>
       <tstamps>1a340992-7b16-59ef-a02c-465765a0dd67</tstamps>
       <units>
         <unit name="A">
           <pins>
             <pin num="1"/>
-            <pin num="3"/>
-            <pin num="5"/>
-            <pin num="7"/>
-            <pin num="9"/>
-            <pin num="11"/>
-            <pin num="13"/>
-            <pin num="15"/>
-            <pin num="17"/>
-            <pin num="19"/>
-            <pin num="21"/>
-            <pin num="23"/>
-            <pin num="25"/>
-            <pin num="27"/>
-            <pin num="29"/>
-            <pin num="31"/>
             <pin num="2"/>
+            <pin num="3"/>
             <pin num="4"/>
+            <pin num="5"/>
             <pin num="6"/>
+            <pin num="7"/>
             <pin num="8"/>
+            <pin num="9"/>
             <pin num="10"/>
+            <pin num="11"/>
             <pin num="12"/>
+            <pin num="13"/>
             <pin num="14"/>
-            <pin num="16"/>
-            <pin num="18"/>
-            <pin num="20"/>
-            <pin num="22"/>
-            <pin num="24"/>
-            <pin num="26"/>
-            <pin num="28"/>
-            <pin num="30"/>
-            <pin num="32"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J7">
+      <value>IO array power column (5V / 3V3 per row)</value>
+      <footprint>MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</footprint>
+      <fields>
+        <field name="Footprint">MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="POWER 3 / IO array"/>
+      <property name="Sheetfile" value="power_periph.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/POWER 3 / IO array/" tstamps="/a37f6ba3-6a13-5152-99c8-874772176748/"/>
+      <tstamps>c0395247-e231-5043-ba64-6884c261bfee</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="14"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J8">
+      <value>IO array GND column (board edge)</value>
+      <footprint>MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</footprint>
+      <fields>
+        <field name="Footprint">MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="POWER 3 / IO array"/>
+      <property name="Sheetfile" value="power_periph.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/POWER 3 / IO array/" tstamps="/a37f6ba3-6a13-5152-99c8-874772176748/"/>
+      <tstamps>21a5ebad-f429-5c63-837a-215e3ae846ba</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="14"/>
           </pins>
         </unit>
       </units>
@@ -3662,84 +3698,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J12">
-      <value>PWM5-8 signals, row 1</value>
-      <footprint>MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow</footprint>
-      <fields>
-        <field name="Footprint">MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Connector_Generic" part="Conn_01x04" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
-      <property name="Sheetname" value="BOARD 4 / servo outputs PWM5-8"/>
-      <property name="Sheetfile" value="actuators.kicad_sch"/>
-      <property name="ki_keywords" value="connector"/>
-      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
-      <sheetpath names="/BOARD 4 / servo outputs PWM5-8/" tstamps="/63f709d8-c925-5723-86e3-07f918d28adf/"/>
-      <tstamps>682d689a-ca27-5d43-bd42-624da078c121</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-            <pin num="3"/>
-            <pin num="4"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J13">
-      <value>Servo 5 V (5V_IN), row 2</value>
-      <footprint>MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow</footprint>
-      <fields>
-        <field name="Footprint">MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Connector_Generic" part="Conn_01x04" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
-      <property name="Sheetname" value="BOARD 4 / servo outputs PWM5-8"/>
-      <property name="Sheetfile" value="actuators.kicad_sch"/>
-      <property name="ki_keywords" value="connector"/>
-      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
-      <sheetpath names="/BOARD 4 / servo outputs PWM5-8/" tstamps="/63f709d8-c925-5723-86e3-07f918d28adf/"/>
-      <tstamps>9242dfda-99e9-5252-aa9b-6b509eb82b5d</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-            <pin num="3"/>
-            <pin num="4"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J14">
-      <value>GND, row 3</value>
-      <footprint>MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow</footprint>
-      <fields>
-        <field name="Footprint">MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Connector_Generic" part="Conn_01x04" description="Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
-      <property name="Sheetname" value="BOARD 4 / servo outputs PWM5-8"/>
-      <property name="Sheetfile" value="actuators.kicad_sch"/>
-      <property name="ki_keywords" value="connector"/>
-      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
-      <sheetpath names="/BOARD 4 / servo outputs PWM5-8/" tstamps="/63f709d8-c925-5723-86e3-07f918d28adf/"/>
-      <tstamps>5226ca0a-03ed-5657-9b83-7edca380b932</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-            <pin num="3"/>
-            <pin num="4"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
   </components>
   <libparts>
     <libpart lib="Connector" part="Micro_SD_Card_Det2">
@@ -3837,25 +3795,6 @@
         <pin num="3" name="Pin_3" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="Connector_Generic" part="Conn_01x04">
-      <description>Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
-      <footprints>
-        <fp>Connector*:*_1x??_*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">J</field>
-        <field name="Value">Conn_01x04</field>
-        <field name="Footprint"/>
-        <field name="Datasheet"/>
-        <field name="Description">Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
-      </fields>
-      <pins>
-        <pin num="1" name="Pin_1" type="passive"/>
-        <pin num="2" name="Pin_2" type="passive"/>
-        <pin num="3" name="Pin_3" type="passive"/>
-        <pin num="4" name="Pin_4" type="passive"/>
-      </pins>
-    </libpart>
     <libpart lib="Connector_Generic" part="Conn_01x08">
       <description>Generic connector, single row, 01x08, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
       <footprints>
@@ -3879,17 +3818,17 @@
         <pin num="8" name="Pin_8" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="Connector_Generic" part="Conn_02x16_Odd_Even">
-      <description>Generic connector, double row, 02x16, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+    <libpart lib="Connector_Generic" part="Conn_01x14">
+      <description>Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
       <footprints>
-        <fp>Connector*:*_2x??_*</fp>
+        <fp>Connector*:*_1x??_*</fp>
       </footprints>
       <fields>
         <field name="Reference">J</field>
-        <field name="Value">Conn_02x16_Odd_Even</field>
+        <field name="Value">Conn_01x14</field>
         <field name="Footprint"/>
         <field name="Datasheet"/>
-        <field name="Description">Generic connector, double row, 02x16, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)</field>
+        <field name="Description">Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
       </fields>
       <pins>
         <pin num="1" name="Pin_1" type="passive"/>
@@ -3906,24 +3845,6 @@
         <pin num="12" name="Pin_12" type="passive"/>
         <pin num="13" name="Pin_13" type="passive"/>
         <pin num="14" name="Pin_14" type="passive"/>
-        <pin num="15" name="Pin_15" type="passive"/>
-        <pin num="16" name="Pin_16" type="passive"/>
-        <pin num="17" name="Pin_17" type="passive"/>
-        <pin num="18" name="Pin_18" type="passive"/>
-        <pin num="19" name="Pin_19" type="passive"/>
-        <pin num="20" name="Pin_20" type="passive"/>
-        <pin num="21" name="Pin_21" type="passive"/>
-        <pin num="22" name="Pin_22" type="passive"/>
-        <pin num="23" name="Pin_23" type="passive"/>
-        <pin num="24" name="Pin_24" type="passive"/>
-        <pin num="25" name="Pin_25" type="passive"/>
-        <pin num="26" name="Pin_26" type="passive"/>
-        <pin num="27" name="Pin_27" type="passive"/>
-        <pin num="28" name="Pin_28" type="passive"/>
-        <pin num="29" name="Pin_29" type="passive"/>
-        <pin num="30" name="Pin_30" type="passive"/>
-        <pin num="31" name="Pin_31" type="passive"/>
-        <pin num="32" name="Pin_32" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Device" part="C">
@@ -4443,10 +4364,6 @@
       <node ref="C76" pin="1" pintype="passive"/>
       <node ref="C77" pin="1" pintype="passive"/>
       <node ref="C80" pin="1" pintype="passive"/>
-      <node ref="J13" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
-      <node ref="J13" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="J13" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
-      <node ref="J13" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="L3" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="R42" pin="1" pintype="passive"/>
       <node ref="R44" pin="1" pintype="passive"/>
@@ -4489,11 +4406,11 @@
       <node ref="U20" pin="65" pinfunction="VREG_FB_65" pintype="passive"/>
     </net>
     <net code="8" name="ELRS_RX" class="Default">
-      <node ref="J6" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
+      <node ref="J6" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="6" pinfunction="GPIO8_6" pintype="bidirectional"/>
     </net>
     <net code="9" name="ELRS_TX" class="Default">
-      <node ref="J6" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
+      <node ref="J6" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="7" pinfunction="GPIO9_7" pintype="bidirectional"/>
     </net>
     <net code="10" name="ESC_TELEM" class="PWM_ESC">
@@ -4578,24 +4495,26 @@
       <node ref="J11" pin="10" pinfunction="DET_A_10" pintype="passive"/>
       <node ref="J11" pin="6" pinfunction="VSS_6" pintype="power_in"/>
       <node ref="J11" pin="SH" pinfunction="SHIELD_SH" pintype="passive"/>
-      <node ref="J14" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
-      <node ref="J14" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="J14" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
-      <node ref="J14" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J3" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="J4" pin="A1" pinfunction="GND_A1" pintype="passive"/>
       <node ref="J4" pin="A12" pinfunction="GND_A12" pintype="passive"/>
       <node ref="J4" pin="B1" pinfunction="GND_B1" pintype="passive"/>
       <node ref="J4" pin="B12" pinfunction="GND_B12" pintype="passive"/>
       <node ref="J4" pin="SH" pinfunction="SHIELD_SH" pintype="passive"/>
-      <node ref="J6" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
-      <node ref="J6" pin="16" pinfunction="Pin_16_16" pintype="passive"/>
-      <node ref="J6" pin="20" pinfunction="Pin_20_20" pintype="passive"/>
-      <node ref="J6" pin="24" pinfunction="Pin_24_24" pintype="passive"/>
-      <node ref="J6" pin="28" pinfunction="Pin_28_28" pintype="passive"/>
-      <node ref="J6" pin="32" pinfunction="Pin_32_32" pintype="passive"/>
-      <node ref="J6" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
-      <node ref="J6" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
+      <node ref="J8" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J8" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
+      <node ref="J8" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
+      <node ref="J8" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
+      <node ref="J8" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
+      <node ref="J8" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
+      <node ref="J8" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="J8" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="J8" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="J8" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
+      <node ref="J8" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
+      <node ref="J8" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
+      <node ref="J8" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
+      <node ref="J8" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="R28" pin="2" pintype="passive"/>
       <node ref="R30" pin="2" pintype="passive"/>
       <node ref="R4" pin="2" pintype="passive"/>
@@ -4634,7 +4553,7 @@
       <node ref="U20" pin="11" pinfunction="GPIO12_11" pintype="bidirectional"/>
     </net>
     <net code="15" name="GPS_TX" class="Default">
-      <node ref="J6" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="J6" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="12" pinfunction="GPIO13_12" pintype="bidirectional"/>
     </net>
     <net code="16" name="HG_ACC_CS" class="SensorSPI">
@@ -4664,213 +4583,189 @@
       <node ref="U20" pin="25" pinfunction="GPIO24_25" pintype="bidirectional"/>
       <node ref="U21" pin="9" pinfunction="INT2/FSYNC/CLKIN_9" pintype="bidirectional"/>
     </net>
-    <net code="21" name="IO_GPIO1" class="Default">
-      <node ref="J6" pin="23" pinfunction="Pin_23_23" pintype="passive"/>
-      <node ref="U20" pin="78" pinfunction="GPIO1_78" pintype="bidirectional"/>
-    </net>
-    <net code="22" name="IO_GPIO21" class="Default">
-      <node ref="J6" pin="25" pinfunction="Pin_25_25" pintype="passive"/>
-      <node ref="U20" pin="21" pinfunction="GPIO21_21" pintype="bidirectional"/>
-    </net>
-    <net code="23" name="IO_GPIO27" class="Default">
-      <node ref="J6" pin="27" pinfunction="Pin_27_27" pintype="passive"/>
-      <node ref="U20" pin="28" pinfunction="GPIO27_28" pintype="bidirectional"/>
-    </net>
-    <net code="24" name="IO_GPIO28" class="Default">
-      <node ref="J6" pin="29" pinfunction="Pin_29_29" pintype="passive"/>
-      <node ref="U20" pin="36" pinfunction="GPIO28_36" pintype="bidirectional"/>
-    </net>
-    <net code="25" name="IO_GPIO31" class="Default">
-      <node ref="J6" pin="31" pinfunction="Pin_31_31" pintype="passive"/>
-      <node ref="U20" pin="39" pinfunction="GPIO31_39" pintype="bidirectional"/>
-    </net>
-    <net code="26" name="IO_GPIO43" class="Default">
-      <node ref="J6" pin="21" pinfunction="Pin_21_21" pintype="passive"/>
-      <node ref="U20" pin="54" pinfunction="GPIO43/ADC3_54" pintype="bidirectional"/>
-    </net>
-    <net code="27" name="IO_GPIO44" class="Default">
-      <node ref="J6" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
+    <net code="21" name="IO_GPIO44" class="Default">
+      <node ref="J6" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
       <node ref="U20" pin="55" pinfunction="GPIO44/ADC4_55" pintype="bidirectional"/>
     </net>
-    <net code="28" name="IO_GPIO45" class="Default">
-      <node ref="J6" pin="15" pinfunction="Pin_15_15" pintype="passive"/>
+    <net code="22" name="IO_GPIO45" class="Default">
+      <node ref="J6" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
       <node ref="U20" pin="56" pinfunction="GPIO45/ADC5_56" pintype="bidirectional"/>
     </net>
-    <net code="29" name="IO_GPIO46" class="Default">
-      <node ref="J6" pin="17" pinfunction="Pin_17_17" pintype="passive"/>
+    <net code="23" name="IO_GPIO46" class="Default">
+      <node ref="J6" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
       <node ref="U20" pin="57" pinfunction="GPIO46/ADC6_57" pintype="bidirectional"/>
     </net>
-    <net code="30" name="IO_GPIO47" class="Default">
-      <node ref="J6" pin="19" pinfunction="Pin_19_19" pintype="passive"/>
+    <net code="24" name="IO_GPIO47" class="Default">
+      <node ref="J6" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
       <node ref="U20" pin="58" pinfunction="GPIO47/ADC7_58" pintype="bidirectional"/>
     </net>
-    <net code="31" name="LED_DATA" class="Default">
+    <net code="25" name="LED_DATA" class="Default">
       <node ref="R55" pin="1" pintype="passive"/>
       <node ref="U20" pin="27" pinfunction="GPIO26_27" pintype="bidirectional"/>
     </net>
-    <net code="32" name="LED_DIN" class="Default">
+    <net code="26" name="LED_DIN" class="Default">
       <node ref="D20" pin="3" pinfunction="DIN_3" pintype="input"/>
       <node ref="R55" pin="2" pintype="passive"/>
     </net>
-    <net code="33" name="MAG_SCL" class="Default">
-      <node ref="J6" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
+    <net code="27" name="MAG_SCL" class="Default">
+      <node ref="J6" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="R26" pin="2" pintype="passive"/>
       <node ref="U20" pin="4" pinfunction="GPIO7_4" pintype="bidirectional"/>
     </net>
-    <net code="34" name="MAG_SDA" class="Default">
-      <node ref="J6" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
+    <net code="28" name="MAG_SDA" class="Default">
+      <node ref="J6" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="R25" pin="2" pintype="passive"/>
       <node ref="U20" pin="3" pinfunction="GPIO6_3" pintype="bidirectional"/>
     </net>
-    <net code="35" name="PWM1" class="PWM_ESC">
+    <net code="29" name="PWM1" class="PWM_ESC">
       <node ref="J3" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="U20" pin="79" pinfunction="GPIO2_79" pintype="bidirectional"/>
     </net>
-    <net code="36" name="PWM2" class="PWM_ESC">
+    <net code="30" name="PWM2" class="PWM_ESC">
       <node ref="J3" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="U20" pin="80" pinfunction="GPIO3_80" pintype="bidirectional"/>
     </net>
-    <net code="37" name="PWM3" class="PWM_ESC">
+    <net code="31" name="PWM3" class="PWM_ESC">
       <node ref="J3" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="1" pinfunction="GPIO4_1" pintype="bidirectional"/>
     </net>
-    <net code="38" name="PWM4" class="PWM_ESC">
+    <net code="32" name="PWM4" class="PWM_ESC">
       <node ref="J3" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="2" pinfunction="GPIO5_2" pintype="bidirectional"/>
     </net>
-    <net code="39" name="PWM5" class="PWM_ESC">
-      <node ref="J12" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    <net code="33" name="PWM5" class="PWM_ESC">
+      <node ref="J6" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="U20" pin="8" pinfunction="GPIO10_8" pintype="bidirectional"/>
     </net>
-    <net code="40" name="PWM6" class="PWM_ESC">
-      <node ref="J12" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    <net code="34" name="PWM6" class="PWM_ESC">
+      <node ref="J6" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="U20" pin="9" pinfunction="GPIO11_9" pintype="bidirectional"/>
     </net>
-    <net code="41" name="PWM7" class="PWM_ESC">
-      <node ref="J12" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+    <net code="35" name="PWM7" class="PWM_ESC">
+      <node ref="J6" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="U20" pin="13" pinfunction="GPIO14_13" pintype="bidirectional"/>
     </net>
-    <net code="42" name="PWM8" class="PWM_ESC">
-      <node ref="J12" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+    <net code="36" name="PWM8" class="PWM_ESC">
+      <node ref="J6" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="U20" pin="14" pinfunction="GPIO15_14" pintype="bidirectional"/>
     </net>
-    <net code="43" name="PWR_GOOD" class="Default">
+    <net code="37" name="PWR_GOOD" class="Default">
       <node ref="R10" pin="2" pintype="passive"/>
       <node ref="SW1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U12" pin="3" pinfunction="EN_3" pintype="input"/>
       <node ref="U20" pin="35" pinfunction="RUN_35" pintype="input"/>
       <node ref="U7" pin="5" pinfunction="PG_5" pintype="output"/>
     </net>
-    <net code="44" name="PWR_SRC_ST" class="Default">
+    <net code="38" name="PWR_SRC_ST" class="Default">
       <node ref="R47" pin="2" pintype="passive"/>
       <node ref="U20" pin="48" pinfunction="GPIO39_48" pintype="bidirectional"/>
       <node ref="U25" pin="9" pinfunction="ST_9" pintype="open_collector"/>
     </net>
-    <net code="45" name="QSPI_SCLK" class="Default">
+    <net code="39" name="QSPI_SCLK" class="Default">
       <node ref="U20" pin="71" pinfunction="QSPI_SCLK_71" pintype="output"/>
       <node ref="U24" pin="6" pinfunction="CLK_6" pintype="input"/>
     </net>
-    <net code="46" name="QSPI_SD0" class="Default">
+    <net code="40" name="QSPI_SD0" class="Default">
       <node ref="U20" pin="72" pinfunction="QSPI_SD0_72" pintype="bidirectional"/>
       <node ref="U24" pin="5" pinfunction="DI/IO_{0}_5" pintype="bidirectional"/>
     </net>
-    <net code="47" name="QSPI_SD1" class="Default">
+    <net code="41" name="QSPI_SD1" class="Default">
       <node ref="U20" pin="74" pinfunction="QSPI_SD1_74" pintype="bidirectional"/>
       <node ref="U24" pin="2" pinfunction="DO/IO_{1}_2" pintype="bidirectional"/>
     </net>
-    <net code="48" name="QSPI_SD2" class="Default">
+    <net code="42" name="QSPI_SD2" class="Default">
       <node ref="U20" pin="73" pinfunction="QSPI_SD2_73" pintype="bidirectional"/>
       <node ref="U24" pin="3" pinfunction="~{WP}/IO_{2}_3" pintype="bidirectional"/>
     </net>
-    <net code="49" name="QSPI_SD3" class="Default">
+    <net code="43" name="QSPI_SD3" class="Default">
       <node ref="U20" pin="70" pinfunction="QSPI_SD3_70" pintype="bidirectional"/>
       <node ref="U24" pin="7" pinfunction="~{HOLD}/~{RESET}/IO_{3}_7" pintype="bidirectional"/>
     </net>
-    <net code="50" name="QSPI_SS" class="Default">
+    <net code="44" name="QSPI_SS" class="Default">
       <node ref="R24" pin="1" pintype="passive"/>
       <node ref="U20" pin="75" pinfunction="~{QSPI_SS}_75" pintype="output"/>
     </net>
-    <net code="51" name="SD_CLK" class="Default">
+    <net code="45" name="SD_CLK" class="Default">
       <node ref="J11" pin="5" pinfunction="CLK_5" pintype="input"/>
       <node ref="U20" pin="40" pinfunction="GPIO32_40" pintype="bidirectional"/>
     </net>
-    <net code="52" name="SD_CMD" class="Default">
+    <net code="46" name="SD_CMD" class="Default">
       <node ref="J11" pin="3" pinfunction="CMD_3" pintype="input"/>
       <node ref="R36" pin="2" pintype="passive"/>
       <node ref="U20" pin="42" pinfunction="GPIO33_42" pintype="bidirectional"/>
     </net>
-    <net code="53" name="SD_D0" class="Default">
+    <net code="47" name="SD_D0" class="Default">
       <node ref="J11" pin="7" pinfunction="DAT0_7" pintype="bidirectional"/>
       <node ref="R37" pin="2" pintype="passive"/>
       <node ref="U20" pin="43" pinfunction="GPIO34_43" pintype="bidirectional"/>
     </net>
-    <net code="54" name="SD_D1" class="Default">
+    <net code="48" name="SD_D1" class="Default">
       <node ref="J11" pin="8" pinfunction="DAT1_8" pintype="bidirectional"/>
       <node ref="R38" pin="2" pintype="passive"/>
       <node ref="U20" pin="44" pinfunction="GPIO35_44" pintype="bidirectional"/>
     </net>
-    <net code="55" name="SD_D2" class="Default">
+    <net code="49" name="SD_D2" class="Default">
       <node ref="J11" pin="1" pinfunction="DAT2_1" pintype="bidirectional"/>
       <node ref="R39" pin="2" pintype="passive"/>
       <node ref="U20" pin="45" pinfunction="GPIO36_45" pintype="bidirectional"/>
     </net>
-    <net code="56" name="SD_D3" class="Default">
+    <net code="50" name="SD_D3" class="Default">
       <node ref="J11" pin="2" pinfunction="DAT3/CD_2" pintype="bidirectional"/>
       <node ref="R40" pin="2" pintype="passive"/>
       <node ref="U20" pin="46" pinfunction="GPIO37_46" pintype="bidirectional"/>
     </net>
-    <net code="57" name="SD_DET" class="Default">
+    <net code="51" name="SD_DET" class="Default">
       <node ref="J11" pin="9" pinfunction="DET_B_9" pintype="passive"/>
       <node ref="R41" pin="2" pintype="passive"/>
       <node ref="U20" pin="47" pinfunction="GPIO38_47" pintype="bidirectional"/>
     </net>
-    <net code="58" name="SENS_MISO" class="SensorSPI">
+    <net code="52" name="SENS_MISO" class="SensorSPI">
       <node ref="TP3" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U20" pin="16" pinfunction="GPIO16_16" pintype="bidirectional"/>
       <node ref="U21" pin="1" pinfunction="AP_SDO_1" pintype="output"/>
       <node ref="U22" pin="5" pinfunction="SDO/ADDR_5" pintype="bidirectional"/>
       <node ref="U23" pin="12" pinfunction="SDO/ALT_ADDRESS_12" pintype="bidirectional"/>
     </net>
-    <net code="59" name="SENS_MOSI" class="SensorSPI">
+    <net code="53" name="SENS_MOSI" class="SensorSPI">
       <node ref="TP2" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U20" pin="19" pinfunction="GPIO19_19" pintype="bidirectional"/>
       <node ref="U21" pin="14" pinfunction="AP_SDA/AP_SDIO/AP_SDI_14" pintype="input"/>
       <node ref="U22" pin="4" pinfunction="SDI/SDA_4" pintype="bidirectional"/>
       <node ref="U23" pin="13" pinfunction="SDA/SDI/SDIO_13" pintype="bidirectional"/>
     </net>
-    <net code="60" name="SENS_SCK" class="SensorSPI">
+    <net code="54" name="SENS_SCK" class="SensorSPI">
       <node ref="TP1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U20" pin="18" pinfunction="GPIO18_18" pintype="bidirectional"/>
       <node ref="U21" pin="13" pinfunction="AP_SCLK_13" pintype="input"/>
       <node ref="U22" pin="2" pinfunction="SCK_2" pintype="input"/>
       <node ref="U23" pin="14" pinfunction="SCL/SCLK_14" pintype="input"/>
     </net>
-    <net code="61" name="SWCLK" class="Default">
+    <net code="55" name="SWCLK" class="Default">
       <node ref="J10" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U20" pin="33" pinfunction="SWCLK_33" pintype="input"/>
     </net>
-    <net code="62" name="SWDIO" class="Default">
+    <net code="56" name="SWDIO" class="Default">
       <node ref="J10" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="34" pinfunction="SWDIO_34" pintype="bidirectional"/>
     </net>
-    <net code="63" name="U7_FB" class="Default">
+    <net code="57" name="U7_FB" class="Default">
       <node ref="R7" pin="2" pintype="passive"/>
       <node ref="R8" pin="1" pintype="passive"/>
       <node ref="U7" pin="9" pinfunction="FB_9" pintype="input"/>
     </net>
-    <net code="64" name="U7_SCONF" class="Default">
+    <net code="58" name="U7_SCONF" class="Default">
       <node ref="R9" pin="1" pintype="passive"/>
       <node ref="U7" pin="10" pinfunction="S-CONF_10" pintype="input"/>
     </net>
-    <net code="65" name="U7_SS" class="Default">
+    <net code="59" name="U7_SS" class="Default">
       <node ref="C13" pin="1" pintype="passive"/>
       <node ref="U7" pin="8" pinfunction="NR/SS_8" pintype="output"/>
     </net>
-    <net code="66" name="U7_SW" class="Power">
+    <net code="60" name="U7_SW" class="Power">
       <node ref="L2" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U7" pin="2" pinfunction="SW_2" pintype="power_out"/>
     </net>
-    <net code="67" name="U7_VO" class="Power">
+    <net code="61" name="U7_VO" class="Power">
       <node ref="C10" pin="1" pintype="passive"/>
       <node ref="C11" pin="1" pintype="passive"/>
       <node ref="C12" pin="1" pintype="passive"/>
@@ -4878,72 +4773,72 @@
       <node ref="L2" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="U7" pin="3" pinfunction="VO_3" pintype="input"/>
     </net>
-    <net code="68" name="U25_ILM" class="Default">
+    <net code="62" name="U25_ILM" class="Default">
       <node ref="R46" pin="1" pintype="passive"/>
       <node ref="U25" pin="10" pinfunction="ILM_10" pintype="passive"/>
     </net>
-    <net code="69" name="U25_OV1" class="Default">
+    <net code="63" name="U25_OV1" class="Default">
       <node ref="R44" pin="2" pintype="passive"/>
       <node ref="R45" pin="1" pintype="passive"/>
       <node ref="U25" pin="5" pinfunction="OV1_5" pintype="input"/>
     </net>
-    <net code="70" name="U25_PR1" class="Default">
+    <net code="64" name="U25_PR1" class="Default">
       <node ref="R42" pin="2" pintype="passive"/>
       <node ref="R43" pin="1" pintype="passive"/>
       <node ref="U25" pin="6" pinfunction="PR1_6" pintype="input"/>
     </net>
-    <net code="71" name="U25_SS" class="Default">
+    <net code="65" name="U25_SS" class="Default">
       <node ref="C70" pin="1" pintype="passive"/>
       <node ref="U25" pin="11" pinfunction="SS_11" pintype="passive"/>
     </net>
-    <net code="72" name="U26_BST" class="Power">
+    <net code="66" name="U26_BST" class="Power">
       <node ref="C75" pin="1" pintype="passive"/>
       <node ref="U26" pin="6" pinfunction="BST_6" pintype="passive"/>
     </net>
-    <net code="73" name="U26_EN" class="Default">
+    <net code="67" name="U26_EN" class="Default">
       <node ref="R52" pin="2" pintype="passive"/>
       <node ref="U26" pin="2" pinfunction="EN_2" pintype="input"/>
     </net>
-    <net code="74" name="U26_SW" class="Power">
+    <net code="68" name="U26_SW" class="Power">
       <node ref="C75" pin="2" pintype="passive"/>
       <node ref="L3" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U26" pin="5" pinfunction="SW_5" pintype="output"/>
     </net>
-    <net code="75" name="USB_CC1" class="Default">
+    <net code="69" name="USB_CC1" class="Default">
       <node ref="J4" pin="A5" pinfunction="CC1_A5" pintype="bidirectional"/>
       <node ref="R4" pin="1" pintype="passive"/>
     </net>
-    <net code="76" name="USB_CC2" class="Default">
+    <net code="70" name="USB_CC2" class="Default">
       <node ref="J4" pin="B5" pinfunction="CC2_B5" pintype="bidirectional"/>
       <node ref="R5" pin="1" pintype="passive"/>
     </net>
-    <net code="77" name="USB_DM" class="USB">
+    <net code="71" name="USB_DM" class="USB">
       <node ref="J4" pin="A7" pinfunction="D-_A7" pintype="bidirectional"/>
       <node ref="J4" pin="B7" pinfunction="D-_B7" pintype="bidirectional"/>
       <node ref="U8" pin="3" pinfunction="I/O2_3" pintype="passive"/>
     </net>
-    <net code="78" name="USB_DM_MCU" class="USB">
+    <net code="72" name="USB_DM_MCU" class="USB">
       <node ref="R23" pin="1" pintype="passive"/>
       <node ref="U8" pin="4" pinfunction="I/O2_4" pintype="passive"/>
     </net>
-    <net code="79" name="USB_DM_RP" class="USB">
+    <net code="73" name="USB_DM_RP" class="USB">
       <node ref="R23" pin="2" pintype="passive"/>
       <node ref="U20" pin="66" pinfunction="USB_DM_66" pintype="bidirectional"/>
     </net>
-    <net code="80" name="USB_DP" class="USB">
+    <net code="74" name="USB_DP" class="USB">
       <node ref="J4" pin="A6" pinfunction="D+_A6" pintype="bidirectional"/>
       <node ref="J4" pin="B6" pinfunction="D+_B6" pintype="bidirectional"/>
       <node ref="U8" pin="1" pinfunction="I/O1_1" pintype="passive"/>
     </net>
-    <net code="81" name="USB_DP_MCU" class="USB">
+    <net code="75" name="USB_DP_MCU" class="USB">
       <node ref="R22" pin="1" pintype="passive"/>
       <node ref="U8" pin="6" pinfunction="I/O1_6" pintype="passive"/>
     </net>
-    <net code="82" name="USB_DP_RP" class="USB">
+    <net code="76" name="USB_DP_RP" class="USB">
       <node ref="R22" pin="2" pintype="passive"/>
       <node ref="U20" pin="67" pinfunction="USB_DP_67" pintype="bidirectional"/>
     </net>
-    <net code="83" name="USB_VBUS" class="Power">
+    <net code="77" name="USB_VBUS" class="Power">
       <node ref="C7" pin="1" pintype="passive"/>
       <node ref="C72" pin="1" pintype="passive"/>
       <node ref="J4" pin="A4" pinfunction="VBUS_A4" pintype="passive"/>
@@ -4954,7 +4849,7 @@
       <node ref="U25" pin="2" pinfunction="IN2_2" pintype="power_in"/>
       <node ref="U8" pin="5" pinfunction="VBUS_5" pintype="passive"/>
     </net>
-    <net code="84" name="V3V3_ANA" class="Power">
+    <net code="78" name="V3V3_ANA" class="Power">
       <node ref="C26" pin="1" pintype="passive"/>
       <node ref="C40" pin="1" pintype="passive"/>
       <node ref="C50" pin="1" pintype="passive"/>
@@ -4982,7 +4877,7 @@
       <node ref="U23" pin="3" pinfunction="RESERVED_3" pintype="passive"/>
       <node ref="U23" pin="6" pinfunction="VS_6" pintype="power_in"/>
     </net>
-    <net code="85" name="V3V3_SYS" class="Power">
+    <net code="79" name="V3V3_SYS" class="Power">
       <node ref="C22" pin="1" pintype="passive"/>
       <node ref="C23" pin="1" pintype="passive"/>
       <node ref="C24" pin="1" pintype="passive"/>
@@ -5003,12 +4898,12 @@
       <node ref="C66" pin="1" pintype="passive"/>
       <node ref="FB1" pin="2" pintype="passive"/>
       <node ref="J11" pin="4" pinfunction="VDD_4" pintype="power_in"/>
-      <node ref="J6" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
-      <node ref="J6" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
-      <node ref="J6" pin="18" pinfunction="Pin_18_18" pintype="passive"/>
-      <node ref="J6" pin="22" pinfunction="Pin_22_22" pintype="passive"/>
-      <node ref="J6" pin="26" pinfunction="Pin_26_26" pintype="passive"/>
-      <node ref="J6" pin="30" pinfunction="Pin_30_30" pintype="passive"/>
+      <node ref="J7" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
+      <node ref="J7" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
+      <node ref="J7" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
+      <node ref="J7" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
+      <node ref="J7" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
+      <node ref="J7" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="R10" pin="1" pintype="passive"/>
       <node ref="R20" pin="1" pintype="passive"/>
       <node ref="R25" pin="1" pintype="passive"/>
@@ -5035,7 +4930,7 @@
       <node ref="U20" pin="76" pinfunction="IOVDD_76" pintype="passive"/>
       <node ref="U24" pin="8" pinfunction="VCC_8" pintype="power_in"/>
     </net>
-    <net code="86" name="V5_SYS" class="Power">
+    <net code="80" name="V5_SYS" class="Power">
       <node ref="C17" pin="1" pintype="passive"/>
       <node ref="C19" pin="1" pintype="passive"/>
       <node ref="C20" pin="1" pintype="passive"/>
@@ -5045,15 +4940,21 @@
       <node ref="C8" pin="1" pintype="passive"/>
       <node ref="C9" pin="1" pintype="passive"/>
       <node ref="D20" pin="4" pinfunction="VDD_4" pintype="power_in"/>
-      <node ref="J6" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="J6" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
+      <node ref="J7" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J7" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
+      <node ref="J7" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="J7" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="J7" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="J7" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
+      <node ref="J7" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
+      <node ref="J7" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="U12" pin="1" pinfunction="IN_1" pintype="power_in"/>
       <node ref="U25" pin="1" pinfunction="OUT_1" pintype="passive"/>
       <node ref="U25" pin="8" pinfunction="OUT_8" pintype="passive"/>
       <node ref="U7" pin="1" pinfunction="EN/SYNC_1" pintype="input"/>
       <node ref="U7" pin="6" pinfunction="VIN_6" pintype="power_in"/>
     </net>
-    <net code="87" name="VBAT" class="Power">
+    <net code="81" name="VBAT" class="Power">
       <node ref="C73" pin="1" pintype="passive"/>
       <node ref="C74" pin="1" pintype="passive"/>
       <node ref="J3" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
@@ -5061,52 +4962,70 @@
       <node ref="R52" pin="1" pintype="passive"/>
       <node ref="U26" pin="3" pinfunction="IN_3" pintype="power_in"/>
     </net>
-    <net code="88" name="VBAT_SENSE" class="Default">
+    <net code="82" name="VBAT_SENSE" class="Default">
       <node ref="C48" pin="1" pintype="passive"/>
       <node ref="R27" pin="2" pintype="passive"/>
       <node ref="R28" pin="1" pintype="passive"/>
       <node ref="U20" pin="49" pinfunction="GPIO40/ADC0_49" pintype="bidirectional"/>
     </net>
-    <net code="89" name="VBUS_SENSE" class="Default">
+    <net code="83" name="VBUS_SENSE" class="Default">
       <node ref="C49" pin="1" pintype="passive"/>
       <node ref="R29" pin="2" pintype="passive"/>
       <node ref="R30" pin="1" pintype="passive"/>
       <node ref="U20" pin="52" pinfunction="GPIO41/ADC1_52" pintype="bidirectional"/>
     </net>
-    <net code="90" name="VREG_AVDD" class="Default">
+    <net code="84" name="VREG_AVDD" class="Default">
       <node ref="C41" pin="1" pintype="passive"/>
       <node ref="R20" pin="2" pintype="passive"/>
       <node ref="U20" pin="61" pinfunction="VREG_AVDD_61" pintype="power_in"/>
     </net>
-    <net code="91" name="VREG_LX" class="Default">
+    <net code="85" name="VREG_LX" class="Default">
       <node ref="L20" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U20" pin="63" pinfunction="VREG_LX_63" pintype="power_out"/>
     </net>
-    <net code="92" name="XIN" class="Default">
+    <net code="86" name="XIN" class="Default">
       <node ref="C46" pin="1" pintype="passive"/>
       <node ref="U20" pin="30" pinfunction="XIN_30" pintype="input"/>
       <node ref="Y1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="93" name="XOUT" class="Default">
+    <net code="87" name="XOUT" class="Default">
       <node ref="R21" pin="1" pintype="passive"/>
       <node ref="U20" pin="31" pinfunction="XOUT_31" pintype="output"/>
     </net>
-    <net code="94" name="XTAL_DRV" class="Default">
+    <net code="88" name="XTAL_DRV" class="Default">
       <node ref="C47" pin="1" pintype="passive"/>
       <node ref="R21" pin="2" pintype="passive"/>
       <node ref="Y1" pin="3" pinfunction="3_3" pintype="passive"/>
     </net>
-    <net code="95" name="unconnected-(D20-DOUT-Pad1)" class="Default">
+    <net code="89" name="unconnected-(D20-DOUT-Pad1)" class="Default">
       <node ref="D20" pin="1" pinfunction="DOUT_1" pintype="output+no_connect"/>
     </net>
-    <net code="96" name="unconnected-(J4-SBU1-PadA8)" class="Default">
+    <net code="90" name="unconnected-(J4-SBU1-PadA8)" class="Default">
       <node ref="J4" pin="A8" pinfunction="SBU1_A8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="97" name="unconnected-(J4-SBU2-PadB8)" class="Default">
+    <net code="91" name="unconnected-(J4-SBU2-PadB8)" class="Default">
       <node ref="J4" pin="B8" pinfunction="SBU2_B8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="98" name="unconnected-(U12-NC-Pad4)" class="Default">
+    <net code="92" name="unconnected-(U12-NC-Pad4)" class="Default">
       <node ref="U12" pin="4" pinfunction="NC_4" pintype="no_connect"/>
+    </net>
+    <net code="93" name="unconnected-(U20-GPIO1-Pad78)" class="Default">
+      <node ref="U20" pin="78" pinfunction="GPIO1_78" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="94" name="unconnected-(U20-GPIO21-Pad21)" class="Default">
+      <node ref="U20" pin="21" pinfunction="GPIO21_21" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="95" name="unconnected-(U20-GPIO27-Pad28)" class="Default">
+      <node ref="U20" pin="28" pinfunction="GPIO27_28" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="96" name="unconnected-(U20-GPIO28-Pad36)" class="Default">
+      <node ref="U20" pin="36" pinfunction="GPIO28_36" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="97" name="unconnected-(U20-GPIO31-Pad39)" class="Default">
+      <node ref="U20" pin="39" pinfunction="GPIO31_39" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="98" name="unconnected-(U20-GPIO43/ADC3-Pad54)" class="Default">
+      <node ref="U20" pin="54" pinfunction="GPIO43/ADC3_54" pintype="bidirectional+no_connect"/>
     </net>
     <net code="99" name="unconnected-(U21-RESV-Pad2)" class="Default">
       <node ref="U21" pin="2" pinfunction="RESV_2" pintype="passive+no_connect"/>

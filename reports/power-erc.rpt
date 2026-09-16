@@ -1,4 +1,4 @@
-ERC report (2026-09-16T01:31:59, Encoding UTF8)
+ERC report (2026-09-16T03:27:06, Encoding UTF8)
 Report includes: Errors, Warnings, Exclusions
 
 ***** Sheet /
@@ -14,8 +14,6 @@ Report includes: Errors, Warnings, Exclusions
 ***** Sheet /BOARD 2 / IMU, barometer, high-g/
 
 ***** Sheet /BOARD 3 / log flash and microSD/
-
-***** Sheet /BOARD 4 / servo outputs PWM5-8/
 
  ** ERC messages: 0  Errors 0  Warnings 0
 
