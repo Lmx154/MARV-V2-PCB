@@ -7,8 +7,8 @@ Source: RP2350 Datasheet, Section 1.2.3, Table 3 "General Purpose Input/Output (
 (F1 SPI, F2 UART, F3 I2C, F4 PWM, F5 SIO, F6-F8 PIO0/1/2, F9 clock/QMI/trace, F10 USB, F11 UART aux).
 ADC0-7 are GPIO40-47 on the RP2350B/RP2354B (QFN-80) only. All GPIO are 3.3 V, not 5 V tolerant.
 
-External IO leaves the board on the J6/J7/J8 IO block (right edge, signal/power/GND columns), the ESC pad
-row J3 (left edge) and the DBG pads J10 (bottom edge).
+External IO leaves the board on the J6/J7/J8 IO block (right front edge, signal/power/GND columns), plus
+two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10.
 
 ## Table A — every GPIO
 

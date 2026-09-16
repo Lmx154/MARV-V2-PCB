@@ -85,29 +85,83 @@ CX, CY = 100.0, 100.0
 # the standard 30.5 x 30.5 mm mounting square is OFF-CENTRE in X - 7.0 mm of
 # margin outside the left holes (which is where the ESC pad row J3 lives) and
 # 13.2 mm outside the right holes (which is where the 3-column IO block lives).
-# The envelope the lead specified is 50.7 x 41.6; the delivered board is the
-# smallest size that still passes every placement rule (see the shrink study in
-# DESIGN_SPEC "Envelope"): 48.7 mm is where the IO block's courtyard reaches
-# the right-hand grommet keepouts, 41.2 mm is where the top band thins until
-# the U7 output caps break CAP_NEAR_MM.
-BOARD_W = 48.7           # board width  (X), mm  -- see --width
+# The envelope the lead specified is 50.7 x 41.6.  This revision moved the ESC
+# pad row J3, the DBG pad row J10 and TP1-TP10 to the BACK (see BACK_* below),
+# which gave back the 7 mm left-edge pocket J3 used to need and the ten 1 mm
+# pads that used to sit on the sensor island, so the envelope shrank again:
+# the delivered board is the smallest size that still passes every placement
+# rule (see the shrink study in DESIGN_SPEC "Envelope").  46.6 mm is where the
+# IO block's fixed row-caption band reaches the right-hand grommet keepouts,
+# 39.0 mm is where the microSD socket on the top edge reaches the top pair.
+BOARD_W = 46.6           # board width  (X), mm  -- see --width
 BOARD_H = 41.2           # board height (Y), mm  -- see --height
 CORNER_R = 2.0           # Edge.Cuts corner radius, mm
 MOUNT_PITCH = 30.5       # standard four-hole square, hole centre to hole centre
-MOUNT_MARGIN_L = 7.0     # left board edge to the left hole centres
-MOUNT_X_L = -BOARD_W / 2.0 + MOUNT_MARGIN_L          # -18.35 at 50.7 mm
-MOUNT_X_R = MOUNT_X_L + MOUNT_PITCH                  # +12.15 at 50.7 mm
+# Left margin: with J3 on the back there is nothing outboard of the left holes
+# any more, so the margin is the minimum the grommet keepout itself allows -
+# the O 6.5 mm flange courtyard needs 3.25 mm plus 0.5 mm to the board edge,
+# i.e. a hole centre 3.75 mm in; 4.0 mm is that with 0.25 mm to spare.
+MOUNT_MARGIN_L = 4.0     # left board edge to the left hole centres
+MOUNT_X_L = -BOARD_W / 2.0 + MOUNT_MARGIN_L          # -19.30 at 46.6 mm
+MOUNT_X_R = MOUNT_X_L + MOUNT_PITCH                  # +11.20 at 46.6 mm
 MOUNT_Y = MOUNT_PITCH / 2.0                          # +-15.25, centred in Y
 # MOUNT_X_L/R above are the DEFAULT-width values, quoted here because they are
 # the numbers in DESIGN_SPEC; Builder recomputes both from the width actually
-# asked for, so --width slides the holes and keeps the 7.0 mm left margin (and
-# with it the ESC row's pocket and the IO block's) rather than eating it.
+# asked for, so --width slides the holes and keeps the 4.0 mm left margin (and
+# with it the IO block's right-hand margin) rather than eating it.
 MOUNT_KEEPOUT_R = 3.25   # grommet flange courtyard radius of the H* footprint
                          # (O 6.5 mm; it was O 8.0 mm before this revision -
                          # see MARV_Packages.pretty/MountingHole_4.0mm_Grommet)
+MOUNT_COPPER_R = 2.5     # the same footprint's O 5.0 mm *.Cu keepout zone.
+                         # The flange courtyard above is a FRONT-side keepout
+                         # for parts; this one is copper on every layer, so it
+                         # is what the back-side pads have to clear.
 EDGE_COPPER = 0.3        # copper-to-edge design rule, mm
 PAD_EDGE_INSET = 0.5     # pad outer edge this far in from Edge.Cuts
+POCKET_L = 0.9           # left board edge to the left-centre pocket.  It
+                         # used to be 3.4 mm because the ESC pad row and its
+                         # silk label band lived outboard of it; with J3 on
+                         # the back nothing does, so it is now just
+                         # copper-to-edge plus a margin, and the 2.5 mm that
+                         # freed came off the board width.
 BOARD_THICKNESS = 1.6
+
+# --------------------------------------------------------------------------
+# THE BACK SIDE (lead's decision)
+# --------------------------------------------------------------------------
+# Assembly stays SINGLE SIDED: every *component* is on F.Cu.  What moves to
+# B.Cu is bare pads only - the two solder pad rows and the ten test points -
+# which is what DESIGN_SPEC's "B.Cu carries routing and pads only" already
+# permits.  They are placed with pcbnew's Flip, so pads, mask, silkscreen and
+# courtyard all land on the B.* layers and KiCad, not this script, does the
+# layer bookkeeping (LIBRARIES.md "pad rows").
+#
+# Why: J3 faces the ESC in the stack, so an 8-wire harness off the back runs
+# straight down instead of round the edge; J10 and TP1-TP10 are bench-only and
+# are reached with the stack apart.  Moving them off the front freed the 7 mm
+# left-edge pocket, the bottom-right corner and ten 1 mm pads' worth of sensor
+# island - the three things the envelope was standing on.
+BACK_PAD_ROWS = ("J3", "J10")
+# every back-side part gets a visible reference on B.SilkS: nothing else is
+# there to collide with, and a bare pad with no legend is unusable on a bench.
+BACK_REF_SILK = True
+# J3, the ESC row: VERTICAL, pad 1 (CURR) at the top, its centre this far in
+# from the LEFT edge - between U26 and L3 on the
+# front, so the VBAT pad lands under the buck's own input and the four PWM
+# pads point at the MCU.  Rotation 270 is what puts pad 1 at the top of a
+# flipped row; check_back() asserts it, because the flip mirrors the
+# footprint and a wrong rotation silently reverses the harness order.
+ESC_BACK_X = 9.35
+ESC_BACK_Y = 0.0
+ESC_BACK_ROT = 270
+# TP1-TP10: two columns this far right of the sensor island's left edge, on a
+# 2.4 mm grid (1 x 1 mm pads, 2 x 2 mm courtyards), five rows from TP_GRID_Y
+# downward - directly under U21/U22/U23, so every via is the board thickness
+# and nothing else.
+J10_LABEL_DY = 3.3       # J10's captions stand this far above its pads
+TP_GRID_X = (0.6, 3.0)
+TP_GRID_Y = 0.6
+TP_GRID_DY = 2.4
 
 # JLCPCB JLC04161H-7628, 4 layer 1.6 mm
 STACKUP = [
@@ -178,7 +232,9 @@ NETCLASSES = [
 # The board is a dense single-sided assembly: only the connectors and the
 # switches keep a silkscreen reference designator, the per-pad function labels
 # are the silkscreen.  Every other reference stays on F.Fab (hidden on silk).
-REF_ON_SILK = ("J3", "J4", "J6", "J7", "J8", "J10", "J11", "SW1", "SW2")
+# J3/J10/TP* are not in this list because they are on the BACK: their
+# references are handled by back_silk(), which never has to fight for room.
+REF_ON_SILK = ("J4", "J6", "J7", "J8", "J11", "SW1", "SW2")
 
 # --------------------------------------------------------------------------
 # placement rules that are circuit requirements, checked after placement
@@ -235,12 +291,16 @@ IO_LABEL_X = 0.35        # label band, left of the signal column pad edge
 IO_LABEL_DY = 0.63       # signal label above / power label below the row
 IO_LABEL_SZ = 0.60       # = RULES["min_text_height"]; see silkscreen()
 IO_LABEL_CLR = 0.2       # reserved margin around a label
+IO_END_TICK = 1.10       # end tick, from the first/last row centre.  The
+                         # block's own footprint has no outline, so the board
+                         # draws these two ticks and the end labels beyond
+                         # them - see Builder.io_end_labels()
 
 # per-pad silkscreen labels: ref -> {pad number: label}
 PAD_LABELS = {
     "J3":  ["CURR", "TX", "M4", "M3", "M2", "M1", "VBAT", "GND"],
     # the IO block, row 1 (top) to row 14: the signal name and the rail its
-    # power pin carries.  pad_labels(), the reserved silk bands in floorplan()
+    # power pin carries.  io_labels(), the reserved silk bands in floorplan()
     # and the netlist row table all index this same list.
     "J6":  ["T0", "R0", "T1", "R1", "SDA", "SCL", "S5", "S6", "S7", "S8",
             "A44", "A45", "A46", "A47"],
@@ -392,11 +452,17 @@ def footprint_libs():
 # --------------------------------------------------------------------------
 class Geom:
     """courtyard / pad bounding boxes of a placed footprint, in board coords
-    relative to the footprint origin."""
+    relative to the footprint origin.
+
+    A footprint that has been flipped to the back carries its courtyard on
+    B.CrtYd, so the layer is taken from the footprint rather than assumed:
+    everything downstream (the packer, the overlap checks, the anchors) then
+    works on a back-side part exactly as it does on a front-side one."""
 
     def __init__(self, fp):
         org = fp.GetPosition()
-        cy = fp.GetCourtyard(pcbnew.F_CrtYd).BBox()
+        layer = pcbnew.B_CrtYd if fp.IsFlipped() else pcbnew.F_CrtYd
+        cy = fp.GetCourtyard(layer).BBox()
         self.cy = self._rel(cy.GetLeft(), cy.GetTop(), cy.GetRight(),
                             cy.GetBottom(), org)
         xs, ys = [], []
@@ -450,10 +516,16 @@ class Builder:
         self.fps = {}
         self.geom = {}
         self.placed = []        # (ref, courtyard rect in board coords)
+        self.back = set()       # refs flipped to the back (bare pads only)
         self.texts = []         # board level silkscreen text, movable
         self.pinned = []        # board level silkscreen text, fixed position
+        self.pinned_refs = set()  # refdes fixed by pin_ref(); never nudged
+        self.back_texts = []    # B.SilkS text; never nudged, nothing to hit
         self.problems = []
         self.notes = []
+
+    def is_back(self, ref):
+        return ref in self.back
 
     # ---------------- board setup ----------------
     def setup_layers(self):
@@ -533,6 +605,15 @@ class Builder:
             ref_fld.SetTextSize(pcbnew.VECTOR2I(mm(SILK_TEXT), mm(SILK_TEXT)))
             ref_fld.SetTextThickness(mm(SILK_THICK))
             fp.Value().SetVisible(False)
+            # THE BACK SIDE: flip here, before any geometry is measured, so
+            # Geom reads B.CrtYd and every anchor, the packer and the checks
+            # see the real back-side outline.  Flipping about the footprint's
+            # own origin mirrors X *inside* the footprint and leaves the
+            # placement to the tables below.
+            if ref in BACK_PAD_ROWS or TEST_POINTS.match(ref):
+                fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
+                ref_fld.SetVisible(BACK_REF_SILK)
+                self.back.add(ref)
             self.fps[ref] = fp
         # nets
         code = 1
@@ -889,9 +970,20 @@ class Builder:
             self.board.Add(s)
 
     def text(self, s, x, y, rot=0, size=LABEL_TEXT, thick=LABEL_THICK,
-             layer=None, just=0, pin=False):
+             layer=None, just=0, pin=False, back=False):
+        """board level silkscreen text.
+
+        `back` puts it on B.SilkS *mirrored*, so it reads the right way round
+        when the board is looked at from the back.  Back text is always
+        CENTRE justified: a mirrored run of glyphs is reflected about its
+        anchor, so only a centred box is the same box before and after the
+        mirror - which is what makes back_pad_labels() able to compute where
+        a back label lands without guessing how KiCad renders it.
+        """
         t = pcbnew.PCB_TEXT(self.board)
         t.SetText(s)
+        if back:
+            layer, just = pcbnew.B_SilkS, 0
         t.SetLayer(pcbnew.F_SilkS if layer is None else layer)
         t.SetPosition(to_kicad(x, y))
         t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size)))
@@ -899,10 +991,15 @@ class Builder:
         t.SetTextAngleDegrees(rot)
         if just:
             t.SetHorizJustify(just)
+        if back:
+            t.SetMirrored(True)
         self.board.Add(t)
-        # a pinned label is on a grid that was computed to fit (the J6 array
+        # a pinned label is on a grid that was computed to fit (the IO block
         # rows): silk_fix must not move it, only keep everything else off it
-        (self.pinned if pin else self.texts).append(t)
+        if back:
+            self.back_texts.append(t)
+        else:
+            (self.pinned if pin else self.texts).append(t)
         return t
 
     def text_extent(self, s, size=LABEL_TEXT, thick=LABEL_THICK):
@@ -945,29 +1042,46 @@ class Builder:
             out.append((PAD_LABELS["J7"][num - 1], x, y - IO_LABEL_DY))
         return out
 
-    def pad_labels(self, ref, labels, dx, dy, rot, just=0):
-        """put one silk label per pad, offset (dx, dy) from the pad centre."""
-        fp = self.fps[ref]
-        org = fp.GetPosition()
-        for pad in fp.Pads():
-            num = pad.GetNumber()
-            try:
-                idx = int(num) - 1
-            except ValueError:
-                continue
-            if idx < 0 or idx >= len(labels):
-                continue
-            p = pad.GetPosition()
-            x = tomm(p.x) - CX
-            y = CY - tomm(p.y)
-            self.text(labels[idx], x + dx, y + dy, rot, just=just)
+    def io_end_labels(self):
+        """(text, x, y) of the IO block's two END bands, centre justified.
 
-    def label_rects(self, ref, labels, dx, dy, size=LABEL_TEXT):
-        """world-coordinate (x0, y0, x1, y1) of every pad_labels(dx, dy,
-        just=-1) text this ref will get, one rect per pad -- so a caller can
-        test a nearby anchored part against only the rows whose label it
-        actually reaches, instead of the whole column's worst case."""
+        The block has no silkscreen outline of its own (the vendored footprint
+        drops it so the row-caption band can have the space), so its ends are
+        marked here: the three reference designators above the top row, one
+        over each column, and a "G" below the bottom row on the GND column -
+        the one legend the ground column needs, every pin of it being ground.
+
+        Both bands are FIXED like the row captions: floorplan() reserves them
+        and silkscreen() draws them from this same list, so what the packer
+        keeps clear and what is drawn cannot drift apart.  The offset is
+        solved, not tabulated - the end tick is 1.10 mm out from the end row
+        and the text sits clear of it - because it is one of the two things
+        that bound the board HEIGHT (check_silk() fails a band that reaches
+        the rounded corner).
+        """
+        _, h = self.text_extent("J8", IO_LABEL_SZ)
+        dy = IO_END_TICK + 0.15 + h / 2.0
         out = []
+        for ref in IO_REFS:
+            xs = {round(tomm(q.GetPosition().x), 3) - CX
+                  for q in self.fps[ref].Pads()}
+            ys = sorted(round(CY - tomm(q.GetPosition().y), 3)
+                        for q in self.fps[ref].Pads())
+            x = xs.pop()
+            out.append((ref, x, ys[-1] + dy))
+            if ref == IO_REFS[2]:                 # the GND column
+                out.append(("G", x, ys[0] - dy))
+        return out
+
+    def back_pad_labels(self, ref, labels, dx, dy, rot=0, size=LABEL_TEXT):
+        """one mirrored B.SilkS label per pad of a back-side row.
+
+        (dx, dy) is the offset from the pad CENTRE to the near edge of the
+        label box; the label itself is centred on that box, so it is left
+        aligned (dx > 0) or right aligned (dx < 0) in effect while staying
+        mirror-invariant.  Nothing else is on the back, so the band beside
+        the pads is reserved by construction and no nudging is needed.
+        """
         fp = self.fps[ref]
         for pad in fp.Pads():
             try:
@@ -976,28 +1090,37 @@ class Builder:
                 continue
             if idx < 0 or idx >= len(labels):
                 continue
-            w, h = self.text_extent(labels[idx], size)
+            w, _ = self.text_extent(labels[idx], size)
             p = pad.GetPosition()
-            x = tomm(p.x) - CX + dx
+            x = tomm(p.x) - CX + dx + (math.copysign(w / 2.0, dx) if dx else 0)
             y = CY - tomm(p.y) + dy
-            out.append((x, y - h / 2, x + w, y + h / 2))
-        return out
+            self.text(labels[idx], x, y, rot, size=size, back=True)
 
-    def mount_hole_pads(self):
-        """(x, y, radius) of every populated mounting hole's own NPTH pad --
-        the real copper, which is much smaller than MOUNT_KEEPOUT_R (a
-        placement safety margin for parts, not the hole itself)."""
-        out = []
-        for ref in ("H1", "H2", "H3", "H4"):
-            fp = self.fps.get(ref)
-            if fp is None:
-                continue
-            pad = next(iter(fp.Pads()), None)
-            if pad is None:
-                continue
-            x, y = self.pos(ref)
-            out.append((x, y, tomm(pad.GetSizeX()) / 2.0))
-        return out
+    def pin_ref(self, ref, x, y, size=IO_LABEL_SZ):
+        """park a FRONT reference designator at a fixed spot and pin it, so
+        silk_fix treats it as an obstacle instead of hunting it a place."""
+        fld = self.fps[ref].Reference()
+        fld.SetVisible(True)
+        fld.SetPosition(to_kicad(x, y))
+        fld.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size)))
+        fld.SetTextThickness(mm(LABEL_THICK))
+        fld.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_CENTER)
+        self.pinned.append(fld)
+        self.pinned_refs.add(ref)
+
+    def back_ref(self, ref, dx, dy):
+        """park a back-side part's reference designator beside its pads"""
+        fld = self.fps[ref].Reference()
+        if not fld.IsVisible():
+            return
+        x, y = self.pos(ref)
+        w, _ = self.text_extent(self.fps[ref].GetReference(), SILK_TEXT)
+        fld.SetPosition(to_kicad(
+            x + dx + (math.copysign(w / 2.0, dx) if dx else 0), y + dy))
+        fld.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_CENTER)
+        fld.SetTextAngleDegrees(0)
+        fld.SetMirrored(True)
+        self.back_texts.append(fld)
 
     # ---------------- silkscreen de-confliction ----------------
     def silk_fix(self, clr=0.25):
@@ -1052,6 +1175,8 @@ class Builder:
                          CY - tomm(bb.GetTop()) + clr))
         items = [(t, None) for t in self.texts]
         for ref in REF_ON_SILK:
+            if ref in self.pinned_refs:     # already on a fixed band
+                continue
             fp = self.fps.get(ref)
             if fp is not None and fp.Reference().IsVisible():
                 items.append((fp.Reference(), ref))
@@ -1130,10 +1255,14 @@ class Builder:
         out = []
         n = len(self.placed)
         holes = {"H1", "H2", "H3", "H4"}
+        # The grommet FLANGE keepout is a front-side courtyard: it keeps
+        # *parts* off the hole.  A back-side pad row is not a part and does
+        # not see the flange - what it has to clear is the footprint's O 5 mm
+        # *.Cu keepout zone, which is checked pad by pad in check_back().
         for ref in holes & set(self.fps):
             x, y = self.pos(ref)
             for rj, aj in self.placed:
-                if rj in holes:
+                if rj in holes or self.is_back(rj):
                     continue
                 if rect_circle_overlap(aj, x, y, MOUNT_KEEPOUT_R + 0.05):
                     out.append("mounting keepout %s/%s" % (ref, rj))
@@ -1144,6 +1273,10 @@ class Builder:
             for j in range(i + 1, n):
                 rj, aj = self.placed[j]
                 if rj in holes:
+                    continue
+                # two courtyards on OPPOSITE sides of the board cannot
+                # collide; the back is deliberately under the front parts
+                if self.is_back(ri) != self.is_back(rj):
                     continue
                 if bbox_overlap(ai, aj, gap=0.001):
                     ox = min(ai[2], aj[2]) - max(ai[0], aj[0])
@@ -1163,7 +1296,119 @@ class Builder:
                 if m < EDGE_COPPER:
                     out.append("copper-to-edge %s pad %s: %.2f mm"
                                % (ref, pad.GetNumber(), m))
+        out += self.check_back()
+        out += self.check_silk()
         out += self.check_rules()
+        return out
+
+    # ---------------- the back side ----------------
+    def pad_boxes(self, ref, clr=0.0):
+        """(x0, y0, x1, y1) of every pad of `ref`, grown by `clr`"""
+        out = []
+        for pad in self.fps[ref].Pads():
+            bb = pad.GetBoundingBox()
+            out.append((tomm(bb.GetLeft()) - CX - clr,
+                        CY - tomm(bb.GetBottom()) - clr,
+                        tomm(bb.GetRight()) - CX + clr,
+                        CY - tomm(bb.GetTop()) + clr))
+        return out
+
+    def check_back(self, clr=0.2):
+        """The back side carries BARE PADS ONLY (lead's decision A).
+
+        Three things are asserted here, because none of them is visible in a
+        front-side courtyard check:
+          1. exactly the allowed refs are flipped, and every one of them
+             really is - a component that drifted to B.Cu breaks the
+             single-sided-assembly rule the whole stack-up rests on;
+          2. J3 pin 1 (CURR) is still the TOP pad of the vertical row - the
+             flip mirrors the footprint, so a wrong rotation silently
+             reverses the ESC harness order;
+          3. back pads clear the grommets' O 5 mm *.Cu keepout zone and every
+             front-side HOLE (the IO block's 42 through pins, the USB-C shield
+             pegs, the NPTH mounting holes), which pass through to B.Cu.
+        """
+        out = []
+        allowed = set(BACK_PAD_ROWS) | {r for r in self.fps
+                                        if TEST_POINTS.match(r)}
+        for ref, fp in sorted(self.fps.items()):
+            if fp.IsFlipped() and ref not in allowed:
+                out.append("%s is on the BACK; assembly is single sided "
+                           "(front only)" % ref)
+            if ref in allowed and not fp.IsFlipped():
+                out.append("%s should be on the back and is not" % ref)
+        if "J3" in self.fps and self.fps["J3"].IsFlipped():
+            ys = {p.GetNumber(): CY - tomm(p.GetPosition().y)
+                  for p in self.fps["J3"].Pads()}
+            if ys and ys.get("1") != max(ys.values()):
+                out.append("J3 pad 1 (CURR) is not the top pad of the row")
+        # back pads vs the grommet copper keepout
+        for ref in sorted(self.back & set(self.fps)):
+            for box in self.pad_boxes(ref, clr):
+                for h in ("H1", "H2", "H3", "H4"):
+                    if h not in self.fps:
+                        continue
+                    hx, hy = self.pos(h)
+                    if rect_circle_overlap(box, hx, hy, MOUNT_COPPER_R):
+                        out.append("%s pad in the %s copper keepout" %
+                                   (ref, h))
+                        break
+        # back pads vs front-side holes
+        drills = []
+        for ref, fp in self.fps.items():
+            if ref in self.back:
+                continue
+            for pad in fp.Pads():
+                if tomm(pad.GetDrillSizeX()) <= 0:
+                    continue
+                bb = pad.GetBoundingBox()
+                drills.append((ref, pad.GetNumber(),
+                               (tomm(bb.GetLeft()) - CX,
+                                CY - tomm(bb.GetBottom()),
+                                tomm(bb.GetRight()) - CX,
+                                CY - tomm(bb.GetTop()))))
+        for ref in sorted(self.back & set(self.fps)):
+            for box in self.pad_boxes(ref, clr):
+                for oref, num, hole in drills:
+                    if bbox_overlap(box, hole):
+                        out.append("%s back pad over the %s pad %s hole"
+                                   % (ref, oref, num))
+        return out
+
+    def check_silk(self, clr=0.15):
+        """Silkscreen text must not sit on copper it can be read off, on the
+        board edge, or on a hole - on EITHER side.
+
+        The front labels of the IO block are FIXED (lead's decision B): they
+        are never nudged and never dropped, so the only way to know the band
+        still fits is to assert it here.  The back labels are fixed for the
+        opposite reason - nothing is on the back to push them around - so the
+        same assertion covers both.
+        """
+        out = []
+        front_pads, back_pads = [], []
+        for ref, fp in self.fps.items():
+            for pad in fp.Pads():
+                bb = pad.GetBoundingBox()
+                r = (tomm(bb.GetLeft()) - CX, CY - tomm(bb.GetBottom()),
+                     tomm(bb.GetRight()) - CX, CY - tomm(bb.GetTop()))
+                if pad.IsOnLayer(pcbnew.F_Cu):
+                    front_pads.append((ref, pad.GetNumber(), r))
+                if pad.IsOnLayer(pcbnew.B_Cu):
+                    back_pads.append((ref, pad.GetNumber(), r))
+        items = ([(t, front_pads, "F.SilkS") for t in self.pinned] +
+                 [(t, back_pads, "B.SilkS") for t in self.back_texts])
+        for t, pads, layer in items:
+            bb = t.GetBoundingBox()
+            r = (tomm(bb.GetLeft()) - CX - clr, CY - tomm(bb.GetBottom()) - clr,
+                 tomm(bb.GetRight()) - CX + clr, CY - tomm(bb.GetTop()) + clr)
+            for ref, num, q in pads:
+                if bbox_overlap(r, q):
+                    out.append("%s label %r on %s pad %s"
+                               % (layer, t.GetText(), ref, num))
+            if not self._inside_board(r):
+                out.append("%s label %r is off the board"
+                           % (layer, t.GetText()))
         return out
 
     def check_rules(self):
@@ -1217,13 +1462,22 @@ class Builder:
         return out
 
     def report_area(self):
-        tot = 0.0
+        """Fill is the FRONT number: the front is the assembly side and the
+        only one that has to hold everything.  The back's own courtyard sum is
+        reported beside it so the pad rows are not invisible, but the two are
+        not added - they are different sides of the same board."""
+        tot = back = 0.0
         for ref, rect in self.placed:
-            tot += (rect[2] - rect[0]) * (rect[3] - rect[1])
+            a = (rect[2] - rect[0]) * (rect[3] - rect[1])
+            if self.is_back(ref):
+                back += a
+            else:
+                tot += a
         area = 4 * self.HX * self.HY
-        print("  board %.1f x %.1f mm = %.0f mm2, courtyard sum %.0f mm2 "
-              "(%.1f %% fill)" % (2 * self.HX, 2 * self.HY, area, tot,
-                                  100 * tot / area))
+        print("  board %.1f x %.1f mm = %.0f mm2, front courtyard sum %.0f "
+              "mm2 (%.1f %% fill), back %.0f mm2 (%.1f %%)"
+              % (2 * self.HX, 2 * self.HY, area, tot, 100 * tot / area,
+                 back, 100 * back / area))
 
 
 # --------------------------------------------------------------------------
@@ -1235,18 +1489,20 @@ def floorplan(B, comps):
     THE ARRANGEMENT (lead's decision, madflight FC3v2 layout):
       right edge   J6/J7/J8, one 3-column x 14-row 2.54 mm block, full height,
                    columns GND | POWER | SIGNAL from the edge inward
-      left edge    J3, the ESC pad row, VERTICAL, pin 1 (CURR) at the top,
-                   in the 7 mm margin outboard of the two left mounting holes
+      left edge    nothing: the ESC pad row moved to the back this revision,
+                   so the margin is only what the grommet keepout needs
       bottom edge  J4 USB-C left of centre, SW1/SW2 just above it, D20 beside
-                   it, J10 DBG pads at the bottom right
+                   it
       top edge     J11 microSD, card ejecting +Y, left of centre
-      interior     U20 right of centre; the sensor island + TP1-TP10 between
-                   the MCU and the IO block; U24 below the MCU; U7/L2/U12
-                   above it; U26/L3/U25/C19 in the left-centre pocket
+      interior     U20 right of centre; the sensor island between the MCU and
+                   the IO block; U24 below the MCU; U7/L2/U12 above it;
+                   U26/L3/U25/C19 in the left-centre pocket
+      BACK         J3 (ESC row, vertical, CURR at the top) under the
+                   left-centre power pocket, J10 (DBG) at the bottom right,
+                   TP1-TP10 directly under the sensor island.  Bare pads only
+                   - see back_side() and BACK_PAD_ROWS.
     """
     HX, HY = B.HX, B.HY
-    EX = HX - PAD_EDGE_INSET        # SMD pad outer edge line, X
-    EY = HY - PAD_EDGE_INSET        # ... and Y
 
     # ---------------- mounting holes ----------------
     # OFF-CENTRE in X: 7.0 mm of margin on the left (the ESC pad row lives
@@ -1269,34 +1525,32 @@ def floorplan(B, comps):
         B.anchor(ref, 0, ("padc", io_x[ref]), ("padc", 0.0))
     io_blk = [dict(B.placed)[r] for r in IO_REFS]
 
-    # ---------------- LEFT edge: the ESC pad row ----------------
-    # Vertical, pads reaching the edge, pin 1 (CURR) at the top.  It sits in
-    # the 7 mm margin outboard of H1/H4: the row is 18.1 mm of courtyard and
-    # the two holes are 30.5 mm apart with a 6.5 mm keepout each, so it fits
-    # between them with 2.3 mm to spare at each end.
-    B.anchor("J3", 270, ("padmin", -EX), ("padc", 0.0))
-    # the eight per-pad labels (CURR..GND), one rect per row: reserved from
-    # the packer below AND used to keep C19 -- the only anchored part that
-    # shares this pocket -- off whichever of them its own height reaches.
-    esc_labels = B.label_rects("J3", PAD_LABELS["J3"], 1.5, 0.0)
+    # ---------------- LEFT edge: nothing ----------------
+    # The ESC pad row J3 used to own the 7 mm margin outboard of H1/H4.  It is
+    # on the BACK now (back_side() below), so the left margin is only what the
+    # grommet flange keepout needs - MOUNT_MARGIN_L, 4.0 mm - and the 3 mm
+    # that freed came straight off the board width.
 
     # ---------------- BOTTOM edge ----------------
-    B.anchor("J4", 0, ("org", -8.0), ("org", -HY + 3.65))   # USB-C, face flush
+    # mcu_x0 is the MCU's x (see "fixed interior" below, where the QFN is
+    # actually placed): the bottom-edge row is anchored to it, and it is only
+    # named here because the row is placed first.
+    mcu_x0 = HX - 24.55
+    # The bottom-edge group is anchored to the MCU, not to absolute x.  U24,
+    # the flash socket, hangs off the MCU's QSPI edge directly above SW2, and
+    # the MCU is pinned to the RIGHT board edge (see mcu_x); anchored to the
+    # board centre - or worse, to the left edge - the two walk towards each
+    # other as --width shrinks and the socket ends up inside the switch.
+    # Tied to mcu_x the whole row keeps its spacing at any width, and the
+    # width is taken out of the left-centre pocket, which is where the ESC
+    # row's old margin went.  The offsets are the ones the 48.7 mm board had.
+    B.anchor("J4", 0, ("org", mcu_x0 - 7.8), ("org", -HY + 3.65))  # USB-C
     j4 = dict(B.placed)["J4"]
-    B.anchor("SW1", 0, ("cyc", -11.0), ("cymin", j4[3] + 0.4))   # RESET
-    B.anchor("SW2", 0, ("cyc", -5.2), ("cymin", j4[3] + 0.4))    # BOOTSEL
-    B.place("D20", -1.0, -HY + 2.2, 0)                      # RGB LED
-    B.place("C79", -1.0, -HY + 4.4, 0)         # WS2812 bypass, at the LED
-    B.place("R55", 0.9, -HY + 4.4, 0)          # 100 R LED_DATA series R
-    # J10 sits as far right along the bottom edge as the H3 grommet keepout
-    # allows - the IO block owns the corner itself - and that limit moves left
-    # as the board gets shorter, because a shorter board puts the keepout
-    # closer to the pad row.  Solved rather than tabulated so --height stays
-    # meaningful: the row's courtyard reaches y = -HY + 3.44 and its right
-    # edge is 3.50 mm from the pad centre.
-    j10_dy = max(0.0, HY - 3.44 - MOUNT_Y)
-    j10_dx = math.sqrt(max((MOUNT_KEEPOUT_R + 0.35) ** 2 - j10_dy ** 2, 0.0))
-    B.anchor("J10", 0, ("padc", mx_r - j10_dx - 3.50), ("padmin", -EY))
+    B.anchor("SW1", 0, ("cyc", mcu_x0 - 10.8), ("cymin", j4[3] + 0.4))  # RST
+    B.anchor("SW2", 0, ("cyc", mcu_x0 - 5.0), ("cymin", j4[3] + 0.4))  # BOOT
+    B.place("D20", mcu_x0 - 0.8, -HY + 2.2, 0)              # RGB LED
+    B.place("C79", mcu_x0 - 0.8, -HY + 4.4, 0)  # WS2812 bypass, at the LED
+    B.place("R55", mcu_x0 + 1.1, -HY + 4.4, 0)  # 100 R LED_DATA series R
 
     # ---------------- TOP edge ----------------
     # microSD, card ejecting +Y (upward), left of centre and above the left
@@ -1330,7 +1584,7 @@ def floorplan(B, comps):
     # MCU's x is pinned to HX: move the edge and the island, not the island's
     # width.  ISLAND_W is what the three MEMS packages, their decoupling and a
     # corridor wide enough for a 2.18 mm test pad actually need.
-    mcu_x, mcu_y = HX - 24.55, 0.0
+    mcu_x, mcu_y = mcu_x0, 0.0
     mcu = B.place("U20", mcu_x, mcu_y, 180)
     # the crystal group is offset right of the QFN centre: at the centre its
     # left load cap runs into the microSD socket, whose own left edge is
@@ -1346,8 +1600,9 @@ def floorplan(B, comps):
     # a circuit requirement (CAP_NEAR), and the grommet keepouts break the
     # interior into pockets too narrow for the packer to discover a sane
     # switcher block on its own.
-    #   U26 + L3 (the VBAT buck) go in the left-centre pocket next to the J3
-    #   VBAT pad, which is at (-EX, -5) now that the row is vertical.
+    #   U26 + L3 (the VBAT buck) go in the left-centre pocket, which is now
+    #   directly ABOVE the J3 VBAT pad: the row is on the back at
+    #   (-HX + ESC_BACK_X, -5), so VBAT rises through the board into the buck.
     #   U7 + L2 (the 3.3 V buck) go in the top band above the MCU, with L2 to
     #   the LEFT of U7 because the TPS62913's SW (pad 2) and VO (pad 3) are
     #   both on that side of the RPU package.  L2 is the reason the band is at
@@ -1359,8 +1614,11 @@ def floorplan(B, comps):
     # above the USB-C receptacle and that band rises as the board gets shorter,
     # so a fixed y walks the buck into SW1.
     buck_y = -HY + 15.8
-    B.place("U26", -HX + 9.35, buck_y, 0)
-    B.place("L3", -HX + 14.35, buck_y, 0)
+    # POCKET_L below is why these are 2.5 mm further left than they were:
+    # the ESC row and its label band used to own the first 3.4 mm of the
+    # left edge and now nothing does.
+    B.place("U26", -HX + POCKET_L + 5.95, buck_y, 0)
+    B.place("L3", -HX + POCKET_L + 10.95, buck_y, 0)
     l2_x = max(mcu_x + 0.8, j11[2] + 2.6)
     B.place("L2", l2_x, HY - 3.6, 0)
     B.place("U7", l2_x + 4.5, HY - 3.6, 0)
@@ -1370,23 +1628,18 @@ def floorplan(B, comps):
     B.place("U12", max(mcu_x + 8.4, xtal_x + 6.0), 10.0, 0)
     # U25, the priority mux, and C19, its 220 uF output bulk: anchored side by
     # side in the left-centre pocket, where VBAT and 5V_IN already are.
-    B.place("U25", min(-HX + 16.35, mcu[0] - 1.8), buck_y + 4.5, 0)
+    B.place("U25", min(-HX + POCKET_L + 12.95, mcu[0] - 1.8),
+            buck_y + 4.5, 0)
     # C19 is the 220 uF polymer: 8.9 x 4.9 mm of courtyard, the biggest
-    # passive on the board.  Its ceiling is the microSD socket above it; its
-    # left edge is nudged clear of whichever ESC row labels its own pad
-    # height overlaps (CURR/TX/M4 at this pocket -- see `esc_labels` above),
-    # rather than being fixed, or its top-left corner would sit under TX.
+    # passive on the board.  Its ceiling is the microSD socket above it.  It
+    # used to be nudged clear of the ESC row's silk labels; with J3 on the
+    # back that band is gone and the cap sits hard against the left margin,
+    # clear of the H1 flange keepout on its own courtyard.
     c19_y = j11[1] - 2.75
-    g19 = B.g("C19", 0)
-    c19_x = -HX + 8.05
-    pad_lo, pad_hi = c19_y + g19.pad[1], c19_y + g19.pad[3]
-    for lx0, ly0, lx1, ly1 in esc_labels:
-        if ly0 < pad_hi and pad_lo < ly1:
-            c19_x = max(c19_x, lx1 + 0.2 - g19.pad[0])
-    B.place("C19", c19_x, c19_y, 0)
+    B.place("C19", -HX + 5.05, c19_y, 0)
     # U8, the USB ESD array, sits beside the receptacle rather than being
     # packed: the two switches take the whole band above J4.
-    B.place("U8", -HX + 5.75, buck_y - 4.6, 0)
+    B.place("U8", -HX + POCKET_L + 2.35, buck_y - 4.6, 0)
     # U24, the QSPI flash/PSRAM socket, is anchored for the same reason:
     # DESIGN_SPEC puts it "adjacent to the MCU's QSPI pads", which with U20 at
     # 180 deg is the bottom edge of the QFN.
@@ -1405,34 +1658,39 @@ def floorplan(B, comps):
     B.place("U21", isl_x + 1.8, -3.0, 0)    # ICM-45686
     B.place("U22", isl_x + 1.25, 1.2, 0)    # BMP581
 
+    # ---------------- the back side ----------------
+    # Bare pads only (see BACK_PAD_ROWS).  Nothing is packed here: the back is
+    # empty by construction, so every one of these is a solved position rather
+    # than a search, and check_back() asserts they clear the grommets' copper
+    # keepout and every front-side hole.  Placed HERE, before the reserved
+    # bands and the packer's `fixed` snapshot, so the cluster sweep below
+    # treats J3/J10/TP* as already placed instead of packing them onto the
+    # front - which is exactly what the snapshot is for.
+    back_side(B, isl_x, mx_r)
+
     # ---------------- reserved bands (silk pad labels) ----------------
-    x10 = sorted(tomm(q.GetPosition().x) - CX for q in B.fps["J10"].Pads())
-    y10 = CY - tomm(next(iter(B.fps["J10"].Pads())).GetPosition().y)
+    # Only the front silk needs reserving.  The ESC row's and the DBG row's
+    # label bands went to the back with their pads, and the back is empty, so
+    # what is left is the board name and the IO block's row captions.
     reserved = [
-        (x10[0] - 0.9, y10 + 1.0, x10[-1] + 0.9, y10 + 5.4),   # J10 labels
         (-HX + 0.4, -HY + 0.4, -HX + 6.6, -HY + 2.2),   # board name
-        (-HX + 1.0, HY - 11.4, -HX + 4.4, HY - 9.6),   # "ESC" caption
     ]
-    # J3 pad labels: the bounding box of the eight rects computed above
-    # (esc_labels), not a hand-fit rectangle -- so it tracks the row's real
-    # geometry instead of drifting stale the next time the board is resized.
-    reserved.append((min(r[0] for r in esc_labels) - 0.2,
-                      min(r[1] for r in esc_labels) - 0.2,
-                      max(r[2] for r in esc_labels) + 0.2,
-                      max(r[3] for r in esc_labels) + 0.2))
     # the IO block row captions: 28 small boxes (a signal name and a rail name
     # per row) rather than one slab, so the sensor island keeps every cell the
-    # labels do not actually use.
+    # labels do not actually use.  Together they span the FULL height of the
+    # block, and silkscreen() draws every one of them at exactly the position
+    # reserved here: the labels are FIXED (lead's decision B), so a part that
+    # would collide with one simply cannot be placed there.
     for s, lx, ly in B.io_labels():
         w, h = B.text_extent(s, IO_LABEL_SZ)
         reserved.append((lx - w - IO_LABEL_CLR, ly - h / 2 - 0.05,
                          lx + IO_LABEL_CLR, ly + h / 2 + 0.05))
-    # the two "G" brackets at the ends of the GND column
-    ys = sorted({round(CY - tomm(q.GetPosition().y), 3)
-                 for q in B.fps[IO_REFS[2]].Pads()})
-    for y in (ys[-1] + 1.55, ys[0] - 1.55):
-        reserved.append((io_x[IO_REFS[2]] - 0.7, y - 0.75,
-                         io_x[IO_REFS[2]] + 0.7, y + 0.75))
+    # the block's two end bands (J6/J7/J8 above the top row, "G" below the
+    # bottom one), from the same list silkscreen() draws them from
+    for s, lx, ly in B.io_end_labels():
+        w, h = B.text_extent(s, IO_LABEL_SZ)
+        reserved.append((lx - w / 2 - IO_LABEL_CLR, ly - h / 2 - 0.05,
+                         lx + w / 2 + IO_LABEL_CLR, ly + h / 2 + 0.05))
     B.build_grid(reserved)
 
     # ---------------- switcher loops ----------------
@@ -1466,11 +1724,11 @@ def floorplan(B, comps):
     # microSD socket belongs to the socket's own bypass and pull-ups (nw), and
     # the left-pocket clusters are packed first, so if west reached into it
     # they would take it.
-    west = [(-HX + 3.4, -11.4, mcu[0] - 0.3, 2.4),
-            (-HX + 3.4, 2.4, -HX + 12.4, 11.4)]
+    west = [(-HX + POCKET_L, -11.4, mcu[0] - 0.3, 2.4),
+            (-HX + POCKET_L, 2.4, -HX + POCKET_L + 9.0, 11.4)]
     # bottom left, around the USB-C receptacle
-    sw = [(-HX + 3.4, -HY + 0.4, -HX + 11.4, -6.0),
-          (-13.3, -11.7, -2.7, -6.0)]
+    sw = [(-HX + POCKET_L, -HY + 0.4, -HX + POCKET_L + 8.0, -6.0),
+          (mcu_x - 13.1, -11.7, mcu_x - 2.5, -6.0)]
     # around the microSD socket: the strip below it and the corner left of it
     nw = [(-HX + 12.55, 2.4, j11[2] - 0.3, j11[1] - 0.3)]
     # the top band, above the MCU and right of the microSD: U7/L2 are already
@@ -1499,14 +1757,16 @@ def floorplan(B, comps):
                      nw + ring),
         "sd_pu":    (["R36", "R37", "R38", "R39", "R40", "R41"],
                      (j11[2] - 1.0, j11[1] - 2.0), nw + ring),
-        "adc_div":  (["R27", "R28", "R29", "R30"], (-HX + 5.5, -2.0),
+        "adc_div":  (["R27", "R28", "R29", "R30"],
+                     (-HX + POCKET_L + 2.1, -2.0),
                      west + sw),
-        "buck5":    (["R54"], (-HX + 6.85, 8.2), west),
+        "buck5":    (["R54"], (-HX + POCKET_L + 3.45, 8.2), west),
         "mux":      (["U25", "C70", "C71", "C72", "R42", "R43", "R44", "R45",
-                      "R46", "R47"], (-HX + 17.85, -0.5), west),
+                      "R46", "R47"], (-HX + POCKET_L + 14.45, -0.5), west),
         # The analog island: the three MEMS sensors, their decoupling and the
-        # LDO that feeds them, kept IND_SENSOR_MM clear of L2/L3.  Packed in
-        # two passes with the test points in between - see place_testpoints().
+        # LDO that feeds them, kept IND_SENSOR_MM clear of L2/L3.  The ten test
+        # points that used to share this strip are on the back now, so the
+        # decoupling has the whole island to itself - see back_side().
         "sens":     (["C50", "C51",
                       "C52", "C53", "C54", "C55", "C56", "C57", "C58", "C59",
                       "C60", "C61", "R48", "R50", "R51"],
@@ -1526,13 +1786,11 @@ def floorplan(B, comps):
     assigned.update({r: "u7" for r, _ in u7_loop})
     assigned.update({r: "buck5" for r, _ in buck_loop})
     groups["u7"] = ([], (6.1, 13.0), north)
+    # everything anchored so far, including the whole back side, is off limits
+    # to the cluster sweep below
     fixed = {r for r, _ in B.placed}
-    # the test points are packed after every cluster, into whatever the sensor
-    # cluster left free, so they must not be swept into a cluster here
-    tps = sorted((r for r in B.fps if TEST_POINTS.match(r)),
-                 key=lambda r: int(r[2:]))
     for ref in sorted(B.fps):
-        if ref in assigned or ref in fixed or ref in tps:
+        if ref in assigned or ref in fixed:
             continue
         votes = {}
         for net, nodes in B.nets:
@@ -1560,83 +1818,6 @@ def floorplan(B, comps):
                 fr += (~sub).sum() * B.CELL ** 2
             print("  region %-8s %6.0f mm2 total, %6.0f mm2 free"
                   % (nm, tot, fr))
-
-    # ---------------- test points ----------------
-    # TP1-TP10 are 1 x 1 mm pads on the sensor SPI bus, its three chip selects
-    # and its four interrupts.  A test point away from the part it probes is a
-    # stub on a 10 MHz bus, so each one is seeded on the sensor whose net it
-    # carries (the three shared bus nets go to the IMU) and bounded to a halo
-    # around it; check_rules() then holds every one within TP_NEAR_MM of a
-    # sensor.  They are packed IMMEDIATELY AFTER the sens cluster and before
-    # any other group, because by the time the rest of the board is packed
-    # there is nothing left next to the sensors.
-    def place_testpoints():
-        far = 0.0
-        # owner = the sensor whose net this pad carries; the three shared bus
-        # nets (SCK/MOSI/MISO) touch all three, and those go to the IMU.
-        own_of = {}
-        for r in tps:
-            owner = SENSORS[0]
-            for net, nodes in B.nets:
-                if (r, "1") in nodes:
-                    own = [s for s in SENSORS if any(n == s for n, _ in nodes)]
-                    if len(own) == 1:
-                        owner = own[0]
-                    break
-            own_of[r] = owner
-        # round robin over the sensors rather than TP1..TP10 in order: six of
-        # the ten belong to the IMU, and taken in order they would use up every
-        # free cell on the island before the barometer and the high-g pad get
-        # one.  One pad per sensor per pass keeps all three probeable.
-        queue = {s: [r for r in tps if own_of[r] == s] for s in SENSORS}
-        order_tp = []
-        while any(queue.values()):
-            for s in SENSORS:
-                if queue[s]:
-                    order_tp.append(queue[s].pop(0))
-        for r in order_tp:
-            owner = own_of[r]
-            seed = B.pos(owner)
-            # First choice: a halo of TP_NEAR_MM/sqrt(2) around the owner, so
-            # that anything inside it is within TP_NEAR_MM of that sensor even
-            # corner to corner.  Then the same halo at full reach, where the
-            # corners are further than TP_NEAR_MM but place_near always takes
-            # the spot NEAREST the sensor, so only a pad that has nowhere
-            # closer lands out there - and check_rules() is what says whether
-            # it did.  Then the union over all three sensors.
-            tight = TP_NEAR_MM / math.sqrt(2.0)
-            for bounds in ([b for b in B.halo([owner], tight)],
-                           [b for b in B.halo([owner], TP_NEAR_MM)],
-                           [b for s in SENSORS
-                            for b in B.halo([s], TP_NEAR_MM)]):
-                d = B.place_near(r, seed, (0,), bounds=bounds)
-                if d is not None:
-                    break
-            if d is None:
-                # no scattering: a test point that cannot sit at its sensor is
-                # a placement failure, not a pad to drop somewhere else
-                B.problems.append("testpoints: no room for %s at %s"
-                                  % (r, owner))
-                B.place(r, -B.HX + 4, -B.HY - 35 - 3 * int(r[2:]), 0)
-            else:
-                far = max(far, d)
-        print("  cluster %-9s %2d parts, seeded on the part they probe, max "
-              "spread %.1f mm" % ("testpts", len(tps), far))
-
-    # Order matters: the groups that have only one place to go come first.
-    # "mux" stays ahead of the analog island - U25 only fits in the left-centre
-    # pocket, while the sensor decoupling can land anywhere near its own part,
-    # so the mux books its room first.  The island itself is over-subscribed
-    # once the ten test points are in it, so its decoupling spills through the
-    # grown-bounds fallback rather than displacing anything anchored.
-    # TP1-TP10 book their room FIRST, before any cluster.  They are 1 x 1 mm
-    # pads that must land within TP_NEAR_MM of the part they probe, the island
-    # is the narrowest region on the board, and everything else in it - the
-    # sensor decoupling, the MCU decoupling that reaches into it - can spill
-    # somewhere else.  A test point cannot: away from its part it is a stub on
-    # a 10 MHz bus.  Packed after the clusters, four of the ten had nowhere.
-    if tps:
-        place_testpoints()
 
     # Groups whose parts have exactly one sane home come before the ones that
     # can spill: the sensor decoupling can sit anywhere near its own package,
@@ -1693,53 +1874,153 @@ def floorplan(B, comps):
                 print("   |" + row)
 
 
+def back_side(B, isl_x, mx_r):
+    """Place the three things that live on B.Cu: the ESC pad row J3, the DBG
+    pad row J10 and the ten test points.  Bare pads, no components.
+
+    Nothing here is packed.  The back is empty by construction, so each
+    position is solved from the one obstacle that does reach through the
+    board - the grommets' O 5 mm copper keepout and the front-side holes -
+    and check_back() asserts the result rather than trusting it.
+    """
+    HX, HY = B.HX, B.HY
+
+    # ---- J3, the ESC pad row -------------------------------------------
+    # Under the left-centre power pocket (see ESC_BACK_*).  The row is 14 mm
+    # of pads and the left grommets are 30.5 mm apart at x = -HX + 4.0, so it
+    # clears both by more than 6 mm in x alone.
+    B.place("J3", -HX + ESC_BACK_X, ESC_BACK_Y, ESC_BACK_ROT)
+
+    # ---- J10, the DBG landing ------------------------------------------
+    # Bottom edge, as far RIGHT as the H3 grommet lets it go.  On the front
+    # the limit was the flange courtyard; on the back it is the O 5 mm copper
+    # keepout, which is 0.75 mm smaller in radius, so the row sits further
+    # right than it used to.  Solved, not tabulated, so --height stays
+    # meaningful: as the board gets shorter the pad row climbs towards the
+    # keepout and the usable x shrinks with it.
+    # Two things stick out to the right and both have to clear the circle: the
+    # pad row itself, and the "GND" caption standing above its last pad - the
+    # caption is narrower but reaches 3.3 mm further up, which is *towards*
+    # the hole centre, so it is the binding one at the wider board sizes.
+    pad_lo, pad_hi = -HY + PAD_EDGE_INSET, -HY + PAD_EDGE_INSET + 2.2
+    lw, lh = B.text_extent(PAD_LABELS["J10"][-1])
+    lab_c = (pad_lo + pad_hi) / 2.0 + J10_LABEL_DY
+    boxes = [(2.0 + 0.7, pad_lo, pad_hi),                      # the pads
+             (2.0 + lh / 2.0, lab_c - lw / 2.0, lab_c + lw / 2.0)]
+    r = MOUNT_COPPER_R + 0.35
+    x_max = min(mx_r - math.sqrt(max(r * r - max(
+        0.0, -MOUNT_Y - hi, lo + MOUNT_Y) ** 2, 0.0)) - out
+        for out, lo, hi in boxes)
+    B.anchor("J10", 0, ("org", x_max), ("padmin", pad_lo))
+
+    # ---- TP1-TP10 -------------------------------------------------------
+    # A fixed 2 x 5 grid under the sensor island.  owner = the sensor whose
+    # net this pad carries (the three shared bus nets touch all three, and
+    # those go to the IMU); each pad then takes the free slot NEAREST its
+    # owner, so the six IMU pads fill the middle of the grid and the
+    # barometer's and the high-g part's take the ends.  check_rules() still
+    # holds every one within TP_NEAR_MM of a sensor.
+    tps = sorted((r for r in B.fps if TEST_POINTS.match(r)),
+                 key=lambda r: int(r[2:]))
+    own_of = {}
+    for ref in tps:
+        owner = SENSORS[0]
+        for net, nodes in B.nets:
+            if (ref, "1") in nodes:
+                own = [s for s in SENSORS if any(n == s for n, _ in nodes)]
+                if len(own) == 1:
+                    owner = own[0]
+                break
+        own_of[ref] = owner
+    slots = [(isl_x + sx, TP_GRID_Y - row * TP_GRID_DY)
+             for row in range(5) for sx in TP_GRID_X]
+    far = 0.0
+    for ref in tps:
+        if not slots:
+            B.problems.append("testpoints: no back-side slot for %s" % ref)
+            continue
+        ox, oy = B.pos(own_of[ref])
+        d, i = min((math.hypot(sx - ox, sy - oy), i)
+                   for i, (sx, sy) in enumerate(slots))
+        sx, sy = slots.pop(i)
+        B.place(ref, sx, sy, 0)
+        far = max(far, d)
+    print("  back  %2d test points on a %.1f mm grid under the island, "
+          "worst %.1f mm from its own sensor"
+          % (len(tps), TP_GRID_DY, far))
+
+
+def back_silk(B):
+    """The B.SilkS legend: mirrored, so it reads from the back.
+
+    Nothing is fixed up here.  The back carries bare pads only, so every band
+    beside a pad is free by construction and the labels are simply drawn where
+    they belong; check_silk() asserts they cleared the copper anyway.
+    """
+    # J3: the row is vertical, so each pad label sits INBOARD of its pad,
+    # left aligned, in the band the row's own courtyard does not use.
+    B.back_pad_labels("J3", PAD_LABELS["J3"], 2.2, 0.0)
+    jx, jy = B.pos("J3")
+    B.text("ESC", jx, jy + 10.6, 0, size=0.9, thick=0.15, back=True)
+    B.back_ref("J3", 0.0, -10.6)
+    # J10: labels above the pads, rotated 90, as on the front
+    B.back_pad_labels("J10", PAD_LABELS["J10"], 0.0, J10_LABEL_DY, 90)
+    B.back_ref("J10", 0.0, 6.0)
+    # the test points: the reference IS the label.  The left column reads
+    # outward to the left and the right column outward to the right, so no
+    # label ever crosses the other column's pads.
+    tps = sorted((r for r in B.back if TEST_POINTS.match(r)),
+                 key=lambda r: int(r[2:]))
+    if tps:
+        right = max(B.pos(r)[0] for r in tps)
+        for ref in tps:
+            B.back_ref(ref, 1.1 if B.pos(ref)[0] > right - 0.01 else -1.1,
+                       0.0)
+
+
 def silkscreen(B):
     HX, HY = B.HX, B.HY
     B.text("MARV V2", -HX + 0.7, -HY + 1.3, 0, size=1.1, thick=0.18, just=-1)
-    # LEFT edge, the ESC pad row: the row is vertical, so each pad label sits
-    # INBOARD of its pad, horizontal and left aligned - four characters at
-    # 0.7 mm fit in the 2.0 mm pitch with 0.7 mm between lines.
-    B.text("ESC", -HX + 1.4, HY - 10.5, 0, size=0.9, thick=0.15, just=-1)
-    B.pad_labels("J3", PAD_LABELS["J3"], 1.5, 0.0, 0, just=-1)
-    # BOTTOM edge, the DBG pads: labels above the pads, rotated 90 deg
-    B.pad_labels("J10", PAD_LABELS["J10"], 0.0, 3.3, 90)
+    # The ESC row's and the DBG row's legends are on B.SilkS with their pads
+    # (back_silk()).  What is left on the front is the IO block's row
+    # captions, the board name and the reference designators.
 
     # RIGHT edge, the IO block.  Every ROW gets a two-line caption in the band
     # on the inner side of the block (see Builder.io_labels): the signal name
     # above the row centreline, the rail its power pin carries below it.  The
-    # labels are pinned - their grid was computed to fit, so silk_fix keeps the
-    # other silk off them instead of shuffling them.  The GND column needs no
-    # per-pin label (every pin of it is ground) and there is no room for one
-    # anyway: 1.7 mm pads on a 2.54 mm grid leave 0.84 mm between columns and
-    # 0.65 mm to the board edge.  It is bracketed with a "G" at each end.
-    # The vendored footprint has no silkscreen outline of its own (it would eat
-    # the label band), so the board draws the end ticks here; row 1's own
-    # caption already says which end pin 1 is at, so there is no separate
-    # pin-1 dot to land on the pad's copper.
+    # GND column needs no per-pin label (every pin of it is ground) and there
+    # is no room for one anyway: 1.7 mm pads on a 2.54 mm grid leave 0.84 mm
+    # between columns and 0.65 mm to the board edge.  It is bracketed with a
+    # "G" at each end.  The vendored footprint has no silkscreen outline of its
+    # own (it would eat the label band), so the board draws the end ticks here;
+    # row 1's own caption already says which end pin 1 is at, so there is no
+    # separate pin-1 dot to land on the pad's copper.
     #
-    # A label is pinned (silk_fix leaves the rest of the silk to detour
-    # around it) UNLESS its own box reaches a mounting hole's real copper --
-    # MOUNT_KEEPOUT_R is a placement margin for *parts*, much bigger than the
-    # NPTH itself, so a hole that is nowhere near any packed footprint can
-    # still be under a label at this row pitch (H3, at this board size, is
-    # under the last two rows).  Unpinning just those lets silk_fix's normal
-    # search find them a clear spot instead of drawing them on the hole.
-    holes = B.mount_hole_pads()
+    # EVERY ONE OF THESE LABELS IS FIXED (lead's decision B).  The old code
+    # unpinned whichever captions reached a mounting hole's copper and let
+    # silk_fix hunt them a spot; at the last board size that dropped A47 and a
+    # 3V3 outright, and a dropped IO label is a mis-wired servo.  Now the band
+    # is part of the envelope instead: floorplan() reserves exactly these
+    # boxes so no part can be packed into them, check_silk() fails the build
+    # if one of them lands on copper, a hole or the board edge, and the
+    # board WIDTH is what has to give - which is what set BOARD_W.
     for s, lx, ly in B.io_labels():
-        w, h = B.text_extent(s, IO_LABEL_SZ)
-        box = (lx - w - IO_LABEL_CLR, ly - h / 2 - 0.05,
-               lx + IO_LABEL_CLR, ly + h / 2 + 0.05)
-        clear = not any(rect_circle_overlap(box, hx, hy, hr + 0.15)
-                        for hx, hy, hr in holes)
-        B.text(s, lx, ly, 0, size=IO_LABEL_SZ, just=1, pin=clear)
-    sig, gnd = B.fps[IO_REFS[0]], B.fps[IO_REFS[2]]
+        B.text(s, lx, ly, 0, size=IO_LABEL_SZ, just=1, pin=True)
+    # the two end bands: the three reference designators above the top row and
+    # the "G" of the GND column below the bottom one.  Fixed, like the rows -
+    # the refdes is the real field, moved onto the band and pinned, not a copy
+    # of its text, so pcbnew still shows J6/J7/J8 where the plot does.
+    for s, lx, ly in B.io_end_labels():
+        if s in IO_REFS:
+            B.pin_ref(s, lx, ly)
+        else:
+            B.text(s, lx, ly, 0, size=IO_LABEL_SZ, thick=LABEL_THICK,
+                   pin=True)
+    sig = B.fps[IO_REFS[0]]
     xs = sorted({round(tomm(q.GetPosition().x), 3) - CX
                  for r in IO_REFS for q in B.fps[r].Pads()})
     ys = sorted({round(CY - tomm(q.GetPosition().y), 3) for q in sig.Pads()})
-    gx = round(tomm(next(iter(gnd.Pads())).GetPosition().x), 3) - CX
-    for y in (ys[-1] + 1.55, ys[0] - 1.55):
-        B.text("G", gx, y, 0, size=IO_LABEL_SZ, thick=LABEL_THICK, pin=True)
-    for y in (ys[-1] + 1.1, ys[0] - 1.1):
+    for y in (ys[-1] + IO_END_TICK, ys[0] - IO_END_TICK):
         B.segment((xs[0] - 0.85, y), (xs[-1] + 0.85, y))
 
 
@@ -1820,6 +2101,7 @@ def main():
     B.load_components(comps, nets)
     floorplan(B, comps)
     silkscreen(B)
+    back_silk(B)
     B.silk_fix()
     B.draw_outline()
 

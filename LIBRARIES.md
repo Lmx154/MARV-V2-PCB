@@ -51,10 +51,10 @@ All rows below are `MARV_Packages:<name>`.
 | U7 | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm` | vendored KiCad official | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm.step` | FreeCAD-generated (`tools/3d/gen_rpu0010a_tps62913.py`) from TI drawing 4224937/A; **height 0.9 mm is the midpoint of the 0.8/1.0 min/max, no nominal published** |
 | U25 | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm` | vendored KiCad official | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm.step` | FreeCAD-generated (`tools/3d/gen_rux0012a_tps2121.py`) from TI drawing 4224010/A; **height 0.9 mm is assumed — the drawing gives only "1 MAX"** |
 | D20 | `LED_WS2812B-2020_PLCC4_2.0x2.0mm` | vendored KiCad official | `LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | FreeCAD-generated (`tools/3d/gen_ws2812c_2020.py`) from the WS2812C-2020 datasheet page 2; this KiCad install ships no 2020 body even though its own footprint references one |
-| J3 | `PadRow_1x08_P2.00mm` | project-authored | — (pads only) | none by design |
-| J10 | `PadRow_1x03_P2.00mm` | project-authored | — (pads only) | none by design |
+| J3 | `PadRow_1x08_P2.00mm` | project-authored on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`) | — (pads only) | none by design |
+| J10 | `PadRow_1x03_P2.00mm` | project-authored on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`) | — (pads only) | none by design |
 | J6/J7/J8 | `PinHeader_1x14_P2.54mm_Vertical_IORow` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`), courtyard trimmed to the body across the row so the three abutting columns (GND \| POWER \| SIGNAL) land exactly on the 2.54 mm grid | `PinHeader_1x14_P2.54mm_Vertical_IORow.step` | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x14_P2.54mm_Vertical.step` |
-| TP1-TP10 | `TestPoint:TestPoint_Pad_1.0x1.0mm` | KiCad official, used directly (not vendored into `MARV_Packages.pretty`) | — (pads only) | none by design |
+| TP1-TP10 | `TestPoint:TestPoint_Pad_1.0x1.0mm` | KiCad official, used directly (not vendored into `MARV_Packages.pretty`) on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`) | — (pads only) | none by design |
 | H1-H4 | `MountingHole_4.0mm_Grommet` | project-authored | — (mechanical) | none by design |
 | L3 | `L_Coilcraft_XxL4030` | vendored KiCad official (shared with L2) | `L_Coilcraft_XxL4030.step` | Coilcraft manufacturer model (XGL4030 series body) |
 | J4 | `USB_C_Receptacle_HRO_TYPE-C-31-M-12` | vendored KiCad official | `USB_C_Receptacle_HRO_TYPE-C-31-M-12.step`, `offset 0 -1.05 0`, `rotate 0 0 180` | **EasyEDA/LCSC-contributed, not HRO's**; check against the HRO drawing before trusting it mechanically |
@@ -65,15 +65,22 @@ All rows below are `MARV_Packages:<name>`.
 
 `PadRow_1x03/08_P2.00mm` are one family — just the two members now that the IO
 array replaced the 1x04 solder-pad ports: N SMD pads, **1.4 x 2.2 mm oval,
-2.00 mm pitch**, on **F.Cu and F.Mask only** (no paste — these are hand/reflow
-wire-and-flex landings, not a connector land), a silkscreen box offset 0.45 mm
-clear of the pads, a filled 0.5 mm silk **pin-1 dot** 0.8 mm outside pad 1, an
-F.Fab copy and an F.CrtYd rectangle 0.25 mm outside everything. Overall pad field
-is `(N-1) x 2.00 + 1.4` mm wide by 2.2 mm tall. They carry **no 3D model on
+2.00 mm pitch**, authored on **F.Cu and F.Mask only** (no paste — these are
+hand/reflow wire-and-flex landings, not a connector land), a silkscreen box
+offset 0.45 mm clear of the pads, a filled 0.5 mm silk **pin-1 dot** 0.8 mm
+outside pad 1, an F.Fab copy and an F.CrtYd rectangle 0.25 mm outside
+everything. Overall pad field is `(N-1) x 2.00 + 1.4` mm wide by 2.2 mm tall.
+**Both instances (J3, J10) are placed flipped to the back** by
+`tools/setup_pcb.py` (`BACK_PAD_ROWS`): KiCad's `Flip()` swaps every F.*/B.*
+layer pair on the footprint (F.Cu -> B.Cu, F.Mask -> B.Mask, F.SilkS -> B.SilkS,
+F.CrtYd -> B.CrtYd, mirrored in X), so the footprint file itself never
+mentions the back — it is authored front-side like every other part, and only
+ends up on B.Cu because of how it is placed. They carry **no 3D model on
 purpose**; `tools/audit_footprints.py --no-3d-ok` (default
 `^(PadRow_|MountingHole_|TestPoint_)`) reports them OK with "pads only".
 Per-pad function labels are *not* in the footprint — add them as silkscreen
-text at layout, and mark pad 1, because the same footprint serves J3 (ESC,
+text at layout (mirrored, on B.SilkS, once flipped), and mark pad 1, because
+the same footprint serves J3 (ESC,
 1x08) and J10 (DBG, 1x03) — the only two ports left that mate with something
 fixed and pad-shaped. The 1x04 member (`PadRow_1x04_P2.00mm`, formerly J6/J7/J9)
 and the 1x02 member (`PadRow_1x02_P2.00mm`, gone with the buzzer before it) are
@@ -94,6 +101,14 @@ the hole itself and a **3.25 mm radius (6.5 mm diameter) F.CrtYd** for the gromm
 flange, which is the real top-side keep-clear — the flange itself, not the flange
 plus a hand-clearance margin; the 8.0 mm diameter courtyard this replaces was
 costing the board 68 mm2 of placeable area across the four holes. No 3D model.
+
+The ten `TestPoint:TestPoint_Pad_1.0x1.0mm` test points (TP1-TP10) are likewise
+authored front-side (F.Cu, no change from the KiCad official footprint) and
+**placed flipped to the back** by `tools/setup_pcb.py`, on the same
+`Flip()`/`BACK_PAD_ROWS`-style mechanism as J3/J10 above — KiCad swaps the
+footprint's F.*/B.* layers, so a bare F.Cu pad becomes a bare B.Cu pad with no
+footprint-file change. They land directly under the sensor cluster (U21/U22/U23)
+so the whole sensor SPI bus is reachable from underneath with the stack apart.
 
 ### Flash / PSRAM socket (U24)
 
