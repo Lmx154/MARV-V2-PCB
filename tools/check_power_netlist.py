@@ -165,7 +165,7 @@ assert {'H1','H2','H3','H4'} <= _refs, 'mounting-hole group missing'
 # not fitted.  R35, the FLASH_CS1 pull-up, is NOT DNP -- GPIO0 must be held deselected whether or not
 # the socket is populated -- and nothing else on the board may be DNP either, because tools/setup_pcb.py
 # uses exactly this attribute to decide what is allowed on B.Cu (check_back()).
-_DNP = {'U24', 'C62', 'C63'}
+_DNP = {'U24'}
 _props = {c.get('ref'): {p.get('name') for p in c.findall('property')}
           for c in root.find('components')}
 for _r in sorted(_DNP):

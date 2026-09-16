@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-16T08:20:25</date>
+    <date>2026-09-16T09:03:02</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -1059,10 +1059,10 @@
       </units>
     </comp>
     <comp ref="L2">
-      <value>2.2u / Isat 7 A, DCR 13.5 mOhm (Coilcraft XGL4030-222MEC or equiv)</value>
-      <footprint>MARV_Packages:L_Coilcraft_XxL4030</footprint>
+      <value>2.2u / Isat 2.2 A (20 %), DCR 30.5 mOhm (Coilcraft XGL3020-222MEC)</value>
+      <footprint>MARV_Packages:L_Coilcraft_XGL3020</footprint>
       <fields>
-        <field name="Footprint">MARV_Packages:L_Coilcraft_XxL4030</field>
+        <field name="Footprint">MARV_Packages:L_Coilcraft_XGL3020</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3346,7 +3346,7 @@
       </units>
     </comp>
     <comp ref="C62">
-      <value>DNP: 100n / 16 V X7R, U24 VCC</value>
+      <value>100n / 16 V X7R, U24 VCC (fitted; socket is optional)</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
@@ -3356,8 +3356,6 @@
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
-      <property name="exclude_from_bom"/>
-      <property name="dnp"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/BOARD 3 / log flash and microSD/" tstamps="/ee71bdc5-8bfd-5022-911d-47d370d195fb/"/>
@@ -3372,7 +3370,7 @@
       </units>
     </comp>
     <comp ref="C63">
-      <value>DNP: 1u / 10 V X7R 0402, U24 VCC</value>
+      <value>1u / 10 V X7R 0402, U24 VCC (fitted; socket is optional)</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
@@ -3382,8 +3380,6 @@
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
-      <property name="exclude_from_bom"/>
-      <property name="dnp"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/BOARD 3 / log flash and microSD/" tstamps="/ee71bdc5-8bfd-5022-911d-47d370d195fb/"/>

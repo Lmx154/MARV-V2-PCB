@@ -499,8 +499,8 @@ def storage_sheet():
     # R35 stays POPULATED on the front: it is the FLASH_CS1 idle pull-up, and
     # GPIO0 has to be held deselected whether or not the socket is fitted.
     s.passive('R35','R','10k, FLASH_CS1 pull-up',170,75,V3,'FLASH_CS1')
-    s.passive('C62','C','DNP: 100n / 16 V X7R, U24 VCC',210,75,V3,'GND',dnp=True)
-    s.passive('C63','C','DNP: 1u / 10 V X7R 0402, U24 VCC',250,75,V3,'GND',dnp=True)
+    s.passive('C62','C','100n / 16 V X7R, U24 VCC (fitted; socket is optional)',210,75,V3,'GND')
+    s.passive('C63','C','1u / 10 V X7R 0402, U24 VCC (fitted; socket is optional)',250,75,V3,'GND')
     s.add('J11','Connector:Micro_SD_Card_Det2','microSD, Molex 104031-0811 push-push',110,175,
           {'1':'SD_D2','2':'SD_D3','3':'SD_CMD','4':V3,'5':'SD_CLK','6':'GND','7':'SD_D0','8':'SD_D1',
            '9':'SD_DET','10':'GND','SH':'GND'},'MARV_Packages:microSD_HC_Molex_104031-0811',refofs=(88,150))
@@ -637,9 +637,13 @@ def build():
              'L3: Coilcraft XGL4030-472MEC, 4.7 uH +/-20%, DCR 31.5 mOhm max, Isat 3.2 A at 20% / 4.4 A at 30% drop,\n'
              'Irms 4.8 A at 20 C rise (Coilcraft Doc 1575-1). Isat(20%) clears the AP63205 high-side peak current limit\n'
              'at its 3.1 A maximum, so the inductor does not saturate even in a current-limit or hiccup event; DCR is\n'
-             'inside the datasheet\'s "less than 100 mOhm" guidance. 4.0 x 4.0 x 3.1 mm, and it reuses the XGL4030\n'
-             'footprint and 3D model already vendored for L2. Ripple at 25.2 V in / 2 A out is 0.78 A pk-pk (Eq.7),\n'
-             'peak 2.39 A (Eq.8).\n'
+             'inside the datasheet\'s "less than 100 mOhm" guidance. 4.0 x 4.0 x 3.1 mm. THIS ONE CANNOT SHRINK THE\n'
+             'WAY L2 DID: L2 is now an XGL3020 (3.0 x 3.0 x 2.0) because the TPS62913 runs it at ~1 A, but L3 has to\n'
+             'clear the AP63205 3.1 A high-side limit, and Isat(20%) = 3.2 A is the floor that sets the 4 x 4 body.\n'
+             'If height ever has to come out of here, the XGL4020 series shares this land pattern at 2.0 mm tall -\n'
+             'but a 2.0 mm core stores less energy, so its 4.7 uH Isat is lower: check it against the 3.1 A limit\n'
+             'from the XGL4020 datasheet before making that swap.\n'
+             'Ripple at 25.2 V in / 2 A out is 0.78 A pk-pk (Eq.7), peak 2.39 A (Eq.8).\n'
              'DERATING CAVEAT: C73 and C76/C77/C80 are the datasheet nominal values, and ceramic DC-bias derating is NOT\n'
              'in them - a 10 uF/50 V 0805 at 25 V and a 22 uF/25 V 0805 at 5 V both lose roughly half. The EVB user\n'
              'guide asks for >= 44 uF of COUT (nominal 66 uF: all three 22 uF fitted) and the board fits the third 22 uF (C80).\n'
@@ -653,7 +657,8 @@ def build():
     out.note('AVIONICS ONLY: 300 mA continuous / 500 mA short peak, provisional. NO SERVO POWER.',15,15,2)
     out.add('U7','Regulator_Switching:TPS62913','TPS62913RPUR',95,70,{'1':'V5_SYS','2':'U7_SW','3':'U7_VO','4':'GND','5':'PWR_GOOD','6':'V5_SYS','7':'GND','8':'U7_SS','9':'U7_FB','10':'U7_SCONF'},
             'MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm')
-    out.passive('L2','L','2.2u / Isat 7 A, DCR 13.5 mOhm (Coilcraft XGL4030-222MEC or equiv)',175,50,'U7_SW','U7_VO',foot='MARV_Packages:L_Coilcraft_XxL4030')
+    out.passive('L2','L','2.2u / Isat 2.2 A (20 %), DCR 30.5 mOhm (Coilcraft XGL3020-222MEC)',175,50,'U7_SW','U7_VO',
+                foot='MARV_Packages:L_Coilcraft_XGL3020')
     out.passive('FB1','FerriteBead','8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv)',175,90,'U7_VO','V3V3_SYS',foot='Inductor_SMD:L_0603_1608Metric')
     for ref,x in [('C8',25),('C9',25)]:
         out.passive(ref,'C','10u / 10 V X7S 0603',x,55 if ref=='C8' else 105,'V5_SYS','GND')
@@ -691,6 +696,23 @@ def build():
              'from V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is on PWR_GOOD rather than V5_SYS:\n'
              'the analog rail therefore starts only once the TPS62913 declares V3V3_SYS in regulation, and drops with it, which removes the\n'
              'window where the sensors were biased from an unregulated V5_SYS while the MCU was still held in reset.',15,240,1.3)
+    out.note('L2 INDUCTOR - Coilcraft XGL3020-222MEC, 3.0 x 3.0 x 2.0 mm (Coilcraft Doc 1776 Rev. 02/19/26): 2.2 uH +/-20%,\n'
+             'DCR 30.5 mOhm typ / 36.5 max, Isat 1.5 A at 10% / 2.2 A at 20% / 2.85 A at 30% inductance drop, Irms 5.0 A at 20 C rise.\n'
+             'It replaces the XGL4030-222MEC (4.0 x 4.0 x 3.1 mm, Isat 7 A): same 2.2 uH, 1.1 mm shorter, 7 mm2 less board, and L2\n'
+             'is no longer the tallest part. OPERATING POINT: dIL = VOUT x (1 - VOUT/VIN)/(L x fsw) = 3.3 x 0.34/(2.2u x 2.2M)\n'
+             '= 0.23 A pk-pk nominal, 0.29 A at the -20% inductance limit, so at the 0.8 A design load the peak inductor current\n'
+             'is ~0.95 A and stays under ~1.05 A with VIN/fsw/L tolerances stacked. Isat(20%) = 2.2 A is ~2.1x that, and Irms\n'
+             '5.0 A is far above the 0.8 A DC: saturation is the constraint here, not self-heating.\n'
+             'THE FAULT CASE IS DELIBERATELY NOT COVERED. The TPS62913 high-side current limit is ~4.5 A, ABOVE Isat(30%) = 2.85 A,\n'
+             'so a hard short on V3V3_SYS does drive this inductor into saturation before the IC limits - the opposite of the rule\n'
+             'used for L3/U26, where Isat(20%) clears the AP63205 limit. Accepted, for two reasons: the XGL is a moulded COMPOSITE\n'
+             'core that SOFT-saturates (the datasheet quotes 10/20/30% inductance-drop currents, not a knee, because the roll-off is\n'
+             'gradual), so there is no ferrite-style collapse and the cycle-by-cycle limit still acts, just on a larger ripple; and\n'
+             'this rail is 300 mA continuous / 500 mA peak, an order below that limit. Sizing L2 for a 4.5 A fault means carrying a\n'
+             '4 x 4 x 3.1 mm part to survive a condition that is already a board failure. RE-CHECK IF THE 3.3 V BUDGET EVER EXCEEDS\n'
+             '~1.5 A CONTINUOUS: the operating peak then approaches Isat(10%) and L2 has to go back up to the XGL4030.\n'
+             'ORIENTATION: MARV_Packages:L_Coilcraft_XGL3020 pad 1 is the terminal-start (short-lead) side - the bar next to the C\n'
+             'in the part marking. PUT U7_SW ON PAD 1: the datasheet asks for the high dv/dt node on the start lead (EMI).',15,250,1.2)
     out.add('U8','Power_Protection:USBLC6-2SC6','USBLC6-2SC6',245,220,{'1':'USB_DP','2':'GND','3':'USB_DM','4':'USB_DM_MCU','5':'USB_VBUS','6':'USB_DP_MCU'})
 
     periph=Sheet('power_periph','POWER 3 / IO array',4)

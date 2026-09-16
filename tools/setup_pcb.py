@@ -153,7 +153,7 @@ BACK_PAD_ROWS = ("J3", "J10")
 # than quietly appearing on the back of a reflowed board.
 # R35, the FLASH_CS1 pull-up, stays POPULATED on the FRONT: GPIO0 has to be
 # held deselected whether or not the socket is fitted.
-BACK_DNP_PARTS = ("U24", "C62", "C63")
+BACK_DNP_PARTS = ("U24",)
 # every back-side part gets a visible reference on B.SilkS: nothing else is
 # there to collide with, and a bare pad with no legend is unusable on a bench.
 BACK_REF_SILK = True
@@ -2106,10 +2106,7 @@ def back_silk(B):
         # the bottom edge and J3's label band the left - is 18 mm wide and
         # one line of both part numbers is 18.2 mm at the 0.6 mm DRC text
         # minimum.  Four short lines fit with margin; one long one does not.
-        lines = ["FLASH / PSRAM EXPANSION",
-                 "SOIC-8 150mil, QMI CS1",
-                 "W25Q64JVSSIQ or",
-                 "APS6404L-3SQR-SN"]
+        lines = ["FLASH", "SOIC-8"]
         w = max(B.text_extent(t, FLASH_LEGEND_SZ)[0] for t in lines)
         # centred over the socket, pulled left of the test-point column - of
         # its mirrored TPnn CAPTIONS, which stand 1.1 mm left of the pads and

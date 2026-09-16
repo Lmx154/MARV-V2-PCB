@@ -1,0 +1,205 @@
+(footprint "L_Coilcraft_XGL3020"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Coilcraft XGL3020 series molded power inductor, 3.0 x 3.0 x 2.0 mm, two terminals (L2 = XGL3020-222MEC, 2.2 uH +/-20 percent, DCR 30.5 typ / 36.5 max mOhm, Isat 1.5 A at 10 percent / 2.2 A at 20 percent / 2.85 A at 30 percent drop, Irms 5.0 A at 20 C rise). Project-authored from the Recommended Land Pattern of Coilcraft Document 1776 Rev. 02/19/26 (doc 1776-3): two pads 0.86 mm (X) x 3.0 mm (Y) on a 1.63 mm centre-to-centre pitch, inner gap 0.77 mm. PAD 1 IS THE TERMINAL-START SIDE: on the part it is the bar printed next to the C of the dash-number marking, which the datasheet says indicates the terminal direction and the start (short) lead, and which is reproduced here as the F.Fab bar inside the left body edge. PUT THE SW NODE ON PAD 1 - the start lead is the innermost turn, so the high dv/dt node sits under the least winding area, which is the datasheet's lowest-EMI orientation.")
+	(tags "L inductor Coilcraft XGL3020 XGL3020-222MEC 3.0x3.0x2.0mm")
+	(property "Reference" "REF**"
+		(at 0 -2.5 0)
+		(layer "F.SilkS")
+		(uuid "6eeea7ba-8f76-4290-9b0b-aea3ad57e3c1")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "L_Coilcraft_XGL3020"
+		(at 0 2.5 0)
+		(layer "F.Fab")
+		(uuid "43384e38-dc6b-4f03-b4f0-831fb26d43af")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "9830722f-8291-4e4b-a31e-550c77822ef8")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "14622532-a2c9-4696-9c57-15b3cc8c652d")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -1.72 -1.72)
+		(end 1.72 -1.72)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "b05578d9-0265-4891-bedd-f7321574afc9")
+	)
+	(fp_line
+		(start -1.72 1.72)
+		(end 1.72 1.72)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "17a2e7ac-7055-4485-a848-abd166d360e5")
+	)
+	(fp_line
+		(start -1.75 -1.75)
+		(end 1.75 -1.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "9ecd2db6-b60a-4a5f-be86-b769ea0cb5ff")
+	)
+	(fp_line
+		(start -1.75 1.75)
+		(end -1.75 -1.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "266abdcf-c91f-4c9b-ac1e-c07f19e3d8b4")
+	)
+	(fp_line
+		(start 1.75 -1.75)
+		(end 1.75 1.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "59e9a8ea-7fcc-4743-ae96-970de8d9ec8c")
+	)
+	(fp_line
+		(start 1.75 1.75)
+		(end -1.75 1.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "b3dfc5da-942d-4881-b75a-e739e4337c43")
+	)
+	(fp_line
+		(start -1.5 -1.5)
+		(end 1.5 -1.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "38ef5e4e-72c0-44b1-b338-c9339702da20")
+	)
+	(fp_line
+		(start -1.5 1.5)
+		(end -1.5 -1.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "5f77e427-c41d-4bbc-b73f-610d4d73b5a5")
+	)
+	(fp_line
+		(start 1.5 -1.5)
+		(end 1.5 1.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "b7e6e99f-0e54-4efd-9ecd-e97b3a1a29cf")
+	)
+	(fp_line
+		(start 1.5 1.5)
+		(end -1.5 1.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "1e3113f4-af9b-4e75-a494-efc11e6aacaf")
+	)
+	(fp_line
+		(start -1.15 -0.8)
+		(end -1.15 0.8)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "9eaac505-fb9c-4f95-bb1a-22d6f7ebd396")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "36d02fdd-5332-405b-bb32-67240cb7977e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -0.815 0)
+		(size 0.86 3.0)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "6add95d7-fd77-464a-9513-687bb52cebd9")
+	)
+	(pad "2" smd roundrect
+		(at 0.815 0)
+		(size 0.86 3.0)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.25)
+		(uuid "a60bce38-d17f-4cc0-be07-3b23f93bc9a2")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/MARV_Packages.3dshapes/L_Coilcraft_XxL3020.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 0 0)
+		)
+	)
+)
