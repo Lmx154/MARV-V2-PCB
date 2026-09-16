@@ -1,9 +1,12 @@
 MARV P3 integrated power - BEHAVIORAL architectural model, not vendor silicon
 * Efficiencies, impedance, current limits, bandwidth and handover are assumptions.
 * No EMI, USB enumeration, IC fault dynamics or switch losses.
-* 5 V-only P3: two sources, 5V_IN (J3, BEC/boost) and USB (J4), entering ONE
-* TPS2121 priority power mux (U25) whose OUT is V5_SYS -- no cell/battery path
-* anywhere. IN1 = 5V_IN has priority, IN2 = USB is the fallback.
+* Two sources reach the mux: 5V_IN -- now the output of U26, the on-board
+* AP63205WU buck that makes 5.0 V from the 6-25.2 V pack on the ESC pad row
+* (J3) -- and USB VBUS (J4). They enter ONE TPS2121 priority power mux (U25)
+* whose OUT is V5_SYS. IN1 = 5V_IN has priority, IN2 = USB is the fallback.
+* The pack itself is NOT modeled: everything upstream of the buck output is
+* outside this deck, and 5V_IN is represented by its regulated behaviour.
 * The mux is modeled by the muxctl (shared selection logic) and muxpath (one
 * channel) subckts below. Device numbers are all from TPS2120/TPS2121 datasheet
 * SLVSEA3F rev F: RON 56 mOhm typ at VINx >= 5 V (Sec 7.5), tSW 100 us (Sec 7.5,
@@ -135,15 +138,21 @@ Rbleed out 0 100k
 * out one source's amplitude and adjust TMSTART/TMEND to that source's own
 * presence window.
 Vin5vinsrc v5vinsrc0 0 PWL(0 0 5m 0 5.1m 0 40m 0 40.1m 0)
-* 5V_IN: external 2S-6S -> 5.0 V / 3 A BEC or 1S BMS/boost module. Modeled as
-* a 0.10 ohm output impedance plus a 3 A hard current limit (behavioral
-* clamp), not a vendor regulator model.
-B5vinlim v5vinsrc0 v5vin I=min(max(v(v5vinsrc0,v5vin)/R5VIN,0),3.0)
-* Real 5V_IN node capacitance: C16 100 nF + C67/C68 2 x 4.7 uF + C69 100 uF +
-* C71 100 nF = ~110 uF. This is load-bearing at the 40 ms handover: with only a
-* token filter cap the still-conducting IN1 channel pins 5V_IN to V5_SYS as the
-* rail recovers and the mux model latches half-on, which the hardware cannot do.
-C5vinfilt v5vin 0 110u
+* 5V_IN: the U26 AP63205WU buck output. Modeled as a 5.0 V source behind a
+* 0.10 ohm effective output impedance (closed-loop output impedance plus the
+* board copper, assumed) and a 2 A hard current limit -- 2 A is the part's
+* rated continuous output, and its high-side peak current limit is 2.5 A min /
+* 2.8 A typ / 3.1 A max (DS41326 Rev. 2-2 Electrical Characteristics), so 2 A
+* is the honest ceiling for this rail. Behavioral clamp, not a vendor model.
+B5vinlim v5vinsrc0 v5vin I=min(max(v(v5vinsrc0,v5vin)/R5VIN,0),2.0)
+* Real 5V_IN node capacitance, now that the node is a buck OUTPUT rather than an
+* input: C76/C77 2 x 22 uF (the AP63205 COUT of datasheet Table 3) + C71 100 nF
+* = 44.1 uF nominal. The old 110 uF was the XT30 input network (C16/C67/C68/C69),
+* which is gone with the 5 V input itself. This value is load-bearing at the 40 ms
+* handover: with only a token filter cap the still-conducting IN1 channel pins
+* 5V_IN to V5_SYS as the rail recovers and the mux model latches half-on, which the
+* hardware cannot do. Dropping 110 uF -> 44.1 uF makes that corner strictly harder.
+C5vinfilt v5vin 0 44.1u
 R5vinbleed v5vin 0 1meg
 Vinusbsrc usbsrc0 0 PWL(0 0 30m 0 30.1m 5.0 55m 5.0 55.1m 0)
 * USB: plain 5 V rail through cable/connector resistance; no current limit

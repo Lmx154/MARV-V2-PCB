@@ -114,6 +114,44 @@ CUSTOM={'MARV_Power:TPS2121RUX':'''(symbol "TPS2121RUX" (exclude_from_sim no) (i
  )
  (embedded_fonts no))'''}
 
+# Passive package policy.  The board is a single-sided square that has to stay
+# at or under 50 mm (DESIGN_SPEC "Envelope"), so every passive is as small as
+# its rating and hand-rework allow; all of the packages below are JLCPCB basic
+# parts (1 % for R, X5R/X7R for C).  Package is derived from the value string,
+# which always starts "<capacitance> / <voltage> V":
+#
+#   R   any value ................................. 0402
+#   C   <= 100 nF, <= 16 V ........................ 0402
+#   C   220 nF .. 10 uF, <= 16 V .................. 0603
+#   C   > 10 uF .. 22 uF, <= 16 V ................. 0805
+#
+# A capacitor rated above 16 V (anything on VBAT, the bootstrap cap, the
+# crystal load caps) or larger than 22 uF must pass an explicit foot= at the
+# call site and keeps the larger body its voltage / DC-bias derating needs:
+# C17/C46/C47 (50 V, 0402), C74/C75 (50 V, 0603), C73 (10u/50 V, 1206),
+# C76/C77/C80 (22u/25 V, 1206), C66 (47u, 1210), C19 (220u polymer, EIA-7343).
+# The two exceptions are enforced below by raising rather than guessing.
+CAP_PACKAGE=[(100e-9,'C_0402_1005Metric'),(10e-6,'C_0603_1608Metric'),(22e-6,'C_0805_2012Metric')]
+SI_MULT={'p':1e-12,'n':1e-9,'u':1e-6}
+OTHER_PACKAGE={'L':'Inductor_SMD:L_6.3x6.3_H3','Fuse':'Fuse:Fuse_1206_3216Metric',
+               'D_Schottky':'Diode_SMD:D_SMA','D_TVS':'Diode_SMD:D_SMB'}
+
+def passive_footprint(kind,value):
+    if kind=='R':
+        return 'Resistor_SMD:R_0402_1005Metric'
+    if kind!='C':
+        return OTHER_PACKAGE[kind]
+    m=re.match(r'\s*([\d.]+)\s*([pnu])\s*/\s*([\d.]+)\s*V',value)
+    if not m:
+        raise ValueError((value,'capacitor value must start "<C> / <V> V"'))
+    farads=float(m.group(1))*SI_MULT[m.group(2)]
+    if float(m.group(3))>16:
+        raise ValueError((value,'capacitor rated > 16 V needs an explicit footprint'))
+    for limit,pkg in CAP_PACKAGE:
+        if farads<=limit*1.001:          # tolerance: 100*1e-9 > 100e-9 in binary floats
+            return 'Capacitor_SMD:'+pkg
+    raise ValueError((value,'capacitor above 22 uF needs an explicit footprint'))
+
 class Sheet:
     def __init__(self, name, title, page):
         self.name,self.title,self.page=name,title,page
@@ -171,7 +209,7 @@ class Sheet:
         self.bom.append((ref,value,fp,self.name))
     def passive(self,ref,kind,value,x,y,a,b,foot=None):
         if foot is None:
-            foot={'R':'Resistor_SMD:R_0603_1608Metric','C':'Capacitor_SMD:C_0805_2012Metric','L':'Inductor_SMD:L_6.3x6.3_H3','Fuse':'Fuse:Fuse_1206_3216Metric','D_Schottky':'Diode_SMD:D_SMA','D_TVS':'Diode_SMD:D_SMB'}[kind]
+            foot=passive_footprint(kind,value)
         self.add(ref,'Device:'+kind,value,x,y,{'1':a,'2':b},foot)
     def render(self):
         return f'(kicad_sch (version 20250114) (generator "eeschema") (uuid {self.id}) (paper "A3") (title_block (title {q(self.title)}) (date "2026-09-14") (rev "P0 - REVIEW ONLY")) (lib_symbols '+ '\n'.join(dump(s) for s in self.libs.values())+')\n'+'\n'.join(self.items)+'\n(embedded_fonts no))\n'
@@ -188,7 +226,7 @@ ANA='V3V3_ANA'
 # (package pin, GPIO name, net or None for no-connect, function note)
 MCU_GPIO=[
  ('77','GPIO0','FLASH_CS1','QMI CS1n, log flash select'),
- ('78','GPIO1',None,'spare'),
+ ('78','GPIO1','IO_GPIO1','spare -> J16 pin 3'),
  ('79','GPIO2','PWM1','PWM1 A'),
  ('80','GPIO3','PWM2','PWM1 B'),
  ('1','GPIO4','PWM3','PWM2 A'),
@@ -208,17 +246,17 @@ MCU_GPIO=[
  ('18','GPIO18','SENS_SCK','SPI0 SCK'),
  ('19','GPIO19','SENS_MOSI','SPI0 TX'),
  ('20','GPIO20','IMU_CS','ICM-45686 AP_CS'),
- ('21','GPIO21',None,'spare'),
+ ('21','GPIO21','IO_GPIO21','spare -> J16 pin 4'),
  ('22','GPIO22','BARO_CS','BMP581 CSB'),
  ('23','GPIO23','IMU_INT1','ICM-45686 INT1'),
  ('25','GPIO24','IMU_INT2','ICM-45686 INT2/FSYNC/CLKIN'),
  ('26','GPIO25','BARO_INT','BMP581 INT'),
- ('27','GPIO26','LED_STAT','green status LED'),
- ('28','GPIO27','LED_WARN','red warning LED'),
+ ('27','GPIO26','LED_DATA','WS2812C-2020 data, 100 R series (R55)'),
+ ('28','GPIO27','IO_GPIO27','spare -> J16 pin 5'),
  ('36','GPIO28','BUZZ_PWM','buzzer gate drive'),
  ('37','GPIO29','HG_ACC_INT','ADXL375 INT1'),
- ('38','GPIO30',None,'spare'),
- ('39','GPIO31',None,'spare'),
+ ('38','GPIO30','ESC_TELEM_RX','ESC KISS telemetry in (PIO UART RX), 1k series R54'),
+ ('39','GPIO31','IO_GPIO31','spare -> J16 pin 6'),
  ('40','GPIO32','SD_CLK','microSD CLK (PIO)'),
  ('42','GPIO33','SD_CMD','microSD CMD'),
  ('43','GPIO34','SD_D0','microSD DAT0'),
@@ -227,14 +265,14 @@ MCU_GPIO=[
  ('46','GPIO37','SD_D3','microSD DAT3'),
  ('47','GPIO38','SD_DET','microSD card detect'),
  ('48','GPIO39','PWR_SRC_ST','U25 TPS2121 ST, open drain'),
- ('49','GPIO40','VIN_SENSE','ADC0, 5V_IN 22k/10k divider'),
+ ('49','GPIO40','VBAT_SENSE','ADC0, VBAT 100k/10k divider, 36.3 V FS'),
  ('52','GPIO41','VBUS_SENSE','ADC1, USB_VBUS 10k/15k divider'),
- ('53','GPIO42',None,'ADC2 spare'),
- ('54','GPIO43',None,'ADC3 spare'),
- ('55','GPIO44',None,'ADC4 spare'),
- ('56','GPIO45',None,'ADC5 spare'),
- ('57','GPIO46',None,'ADC6 spare'),
- ('58','GPIO47',None,'ADC7 spare'),
+ ('53','GPIO42','CURR_SENSE','ADC2, ESC current sense, 1k + 100n'),
+ ('54','GPIO43','IO_GPIO43','ADC3 -> J16 pin 7'),
+ ('55','GPIO44','IO_GPIO44','ADC4 -> J16 pin 8'),
+ ('56','GPIO45','IO_GPIO45','ADC5 -> J16 pin 9'),
+ ('57','GPIO46','IO_GPIO46','ADC6 -> J16 pin 10'),
+ ('58','GPIO47','IO_GPIO47','ADC7 -> J16 pin 11'),
 ]
 
 def mcu_sheet():
@@ -259,15 +297,15 @@ def mcu_sheet():
     for i in range(8):
         s.passive('C%d'%(30+i),'C','100n / 16 V X7R, IOVDD pin %s'%('5 15 24 29 41 50 60 76'.split()[i]),*left[i],V3,'GND')
     s.passive('C38','C','100n / 16 V X7R, pins 68+69',*left[8],V3,'GND')
-    s.passive('C39','C','4.7u / 10 V X7R, VREG_VIN',*left[9],V3,'GND')
+    s.passive('C39','C','4.7u / 10 V X7R 0603, VREG_VIN',*left[9],V3,'GND')
     s.passive('C40','C','100n / 16 V X7R, ADC_AVDD',*left[10],ANA,'GND')
     s.passive('R20','R','33 / 1%, VREG_AVDD filter',*left[11],V3,'VREG_AVDD')
-    s.passive('C41','C','4.7u / 10 V X7R, VREG_AVDD',*left[12],'VREG_AVDD','GND')
+    s.passive('C41','C','4.7u / 10 V X7R 0603, VREG_AVDD',*left[12],'VREG_AVDD','GND')
     s.passive('L20','L','3.3u, 0806 AOTA-B201610S3R3',*left[13],'VREG_LX','DVDD',foot='Inductor_SMD:L_Murata_DFE201610P')
     s.passive('C42','C','100n / 16 V X7R, DVDD pin 10',*left[14],'DVDD','GND')
     s.passive('C43','C','100n / 16 V X7R, DVDD pin 32',*left[15],'DVDD','GND')
     s.passive('C44','C','100n / 16 V X7R, DVDD pin 51',*left[16],'DVDD','GND')
-    s.passive('C45','C','4.7u / 10 V X7R, DVDD bulk',*left[17],'DVDD','GND')
+    s.passive('C45','C','4.7u / 10 V X7R 0603, DVDD bulk',*left[17],'DVDD','GND')
     s.passive('R22','R','27 / 1%, USB D+ series',*left[18],'USB_DP_MCU','USB_DP_RP')
     s.passive('R23','R','27 / 1%, USB D- series',*left[19],'USB_DM_MCU','USB_DM_RP')
     s.passive('R21','R','1k / 1%, crystal drive limit',*left[20],'XOUT','XTAL_DRV')
@@ -293,33 +331,70 @@ def mcu_sheet():
     s.note('GPIO MAP (pin = QFN-80 pin)\n'+'\n'.join(rows[:24]),250,14,1.3)
     s.note('\n'+'\n'.join(rows[24:]),338,14,1.3)
 
-    s.add('J10','Connector_Generic:Conn_02x05_Odd_Even','SWD, Cortex-M 10-pin 1.27 mm',270,92,
-          {'1':V3,'2':'SWDIO','3':'GND','4':'SWCLK','5':'GND','6':None,'7':None,'8':None,'9':'GND','10':'PWR_GOOD'},
-          'Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD')
-    s.note('J10 pin 1 is 3V3 OUT for debugger reference only - never power the board from it. Pin 10 is the\n'
-           'debugger reset line on PWR_GOOD/RUN; pins 6-8 (SWO, KEY, NC) unused. RUN is held by the TPS62913\n'
-           'power-good pull-up on POWER 2, so the MCU cannot run before V3V3_SYS is in regulation.',250,106,1.3)
+    s.add('J10','Connector_Generic:Conn_01x03','DBG pads (SWCLK SWDIO GND)',250,92,
+          {'1':'SWCLK','2':'SWDIO','3':'GND'},'MARV_Packages:PadRow_1x03_P2.00mm')
+    s.note('J10 is a 3-pad SWD landing (SWCLK / SWDIO / GND), not a 10-pin Cortex header: the board carries solder pads\n'
+           'for every bus (DESIGN_SPEC "Physical design"). The debugger reference 3V3 and the debugger-driven reset line\n'
+           'of the old 2x05 header are both gone - power the board from VBAT or USB while debugging, and use SW1 (RUN via\n'
+           'PWR_GOOD) for reset. RUN is still held by the TPS62913 power-good pull-up on POWER 2, so the MCU cannot run\n'
+           'before V3V3_SYS is in regulation.',180,104,1.3)
 
-    right=[(265+35*c,140+28*r) for r in range(2) for c in range(4)]
-    s.passive('R27','R','22k / 1%, 5V_IN top',*right[0],'5V_IN','VIN_SENSE')
-    s.passive('R28','R','10k / 1%, 5V_IN bottom',*right[1],'VIN_SENSE','GND')
-    s.passive('C48','C','100n / 16 V X7R, ADC0',*right[2],'VIN_SENSE','GND')
+    # J16 spare-IO block: the nine GPIOs that no on-board function claims, plus one 3.3 V and two grounds.
+    # GPIO43-47 are ADC3-ADC7 (ADC0-2 are taken by VBAT_SENSE / VBUS_SENSE / CURR_SENSE), so five of the
+    # eleven signal pins are analog-capable; label those in silk at layout.
+    s.add('J16','Connector_Generic:Conn_02x06_Odd_Even','SPARE IO 2x6 (see note)',340,92,
+          {'1':V3,'2':'GND','3':'IO_GPIO1','4':'IO_GPIO21','5':'IO_GPIO27','6':'IO_GPIO31',
+           '7':'IO_GPIO43','8':'IO_GPIO44','9':'IO_GPIO45','10':'IO_GPIO46','11':'IO_GPIO47','12':'GND'},
+          'Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Vertical')
+    s.note('J16 SPARE IO (2.54 mm THT, right edge). 1 V3V3_SYS | 2 GND | 3 GPIO1 | 4 GPIO21 | 5 GPIO27 | 6 GPIO31 |\n'
+           '7 GPIO43* | 8 GPIO44* | 9 GPIO45* | 10 GPIO46* | 11 GPIO47* | 12 GND.  * = ADC-capable (ADC3-ADC7);\n'
+           'silk-mark those five at layout. These GPIOs are no longer no-connect, so every RP2354B GPIO now\n'
+           'terminates somewhere: 39 on board functions and ports, 9 on this block.',300,112,1.3)
+
+    right=[(250+35*c,140+28*r) for r in range(3) for c in range(4)]
+    s.passive('R27','R','100k / 1%, VBAT top',*right[0],'VBAT','VBAT_SENSE')
+    s.passive('R28','R','10k / 1%, VBAT bottom',*right[1],'VBAT_SENSE','GND')
+    s.passive('C48','C','100n / 16 V X7R, ADC0',*right[2],'VBAT_SENSE','GND')
     s.passive('R29','R','10k / 1%, VBUS top',*right[3],'USB_VBUS','VBUS_SENSE')
     s.passive('R30','R','15k / 1%, VBUS bottom',*right[4],'VBUS_SENSE','GND')
     s.passive('C49','C','100n / 16 V X7R, ADC1',*right[5],'VBUS_SENSE','GND')
-    s.passive('R31','R','1k, green status LED',*right[6],'LED_STAT','LED1_A')
-    s.passive('R32','R','1k, red warning LED',*right[7],'LED_WARN','LED2_A')
-    s.add('D20','Device:LED','green, status',270,196,{'1':'GND','2':'LED1_A'},'LED_SMD:LED_0603_1608Metric')
-    s.add('D21','Device:LED','red, warning',335,196,{'1':'GND','2':'LED2_A'},'LED_SMD:LED_0603_1608Metric')
-    s.passive('R33','R','1k, gate series',265,222,'BUZZ_PWM','BUZZ_G')
-    s.passive('R34','R','100k, gate pull-down',300,222,'BUZZ_G','GND')
-    s.add('Q20','Transistor_FET:2N7002','2N7002',345,222,{'1':'BUZZ_G','2':'GND','3':'BUZZ_D'},'Package_TO_SOT_SMD:SOT-23')
-    s.add('BZ1','Device:Buzzer','5 V active buzzer',390,205,{'1':'V5_SYS','2':'BUZZ_D'},'Buzzer_Beeper:Buzzer_12x9.5RM7.6')
-    s.add('D22','Device:D_Schottky','flyback across BZ1',390,240,{'1':'V5_SYS','2':'BUZZ_D'},'Diode_SMD:D_SOD-123')
-    s.note('Telemetry dividers, 100 nF at each ADC pin. VIN_SENSE (R27/R28 22k/10k) scales by 10/32 = 0.3125, so the 3.3 V\n'
-           'ADC full scale is 10.56 V: 1.56 V at 5.00 V in, 1.72 V at 5.50 V, and a 2S mis-plug at 8.4 V still reads on-scale\n'
-           '(2.63 V) instead of pinning the input, which is the point of the wider divider. VBUS_SENSE keeps 10k/15k.\n'
-           'Buzzer runs from V5_SYS (avionics OR output), never from the servo bus; D22 clamps the coil kick.\n'
+    s.passive('R53','R','1k / 1%, CURR series',*right[6],'CURR_SENSE_RAW','CURR_SENSE')
+    s.passive('C78','C','100n / 16 V X7R, ADC2 filter',*right[7],'CURR_SENSE','GND')
+    s.passive('R54','R','1k, ESC telemetry series',*right[8],'ESC_TELEM','ESC_TELEM_RX')
+    s.passive('R55','R','100 / 1%, WS2812 data series',*right[9],'LED_DATA','LED_DIN')
+    s.passive('C79','C','100n / 16 V X7R, D20 VDD',*right[10],'V5_SYS','GND')
+    s.add('D20','LED:WS2812B-2020','WS2812C-2020 RGB',375,196,
+          {'1':None,'2':'GND','3':'LED_DIN','4':'V5_SYS'},'MARV_Packages:LED_WS2812B-2020_PLCC4_2.0x2.0mm')
+    s.passive('R33','R','1k, gate series',250,228,'BUZZ_PWM','BUZZ_G')
+    s.passive('R34','R','100k, gate pull-down',285,228,'BUZZ_G','GND')
+    s.add('Q20','Transistor_FET:2N7002','2N7002',320,228,{'1':'BUZZ_G','2':'GND','3':'BUZZ_D'},'Package_TO_SOT_SMD:SOT-23')
+    s.add('J15','Connector_Generic:Conn_01x02','BUZZER pads (5V BZ-)',375,228,{'1':'V5_SYS','2':'BUZZ_D'},'MARV_Packages:PadRow_1x02_P2.00mm')
+    s.add('D22','Device:D_Schottky','flyback across the buzzer pads',250,258,{'1':'V5_SYS','2':'BUZZ_D'},'Diode_SMD:D_SOD-123')
+    # MECHANICAL GROUP: four Mechanical:MountingHole symbols, no pins and no nets - they exist so the
+    # 30.5 x 30.5 mm grommet pattern of DESIGN_SPEC "Physical design" lands in the netlist and therefore in
+    # the PCB, and so tools/audit_footprints.py checks the footprint file resolves.
+    for i,ref in enumerate(['H1','H2','H3','H4']):
+        s.add(ref,'Mechanical:MountingHole','M3 grommet hole, 4.0 mm NPTH',170+25*i,258,{},
+              'MARV_Packages:MountingHole_4.0mm_Grommet',refofs=(165+25*i,264))
+    s.note('MECHANICAL: H1-H4 are the four 4.0 mm NPTH grommet\n'
+           'holes on the standard 30.5 x 30.5 mm pattern, centred\n'
+           'on the board, each with a 5.0 mm copper keepout and an\n'
+           '8.0 mm top-side courtyard for the grommet flange. No\n'
+           'pins, no nets. See DESIGN_SPEC "Physical design".',170,270,1.3)
+    s.note('TELEMETRY AND ANALOG INPUTS (100 nF at each ADC pin).\n'
+           'VBAT_SENSE: R27/R28 100k/10k scale VBAT by 1/11, so the 3.3 V ADC full scale is 36.3 V. A 6S pack at its\n'
+           '25.2 V maximum reads 2.29 V and a 2S pack at 6.0 V reads 0.55 V, so the whole 2-6S window is on-scale with\n'
+           'headroom; the divider draws 229 uA at 25.2 V. The old 5V_IN divider is gone with the 5 V input itself.\n'
+           'CURR_SENSE: the ESC current-sense output (J3 pin 1, 12.75 mV/A, 0-3.3 V) through R53 1k into C78 100 nF at\n'
+           'the pin - a 100 us RC anti-alias/ESD network, well under the RP2350 ADC source-impedance guidance.\n'
+           'ESC_TELEM: the ESC KISS telemetry output (J3 pin 2, 3.3 V, 115200 baud, one-wire from the ESC) through R54\n'
+           '1k into GPIO30, read by a PIO UART. The resistor is series protection only, not a level shifter: the ESC pad\n'
+           'row is 3.3 V CMOS on both the telemetry and the four motor lines.\n'
+           'VBUS_SENSE keeps 10k/15k on GPIO41.\n'
+           'D20 WS2812C-2020: VDD on V5_SYS with C79 100 nF, DIN from GPIO26 through R55 100 R, DOUT no-connect (single\n'
+           'pixel). Its DIN VIH minimum is 2.7 V (datasheet Electrical Characteristics), which 3.3 V CMOS clears - that\n'
+           'is why the C variant is used rather than a 5050 WS2812B, whose VIH is 0.7 x VDD = 3.5 V.\n'
+           'Buzzer: Q20 low-side drive into the J15 pads (pin 1 V5_SYS, pin 2 BUZZ_D = Q20 drain); D22 clamps the kick.\n'
            'QSPI_* are the dedicated QSPI pads: they reach the in-package flash die AND the package pins\n'
            '(RP2350 datasheet Sec 14.3), so U24 shares the bus with GPIO0/QMI CS1n (FLASH_CS1) as its select.\n'
            'RP2354 requires QSPI_IOVDD = 3.3 V, and IOVDD = 3.3 V to run a second QSPI device (Sec 14.9).',15,258,1.3)
@@ -346,9 +421,9 @@ def sensors_sheet():
         ['C50','C51','C54','C55','C58','C59','C52','C53','C56','C57','C60','C61'],
         [(30,170),(65,170),(160,170),(195,170),(290,170),(325,170),
          (30,198),(65,198),(160,198),(195,198),(290,198),(325,198)],
-        ['100n / 16 V X7R, U21 VDD','1u / 10 V X7R, U21 VDD','100n / 16 V X7R, U22 VDD','1u / 10 V X7R, U22 VDD',
-         '100n / 16 V X7R, U23 VS','1u / 10 V X7R, U23 VS','100n / 16 V X7R, U21 VDDIO','1u / 10 V X7R, U21 VDDIO',
-         '100n / 16 V X7R, U22 VDDIO','1u / 10 V X7R, U22 VDDIO','100n / 16 V X7R, U23 VDD_IO','1u / 10 V X7R, U23 VDD_IO']):
+        ['100n / 16 V X7R, U21 VDD','1u / 10 V X7R 0603, U21 VDD','100n / 16 V X7R, U22 VDD','1u / 10 V X7R 0603, U22 VDD',
+         '100n / 16 V X7R, U23 VS','1u / 10 V X7R 0603, U23 VS','100n / 16 V X7R, U21 VDDIO','1u / 10 V X7R 0603, U21 VDDIO',
+         '100n / 16 V X7R, U22 VDDIO','1u / 10 V X7R 0603, U22 VDDIO','100n / 16 V X7R, U23 VDD_IO','1u / 10 V X7R 0603, U23 VDD_IO']):
         s.passive(ref,'C',val,x,y,ANA,'GND')
     for ref,(x,y),net in zip(['R48','R50','R51'],[(100,170),(100,198),(130,198)],
                              ['IMU_CS','BARO_CS','HG_ACC_CS']):
@@ -382,13 +457,15 @@ def sensors_sheet():
 def storage_sheet():
     s=Sheet('storage','BOARD 3 / log flash and microSD',7)
     s.note('Log flash on the shared QSPI bus with GPIO0/QMI CS1n as its chip select, and a latched microSD wired for\n'
-           '4-bit PIO (also SPI-compatible). Both on V3V3_SYS with local bulk, per the rail split in DESIGN_SPEC.',15,10,1.6)
-    s.add('U24','Memory_Flash:W25Q128JVS','W25Q128JVSIQ, 128 Mbit QSPI NOR',95,75,
+           '4-bit PIO (also SPI-compatible). Both on V3V3_SYS with local bulk, per the rail split in DESIGN_SPEC.\n'
+           'U24 IS A SOCKET, NOT ONE PART: the 150-mil SOIC-8 land takes either the default W25Q64JVSSIQ NOR flash or an\n'
+           'APS6404L-3SQR-SN 8 MB QSPI PSRAM - see the U24 note below.',15,10,1.6)
+    s.add('U24','Memory_Flash:W25Q32JVSS','W25Q64JVSSIQ, 64 Mbit QSPI NOR',95,75,
           {'1':'FLASH_CS1','2':'QSPI_SD1','3':'QSPI_SD2','4':'GND','5':'QSPI_SD0','6':'QSPI_SCLK','7':'QSPI_SD3','8':V3},
-          'Package_SO:SOIC-8_5.3x5.3mm_P1.27mm',refofs=(85,100),vlab=True)
+          'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm',refofs=(85,100),vlab=True)
     s.passive('R35','R','10k, FLASH_CS1 pull-up',170,75,V3,'FLASH_CS1')
     s.passive('C62','C','100n / 16 V X7R, U24 VCC',210,75,V3,'GND')
-    s.passive('C63','C','1u / 10 V X7R, U24 VCC',250,75,V3,'GND')
+    s.passive('C63','C','1u / 10 V X7R 0603, U24 VCC',250,75,V3,'GND')
     s.add('J11','Connector:Micro_SD_Card_Det2','microSD, Molex 104031-0811 push-push',110,175,
           {'1':'SD_D2','2':'SD_D3','3':'SD_CMD','4':V3,'5':'SD_CLK','6':'GND','7':'SD_D0','8':'SD_D1',
            '9':'SD_DET','10':'GND','SH':'GND'},'MARV_Packages:microSD_HC_Molex_104031-0811',refofs=(88,150))
@@ -397,12 +474,23 @@ def storage_sheet():
                              ['SD_CMD','SD_D0','SD_D1','SD_D2','SD_D3','SD_DET']):
         s.passive(ref,'R','10k, %s pull-up'%net,x,y,V3,net)
     s.passive('C64','C','100n / 16 V X7R, at the socket',215,225,V3,'GND')
-    s.passive('C65','C','10u / 10 V X7R, at the socket',250,225,V3,'GND',foot='Capacitor_SMD:C_1206_3216Metric')
+    s.passive('C65','C','10u / 10 V X7R 0603, at the socket',250,225,V3,'GND')
     s.passive('C66','C','47u / 6.3 V X5R, at the socket',285,225,V3,'GND',foot='Capacitor_SMD:C_1210_3225Metric')
     s.note('U24 shares the dedicated QSPI pads with the RP2354B in-package flash die (datasheet Sec 14.3): CLK = QSPI_SCLK,\n'
            'DI/IO0 = QSPI_SD0, DO/IO1 = QSPI_SD1, WP/IO2 = QSPI_SD2, HOLD/IO3 = QSPI_SD3. Only the chip select differs -\n'
            'FLASH_CS1 comes from GPIO0 (QMI CS1n), pulled up to V3V3_SYS by R35 so the part is deselected before the MCU\n'
-           'drives it. QSPI_SS (the internal die) keeps its own strap on the MCU sheet.',15,245,1.3)
+           'drives it. QSPI_SS (the internal die) keeps its own strap on the MCU sheet.\n'
+           'U24 SOCKET - OPTIONAL PSRAM OR SECOND FLASH. The land is Package_SO:SOIC-8_3.9x4.9mm_P1.27mm (150 mil), which\n'
+           'fits BOTH the default W25Q64JVSSIQ (Winbond, 64 Mbit = 8 MB NOR flash, SOIC-8 150 mil) and the\n'
+           'APS6404L-3SQR-SN (AP Memory, 64 Mbit = 8 MB QSPI pseudo-SRAM, SOP-8 150 mil). The two are pin-identical on\n'
+           'this bus: 1 CE#/CS#, 2 SO/SIO1, 3 SIO2 (WP# on the flash), 4 VSS/GND, 5 SI/SIO0, 6 SCLK, 7 SIO3 (HOLD# on the\n'
+           'flash), 8 VCC - so no board change is needed to swap them. The RP2350 QMI supports a PSRAM on CS1 with its own\n'
+           'timing/chip-select registers (RP2350 datasheet Sec 12.14 QMI, M1_TIMING/M1_RFMT/M1_WFMT), which is what makes\n'
+           'the alternative real rather than mechanical. Default fit is the W25Q64 flash; fit the PSRAM instead only if\n'
+           'firmware needs XIP-addressable RAM more than it needs log space.\n'
+           'SYMBOL SUBSTITUTION: KiCad 10 ships no W25Q64JVSS symbol (Memory_Flash has W25Q16JVSS, W25Q32JVSS, W25Q128JV*\n'
+           'only). U24 therefore uses Memory_Flash:W25Q32JVSS, whose pinout is identical across the whole W25Q JV family;\n'
+           'the Value field carries the real MPN. See LIBRARIES.md.',15,245,1.3)
     s.note('J11: DET_A to GND and DET_B to SD_DET with a 10k pull-up, so the input reads low with a card inserted. The\n'
            'shield goes to GND. 100 nF + 10 uF + 47 uF sit at the socket (DESIGN_SPEC "Rails": SD transients stay on the\n'
            'buck rail). 10k pull-ups on CMD and DAT0-DAT3 are the SD-standard idle bias and also keep DAT3/CD high for\n'
@@ -410,44 +498,58 @@ def storage_sheet():
     return s
 
 def actuators_sheet():
-    s=Sheet('actuators','BOARD 4 / PWM outputs',8)
-    s.note('Eight PWM outputs on a 3-row 2.54 mm block: signal / SERVO_5V / GND. No series resistors - 3.3 V logic straight\n'
-           'from the RP2354B, which is what servos and ESCs expect.',15,10,1.6)
-    s.add('J12','Connector_Generic:Conn_01x08','PWM signals, row 1',95,70,
-          {str(i+1):'PWM%d'%(i+1) for i in range(8)},'Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical')
-    s.add('J13','Connector_Generic:Conn_01x08','SERVO_5V pass-through, row 2',165,70,
-          {str(i+1):'5V_IN' for i in range(8)},'Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical')
-    s.add('J14','Connector_Generic:Conn_01x08','GND, row 3',235,70,
-          {str(i+1):'GND' for i in range(8)},'Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical')
-    s.note('3.3 V logic; servo/ESC power is the external BEC bus, 3 A limit is the BEC\'s.',15,120,1.6)
-    s.note('Row 2 is SERVO_5V = the 5V_IN net, i.e. the J3 input BEFORE U25 (the TPS2121 priority power mux). Servo and ESC\n'
-           'current therefore never crosses the board rails, V5_SYS or the mux; in particular it is not counted against the\n'
-           'mux ILM current limit (1.49 A, set by R46). It returns through the row 3 ground pins.\n'
-           'Nothing on this sheet loads V3V3_SYS or USB_VBUS.',15,140,1.3)
-    note='No 3-row generic connector symbol or 2.54 mm 3x08 footprint ships with this KiCad install, so the header is drawn\n'
-    note+='as three stacked Conn_01x08 symbols (J12 signal, J13 SERVO_5V, J14 GND) with three 1x08 footprints. Place them on\n'
-    note+='2.54 mm centres to form the usual 3x8 servo block; column n is J12 pin n / J13 pin n / J14 pin n.'
-    s.note(note,15,165,1.3)
-    s.note('PWM MAP\nPWM1 = GPIO2   PWM5 = GPIO10\nPWM2 = GPIO3   PWM6 = GPIO11\nPWM3 = GPIO4   PWM7 = GPIO14\nPWM4 = GPIO5   PWM8 = GPIO15',15,195,1.3)
+    s=Sheet('actuators','BOARD 4 / servo outputs PWM5-8',8)
+    s.note('PWM5-8 only. PWM1-4 leave the board on the ESC pad row (J3, POWER 1) and appear nowhere on this sheet.\n'
+           'Three 1x04 rows on 2.54 mm centres form the usual servo block: signal / 5 V / GND. No series resistors -\n'
+           '3.3 V logic straight from the RP2354B, which is what servos and ESCs expect.',15,10,1.6)
+    s.add('J12','Connector_Generic:Conn_01x04','PWM5-8 signals, row 1',95,70,
+          {'1':'PWM5','2':'PWM6','3':'PWM7','4':'PWM8'},'MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow')
+    s.add('J13','Connector_Generic:Conn_01x04','Servo 5 V (5V_IN), row 2',165,70,
+          {str(i+1):'5V_IN' for i in range(4)},'MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow')
+    s.add('J14','Connector_Generic:Conn_01x04','GND, row 3',235,70,
+          {str(i+1):'GND' for i in range(4)},'MARV_Packages:PinHeader_1x04_P2.54mm_Vertical_ServoRow')
+    s.note('Row 2 is the 5V_IN net - the output of U26 (the AP63205 VBAT buck on POWER 1), taken BEFORE U25, the TPS2121\n'
+           'priority power mux. Servo current therefore never crosses V5_SYS or the mux and is not counted against the\n'
+           'mux ILM current limit (1.49 A, set by R46); it does count against the buck, which is a 2 A part, so the four\n'
+           'servo channels share whatever is left of 2 A after the avionics load (~0.3 A typical, 0.6 A peak). Sizing the\n'
+           '5V_IN copper and budgeting servo current against U26 is an open item in DESIGN_SPEC.\n'
+           'Nothing on this sheet loads V3V3_SYS or USB_VBUS.',15,120,1.3)
+    s.note('Three stacked Conn_01x04 symbols (J12 signal, J13 5 V, J14 GND) with three 1x04 THT footprints: no 3-row\n'
+           'generic connector symbol or 2.54 mm 3x04 footprint ships with this KiCad install. Place them on 2.54 mm\n'
+           'centres at the bottom-left of the board to form a 3x4 servo block in standard servo lead order\n'
+           '(SIG / 5 V / GND); column n is J12 pin n / J13 pin n / J14 pin n. Through-hole 2.54 mm is deliberate here:\n'
+           'DESIGN_SPEC "Physical design" puts solder pads on every bus and keeps THT pins for leftover IO only.',15,155,1.3)
+    s.note('PWM MAP (this sheet)\nPWM5 = GPIO10\nPWM6 = GPIO11\nPWM7 = GPIO14\nPWM8 = GPIO15\n\n'
+           'ON THE ESC PAD ROW (J3, POWER 1)\nPWM1 = GPIO2\nPWM2 = GPIO3\nPWM3 = GPIO4\nPWM4 = GPIO5',15,195,1.3)
     return s
 
 def build():
-    src=Sheet('power_sources','POWER 1 / 5 V in, USB, priority power mux',2)
-    src.note('5 V INPUTS ONLY: BEC/boost 4.75-5.5 V (J3), USB VBUS ~5 V (J4). NO RAW CELL INPUT ON THIS BOARD.',15,15,2)
-    # J3 is an XT30 right-angle male. PIN NUMBERING IS NOT THE POLARITY: in every AMASS footprint that
-    # ships with KiCad (XT30PW-M/F, XT30U-M, XT60PW-M) pad 1 carries the "-" silkscreen marker and pad 2
-    # the "+" marker, so pin 1 = GND and pin 2 = +5 V. Verified in
-    # /usr/share/kicad/footprints/Connector_AMASS.pretty/AMASS_XT30PW-M_1x02_P2.50mm_Horizontal.kicad_mod
-    # (pad 1 at x=0 next to the "-" text at x=+3; pad 2 at x=-5 next to the "+" text at x=-8).
-    # That footprint (and six others - see LIBRARIES.md) is vendored byte-for-byte into
-    # MARV_Packages.pretty/ with only its (model ...) node repointed at a project-local STEP, so the
-    # project is self-contained for layout; the pads/courtyard are unchanged from the KiCad original.
-    src.add('J3','Connector_Generic:Conn_01x02','5 V IN, 4.75-5.5 V, XT30 (BEC/BMS/boost module)',35,95,{'1':'GND','2':'5V_IN'},'MARV_Packages:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal')
-    src.add('D23','Diode:SMAJ5.0A','SMAJ5.0A, 5.0 V standoff uni-directional TVS',40,50,{'1':'5V_IN','2':'GND'},'Diode_SMD:D_SMA')
-    src.passive('C16','C','100n / 16 V X7R, J3 HF bypass',30,140,'5V_IN','GND')
-    src.passive('C67','C','4.7u / 10 V X7R, J3 bulk',65,140,'5V_IN','GND')
-    src.passive('C68','C','4.7u / 10 V X7R, J3 bulk',100,140,'5V_IN','GND')
-    src.passive('C69','C','100u / 10 V polymer, J3 bulk',135,140,'5V_IN','GND','Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D')
+    src=Sheet('power_sources','POWER 1 / ESC pad row, VBAT buck, USB, priority power mux',2)
+    src.note('BOARD INPUTS: VBAT 6-25.2 V (2-6S) from the ESC pad row J3, and USB VBUS ~5 V (J4). U26 (AP63205WU) makes\n'
+             '5V_IN from VBAT; 5V_IN is the priority input of the U25 power mux and also the servo 5 V bus.',15,15,2)
+    # J3 is the MicoAir AM32 4-in-1 ESC's FC-connection pad row, left to right as printed on the ESC:
+    # CURR, TX, M4, M3, M2, M1, VBAT, GND. The ORDER is authoritative (it is what the ESC silkscreen reads);
+    # the pitch is an assumption - MicoAir publishes no pad drawing - so PadRow_1x08_P2.00mm uses 2.00 mm and
+    # must be confirmed against the physical ESC before fab. See DESIGN_SPEC "Physical design".
+    src.add('J3','Connector_Generic:Conn_01x08','ESC pads (CURR TX M4 M3 M2 M1 VBAT GND)',40,172,
+            {'1':'CURR_SENSE_RAW','2':'ESC_TELEM','3':'PWM4','4':'PWM3','5':'PWM2','6':'PWM1','7':'VBAT','8':'GND'},
+            'MARV_Packages:PadRow_1x08_P2.00mm')
+
+    # U26 AP63205WU: 3.8-32 V in, fixed 5.0 V / 2 A synchronous buck, TSOT-23-6 (Diodes DS41326 Rev. 2-2).
+    # Values are Table 3 "Recommended Component Selections for AP63205" / Figure 21 verbatim:
+    # L 4.7 uH, C1 10 uF, C2 3 x 22 uF (C76/C77/C80; datasheet minimum is 2 x 22 uF), C3 100 nF. FB is a sense input on the fixed-output parts and goes
+    # straight to the output (Sec 9 "Setting the Output Voltage"); there is no external divider.
+    src.add('U26','Regulator_Switching:AP63205WU','AP63205WU-7',75,100,
+            {'1':'5V_IN','2':'U26_EN','3':'VBAT','4':'GND','5':'U26_SW','6':'U26_BST'})
+    src.passive('C73','C','10u / 50 V X7R, VIN bulk',30,50,'VBAT','GND',foot='Capacitor_SMD:C_1206_3216Metric')
+    src.passive('C74','C','100n / 50 V X7R, VIN HF bypass',65,50,'VBAT','GND',foot='Capacitor_SMD:C_0603_1608Metric')
+    src.passive('R52','R','100k / 1%, EN to VIN',100,50,'VBAT','U26_EN')
+    src.passive('C75','C','100n / 50 V X7R, bootstrap',135,50,'U26_BST','U26_SW',foot='Capacitor_SMD:C_0603_1608Metric')
+    src.passive('L3','L','4.7u, Isat 4.4 A, DCR 31.5 mOhm max (Coilcraft XGL4030-472MEC)',125,100,'U26_SW','5V_IN',
+                foot='MARV_Packages:L_Coilcraft_XxL4030')
+    src.passive('C76','C','22u / 25 V X5R, buck COUT',30,140,'5V_IN','GND',foot='Capacitor_SMD:C_1206_3216Metric')
+    src.passive('C77','C','22u / 25 V X5R, buck COUT',65,140,'5V_IN','GND',foot='Capacitor_SMD:C_1206_3216Metric')
+    src.passive('C80','C','22u / 25 V X5R, buck COUT (3rd: >=44 uF after DC-bias derating, AP63205 EVB guide)',100,140,'5V_IN','GND',foot='Capacitor_SMD:C_1206_3216Metric')
 
     # U25 TPS2121 priority power mux: IN1 = 5V_IN (priority), IN2 = USB_VBUS, OUT = V5_SYS.
     src.passive('R42','R','32.4k / 1%, PR1 top (5V_IN)',185,50,'5V_IN','U25_PR1')
@@ -467,7 +569,7 @@ def build():
     src.add('J4','Connector:USB_C_Receptacle_USB2.0_16P','USB_C_PROGRAM_POWER',55,215,{'A1':'GND','A4':'USB_VBUS','A5':'USB_CC1','A6':'USB_DP','A7':'USB_DM','A8':None,'A9':'USB_VBUS','A12':'GND','B1':'GND','B4':'USB_VBUS','B5':'USB_CC2','B6':'USB_DP','B7':'USB_DM','B8':None,'B9':'USB_VBUS','B12':'GND','S1':'GND'},'MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12')
     src.passive('R4','R','5.1k / 1%',120,195,'USB_CC1','GND')
     src.passive('R5','R','5.1k / 1%',120,240,'USB_CC2','GND')
-    src.passive('C7','C','1u / 10 V',25,275,'USB_VBUS','GND')
+    src.passive('C7','C','1u / 10 V X7R 0603',25,275,'USB_VBUS','GND')
 
     src.note('U25 TPS2121 PRIORITY POWER MUX (TI SLVSEA3F). IN1 = 5V_IN is the priority source, IN2 = USB_VBUS the fallback; OUT = V5_SYS.\n'
              'Reverse-current blocking is always on for BOTH channels (Sec 9.3.6, IRCB 0.2/1/2 A, tRCB 10 us, VRCB 0/25/50 mV), so neither input\n'
@@ -487,13 +589,45 @@ def build():
              'ST (Sec 6, Sec 10.2.3) is an open-drain status output: HIGH when IN1 (or neither input) drives OUT, LOW when IN2 does. R47 10k to\n'
              'V3V3_SYS is inside the RST = 6-20 kOhm recommended operating range of Sec 7.3; PWR_SRC_ST lands on RP2354B GPIO39 (pin 48).\n'
              'Sec 11 gives no numeric minimum COUT, only "increase the capacitance on OUT to avoid output voltage drop"; C19 220 uF + C8/C9\n'
-             '2 x 10 uF on POWER 2 already exceed the 100-200 uF the datasheet design examples use, so no extra output capacitor is added here.',150,150,1.3)
-    src.note('J3 INPUT NETWORK: C16 100 nF + C67/C68 2 x 4.7 uF X7R + C69 100 uF polymer, and D23 SMAJ5.0A (DO-214AC/SMA) clamping 5V_IN to GND.\n'
-             'D23 is a UNI-directional TVS: its KiCad symbol inherits the generic A1/A2 pin names from the SM6T family, but the graphic and the\n'
-             'DO-214AC band both put the CATHODE on pin 1, so pin 1 goes to 5V_IN and pin 2 (anode) to GND. 5.0 V standoff / 6.4 V VBR min\n'
-             'sits above the 5.5 V input maximum and below the TPS2121 5.585 V worst-case OV1 trip, so the clamp and the mux do not fight.\n'
-             'J3 is XT30PW-M: pad 1 is the "-" terminal and pad 2 the "+" terminal in the KiCad footprint - see the comment in tools/build_power.py.',150,215,1.3)
-    src.note('USB_VBUS feeds U25 IN2 directly; no inrush/current limiting on this sheet.\nData ESD protection is on POWER 2. No servo rail connection.',150,245)
+             '2 x 10 uF on POWER 2 already exceed the 100-200 uF the datasheet design examples use, so no extra output capacitor is added here.\n'
+             'WHAT CHANGED WITH THE ON-BOARD BUCK: IN1 is no longer an external BEC of unknown quality, it is U26\'s regulated 5.00 V +/-1% output.\n'
+             'PR1 therefore sits far above its 4.494 V rising threshold whenever the pack is connected, so IN1 selection is unconditional in normal\n'
+             'operation, and OV1 (5.862 V typ, 5.585 V worst case) can only trip on a U26 failure - it is now a backstop against a shorted high-side\n'
+             'FET pushing VBAT onto 5V_IN, not the mis-plug guard it used to be. The mis-plug case itself is gone: there is no 5 V input connector\n'
+             'left to mis-plug, and VBAT does not reach V5_SYS by any path. The divider values are kept as they are because they still bound both\n'
+             'ends of the window and cost nothing.',150,150,1.25)
+    src.note('ESC PAD ROW J3 (MicoAir AM32 4-in-1 ESC, FC-connection row). Order is the ESC silkscreen read left to right:\n'
+             '1 CURR - analog current sense from the ESC, 12.75 mV/A, 0-3.3 V -> R53/C78 -> GPIO42 (ADC2) on BOARD 1.\n'
+             '2 TX   - KISS ESC telemetry, 3.3 V, 115200 baud, ESC output only -> R54 -> GPIO30 (PIO UART RX).\n'
+             '3-6 M4 M3 M2 M1 - 3.3 V DShot/PWM inputs, straight from the RP2354B (PWM4..PWM1 = GPIO5, 4, 3, 2).\n'
+             '7 VBAT - raw pack, 6-25.2 V (2-6S), the only board power input besides USB.  8 GND.\n'
+             'PITCH IS AN ASSUMPTION: MicoAir publishes no pad drawing, so MARV_Packages:PadRow_1x08_P2.00mm assumes\n'
+             '2.00 mm. The ORDER is authoritative; confirm the pitch against the physical ESC before fab.\n'
+             'The ESC-side low-ESR electrolytic on VBAT is MANDATORY: this board carries ceramic input capacitance only\n'
+             '(C73 10 uF + C74 100 nF), and a ceramic-only pack connection rings to roughly twice pack voltage on hot\n'
+             'plug. There is no TVS on VBAT by design - nothing that clamps below 32 V survives a 6S pack.',150,205,1.25)
+    src.note('U26 AP63205WU-7 VBAT BUCK (Diodes DS41326 Rev. 2-2). 3.8-32 V in, FIXED 5.0 V out (4.95/5.00/5.05 V,\n'
+             'Electrical Characteristics VFB row), 2 A, 1.1 MHz with +/-6% frequency spread spectrum, 4 ms internal\n'
+             'soft-start, 22 uA quiescent, TSOT-23-6. VIN abs max 35 V DC / 40 V for 400 ms vs a 25.2 V 6S pack.\n'
+             'Component values are Table 3 "Recommended Component Selections for AP63205" and Figure 21 verbatim:\n'
+             'L 4.7 uH (L3), C1 10 uF (C73), C2 3 x 22 uF (C76/C77/C80; datasheet minimum is 2 x 22 uF), C3 100 nF bootstrap BST-SW (C75).\n'
+             'FB (pin 1) is a SENSE input on the fixed-output parts and goes straight to the 5 V output - Sec 9 "Setting\n'
+             'the Output Voltage": only the adjustable AP63200/AP63201 take a divider. FB abs max 6.0 V.\n'
+             'EN (pin 2): "The EN pin is a high voltage pin and can be directly connected to VIN" (Sec 3 "Enable"), abs\n'
+             'max 35 V, threshold 1.18 V rising / 1.10 V falling, internal 1.5 uA pull-up. R52 100k from VBAT is that\n'
+             'connection with a series element, so a VBAT transient reaches the EN clamp through 100k rather than\n'
+             'directly, and so a UVLO divider (Eq.1/Eq.2) or a start-delay cap (Eq.3) can be added later without\n'
+             'touching the VBAT copper. Device UVLO is 3.5 V typ rising regardless.\n'
+             'L3: Coilcraft XGL4030-472MEC, 4.7 uH +/-20%, DCR 31.5 mOhm max, Isat 3.2 A at 20% / 4.4 A at 30% drop,\n'
+             'Irms 4.8 A at 20 C rise (Coilcraft Doc 1575-1). Isat(20%) clears the AP63205 high-side peak current limit\n'
+             'at its 3.1 A maximum, so the inductor does not saturate even in a current-limit or hiccup event; DCR is\n'
+             'inside the datasheet\'s "less than 100 mOhm" guidance. 4.0 x 4.0 x 3.1 mm, and it reuses the XGL4030\n'
+             'footprint and 3D model already vendored for L2. Ripple at 25.2 V in / 2 A out is 0.78 A pk-pk (Eq.7),\n'
+             'peak 2.39 A (Eq.8).\n'
+             'DERATING CAVEAT: C73 and C76/C77/C80 are the datasheet nominal values, and ceramic DC-bias derating is NOT\n'
+             'in them - a 10 uF/50 V 1206 at 25 V and a 22 uF/25 V 1206 at 5 V both lose roughly half. The EVB user\n'
+             'guide asks for >= 44 uF of COUT (nominal 66 uF: all three 22 uF fitted) and the board fits the third 22 uF (C80).',150,238,1.25)
+    src.note('USB_VBUS feeds U25 IN2 directly; no inrush or current limiting on this sheet.\nData ESD protection is on POWER 2. No servo rail connection.',330,130,1.2)
 
     out=Sheet('power_3v3','POWER 2 / 3.3 V system buck and analog LDO',3)
     out.note('AVIONICS ONLY: 300 mA continuous / 500 mA short peak, provisional. NO SERVO POWER.',15,15,2)
@@ -502,14 +636,14 @@ def build():
     out.passive('L2','L','2.2u / Isat 7 A, DCR 13.5 mOhm (Coilcraft XGL4030-222MEC or equiv)',175,50,'U7_SW','U7_VO',foot='MARV_Packages:L_Coilcraft_XxL4030')
     out.passive('FB1','FerriteBead','8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv)',175,90,'U7_VO','V3V3_SYS',foot='Inductor_SMD:L_0603_1608Metric')
     for ref,x in [('C8',25),('C9',25)]:
-        out.passive(ref,'C','10u / 10 V X7S',x,55 if ref=='C8' else 105,'V5_SYS','GND')
+        out.passive(ref,'C','10u / 10 V X7S 0603',x,55 if ref=='C8' else 105,'V5_SYS','GND')
     out.passive('C17','C','2.2n / 50 V X7R, VIN-PGND HF bypass',55,60,'V5_SYS','GND',foot='Capacitor_SMD:C_0402_1005Metric')
     out.passive('C19','C','220u / 10 V polymer, ESR ~40 mOhm',25,155,'V5_SYS','GND','Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D')
     for ref,x in [('C10',245),('C11',310),('C12',375)]:
         out.passive(ref,'C','22u / 10 V X7S, 1st-stage COUT',x,50,'U7_VO','GND',foot='Capacitor_SMD:C_0805_2012Metric')
     for ref,x in [('C23',245),('C24',310)]:
         out.passive(ref,'C','22u / 10 V X7S, 2nd-stage Cf (post-bead)',x,75,'V3V3_SYS','GND',foot='Capacitor_SMD:C_0805_2012Metric')
-    out.passive('C13','C','470n / 16 V, NR/SS soft-start + noise filter (5 ms)',95,125,'U7_SS','GND')
+    out.passive('C13','C','470n / 16 V X7R 0603, NR/SS soft-start + noise filter (5 ms)',95,125,'U7_SS','GND')
     out.passive('R7','R','15.8k / 0.1%',245,105,'V3V3_SYS','U7_FB')
     out.passive('R8','R','4.99k / 0.1%',310,105,'U7_FB','GND')
     out.passive('R9','R','6.04k / 1%, S-CONF: 2.2 MHz + triangle SSM, discharge off, no sync',175,120,'U7_SCONF','GND')
@@ -517,8 +651,8 @@ def build():
     out.note('V3V3_SYS feedback (TPS62913 datasheet Sec 8.2.2.2.6, Eq.8): VOUT = VFB x (1 + R1/R2); VFB = 0.8 V typ, 0.792-0.812 V spec (Sec 6.5).\nR2 = 4.99 kOhm (<=5 kOhm per datasheet noise guidance). R1 = R2 x (VOUT/VFB - 1) = 4.99k x (3.3/0.8 - 1) = 4.99k x 3.125 = 15.59 kOhm -> nearest 1% E96 = 15.8 kOhm.\nActual VOUT = 0.8 V x (1 + 15.8k/4.99k) = 3.33 V nominal (3.30-3.38 V across VFB tolerance).',15,180,1.3)
     out.note('S-CONF = 6.04 kOhm to GND (Table 7-1): 2.2 MHz switching, triangle spread-spectrum ON, output discharge OFF, no external sync.\n2.2 MHz + 2.2uH matches the VIN=5V/VOUT<=3.3V design table (Table 8-2). TPS62913 runs fixed-frequency PWM at all loads, no light-load skip mode (Sec 7.4.1) -- forced PWM is inherent; there is no separate MODE pin on this device.\nVO (pin 3) senses the node between L1 and the ferrite bead (device internal loop); the FB divider senses V3V3_SYS after the bead for low-noise remote regulation (Sec 7.1 / 8.2.2.2.4).',15,215,1.3)
     out.add('U12','Regulator_Linear:TPS7A20xxxDBV','TPS7A2033PDBVR',95,200,{'1':'V5_SYS','2':'GND','3':'PWR_GOOD','4':None,'5':'V3V3_ANA'})
-    out.passive('C25','C','1u / 10 V X7R, LDO input',55,195,'V5_SYS','GND')
-    out.passive('C26','C','1u / 10 V X7R, LDO output, ESR <=100 mOhm',150,195,'V3V3_ANA','GND')
+    out.passive('C25','C','1u / 10 V X7R 0603, LDO input',55,195,'V5_SYS','GND')
+    out.passive('C26','C','1u / 10 V X7R 0603, LDO output, ESR <=100 mOhm',150,195,'V3V3_ANA','GND')
     out.note('3V3_ANA feeds ICM-45686, BMP581, ADXL375 and the RP2354B ADC_AVDD pin (100 nF at each pin on the MCU sheet); VREG_AVDD is filtered\n'
              'from V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is on PWR_GOOD rather than V5_SYS:\n'
              'the analog rail therefore starts only once the TPS62913 declares V3V3_SYS in regulation, and drops with it, which removes the\n'
@@ -526,18 +660,21 @@ def build():
     out.add('U8','Power_Protection:USBLC6-2SC6','USBLC6-2SC6',245,220,{'1':'USB_DP','2':'GND','3':'USB_DM','4':'USB_DM_MCU','5':'USB_VBUS','6':'USB_DP_MCU'})
 
     periph=Sheet('power_periph','POWER 3 / peripheral ports',4)
-    periph.note('PIXHAWK DS-009 PIN ORDER. UART ports (J6, J7): 1 VCC, 2 TX, 3 RX, 4 GND. I2C port (J9): 1 VCC, 2 SCL, 3 SDA, 4 GND.\n'
+    periph.note('PIXHAWK DS-009 PIN ORDER ON SOLDER PADS. UART ports (J6, J7): 1 VCC, 2 TX, 3 RX, 4 GND. I2C port (J9): 1 VCC, 2 SCL,\n'
+                '3 SDA, 4 GND. The connector is gone, the ORDER is not: all three are 1x04 solder pad rows (MARV_Packages:PadRow_1x04_P2.00mm,\n'
+                '1.4 x 2.2 mm pads on 2.00 mm pitch, F.Cu only) on the left board edge, so a DS-009 pigtail is soldered on rather than mated.\n'
+                'Label each pad in silk at layout and mark pad 1.\n'
                 'Pin 2 of a UART port is the BOARD TX, i.e. the RP2354B UART TX output, which lands on the module RX input - that is the\n'
                 'GPS_RX / ELRS_RX net, because a port label is named for the peripheral pin it belongs to (see the MCU sheet). Pin 3 is the\n'
                 'board RX, fed by the module TX: GPS_TX / ELRS_TX.',15,15,1.4)
-    periph.passive('C20','C','10u / 10 V X7R',25,55,'V5_SYS','GND')
-    periph.add('J6','Connector_Generic:Conn_01x04','UART_GPS (DS-009: VCC/TX/RX/GND)',95,55,{'1':'V5_SYS','2':'GPS_RX','3':'GPS_TX','4':'GND'},'Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal')
+    periph.passive('C20','C','10u / 10 V X7R 0603',25,55,'V5_SYS','GND')
+    periph.add('J6','Connector_Generic:Conn_01x04','UART_GPS (DS-009: VCC/TX/RX/GND)',95,55,{'1':'V5_SYS','2':'GPS_RX','3':'GPS_TX','4':'GND'},'MARV_Packages:PadRow_1x04_P2.00mm')
 
-    periph.passive('C21','C','10u / 10 V X7R',25,105,'V5_SYS','GND')
-    periph.add('J7','Connector_Generic:Conn_01x04','UART_ELRS (DS-009: VCC/TX/RX/GND)',95,105,{'1':'V5_SYS','2':'ELRS_RX','3':'ELRS_TX','4':'GND'},'Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal')
+    periph.passive('C21','C','10u / 10 V X7R 0603',25,105,'V5_SYS','GND')
+    periph.add('J7','Connector_Generic:Conn_01x04','UART_ELRS (DS-009: VCC/TX/RX/GND)',95,105,{'1':'V5_SYS','2':'ELRS_RX','3':'ELRS_TX','4':'GND'},'MARV_Packages:PadRow_1x04_P2.00mm')
 
-    periph.passive('C22','C','10u / 10 V X7R',25,155,'V3V3_SYS','GND')
-    periph.add('J9','Connector_Generic:Conn_01x04','I2C_MAG (DS-009: VCC/SCL/SDA/GND)',95,155,{'1':'V3V3_SYS','2':'MAG_SCL','3':'MAG_SDA','4':'GND'},'Connector_JST:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal')
+    periph.passive('C22','C','10u / 10 V X7R 0603',25,155,'V3V3_SYS','GND')
+    periph.add('J9','Connector_Generic:Conn_01x04','I2C_MAG (DS-009: VCC/SCL/SDA/GND)',95,155,{'1':'V3V3_SYS','2':'MAG_SCL','3':'MAG_SDA','4':'GND'},'MARV_Packages:PadRow_1x04_P2.00mm')
 
     periph.note('RAILS: J6 and J7 VCC are on V5_SYS - GNSS and ELRS modules are 5 V-powered with their own on-module regulators, and their\n'
                 'C20 / C21 10 uF local bulk moved to V5_SYS with them. Their SIGNAL pins stay 3.3 V CMOS straight from the RP2354B, which is\n'
@@ -547,12 +684,15 @@ def build():
 
     mcu=mcu_sheet(); sens=sensors_sheet(); sto=storage_sheet(); act=actuators_sheet()
     sheets=[src,out,periph,mcu,sens,sto,act]
-    for sheet,net,x,y,num in [(src,'GND',395,55,1),(src,'5V_IN',395,80,2),(src,'USB_VBUS',395,105,3),(src,'V5_SYS',395,130,4),
+    for sheet,net,x,y,num in [(src,'GND',400,190,1),(src,'5V_IN',400,215,2),(src,'USB_VBUS',400,240,3),(src,'V5_SYS',400,265,4),
+                              (src,'VBAT',400,165,8),
                               (mcu,'V3V3_SYS',155,262,5),(mcu,'VREG_AVDD',185,262,6),(mcu,'DVDD',215,262,7)]:
         sheet.add('#FLG'+str(num),'power:PWR_FLAG','PWR_FLAG',x,y,{'1':net})
     root=['(kicad_sch (version 20250114) (generator "eeschema") (uuid '+uid('power-root')+') (paper "A3") (title_block (title "MARV integrated power - preliminary") (date "2026-09-14") (rev "P0 - NOT FOR FAB")) (lib_symbols)']
     root.append('(text '+q('Integrated draft: power chain (sheets 2-4) and board stage (sheets 5-8). See DESIGN_SPEC.md.\n'
-                            'Rails: V5_SYS from the 5 V inputs, V3V3_SYS from the TPS62913 buck, V3V3_ANA from the TPS7A20 LDO.\n'
+                            'Inputs: VBAT 6-25.2 V (2-6S) from the MicoAir AM32 ESC pad row J3, and USB VBUS.\n'
+                            'Rails: 5V_IN from the U26 AP63205 buck, V5_SYS from the U25 TPS2121 mux, V3V3_SYS from the\n'
+                            'TPS62913 buck, V3V3_ANA from the TPS7A20 LDO. Servo 5 V is 5V_IN, upstream of the mux.\n'
                             'No PCB placement or routing has been performed.')+' (at 20 20 0) (effects (font (size 1.8 1.8)) (justify left top)) (uuid '+uid('root-note')+'))')
     for i,s in enumerate(sheets):
         x,y=20+200*(i//4),60+38*(i%4)

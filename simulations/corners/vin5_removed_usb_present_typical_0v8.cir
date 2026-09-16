@@ -4,9 +4,11 @@ MARV P3 source-handover corner - TPS2121 behavioral model, not vendor silicon
 * comments for why every nonlinearity in the state path is a tanh rather
 * than a ?:/min/max clamp.
 *
-* P3 is 5 V-only: the two sources are 5V_IN (J3, BEC/boost, 0.10 ohm, 3 A
-* limit) and USB (J4, 0.35 ohm, no limit), both entering ONE TPS2121
-* priority power mux (U25) whose OUT is V5_SYS -- no cell/battery path.
+* The two sources are 5V_IN -- the output of U26, the on-board AP63205WU buck
+* that makes 5.0 V from the 6-25.2 V pack on the ESC pad row J3 (0.10 ohm
+* effective output impedance, 2 A limit) -- and USB (J4, 0.35 ohm, no limit),
+* both entering ONE TPS2121 priority power mux (U25) whose OUT is V5_SYS.
+* The pack itself is not modeled; this deck starts at the buck output.
 * IN1 = 5V_IN is the priority input, IN2 = USB the fallback.
 * Exactly one of them is the SURVIVOR (present for the whole run) and the
 * other is the OTHER source (removed, inserted, or held over-voltage at
@@ -16,11 +18,15 @@ MARV P3 source-handover corner - TPS2121 behavioral model, not vendor silicon
 * Xsurvivoror/Xotheror, top-level source Vsrv/Vother) and the ROLE BLOCK
 * only decides which of them the controller treats as IN1, so every .meas
 * statement is invariant across the substitutions:
-*   bec_removed_usb_present (on-disk default): USB survives, 5V_IN removed.
-*   usb_removed_bec_present: 5V_IN survives, USB removed.
-*   usb_insert_bec_present: 5V_IN survives, USB absent then inserted.
-*   bec_ov_6v5 / bec_2s_8v4: USB survives, 5V_IN held above the OV1 trip
-*     for the whole run (a mis-set BEC, and a 2S pack plugged into J3).
+*   vin5_removed_usb_present (on-disk default): USB survives, 5V_IN removed
+*     (pack unplugged, or U26 shut down) while USB is already attached.
+*   usb_removed_vin5_present: 5V_IN survives, USB removed.
+*   usb_insert_vin5_present: 5V_IN survives, USB absent then inserted.
+*   buck_fault_6v5 / buck_fault_8v4: USB survives, 5V_IN held above the OV1
+*     trip for the whole run. With a fixed 5.00 V +/-1% buck there is no
+*     external source left to mis-set or mis-plug, so these now model a U26
+*     FAILURE pushing 6.5 V or 8.4 V onto 5V_IN (e.g. a shorted high-side
+*     FET partially passing VBAT) and prove OV1 still protects V5_SYS.
 *   Same hooks also produce the reverse-current corner in RESULTS.md (USB
 *   inserted onto an already-present 5V_IN): current into the 5V_IN path is
 *   directly measurable through Vsrv (the SURVIVOR block's own top-level
@@ -63,7 +69,7 @@ MARV P3 source-handover corner - TPS2121 behavioral model, not vendor silicon
 .param R5VIN=0.10 RUSB=0.35
 .param RONHI=0.056 TSW=100u TRCB=10u IRCB=1 VRCB=0.025
 .param VUVR=2.65 VUVF=2.55 VOVR=5.862 VOVF=5.751 VPRR=4.494 VPRF=4.410 VCMP=0.280
-.param CSYS=20u CPOLY=220u ILOAD=0.5
+.param CSYS=20u CPOLY=220u ILOAD=0.8
 
 * ---------------------------------------------------------------------------
 * muxctl: the TPS2121's shared channel-selection logic. Unlike the LM66100
@@ -144,7 +150,7 @@ Rbleed out 0 100k
 
 * --- SURVIVOR SOURCE BLOCK: usb_survivor ---
 * USB present for the whole run (no current limit): the surviving source in
-* bec_removed_usb_present and in both over-voltage corners. Held at the same
+* vin5_removed_usb_present and in both over-voltage corners. Held at the same
 * 5.0 V as the OTHER source. The LM66100 model this file replaces had to
 * split the two sources 4.6 V / 5.4 V to make the pre-event state
 * well-defined, because that part had no priority mechanism and near-equal
@@ -158,27 +164,29 @@ Csrvfilt srv 0 1.1u
 Xsurvivoror srv sys ensrv muxpath params: ron={RONHI} tsw={TSW} trcb={TRCB} ircb={IRCB} vrcb={VRCB}
 * --- END SURVIVOR SOURCE BLOCK ---
 
-* --- OTHER SOURCE BLOCK: bec_removed ---
+* --- OTHER SOURCE BLOCK: vin5_removed ---
 * 5V_IN present from t=0 at 5.0 V, removed (100 us ramp) at t=15 ms.
-* Current-limited like integrated_power.cir's B5vinlim (0.10 ohm slope, 3 A
-* hard clamp). Cosrcfilt is the REAL 5V_IN node capacitance, not a token
-* filter cap: C16 100 nF + C67/C68 2 x 4.7 uF + C69 100 uF + C71 100 nF =
-* ~110 uF. That value is load-bearing for this corner. With only the old
-* 100 nF pre-OR cap the node has so little charge that the still-conducting
-* IN1 channel pins it to V5_SYS as the rail recovers, the PR1 divider never
-* stays below VREF, and the model latches into a half-conducting state that
-* the hardware cannot reach; with the real bulk the reverse current needed
-* to drag 110 uF up exceeds IRCB, RCB trips within tRCB, and IN1 stays off.
-Vother vother0 0 6.5
-Botherlim vother0 osrc I=min(max(v(vother0,osrc)/R5VIN,0),3.0)
-Cosrcfilt osrc 0 110u
+* Current-limited like integrated_power.cir's B5vinlim (0.10 ohm slope, 2 A
+* hard clamp = the AP63205's rated output). Cosrcfilt is the REAL 5V_IN node
+* capacitance, not a token filter cap: C76/C77 2 x 22 uF (the AP63205 COUT of
+* datasheet Table 3) + C71 100 nF = 44.1 uF. That value is load-bearing for
+* this corner. With only a 100 nF pre-OR cap the node has so little charge
+* that the still-conducting IN1 channel pins it to V5_SYS as the rail
+* recovers, the PR1 divider never stays below VREF, and the model latches
+* into a half-conducting state that the hardware cannot reach; with the real
+* bulk the reverse current needed to drag 44.1 uF up exceeds IRCB, RCB trips
+* within tRCB, and IN1 stays off. This node used to carry ~110 uF of XT30
+* input network, so the corner is strictly harder than it was.
+Vother vother0 0 PWL(0 5.0 15m 5.0 15.1m 0)
+Botherlim vother0 osrc I=min(max(v(vother0,osrc)/R5VIN,0),2.0)
+Cosrcfilt osrc 0 44.1u
 Rosrcbleed osrc 0 100k
 Xotheror osrc sys enoth muxpath params: ron={RONHI} tsw={TSW} trcb={TRCB} ircb={IRCB} vrcb={VRCB}
 * --- END OTHER SOURCE BLOCK ---
 
 * --- ROLE BLOCK: other_is_in1 ---
 * Default roles: the OTHER source is 5V_IN = IN1 (priority) and the SURVIVOR
-* is USB = IN2. usb_removed_bec_present / usb_insert_bec_present swap this.
+* is USB = IN2. usb_removed_vin5_present / usb_insert_vin5_present swap this.
 Xmuxctl osrc srv enoth ensrv muxctl params: vuvr={VUVR} vuvf={VUVF} vovr={VOVR} vovf={VOVF} vprr={VPRR} vprf={VPRF} vcmp={VCMP}
 * --- END ROLE BLOCK ---
 
@@ -202,8 +210,8 @@ Iload v3v3 0 {ILOAD}
 .meas tran rev_dur INTEG par('(i(Vsrv)>0.02) ? 1 : 0') FROM=14m TO=25m
 * Handover-validity precondition, per case (see tools/run_power_checks.py):
 *   fet_pre  - survivor channel conduction just before the 15 ms event. For
-*              bec_removed_usb_present this must be ~0 (5V_IN has priority,
-*              so the USB channel is held off); for usb_removed_bec_present
+*              vin5_removed_usb_present this must be ~0 (5V_IN has priority,
+*              so the USB channel is held off); for usb_removed_vin5_present
 *              it must be ~1 (5V_IN IS the survivor and holds priority).
 *   oth_pre  - the other channel's conduction just before the event.
 *   oth_max  - the other channel's conduction over the whole evaluated run;

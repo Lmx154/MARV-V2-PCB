@@ -54,15 +54,14 @@ dot marker, and no material colours.
 | `QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm.step` | RP2354B (U20) | `tools/3d/gen_qfn80_rp2354b.py` | RP2350 datasheet Ch. 14.2, Figure 145 dimension table (body height A = 0.80/0.85/0.90, nominal 0.85 used) | 488531 | `f92b7b1e438a417aa8c7093ba8762307c5e4ddf36431eb10a4c9d37f5a44c05e` |
 | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm.step` | TPS62913RPUR (U7) | `tools/3d/gen_rpu0010a_tps62913.py` | TPS62913 datasheet SLVSHR9, package outline RPU0010A, TI drawing 4224937/A | 66969 | `b18cb2ad728cf6865b6984cee9e7fdf8dbdf68ef97ae5561e05dc2100021b0a1` |
 | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm.step` | TPS2121RUXR (U25) | `tools/3d/gen_rux0012a_tps2121.py` | TPS2120/TPS2121 datasheet SLVSEA3F, package outline RUX0012A, TI drawing 4224010/A | 78852 | `1353e9ca8d106fc8153fc7997652fbaed478203bf3e502329d63523632ed3835` |
-| `AMASS_XT30PW-M_1x02_P2.50mm_Horizontal.step` | Amass XT30PW-M (J3) | `tools/3d/gen_xt30pw_m.py` | X/Y from the KiCad footprint's own F.Fab outline and pad list; **housing height and pin diameter are generic XT30-series values, not the XT30PW-M drawing** | 14283 | `d0cb7b8c77c55b8467207eafc771ad637e0161fe80efff8fc2ba847ba4f85ee6` |
+| `LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | Worldsemi WS2812C-2020 (D20) | `tools/3d/gen_ws2812c_2020.py` | WS2812C-2020 datasheet p.2 "Mechanical Dimensions": body 2.20 x 2.00, total height 0.84, base step 0.28; **the moulded lens step has no dimensioned width, so its 1.45 x 1.30 footprint is scaled off the Side View** | 36537 | `9a134a81faa1730c21bead06b5a3ccda6f93fbdbdc0b706986019b045b795732` |
 
 Caveats that matter for layout:
 
-- **`AMASS_XT30PW-M...` is a placeholder body.** amassconnectors.com publishes no
-  CAD or drawing, and every distributor mirror of the XT30PW-M PDF (TME, LCSC,
-  JLCPCB, Octopart, componentsearchengine) returned HTTP 403 to automated
-  fetches. Housing height 7.0 mm and pin diameter 1.5 mm are typical XT30-series
-  figures, not measured from the part. Do not use it for enclosure clearance.
+- **`LED_WS2812B-2020...` lens step is approximate.** The datasheet Side View
+  dimensions only the two heights (0.84 total, 0.28 base); the upper moulding's
+  width is scaled off the drawing, not read from it. The outer envelope
+  (2.20 x 2.00 x 0.84) and the four terminals are dimensioned values.
 - **`Texas_VQFN-HR-12...` height is assumed 0.9 mm**: TI drawing 4224010/A gives
   only "1 MAX" for RUX0012A, with no nominal. 0.9 mm was chosen to match the
   0.8/1.0 min/max band of the sibling RPU0010A package.
@@ -122,7 +121,7 @@ CC-BY-SA 4.0 and this attribution must travel with it.
 | Wanted | Why not |
 | --- | --- |
 | TI STEP for TPS62913 (RPU0010A) and TPS2121 (RUX0012A) | ti.com links only to Ultra Librarian; download needs T&C acceptance plus a reCAPTCHA that was disabled ("exceeding free quota") at the time. Generated instead — see section 2. |
-| Amass STEP/drawing for XT30PW-M | amassconnectors.com is a static brochure with no CAD, drawings or downloads; catalogue by request from sales@amassconnectors.com. Generated instead — see section 2. |
+| KiCad's own `LED_SMD.3dshapes/LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | Referenced by the KiCad 10 footprint but not shipped by this KiCad 10.0.6 install (only the 5050, Mini-3535 and PLCC6 bodies are present). Generated instead — see section 2. |
 | TDK STEP for ICM-45686 | Product/download pages are session-gated. KiCad stand-in used — see section 3. |
 | Bosch STEP for BMP581 | Not published. KiCad stand-in used — see section 3. |
 

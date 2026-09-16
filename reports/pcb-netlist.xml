@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-15T19:15:55</date>
+    <date>2026-09-15T18:47:44</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -4452,12 +4452,12 @@
       <node ref="R33" pin="1" pintype="passive"/>
       <node ref="U20" pin="36" pinfunction="GPIO28_36" pintype="bidirectional"/>
     </net>
-    <net code="8" name="CURR_SENSE" class="PWM_ESC">
+    <net code="8" name="CURR_SENSE" class="ESC">
       <node ref="C78" pin="1" pintype="passive"/>
       <node ref="R53" pin="2" pintype="passive"/>
       <node ref="U20" pin="53" pinfunction="GPIO42/ADC2_53" pintype="bidirectional"/>
     </net>
-    <net code="9" name="CURR_SENSE_RAW" class="PWM_ESC">
+    <net code="9" name="CURR_SENSE_RAW" class="ESC">
       <node ref="J3" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R53" pin="1" pintype="passive"/>
     </net>
@@ -4480,11 +4480,11 @@
       <node ref="J7" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="7" pinfunction="GPIO9_7" pintype="bidirectional"/>
     </net>
-    <net code="13" name="ESC_TELEM" class="PWM_ESC">
+    <net code="13" name="ESC_TELEM" class="ESC">
       <node ref="J3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R54" pin="1" pintype="passive"/>
     </net>
-    <net code="14" name="ESC_TELEM_RX" class="PWM_ESC">
+    <net code="14" name="ESC_TELEM_RX" class="ESC">
       <node ref="R54" pin="2" pintype="passive"/>
       <node ref="U20" pin="38" pinfunction="GPIO30_38" pintype="bidirectional"/>
     </net>
@@ -4696,35 +4696,35 @@
       <node ref="R25" pin="2" pintype="passive"/>
       <node ref="U20" pin="3" pinfunction="GPIO6_3" pintype="bidirectional"/>
     </net>
-    <net code="37" name="PWM1" class="PWM_ESC">
+    <net code="37" name="PWM1" class="ESC">
       <node ref="J3" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="U20" pin="79" pinfunction="GPIO2_79" pintype="bidirectional"/>
     </net>
-    <net code="38" name="PWM2" class="PWM_ESC">
+    <net code="38" name="PWM2" class="ESC">
       <node ref="J3" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="U20" pin="80" pinfunction="GPIO3_80" pintype="bidirectional"/>
     </net>
-    <net code="39" name="PWM3" class="PWM_ESC">
+    <net code="39" name="PWM3" class="ESC">
       <node ref="J3" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="1" pinfunction="GPIO4_1" pintype="bidirectional"/>
     </net>
-    <net code="40" name="PWM4" class="PWM_ESC">
+    <net code="40" name="PWM4" class="ESC">
       <node ref="J3" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="2" pinfunction="GPIO5_2" pintype="bidirectional"/>
     </net>
-    <net code="41" name="PWM5" class="PWM_ESC">
+    <net code="41" name="PWM5" class="Default">
       <node ref="J12" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U20" pin="8" pinfunction="GPIO10_8" pintype="bidirectional"/>
     </net>
-    <net code="42" name="PWM6" class="PWM_ESC">
+    <net code="42" name="PWM6" class="Default">
       <node ref="J12" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="9" pinfunction="GPIO11_9" pintype="bidirectional"/>
     </net>
-    <net code="43" name="PWM7" class="PWM_ESC">
+    <net code="43" name="PWM7" class="Default">
       <node ref="J12" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="13" pinfunction="GPIO14_13" pintype="bidirectional"/>
     </net>
-    <net code="44" name="PWM8" class="PWM_ESC">
+    <net code="44" name="PWM8" class="Default">
       <node ref="J12" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="14" pinfunction="GPIO15_14" pintype="bidirectional"/>
     </net>

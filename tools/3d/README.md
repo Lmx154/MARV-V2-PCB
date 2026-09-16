@@ -21,7 +21,7 @@ From the repo root:
 /snap/bin/freecad.cmd -c tools/3d/gen_qfn80_rp2354b.py </dev/null
 /snap/bin/freecad.cmd -c tools/3d/gen_rpu0010a_tps62913.py </dev/null
 /snap/bin/freecad.cmd -c tools/3d/gen_rux0012a_tps2121.py </dev/null
-/snap/bin/freecad.cmd -c tools/3d/gen_xt30pw_m.py </dev/null
+/snap/bin/freecad.cmd -c tools/3d/gen_ws2812c_2020.py </dev/null
 ```
 
 Run the generators with stdin closed (e.g. `</dev/null`), because FreeCADCmd
@@ -37,7 +37,7 @@ WROTE <path> size=<bytes> bytes
 To regenerate all four in one go:
 
 ```sh
-for f in gen_qfn80_rp2354b.py gen_rpu0010a_tps62913.py gen_rux0012a_tps2121.py gen_xt30pw_m.py; do
+for f in gen_qfn80_rp2354b.py gen_rpu0010a_tps62913.py gen_rux0012a_tps2121.py gen_ws2812c_2020.py; do
     /snap/bin/freecad.cmd -c "tools/3d/$f" </dev/null
 done
 ```
@@ -61,10 +61,10 @@ calling `exportStep`.
   is built directly in the footprint's own XY coordinate frame.
 - In-plane (X/Y) pad positions are taken from the real KiCad system
   footprints in `/usr/share/kicad/footprints/` (`Package_DFN_QFN.pretty`,
-  `Connector_AMASS.pretty`) so the generated models line up with the
+  `LED_SMD.pretty`) so the generated models line up with the
   footprints already used in this project's schematics/BOM.
 - A pin-1 corner chamfer (QFN/VQFN parts) or a small top-face dot marker
-  (all four parts) marks pin 1 / the positive terminal.
+  (all four parts) marks pin 1.
 
 ## Per-model dimension sources
 
@@ -73,7 +73,7 @@ calling `exportStep`.
 | `gen_qfn80_rp2354b.py` | `QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm.step` | RP2350 datasheet, Ch. 14.2 "QFN-80 package", Figure 145 dimension table, PDF page 1329 ( https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf ) |
 | `gen_rpu0010a_tps62913.py` | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm.step` | TPS62913 datasheet (SLVSHR9), package outline RPU0010A, TI dwg 4224937/A ( https://www.ti.com/lit/ds/symlink/tps62913.pdf ) |
 | `gen_rux0012a_tps2121.py` | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm.step` | TPS2120/TPS2121 datasheet (SLVSEA3F), package outline RUX0012A, TI dwg 4224010/A ( https://www.ti.com/lit/ds/symlink/tps2121.pdf ) |
-| `gen_xt30pw_m.py` | `AMASS_XT30PW-M_1x02_P2.50mm_Horizontal.step` | UNKNOWN / approximate - distributor PDF (TME/LCSC/JLCPCB/componentsearchengine) blocked automated fetch (HTTP 403) in this session. X/Y taken from the real `.kicad_mod` F.Fab outline and pad list; housing height and pin diameter are generic XT30-series typical values, not the exact XT30PW-M drawing. See script docstring. |
+| `gen_ws2812c_2020.py` | `LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | Worldsemi WS2812C-2020 datasheet, page 2 "Mechanical Dimensions (Unit: mm)" - Back View 2.20 x 2.00, Side View 0.84 total / 0.28 base, PCB Solder Pad 0.70 / 0.40 / 1.13. The upper moulding step has no dimensioned width and is scaled from the drawing. See script docstring. |
 
 Full dimension tables, JEDEC/TI drawing numbers, and exact values used are
 documented in each script's module docstring - read the script before
@@ -84,9 +84,7 @@ trusting a number blindly.
 - Leads/pads are modelled as flat rectangular boxes (QFN/VQFN) or plain
   cylinders (Amass pins), not the true gull-wing/lead-frame profile.
 - The exposed pad (QFN-80 only) is a flat rectangular plate.
-- The Amass housing is a single rectangular block sized to the footprint's
-  F.Fab outline bounding box; the real connector's shroud/base transition
-  and mounting bosses are not modelled, and there is a deliberate visual
-  gap between the housing block and the pin cylinders (the pins bend 90
-  degrees inside the real connector, which is not modelled).
+- The WS2812C-2020 body is a base slab plus a plain smaller box for the
+  moulded lens; the castellated terminals are modelled as flat pads matching
+  the copper, and the RGB die and polarity-mark recess are not modelled.
 - Colours are not set (default FreeCAD/STEP material).

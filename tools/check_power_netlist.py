@@ -17,12 +17,39 @@ expected={
  # U12 TPS7A20 LDO: EN (pin 3) is sequenced from PWR_GOOD, not from V5_SYS
  ('U12','1'):'V5_SYS',('U12','2'):'GND',('U12','3'):'PWR_GOOD',('U12','5'):'V3V3_ANA',
  ('J4','A5'):'USB_CC1',('J4','B5'):'USB_CC2',('J4','SH'):'GND',
- # J3: XT30PW-M. Pin 1 is the "-" pad and pin 2 the "+" pad in every AMASS footprint KiCad ships,
- # so the polarity assertion here is pin 1 = GND / pin 2 = 5V_IN, NOT "pin 1 is the positive pin".
- ('J3','1'):'GND',('J3','2'):'5V_IN',
- ('D23','1'):'5V_IN',('D23','2'):'GND',                           # SMAJ5.0A, cathode (pin 1) to 5V_IN
- ('C16','1'):'5V_IN',('C67','1'):'5V_IN',('C68','1'):'5V_IN',('C69','1'):'5V_IN',
- ('C16','2'):'GND',('C67','2'):'GND',('C68','2'):'GND',('C69','2'):'GND',
+ # J3 is the MicoAir AM32 4-in-1 ESC pad row. The order is the ESC silkscreen read left to right:
+ # CURR, TX, M4, M3, M2, M1, VBAT, GND -- so pin 3 is PWM4 and pin 6 is PWM1, NOT the other way round.
+ # This assertion is the one that catches a reversed motor row, which is why every pin is listed.
+ ('J3','1'):'CURR_SENSE_RAW',('J3','2'):'ESC_TELEM',('J3','3'):'PWM4',('J3','4'):'PWM3',
+ ('J3','5'):'PWM2',('J3','6'):'PWM1',('J3','7'):'VBAT',('J3','8'):'GND',
+ # U26 AP63205WU-7, fixed 5 V / 2 A buck, TSOT-23-6 (Diodes DS41326 Rev. 2-2 Pin Descriptions):
+ # 1 FB, 2 EN, 3 VIN, 4 GND, 5 SW, 6 BST. FB is a sense input on the fixed-output parts and goes
+ # straight to the output, so ('U26','1') must be 5V_IN and not a divider node.
+ ('U26','1'):'5V_IN',('U26','2'):'U26_EN',('U26','3'):'VBAT',('U26','4'):'GND',
+ ('U26','5'):'U26_SW',('U26','6'):'U26_BST',
+ ('L3','1'):'U26_SW',('L3','2'):'5V_IN',
+ ('C75','1'):'U26_BST',('C75','2'):'U26_SW',                      # bootstrap cap, BST to SW
+ ('C73','1'):'VBAT',('C73','2'):'GND',('C74','1'):'VBAT',('C74','2'):'GND',
+ ('C76','1'):'5V_IN',('C76','2'):'GND',('C77','1'):'5V_IN',('C77','2'):'GND',('C80','1'):'5V_IN',('C80','2'):'GND',
+ ('R52','1'):'VBAT',('R52','2'):'U26_EN',
+ # ESC analog current sense and one-wire KISS telemetry, both conditioned by a 1k series resistor
+ ('R53','1'):'CURR_SENSE_RAW',('R53','2'):'CURR_SENSE',('C78','1'):'CURR_SENSE',('C78','2'):'GND',
+ ('U20','53'):'CURR_SENSE',                                       # GPIO42 = ADC2
+ ('R54','1'):'ESC_TELEM',('R54','2'):'ESC_TELEM_RX',('U20','38'):'ESC_TELEM_RX',   # GPIO30, PIO UART RX
+ # WS2812C-2020 (LED:WS2812B-2020 symbol): 1 DOUT (no connect), 2 VSS, 3 DIN, 4 VDD
+ ('R55','1'):'LED_DATA',('R55','2'):'LED_DIN',('U20','27'):'LED_DATA',
+ ('D20','2'):'GND',('D20','3'):'LED_DIN',('D20','4'):'V5_SYS',('C79','1'):'V5_SYS',('C79','2'):'GND',
+ # buzzer solder pads replace the through-hole buzzer; D22 still clamps across them
+ ('J15','1'):'V5_SYS',('J15','2'):'BUZZ_D',('Q20','3'):'BUZZ_D',('D22','1'):'V5_SYS',('D22','2'):'BUZZ_D',
+ # SWD solder pads
+ ('J10','1'):'SWCLK',('J10','2'):'SWDIO',('J10','3'):'GND',
+ # spare-IO block: 3.3 V, two grounds and the nine GPIOs no on-board function claims
+ ('J16','1'):'V3V3_SYS',('J16','2'):'GND',('J16','3'):'IO_GPIO1',('J16','4'):'IO_GPIO21',
+ ('J16','5'):'IO_GPIO27',('J16','6'):'IO_GPIO31',('J16','7'):'IO_GPIO43',('J16','8'):'IO_GPIO44',
+ ('J16','9'):'IO_GPIO45',('J16','10'):'IO_GPIO46',('J16','11'):'IO_GPIO47',('J16','12'):'GND',
+ ('U20','78'):'IO_GPIO1',('U20','21'):'IO_GPIO21',('U20','28'):'IO_GPIO27',('U20','39'):'IO_GPIO31',
+ ('U20','54'):'IO_GPIO43',('U20','55'):'IO_GPIO44',('U20','56'):'IO_GPIO45',('U20','57'):'IO_GPIO46',
+ ('U20','58'):'IO_GPIO47',
  # Peripheral ports, Pixhawk DS-009 order. UART: 1 VCC, 2 TX (board TX = module RX net), 3 RX, 4 GND.
  ('J6','1'):'V5_SYS',('J6','2'):'GPS_RX',('J6','3'):'GPS_TX',('J6','4'):'GND',
  ('J7','1'):'V5_SYS',('J7','2'):'ELRS_RX',('J7','3'):'ELRS_TX',('J7','4'):'GND',
@@ -36,9 +63,9 @@ expected={
  ('R20','1'):'V3V3_SYS',('R20','2'):'VREG_AVDD',('L20','1'):'VREG_LX',('L20','2'):'DVDD',
  ('C40','1'):'V3V3_ANA',('C41','1'):'VREG_AVDD',
  ('U20','10'):'DVDD',('U20','32'):'DVDD',('U20','51'):'DVDD',
- # telemetry dividers: VIN_SENSE 22k/10k (full scale 10.56 V), VBUS_SENSE unchanged at 10k/15k
- ('R27','1'):'5V_IN',('R27','2'):'VIN_SENSE',('R28','1'):'VIN_SENSE',('R28','2'):'GND',
- ('C48','1'):'VIN_SENSE',
+ # telemetry dividers: VBAT_SENSE 100k/10k (full scale 36.3 V), VBUS_SENSE unchanged at 10k/15k
+ ('R27','1'):'VBAT',('R27','2'):'VBAT_SENSE',('R28','1'):'VBAT_SENSE',('R28','2'):'GND',
+ ('C48','1'):'VBAT_SENSE',('U20','49'):'VBAT_SENSE',
  ('R29','1'):'USB_VBUS',('R29','2'):'VBUS_SENSE',('R30','1'):'VBUS_SENSE',('R30','2'):'GND',
  # sensor chip-select pull-ups, biased to the rail the sensor VDDIO pins run from. R49 (the former
  # second IMU chip-select pull-up) is removed: the ICM-45686 (U21) has a single chip select.
@@ -58,8 +85,11 @@ expected={
  ('U20','12'):'GPS_TX',('U20','11'):'GPS_RX',('U20','7'):'ELRS_TX',('U20','6'):'ELRS_RX',
  ('U20','3'):'MAG_SDA',('U20','4'):'MAG_SCL',
 }
-# J13 is row 2 of the actuator header: the raw J3 input, ahead of the U25 power mux
-expected.update({(f'J13',str(i)):'5V_IN' for i in range(1,9)})
+# J13 is row 2 of the servo block: 5V_IN, the U26 buck output, ahead of the U25 power mux.
+# Only four channels now -- PWM1-4 leave on the ESC pad row, so J12/J13/J14 are 1x04 rows.
+expected.update({('J13',str(i)):'5V_IN' for i in range(1,5)})
+expected.update({('J12',str(i)):'PWM%d'%(i+4) for i in range(1,5)})
+expected.update({('J14',str(i)):'GND' for i in range(1,5)})
 # U25 TPS2121 priority power mux, every pin. Pin numbers are the RUX0012A VQFN-HR-12 assignment of
 # datasheet SLVSEA3F Sec 6 (Figure 6-2 / Pin Functions): 1 OUT, 2 IN2, 3 CP2, 4 OV2, 5 OV1, 6 PR1,
 # 7 IN1, 8 OUT, 9 ST, 10 ILM, 11 SS, 12 GND. CP2 and OV2 are grounded ("connect to GND if not
@@ -76,18 +106,44 @@ for pin,net in expected.items():
  assert pin_net.get(pin)==net,(pin,net,pin_net.get(pin))
 assert nets['U7_FB']=={('U7','9'),('R7','2'),('R8','1')}
 assert {('J4','A4'),('J4','A9'),('J4','B4'),('J4','B9')} <= nets['USB_VBUS']
-# the superseded LM66100 OR-ing pair is gone, symbol and all
-assert not {'U3','U5'} & {c.get('ref') for c in ET.parse(sys.argv[1]).getroot().find('components')},'U3/U5 still present'
+# parts retired by earlier revisions and by this one must be gone, symbol and all:
+# U3/U5 the LM66100 OR-ing pair; J3's XT30 input network D23/C16/C67/C68/C69 (the 5 V input itself is
+# gone, J3 is now the ESC pad row); D21/R31/R32 the two discrete status LEDs (one WS2812C now); BZ1 the
+# through-hole buzzer (J15 solder pads now).
+_refs = {c.get('ref') for c in root.find('components')}
+assert not {'U3','U5','D23','C16','C67','C68','C69','D21','R31','R32','BZ1'} & _refs, sorted(
+    {'U3','U5','D23','C16','C67','C68','C69','D21','R31','R32','BZ1'} & _refs)
+assert {'H1','H2','H3','H4'} <= _refs, 'mounting-hole group missing'
 # every U25 programming node is exactly the two or three pins it should be, nothing else leaks in
 assert nets['U25_PR1']=={('U25','6'),('R42','2'),('R43','1')},nets['U25_PR1']
 assert nets['U25_OV1']=={('U25','5'),('R44','2'),('R45','1')},nets['U25_OV1']
 assert nets['U25_ILM']=={('U25','10'),('R46','1')},nets['U25_ILM']
 assert nets['U25_SS']=={('U25','11'),('C70','1')},nets['U25_SS']
 assert nets['PWR_SRC_ST']=={('U25','9'),('R47','2'),('U20','48')},nets['PWR_SRC_ST']
-# V5_SYS boundary: the mux output rail may reach the two avionics UART ports (J6/J7 VCC) and nothing
-# else with a connector reference. In particular the servo row J13, the 5 V input J3 and USB J4 must
-# stay off it, so servo/ESC current never crosses the mux and no source connector back-feeds it.
-assert {ref for ref,pin in nets['V5_SYS'] if ref.startswith('J')}=={'J6','J7'},nets['V5_SYS']
+# POWER CHAIN BOUNDARY: VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS, with servo 5 V tapped at 5V_IN.
+# 1. VBAT (raw 6-25.2 V pack) reaches exactly one connector (J3, the ESC row) and exactly one IC pin
+#    (U26 VIN). Nothing else may see pack voltage -- in particular no U25, U20 or U7 pin, and the only
+#    other things on the net are the buck input caps, the EN resistor and the R27 sense divider top.
+assert {ref for ref,pin in nets['VBAT'] if ref.startswith('J')}=={'J3'},nets['VBAT']
+assert {(ref,pin) for ref,pin in nets['VBAT'] if ref.startswith('U')}=={('U26','3')},nets['VBAT']
+assert nets['VBAT']=={('J3','7'),('U26','3'),('C73','1'),('C74','1'),('R52','1'),('R27','1')},nets['VBAT']
+# 2. 5V_IN is now a buck OUTPUT, not an input: it is driven by L3/U26 and feeds U25 IN1 (pin 7), the
+#    mux PR1/OV1 dividers, the mux IN1 bypass and the servo row J13. No source connector sits on it.
+assert {ref for ref,pin in nets['5V_IN'] if ref.startswith('J')}=={'J13'},nets['5V_IN']
+assert {('L3','2'),('U26','1'),('U25','7'),('C76','1'),('C77','1'),('C80','1')} <= nets['5V_IN'],nets['5V_IN']
+# 3. V5_SYS (mux output) may reach the two avionics UART ports (J6/J7 VCC) and the buzzer pads (J15),
+#    and nothing else with a connector reference. The servo row J13, the ESC row J3 and USB J4 must
+#    stay off it, so servo/ESC current never crosses the mux and no source connector back-feeds it.
+assert {ref for ref,pin in nets['V5_SYS'] if ref.startswith('J')}=={'J6','J7','J15'},nets['V5_SYS']
+# 4. The buck's own programming nodes are exactly what they should be, nothing leaks in.
+assert nets['U26_SW']=={('U26','5'),('L3','1'),('C75','2')},nets['U26_SW']
+assert nets['U26_BST']=={('U26','6'),('C75','1')},nets['U26_BST']
+assert nets['U26_EN']=={('U26','2'),('R52','2')},nets['U26_EN']
+# 5. PWM1-4 leave the board ONLY on the ESC pad row; PWM5-8 leave ONLY on the servo block.
+for n in range(1,5):
+    assert {ref for ref,pin in nets['PWM%d'%n] if ref.startswith('J')}=={'J3'},nets['PWM%d'%n]
+for n in range(5,9):
+    assert {ref for ref,pin in nets['PWM%d'%n] if ref.startswith('J')}=={'J12'},nets['PWM%d'%n]
 assert not any(ref.startswith('J') for ref,pin in nets['V3V3_ANA'])
 # the RP2354B analog rail reaches VREG_AVDD only through the 33 ohm design-guide filter
 assert nets['VREG_AVDD']=={('U20','61'),('R20','2'),('C41','1')},nets['VREG_AVDD']
@@ -118,4 +174,5 @@ for ref,c in components.items():
  pads={unquote(p[1]) for p in children(parse(path.read_text()),'pad') if unquote(p[1])}
  used={pin for rr,pin in pin_net if rr==ref}
  assert used<=pads,(ref,fp,'pins absent in footprint',used-pads)
-print(f'PASS: {len(expected)} critical pin mappings, the FB divider, USB supply pins, V5_SYS boundary and footprint coverage for {len(components)} components.')
+print(f'PASS: {len(expected)} critical pin mappings, the FB divider, USB supply pins, the VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS\n'
+      f'      boundary, the ESC pad-row order, the PWM1-4 / PWM5-8 split and footprint coverage for {len(components)} components.')

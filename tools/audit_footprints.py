@@ -12,8 +12,16 @@ if the symbol has a pin with that same designator; otherwise they're
 mechanical, not electrical, and are excluded from the comparison (the raw,
 unfiltered pad count is still available in --json output).
 
+Footprints whose *name* matches --no-3d-ok (default "^(PadRow_|MountingHole_)")
+are exempt from the 3D-model check: solder pad rows and mechanical holes have
+no body to model, so a missing model is the correct state, not a defect. They
+report OK with the 3D-model cell set to "pads only". The exemption applies ONLY
+to the NO_3D_REF status -- a footprint that references a model file that does
+not exist still fails with 3D_FILE_MISSING, and every other check is unchanged.
+
 Usage:
     python3 tools/audit_footprints.py [NETLIST_XML] [--json OUT.json] [--no-fail]
+                                      [--no-3d-ok REGEX]
 
     NETLIST_XML defaults to reports/power-netlist.xml (relative to the
     current directory). Regenerate it first, e.g. into a scratch location
@@ -268,9 +276,16 @@ def md_escape(text):
     return (text or '').replace('|', '\\|').replace('\n', ' ')
 
 
-def resolve_component(comp, fp_table, env, pin_nums):
+DEFAULT_NO_3D_OK = r'^(PadRow_|MountingHole_)'
+
+
+def resolve_component(comp, fp_table, env, pin_nums, no_3d_ok=None):
     """pin_nums is the symbol's set of pin numbers (from <libparts>), or None
-    if no libpart data is available for this component's lib:part."""
+    if no libpart data is available for this component's lib:part.
+
+    no_3d_ok is a compiled regex matched against the footprint NAME (the part
+    after 'lib:'); a match means "this footprint is not supposed to have a 3D
+    model", so NO_3D_REF is suppressed."""
     row = dict(comp)
     row['fp_file_cell'] = '—'
     row['model_cell'] = '—'
@@ -330,8 +345,12 @@ def resolve_component(comp, fp_table, env, pin_nums):
     row['fp_file_cell'] = f'{fp_name}.kicad_mod ({len(effective_pads)} pads{pin_note})'
 
     if not models:
-        issues.add('NO_3D_REF')
-        row['model_cell'] = '(no 3D model referenced)'
+        if no_3d_ok is not None and no_3d_ok.search(fp_name):
+            row['model_cell'] = 'pads only'
+            row['no_3d_ok'] = True
+        else:
+            issues.add('NO_3D_REF')
+            row['model_cell'] = '(no 3D model referenced)'
     else:
         missing = [p for p, e in models if not e]
         if missing:
@@ -354,7 +373,11 @@ def main():
                      help='kicadxml netlist export (default: reports/power-netlist.xml)')
     ap.add_argument('--json', metavar='PATH', help='also write machine-readable results to PATH')
     ap.add_argument('--no-fail', action='store_true', help='exit 0 even if issues are found')
+    ap.add_argument('--no-3d-ok', metavar='REGEX', default=DEFAULT_NO_3D_OK,
+                     help='footprint-name regex whose matches need no 3D model; they report OK with '
+                          '"pads only" (default: %(default)s). Pass an empty string to disable.')
     args = ap.parse_args()
+    no_3d_ok = re.compile(args.no_3d_ok) if args.no_3d_ok else None
 
     xml_path = Path(args.netlist)
     if not xml_path.exists():
@@ -364,7 +387,7 @@ def main():
     env = build_env()
     fp_table = load_fp_lib_table(env)
     comps, libpart_pins = parse_netlist(xml_path)
-    rows = [resolve_component(c, fp_table, env, libpart_pins.get((c['lib'], c['part'])))
+    rows = [resolve_component(c, fp_table, env, libpart_pins.get((c['lib'], c['part'])), no_3d_ok)
             for c in comps]
     rows.sort(key=lambda r: (STATUS_ORDER.index(r['status']), natural_key(r['ref'])))
 
