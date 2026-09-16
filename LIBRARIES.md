@@ -49,7 +49,6 @@ All rows below are `MARV_Packages:<name>`.
 | J3 | `PadRow_1x08_P2.00mm` | project-authored | — (pads only) | none by design |
 | J6, J7, J9 | `PadRow_1x04_P2.00mm` | project-authored | — (pads only) | none by design |
 | J10 | `PadRow_1x03_P2.00mm` | project-authored | — (pads only) | none by design |
-| J15 | `PadRow_1x02_P2.00mm` | project-authored | — (pads only) | none by design |
 | H1-H4 | `MountingHole_4.0mm_Grommet` | project-authored | — (mechanical) | none by design |
 | L3 | `L_Coilcraft_XxL4030` | vendored KiCad official (shared with L2) | `L_Coilcraft_XxL4030.step` | Coilcraft manufacturer model (XGL4030 series body) |
 | J4 | `USB_C_Receptacle_HRO_TYPE-C-31-M-12` | vendored KiCad official | `USB_C_Receptacle_HRO_TYPE-C-31-M-12.step`, `offset 0 -1.05 0`, `rotate 0 0 180` | **EasyEDA/LCSC-contributed, not HRO's**; check against the HRO drawing before trusting it mechanically |
@@ -58,7 +57,7 @@ All rows below are `MARV_Packages:<name>`.
 
 ### Project-authored pad rows and the grommet hole
 
-`PadRow_1x02/03/04/08_P2.00mm` are one family: N SMD pads, **1.4 x 2.2 mm oval,
+`PadRow_1x03/04/08_P2.00mm` are one family: N SMD pads, **1.4 x 2.2 mm oval,
 2.00 mm pitch**, on **F.Cu and F.Mask only** (no paste — these are hand/reflow
 wire-and-flex landings, not a connector land), a silkscreen box offset 0.45 mm
 clear of the pads, a filled 0.5 mm silk **pin-1 dot** 0.8 mm outside pad 1, an
@@ -67,7 +66,9 @@ is `(N-1) x 2.00 + 1.4` mm wide by 2.2 mm tall. They carry **no 3D model on
 purpose**; `tools/audit_footprints.py --no-3d-ok` (default `^(PadRow_|MountingHole_)`)
 reports them OK with "pads only". Per-pad function labels are *not* in the
 footprint — add them as silkscreen text at layout, and mark pad 1, because the
-same footprint serves J3 (ESC), J6/J7/J9 (ports), J10 (SWD) and J15 (buzzer).
+same footprint serves J3 (ESC), J6/J7/J9 (ports) and J10 (SWD). The 1x02 member
+of the family (`PadRow_1x02_P2.00mm`) is gone with the buzzer that was its only
+user; regenerate it from the same rules if a two-pad row is ever needed again.
 
 **J3 pitch is an assumption.** MicoAir publishes no pad drawing for the AM32
 4-in-1 ESC's FC row, so 2.00 mm is a best guess. The pad **order** (CURR, TX, M4,

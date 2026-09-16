@@ -115,30 +115,34 @@ CUSTOM={'MARV_Power:TPS2121RUX':'''(symbol "TPS2121RUX" (exclude_from_sim no) (i
  (embedded_fonts no))'''}
 
 # Passive package policy.  The board is a single-sided square that has to stay
-# at or under 50 mm (DESIGN_SPEC "Envelope"), so every passive is as small as
-# its rating and hand-rework allow; all of the packages below are JLCPCB basic
-# parts (1 % for R, X5R/X7R for C).  Package is derived from the value string,
-# which always starts "<capacitance> / <voltage> V":
+# at or under 50 mm (DESIGN_SPEC "Envelope"), so every passive is now the
+# SMALLEST package its rating allows rather than the smallest hand-solderable
+# one; all of the packages below are JLCPCB assembly parts (1 % for R,
+# X5R/X7R for C).  Package is derived from the value string, which always
+# starts "<capacitance> / <voltage> V":
 #
-#   R   any value ................................. 0402
-#   C   <= 100 nF, <= 16 V ........................ 0402
-#   C   220 nF .. 10 uF, <= 16 V .................. 0603
-#   C   > 10 uF .. 22 uF, <= 16 V ................. 0805
+#   R   any value ................................. 0201
+#   C   <= 4.7 uF, <= 16 V ........................ 0402
+#   C   > 4.7 uF .. 22 uF, <= 16 V ................ 0603
 #
+# REWORK: 0201 resistors (0.6 x 0.3 mm) and 22 uF 0603 ceramics are machine
+# placement only - JLC assembles them, a bench iron does not rework them.
+# That is the deliberate trade for the 50 mm single-sided envelope.
 # A capacitor rated above 16 V (anything on VBAT, the bootstrap cap, the
 # crystal load caps) or larger than 22 uF must pass an explicit foot= at the
 # call site and keeps the larger body its voltage / DC-bias derating needs:
-# C17/C46/C47 (50 V, 0402), C74/C75 (50 V, 0603), C73 (10u/50 V, 1206),
-# C76/C77/C80 (22u/25 V, 1206), C66 (47u, 1210), C19 (220u polymer, EIA-7343).
-# The two exceptions are enforced below by raising rather than guessing.
-CAP_PACKAGE=[(100e-9,'C_0402_1005Metric'),(10e-6,'C_0603_1608Metric'),(22e-6,'C_0805_2012Metric')]
+# C17/C46/C47 (50 V, 0402), C74/C75 (50 V, 0402), C73 (10u/50 V, 0805),
+# C76/C77/C80 (22u/25 V, 0805), C66 (47u/6.3 V, 0805), C19 (220u polymer,
+# EIA-7343).  The two exceptions are enforced below by raising rather than
+# guessing.
+CAP_PACKAGE=[(4.7e-6,'C_0402_1005Metric'),(22e-6,'C_0603_1608Metric')]
 SI_MULT={'p':1e-12,'n':1e-9,'u':1e-6}
 OTHER_PACKAGE={'L':'Inductor_SMD:L_6.3x6.3_H3','Fuse':'Fuse:Fuse_1206_3216Metric',
                'D_Schottky':'Diode_SMD:D_SMA','D_TVS':'Diode_SMD:D_SMB'}
 
 def passive_footprint(kind,value):
     if kind=='R':
-        return 'Resistor_SMD:R_0402_1005Metric'
+        return 'Resistor_SMD:R_0201_0603Metric'
     if kind!='C':
         return OTHER_PACKAGE[kind]
     m=re.match(r'\s*([\d.]+)\s*([pnu])\s*/\s*([\d.]+)\s*V',value)
@@ -253,7 +257,7 @@ MCU_GPIO=[
  ('26','GPIO25','BARO_INT','BMP581 INT'),
  ('27','GPIO26','LED_DATA','WS2812C-2020 data, 100 R series (R55)'),
  ('28','GPIO27','IO_GPIO27','spare -> J16 pin 5'),
- ('36','GPIO28','BUZZ_PWM','buzzer gate drive'),
+ ('36','GPIO28','IO_GPIO28','spare -> J16 pin 12'),
  ('37','GPIO29','HG_ACC_INT','ADXL375 INT1'),
  ('38','GPIO30','ESC_TELEM_RX','ESC KISS telemetry in (PIO UART RX), 1k series R54'),
  ('39','GPIO31','IO_GPIO31','spare -> J16 pin 6'),
@@ -297,15 +301,15 @@ def mcu_sheet():
     for i in range(8):
         s.passive('C%d'%(30+i),'C','100n / 16 V X7R, IOVDD pin %s'%('5 15 24 29 41 50 60 76'.split()[i]),*left[i],V3,'GND')
     s.passive('C38','C','100n / 16 V X7R, pins 68+69',*left[8],V3,'GND')
-    s.passive('C39','C','4.7u / 10 V X7R 0603, VREG_VIN',*left[9],V3,'GND')
+    s.passive('C39','C','4.7u / 10 V X5R 0402, VREG_VIN',*left[9],V3,'GND')
     s.passive('C40','C','100n / 16 V X7R, ADC_AVDD',*left[10],ANA,'GND')
     s.passive('R20','R','33 / 1%, VREG_AVDD filter',*left[11],V3,'VREG_AVDD')
-    s.passive('C41','C','4.7u / 10 V X7R 0603, VREG_AVDD',*left[12],'VREG_AVDD','GND')
+    s.passive('C41','C','4.7u / 10 V X5R 0402, VREG_AVDD',*left[12],'VREG_AVDD','GND')
     s.passive('L20','L','3.3u, 0806 AOTA-B201610S3R3',*left[13],'VREG_LX','DVDD',foot='Inductor_SMD:L_Murata_DFE201610P')
     s.passive('C42','C','100n / 16 V X7R, DVDD pin 10',*left[14],'DVDD','GND')
     s.passive('C43','C','100n / 16 V X7R, DVDD pin 32',*left[15],'DVDD','GND')
     s.passive('C44','C','100n / 16 V X7R, DVDD pin 51',*left[16],'DVDD','GND')
-    s.passive('C45','C','4.7u / 10 V X7R 0603, DVDD bulk',*left[17],'DVDD','GND')
+    s.passive('C45','C','4.7u / 10 V X5R 0402, DVDD bulk',*left[17],'DVDD','GND')
     s.passive('R22','R','27 / 1%, USB D+ series',*left[18],'USB_DP_MCU','USB_DP_RP')
     s.passive('R23','R','27 / 1%, USB D- series',*left[19],'USB_DM_MCU','USB_DM_RP')
     s.passive('R21','R','1k / 1%, crystal drive limit',*left[20],'XOUT','XTAL_DRV')
@@ -339,17 +343,19 @@ def mcu_sheet():
            'PWR_GOOD) for reset. RUN is still held by the TPS62913 power-good pull-up on POWER 2, so the MCU cannot run\n'
            'before V3V3_SYS is in regulation.',180,104,1.3)
 
-    # J16 spare-IO block: the nine GPIOs that no on-board function claims, plus one 3.3 V and two grounds.
+    # J16 spare-IO block: the ten GPIOs that no on-board function claims, plus one 3.3 V and one ground.
     # GPIO43-47 are ADC3-ADC7 (ADC0-2 are taken by VBAT_SENSE / VBUS_SENSE / CURR_SENSE), so five of the
-    # eleven signal pins are analog-capable; label those in silk at layout.
+    # ten signal pins are analog-capable; label those in silk at layout.  Pin 12 was the block's second
+    # ground and now carries GPIO28, freed by deleting the buzzer driver (DESIGN_SPEC revision record).
     s.add('J16','Connector_Generic:Conn_02x06_Odd_Even','SPARE IO 2x6 (see note)',340,92,
           {'1':V3,'2':'GND','3':'IO_GPIO1','4':'IO_GPIO21','5':'IO_GPIO27','6':'IO_GPIO31',
-           '7':'IO_GPIO43','8':'IO_GPIO44','9':'IO_GPIO45','10':'IO_GPIO46','11':'IO_GPIO47','12':'GND'},
+           '7':'IO_GPIO43','8':'IO_GPIO44','9':'IO_GPIO45','10':'IO_GPIO46','11':'IO_GPIO47','12':'IO_GPIO28'},
           'Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Vertical')
     s.note('J16 SPARE IO (2.54 mm THT, right edge). 1 V3V3_SYS | 2 GND | 3 GPIO1 | 4 GPIO21 | 5 GPIO27 | 6 GPIO31 |\n'
-           '7 GPIO43* | 8 GPIO44* | 9 GPIO45* | 10 GPIO46* | 11 GPIO47* | 12 GND.  * = ADC-capable (ADC3-ADC7);\n'
-           'silk-mark those five at layout. These GPIOs are no longer no-connect, so every RP2354B GPIO now\n'
-           'terminates somewhere: 39 on board functions and ports, 9 on this block.',300,112,1.3)
+           '7 GPIO43* | 8 GPIO44* | 9 GPIO45* | 10 GPIO46* | 11 GPIO47* | 12 GPIO28.  * = ADC-capable (ADC3-ADC7);\n'
+           'silk-mark those five at layout. Pin 12 was the second ground; it now carries GPIO28, which the deleted\n'
+           'buzzer driver used to own, so the block has one ground (pin 2) and ten GPIOs. These GPIOs are no longer\n'
+           'no-connect, so every RP2354B GPIO still terminates somewhere: 38 on board functions and ports, 10 here.',300,112,1.3)
 
     right=[(250+35*c,140+28*r) for r in range(3) for c in range(4)]
     s.passive('R27','R','100k / 1%, VBAT top',*right[0],'VBAT','VBAT_SENSE')
@@ -365,11 +371,6 @@ def mcu_sheet():
     s.passive('C79','C','100n / 16 V X7R, D20 VDD',*right[10],'V5_SYS','GND')
     s.add('D20','LED:WS2812B-2020','WS2812C-2020 RGB',375,196,
           {'1':None,'2':'GND','3':'LED_DIN','4':'V5_SYS'},'MARV_Packages:LED_WS2812B-2020_PLCC4_2.0x2.0mm')
-    s.passive('R33','R','1k, gate series',250,228,'BUZZ_PWM','BUZZ_G')
-    s.passive('R34','R','100k, gate pull-down',285,228,'BUZZ_G','GND')
-    s.add('Q20','Transistor_FET:2N7002','2N7002',320,228,{'1':'BUZZ_G','2':'GND','3':'BUZZ_D'},'Package_TO_SOT_SMD:SOT-23')
-    s.add('J15','Connector_Generic:Conn_01x02','BUZZER pads (5V BZ-)',375,228,{'1':'V5_SYS','2':'BUZZ_D'},'MARV_Packages:PadRow_1x02_P2.00mm')
-    s.add('D22','Device:D_Schottky','flyback across the buzzer pads',250,258,{'1':'V5_SYS','2':'BUZZ_D'},'Diode_SMD:D_SOD-123')
     # MECHANICAL GROUP: four Mechanical:MountingHole symbols, no pins and no nets - they exist so the
     # 30.5 x 30.5 mm grommet pattern of DESIGN_SPEC "Physical design" lands in the netlist and therefore in
     # the PCB, and so tools/audit_footprints.py checks the footprint file resolves.
@@ -394,7 +395,6 @@ def mcu_sheet():
            'D20 WS2812C-2020: VDD on V5_SYS with C79 100 nF, DIN from GPIO26 through R55 100 R, DOUT no-connect (single\n'
            'pixel). Its DIN VIH minimum is 2.7 V (datasheet Electrical Characteristics), which 3.3 V CMOS clears - that\n'
            'is why the C variant is used rather than a 5050 WS2812B, whose VIH is 0.7 x VDD = 3.5 V.\n'
-           'Buzzer: Q20 low-side drive into the J15 pads (pin 1 V5_SYS, pin 2 BUZZ_D = Q20 drain); D22 clamps the kick.\n'
            'QSPI_* are the dedicated QSPI pads: they reach the in-package flash die AND the package pins\n'
            '(RP2350 datasheet Sec 14.3), so U24 shares the bus with GPIO0/QMI CS1n (FLASH_CS1) as its select.\n'
            'RP2354 requires QSPI_IOVDD = 3.3 V, and IOVDD = 3.3 V to run a second QSPI device (Sec 14.9).',15,258,1.3)
@@ -421,9 +421,9 @@ def sensors_sheet():
         ['C50','C51','C54','C55','C58','C59','C52','C53','C56','C57','C60','C61'],
         [(30,170),(65,170),(160,170),(195,170),(290,170),(325,170),
          (30,198),(65,198),(160,198),(195,198),(290,198),(325,198)],
-        ['100n / 16 V X7R, U21 VDD','1u / 10 V X7R 0603, U21 VDD','100n / 16 V X7R, U22 VDD','1u / 10 V X7R 0603, U22 VDD',
-         '100n / 16 V X7R, U23 VS','1u / 10 V X7R 0603, U23 VS','100n / 16 V X7R, U21 VDDIO','1u / 10 V X7R 0603, U21 VDDIO',
-         '100n / 16 V X7R, U22 VDDIO','1u / 10 V X7R 0603, U22 VDDIO','100n / 16 V X7R, U23 VDD_IO','1u / 10 V X7R 0603, U23 VDD_IO']):
+        ['100n / 16 V X7R, U21 VDD','1u / 10 V X7R 0402, U21 VDD','100n / 16 V X7R, U22 VDD','1u / 10 V X7R 0402, U22 VDD',
+         '100n / 16 V X7R, U23 VS','1u / 10 V X7R 0402, U23 VS','100n / 16 V X7R, U21 VDDIO','1u / 10 V X7R 0402, U21 VDDIO',
+         '100n / 16 V X7R, U22 VDDIO','1u / 10 V X7R 0402, U22 VDDIO','100n / 16 V X7R, U23 VDD_IO','1u / 10 V X7R 0402, U23 VDD_IO']):
         s.passive(ref,'C',val,x,y,ANA,'GND')
     for ref,(x,y),net in zip(['R48','R50','R51'],[(100,170),(100,198),(130,198)],
                              ['IMU_CS','BARO_CS','HG_ACC_CS']):
@@ -465,7 +465,7 @@ def storage_sheet():
           'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm',refofs=(85,100),vlab=True)
     s.passive('R35','R','10k, FLASH_CS1 pull-up',170,75,V3,'FLASH_CS1')
     s.passive('C62','C','100n / 16 V X7R, U24 VCC',210,75,V3,'GND')
-    s.passive('C63','C','1u / 10 V X7R 0603, U24 VCC',250,75,V3,'GND')
+    s.passive('C63','C','1u / 10 V X7R 0402, U24 VCC',250,75,V3,'GND')
     s.add('J11','Connector:Micro_SD_Card_Det2','microSD, Molex 104031-0811 push-push',110,175,
           {'1':'SD_D2','2':'SD_D3','3':'SD_CMD','4':V3,'5':'SD_CLK','6':'GND','7':'SD_D0','8':'SD_D1',
            '9':'SD_DET','10':'GND','SH':'GND'},'MARV_Packages:microSD_HC_Molex_104031-0811',refofs=(88,150))
@@ -475,7 +475,7 @@ def storage_sheet():
         s.passive(ref,'R','10k, %s pull-up'%net,x,y,V3,net)
     s.passive('C64','C','100n / 16 V X7R, at the socket',215,225,V3,'GND')
     s.passive('C65','C','10u / 10 V X7R 0603, at the socket',250,225,V3,'GND')
-    s.passive('C66','C','47u / 6.3 V X5R, at the socket',285,225,V3,'GND',foot='Capacitor_SMD:C_1210_3225Metric')
+    s.passive('C66','C','47u / 6.3 V X5R 0805, at the socket',285,225,V3,'GND',foot='Capacitor_SMD:C_0805_2012Metric')
     s.note('U24 shares the dedicated QSPI pads with the RP2354B in-package flash die (datasheet Sec 14.3): CLK = QSPI_SCLK,\n'
            'DI/IO0 = QSPI_SD0, DO/IO1 = QSPI_SD1, WP/IO2 = QSPI_SD2, HOLD/IO3 = QSPI_SD3. Only the chip select differs -\n'
            'FLASH_CS1 comes from GPIO0 (QMI CS1n), pulled up to V3V3_SYS by R35 so the part is deselected before the MCU\n'
@@ -541,15 +541,15 @@ def build():
     # straight to the output (Sec 9 "Setting the Output Voltage"); there is no external divider.
     src.add('U26','Regulator_Switching:AP63205WU','AP63205WU-7',75,100,
             {'1':'5V_IN','2':'U26_EN','3':'VBAT','4':'GND','5':'U26_SW','6':'U26_BST'})
-    src.passive('C73','C','10u / 50 V X7R, VIN bulk',30,50,'VBAT','GND',foot='Capacitor_SMD:C_1206_3216Metric')
-    src.passive('C74','C','100n / 50 V X7R, VIN HF bypass',65,50,'VBAT','GND',foot='Capacitor_SMD:C_0603_1608Metric')
+    src.passive('C73','C','10u / 50 V X5R 0805 GRM21BR61H106KE43, VIN bulk',30,50,'VBAT','GND',foot='Capacitor_SMD:C_0805_2012Metric')
+    src.passive('C74','C','100n / 50 V X7R 0402, VIN HF bypass',65,50,'VBAT','GND',foot='Capacitor_SMD:C_0402_1005Metric')
     src.passive('R52','R','100k / 1%, EN to VIN',100,50,'VBAT','U26_EN')
-    src.passive('C75','C','100n / 50 V X7R, bootstrap',135,50,'U26_BST','U26_SW',foot='Capacitor_SMD:C_0603_1608Metric')
+    src.passive('C75','C','100n / 50 V X7R 0402, bootstrap',135,50,'U26_BST','U26_SW',foot='Capacitor_SMD:C_0402_1005Metric')
     src.passive('L3','L','4.7u, Isat 4.4 A, DCR 31.5 mOhm max (Coilcraft XGL4030-472MEC)',125,100,'U26_SW','5V_IN',
                 foot='MARV_Packages:L_Coilcraft_XxL4030')
-    src.passive('C76','C','22u / 25 V X5R, buck COUT',30,140,'5V_IN','GND',foot='Capacitor_SMD:C_1206_3216Metric')
-    src.passive('C77','C','22u / 25 V X5R, buck COUT',65,140,'5V_IN','GND',foot='Capacitor_SMD:C_1206_3216Metric')
-    src.passive('C80','C','22u / 25 V X5R, buck COUT (3rd: >=44 uF after DC-bias derating, AP63205 EVB guide)',100,140,'5V_IN','GND',foot='Capacitor_SMD:C_1206_3216Metric')
+    src.passive('C76','C','22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT',30,140,'5V_IN','GND',foot='Capacitor_SMD:C_0805_2012Metric')
+    src.passive('C77','C','22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT',65,140,'5V_IN','GND',foot='Capacitor_SMD:C_0805_2012Metric')
+    src.passive('C80','C','22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT (3rd: >=44 uF after DC-bias derating, AP63205 EVB guide)',100,140,'5V_IN','GND',foot='Capacitor_SMD:C_0805_2012Metric')
 
     # U25 TPS2121 priority power mux: IN1 = 5V_IN (priority), IN2 = USB_VBUS, OUT = V5_SYS.
     src.passive('R42','R','32.4k / 1%, PR1 top (5V_IN)',185,50,'5V_IN','U25_PR1')
@@ -569,7 +569,7 @@ def build():
     src.add('J4','Connector:USB_C_Receptacle_USB2.0_16P','USB_C_PROGRAM_POWER',55,215,{'A1':'GND','A4':'USB_VBUS','A5':'USB_CC1','A6':'USB_DP','A7':'USB_DM','A8':None,'A9':'USB_VBUS','A12':'GND','B1':'GND','B4':'USB_VBUS','B5':'USB_CC2','B6':'USB_DP','B7':'USB_DM','B8':None,'B9':'USB_VBUS','B12':'GND','S1':'GND'},'MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12')
     src.passive('R4','R','5.1k / 1%',120,195,'USB_CC1','GND')
     src.passive('R5','R','5.1k / 1%',120,240,'USB_CC2','GND')
-    src.passive('C7','C','1u / 10 V X7R 0603',25,275,'USB_VBUS','GND')
+    src.passive('C7','C','1u / 10 V X7R 0402',25,275,'USB_VBUS','GND')
 
     src.note('U25 TPS2121 PRIORITY POWER MUX (TI SLVSEA3F). IN1 = 5V_IN is the priority source, IN2 = USB_VBUS the fallback; OUT = V5_SYS.\n'
              'Reverse-current blocking is always on for BOTH channels (Sec 9.3.6, IRCB 0.2/1/2 A, tRCB 10 us, VRCB 0/25/50 mV), so neither input\n'
@@ -625,8 +625,12 @@ def build():
              'footprint and 3D model already vendored for L2. Ripple at 25.2 V in / 2 A out is 0.78 A pk-pk (Eq.7),\n'
              'peak 2.39 A (Eq.8).\n'
              'DERATING CAVEAT: C73 and C76/C77/C80 are the datasheet nominal values, and ceramic DC-bias derating is NOT\n'
-             'in them - a 10 uF/50 V 1206 at 25 V and a 22 uF/25 V 1206 at 5 V both lose roughly half. The EVB user\n'
-             'guide asks for >= 44 uF of COUT (nominal 66 uF: all three 22 uF fitted) and the board fits the third 22 uF (C80).',150,238,1.25)
+             'in them - a 10 uF/50 V 0805 at 25 V and a 22 uF/25 V 0805 at 5 V both lose roughly half. The EVB user\n'
+             'guide asks for >= 44 uF of COUT (nominal 66 uF: all three 22 uF fitted) and the board fits the third 22 uF (C80).\n'
+             'PACKAGES: C73 is a 10 uF/50 V X5R 0805 (GRM21BR61H106KE43) and C76/C77/C80 are 22 uF/25 V X5R 0805\n'
+             '(GRM21BR61E226ME44) - down from 1206 for the 50 mm single-sided envelope; C74/C75 are 50 V X7R 0402.\n'
+             'Same capacitance, same voltage rating, smaller body: the DC-bias loss above is the 0805 figure and is\n'
+             'not made worse by the package change at these ratings, but none of these parts is bench-reworkable.',150,238,1.25)
     src.note('USB_VBUS feeds U25 IN2 directly; no inrush or current limiting on this sheet.\nData ESD protection is on POWER 2. No servo rail connection.',330,130,1.2)
 
     out=Sheet('power_3v3','POWER 2 / 3.3 V system buck and analog LDO',3)
@@ -640,19 +644,26 @@ def build():
     out.passive('C17','C','2.2n / 50 V X7R, VIN-PGND HF bypass',55,60,'V5_SYS','GND',foot='Capacitor_SMD:C_0402_1005Metric')
     out.passive('C19','C','220u / 10 V polymer, ESR ~40 mOhm',25,155,'V5_SYS','GND','Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D')
     for ref,x in [('C10',245),('C11',310),('C12',375)]:
-        out.passive(ref,'C','22u / 10 V X7S, 1st-stage COUT',x,50,'U7_VO','GND',foot='Capacitor_SMD:C_0805_2012Metric')
+        out.passive(ref,'C','22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)',x,50,'U7_VO','GND')
     for ref,x in [('C23',245),('C24',310)]:
-        out.passive(ref,'C','22u / 10 V X7S, 2nd-stage Cf (post-bead)',x,75,'V3V3_SYS','GND',foot='Capacitor_SMD:C_0805_2012Metric')
-    out.passive('C13','C','470n / 16 V X7R 0603, NR/SS soft-start + noise filter (5 ms)',95,125,'U7_SS','GND')
+        out.passive(ref,'C','22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)',x,75,'V3V3_SYS','GND')
+    out.passive('C13','C','470n / 16 V X7R 0402, NR/SS soft-start + noise filter (5 ms)',95,125,'U7_SS','GND')
     out.passive('R7','R','15.8k / 0.1%',245,105,'V3V3_SYS','U7_FB')
     out.passive('R8','R','4.99k / 0.1%',310,105,'U7_FB','GND')
     out.passive('R9','R','6.04k / 1%, S-CONF: 2.2 MHz + triangle SSM, discharge off, no sync',175,120,'U7_SCONF','GND')
     out.passive('R10','R','100k',245,155,'V3V3_SYS','PWR_GOOD')
+    out.note('PASSIVE PACKAGES (DESIGN_SPEC "Physical design"): resistors are 0201, ceramics <= 4.7 uF are 0402 and the\n'
+             '10-22 uF ceramics are 0603. C10/C11/C12 (1st-stage COUT) and C23/C24 (post-bead Cf) are 22 uF / 10 V X5R\n'
+             '0603 (GRM188R61A226ME15): at 3.3 V DC bias an X5R 22 uF 0603 keeps roughly 60 % of its nominal value, so\n'
+             'the 66 uF nominal of the first stage is ~40 uF effective and the 44 uF post-bead stage is ~26 uF. The\n'
+             'ngspice decks still carry the NOMINAL 66 uF (simulations/*.cir COUT), so the modelled rail is optimistic\n'
+             'by that margin - an open item, not a result. Do not read the effective value off the BOM either.\n'
+             '0201 resistors and 22 uF 0603 ceramics are machine-place parts - JLC assembles them, a bench iron does not.',245,163,1.25)
     out.note('V3V3_SYS feedback (TPS62913 datasheet Sec 8.2.2.2.6, Eq.8): VOUT = VFB x (1 + R1/R2); VFB = 0.8 V typ, 0.792-0.812 V spec (Sec 6.5).\nR2 = 4.99 kOhm (<=5 kOhm per datasheet noise guidance). R1 = R2 x (VOUT/VFB - 1) = 4.99k x (3.3/0.8 - 1) = 4.99k x 3.125 = 15.59 kOhm -> nearest 1% E96 = 15.8 kOhm.\nActual VOUT = 0.8 V x (1 + 15.8k/4.99k) = 3.33 V nominal (3.30-3.38 V across VFB tolerance).',15,180,1.3)
     out.note('S-CONF = 6.04 kOhm to GND (Table 7-1): 2.2 MHz switching, triangle spread-spectrum ON, output discharge OFF, no external sync.\n2.2 MHz + 2.2uH matches the VIN=5V/VOUT<=3.3V design table (Table 8-2). TPS62913 runs fixed-frequency PWM at all loads, no light-load skip mode (Sec 7.4.1) -- forced PWM is inherent; there is no separate MODE pin on this device.\nVO (pin 3) senses the node between L1 and the ferrite bead (device internal loop); the FB divider senses V3V3_SYS after the bead for low-noise remote regulation (Sec 7.1 / 8.2.2.2.4).',15,215,1.3)
     out.add('U12','Regulator_Linear:TPS7A20xxxDBV','TPS7A2033PDBVR',95,200,{'1':'V5_SYS','2':'GND','3':'PWR_GOOD','4':None,'5':'V3V3_ANA'})
-    out.passive('C25','C','1u / 10 V X7R 0603, LDO input',55,195,'V5_SYS','GND')
-    out.passive('C26','C','1u / 10 V X7R 0603, LDO output, ESR <=100 mOhm',150,195,'V3V3_ANA','GND')
+    out.passive('C25','C','1u / 10 V X7R 0402, LDO input',55,195,'V5_SYS','GND')
+    out.passive('C26','C','1u / 10 V X7R 0402, LDO output, ESR <=100 mOhm',150,195,'V3V3_ANA','GND')
     out.note('3V3_ANA feeds ICM-45686, BMP581, ADXL375 and the RP2354B ADC_AVDD pin (100 nF at each pin on the MCU sheet); VREG_AVDD is filtered\n'
              'from V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is on PWR_GOOD rather than V5_SYS:\n'
              'the analog rail therefore starts only once the TPS62913 declares V3V3_SYS in regulation, and drops with it, which removes the\n'

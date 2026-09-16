@@ -39,15 +39,15 @@ expected={
  # WS2812C-2020 (LED:WS2812B-2020 symbol): 1 DOUT (no connect), 2 VSS, 3 DIN, 4 VDD
  ('R55','1'):'LED_DATA',('R55','2'):'LED_DIN',('U20','27'):'LED_DATA',
  ('D20','2'):'GND',('D20','3'):'LED_DIN',('D20','4'):'V5_SYS',('C79','1'):'V5_SYS',('C79','2'):'GND',
- # buzzer solder pads replace the through-hole buzzer; D22 still clamps across them
- ('J15','1'):'V5_SYS',('J15','2'):'BUZZ_D',('Q20','3'):'BUZZ_D',('D22','1'):'V5_SYS',('D22','2'):'BUZZ_D',
  # SWD solder pads
  ('J10','1'):'SWCLK',('J10','2'):'SWDIO',('J10','3'):'GND',
- # spare-IO block: 3.3 V, two grounds and the nine GPIOs no on-board function claims
+ # spare-IO block: 3.3 V, one ground and the ten GPIOs no on-board function claims. Pin 12 was the
+ # second ground until the buzzer was deleted; it now carries GPIO28 (pin 36), which that driver owned.
  ('J16','1'):'V3V3_SYS',('J16','2'):'GND',('J16','3'):'IO_GPIO1',('J16','4'):'IO_GPIO21',
  ('J16','5'):'IO_GPIO27',('J16','6'):'IO_GPIO31',('J16','7'):'IO_GPIO43',('J16','8'):'IO_GPIO44',
- ('J16','9'):'IO_GPIO45',('J16','10'):'IO_GPIO46',('J16','11'):'IO_GPIO47',('J16','12'):'GND',
+ ('J16','9'):'IO_GPIO45',('J16','10'):'IO_GPIO46',('J16','11'):'IO_GPIO47',('J16','12'):'IO_GPIO28',
  ('U20','78'):'IO_GPIO1',('U20','21'):'IO_GPIO21',('U20','28'):'IO_GPIO27',('U20','39'):'IO_GPIO31',
+ ('U20','36'):'IO_GPIO28',
  ('U20','54'):'IO_GPIO43',('U20','55'):'IO_GPIO44',('U20','56'):'IO_GPIO45',('U20','57'):'IO_GPIO46',
  ('U20','58'):'IO_GPIO47',
  # Peripheral ports, Pixhawk DS-009 order. UART: 1 VCC, 2 TX (board TX = module RX net), 3 RX, 4 GND.
@@ -109,10 +109,15 @@ assert {('J4','A4'),('J4','A9'),('J4','B4'),('J4','B9')} <= nets['USB_VBUS']
 # parts retired by earlier revisions and by this one must be gone, symbol and all:
 # U3/U5 the LM66100 OR-ing pair; J3's XT30 input network D23/C16/C67/C68/C69 (the 5 V input itself is
 # gone, J3 is now the ESC pad row); D21/R31/R32 the two discrete status LEDs (one WS2812C now); BZ1 the
-# through-hole buzzer (J15 solder pads now).
+# through-hole buzzer, and with it the whole buzzer driver - J15 pads, Q20 gate, D22 flyback, R33/R34
+# gate network - deleted in this revision, which is what frees GPIO28 for J16 pin 12.
+_retired = {'U3','U5','D23','C16','C67','C68','C69','D21','R31','R32','BZ1',
+            'J15','Q20','D22','R33','R34'}
 _refs = {c.get('ref') for c in root.find('components')}
-assert not {'U3','U5','D23','C16','C67','C68','C69','D21','R31','R32','BZ1'} & _refs, sorted(
-    {'U3','U5','D23','C16','C67','C68','C69','D21','R31','R32','BZ1'} & _refs)
+assert not _retired & _refs, sorted(_retired & _refs)
+# and no net of the deleted driver survives either (BUZZ_PWM / BUZZ_G / BUZZ_D / BUZZER*)
+assert not [n for n in nets if n.upper().startswith('BUZZ')], sorted(
+    n for n in nets if n.upper().startswith('BUZZ'))
 assert {'H1','H2','H3','H4'} <= _refs, 'mounting-hole group missing'
 # every U25 programming node is exactly the two or three pins it should be, nothing else leaks in
 assert nets['U25_PR1']=={('U25','6'),('R42','2'),('R43','1')},nets['U25_PR1']
@@ -131,10 +136,10 @@ assert nets['VBAT']=={('J3','7'),('U26','3'),('C73','1'),('C74','1'),('R52','1')
 #    mux PR1/OV1 dividers, the mux IN1 bypass and the servo row J13. No source connector sits on it.
 assert {ref for ref,pin in nets['5V_IN'] if ref.startswith('J')}=={'J13'},nets['5V_IN']
 assert {('L3','2'),('U26','1'),('U25','7'),('C76','1'),('C77','1'),('C80','1')} <= nets['5V_IN'],nets['5V_IN']
-# 3. V5_SYS (mux output) may reach the two avionics UART ports (J6/J7 VCC) and the buzzer pads (J15),
-#    and nothing else with a connector reference. The servo row J13, the ESC row J3 and USB J4 must
-#    stay off it, so servo/ESC current never crosses the mux and no source connector back-feeds it.
-assert {ref for ref,pin in nets['V5_SYS'] if ref.startswith('J')}=={'J6','J7','J15'},nets['V5_SYS']
+# 3. V5_SYS (mux output) may reach the two avionics UART ports (J6/J7 VCC) and nothing else with a
+#    connector reference (the J15 buzzer pads are gone). The servo row J13, the ESC row J3 and USB J4
+#    must stay off it, so servo/ESC current never crosses the mux and no source connector back-feeds it.
+assert {ref for ref,pin in nets['V5_SYS'] if ref.startswith('J')}=={'J6','J7'},nets['V5_SYS']
 # 4. The buck's own programming nodes are exactly what they should be, nothing leaks in.
 assert nets['U26_SW']=={('U26','5'),('L3','1'),('C75','2')},nets['U26_SW']
 assert nets['U26_BST']=={('U26','6'),('C75','1')},nets['U26_BST']

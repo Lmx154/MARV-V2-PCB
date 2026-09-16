@@ -12,3 +12,4 @@ __pycache__/
 # ngspice scratch
 simulations/corners/*.log
 simulations/*.log
+backups/*.kicad_pcb.prev

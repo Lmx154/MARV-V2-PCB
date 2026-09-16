@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-15T18:47:44</date>
+    <date>2026-09-15T21:32:36</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -151,10 +151,10 @@
   </design>
   <components>
     <comp ref="C7">
-      <value>1u / 10 V X7R 0603</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -247,10 +247,10 @@
       </units>
     </comp>
     <comp ref="C73">
-      <value>10u / 50 V X7R, VIN bulk</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
+      <value>10u / 50 V X5R 0805 GRM21BR61H106KE43, VIN bulk</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -271,10 +271,10 @@
       </units>
     </comp>
     <comp ref="C74">
-      <value>100n / 50 V X7R, VIN HF bypass</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>100n / 50 V X7R 0402, VIN HF bypass</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -295,10 +295,10 @@
       </units>
     </comp>
     <comp ref="C75">
-      <value>100n / 50 V X7R, bootstrap</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>100n / 50 V X7R 0402, bootstrap</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -319,10 +319,10 @@
       </units>
     </comp>
     <comp ref="C76">
-      <value>22u / 25 V X5R, buck COUT</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
+      <value>22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -343,10 +343,10 @@
       </units>
     </comp>
     <comp ref="C77">
-      <value>22u / 25 V X5R, buck COUT</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
+      <value>22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -367,10 +367,10 @@
       </units>
     </comp>
     <comp ref="C80">
-      <value>22u / 25 V X5R, buck COUT (3rd: &gt;=44 uF after DC-bias derating, AP63205 EVB guide)</value>
-      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
+      <value>22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT (3rd: &gt;=44 uF after DC-bias derating, AP63205 EVB guide)</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -486,9 +486,9 @@
     </comp>
     <comp ref="R4">
       <value>5.1k / 1%</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -510,9 +510,9 @@
     </comp>
     <comp ref="R5">
       <value>5.1k / 1%</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -534,9 +534,9 @@
     </comp>
     <comp ref="R42">
       <value>32.4k / 1%, PR1 top (5V_IN)</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -558,9 +558,9 @@
     </comp>
     <comp ref="R43">
       <value>10k / 1%, PR1 bottom</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -582,9 +582,9 @@
     </comp>
     <comp ref="R44">
       <value>45.3k / 1%, OV1 top (5V_IN)</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -606,9 +606,9 @@
     </comp>
     <comp ref="R45">
       <value>10k / 1%, OV1 bottom</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -630,9 +630,9 @@
     </comp>
     <comp ref="R46">
       <value>80.6k / 1%, ILM -&gt; 1.49 A</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -654,9 +654,9 @@
     </comp>
     <comp ref="R47">
       <value>10k / 1%, ST pull-up (open drain)</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -678,9 +678,9 @@
     </comp>
     <comp ref="R52">
       <value>100k / 1%, EN to VIN</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -813,10 +813,10 @@
       </units>
     </comp>
     <comp ref="C10">
-      <value>22u / 10 V X7S, 1st-stage COUT</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -837,10 +837,10 @@
       </units>
     </comp>
     <comp ref="C11">
-      <value>22u / 10 V X7S, 1st-stage COUT</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -861,10 +861,10 @@
       </units>
     </comp>
     <comp ref="C12">
-      <value>22u / 10 V X7S, 1st-stage COUT</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -885,10 +885,10 @@
       </units>
     </comp>
     <comp ref="C13">
-      <value>470n / 16 V X7R 0603, NR/SS soft-start + noise filter (5 ms)</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>470n / 16 V X7R 0402, NR/SS soft-start + noise filter (5 ms)</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -957,10 +957,10 @@
       </units>
     </comp>
     <comp ref="C23">
-      <value>22u / 10 V X7S, 2nd-stage Cf (post-bead)</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -981,10 +981,10 @@
       </units>
     </comp>
     <comp ref="C24">
-      <value>22u / 10 V X7S, 2nd-stage Cf (post-bead)</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <value>22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1005,10 +1005,10 @@
       </units>
     </comp>
     <comp ref="C25">
-      <value>1u / 10 V X7R 0603, LDO input</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, LDO input</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1029,10 +1029,10 @@
       </units>
     </comp>
     <comp ref="C26">
-      <value>1u / 10 V X7R 0603, LDO output, ESR &lt;=100 mOhm</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, LDO output, ESR &lt;=100 mOhm</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1102,9 +1102,9 @@
     </comp>
     <comp ref="R7">
       <value>15.8k / 0.1%</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1126,9 +1126,9 @@
     </comp>
     <comp ref="R8">
       <value>4.99k / 0.1%</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1150,9 +1150,9 @@
     </comp>
     <comp ref="R9">
       <value>6.04k / 1%, S-CONF: 2.2 MHz + triangle SSM, discharge off, no sync</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1174,9 +1174,9 @@
     </comp>
     <comp ref="R10">
       <value>100k</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1653,10 +1653,10 @@
       </units>
     </comp>
     <comp ref="C39">
-      <value>4.7u / 10 V X7R 0603, VREG_VIN</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>4.7u / 10 V X5R 0402, VREG_VIN</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1701,10 +1701,10 @@
       </units>
     </comp>
     <comp ref="C41">
-      <value>4.7u / 10 V X7R 0603, VREG_AVDD</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>4.7u / 10 V X5R 0402, VREG_AVDD</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1797,10 +1797,10 @@
       </units>
     </comp>
     <comp ref="C45">
-      <value>4.7u / 10 V X7R 0603, DVDD bulk</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>4.7u / 10 V X5R 0402, DVDD bulk</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -1991,30 +1991,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="D22">
-      <value>flyback across the buzzer pads</value>
-      <footprint>Diode_SMD:D_SOD-123</footprint>
-      <fields>
-        <field name="Footprint">Diode_SMD:D_SOD-123</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Device" part="D_Schottky" description="Schottky diode"/>
-      <property name="Sheetname" value="BOARD 1 / RP2354B"/>
-      <property name="Sheetfile" value="mcu.kicad_sch"/>
-      <property name="ki_keywords" value="diode Schottky"/>
-      <property name="ki_fp_filters" value="TO-???* *_Diode_* *SingleDiode* D_*"/>
-      <sheetpath names="/BOARD 1 / RP2354B/" tstamps="/203e2964-cb5c-592c-ba13-6544f885ad75/"/>
-      <tstamps>d683bfd2-1786-5b6e-baf7-8a63992e093d</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="H1">
       <value>M3 grommet hole, 4.0 mm NPTH</value>
       <footprint>MARV_Packages:MountingHole_4.0mm_Grommet</footprint>
@@ -2124,30 +2100,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J15">
-      <value>BUZZER pads (5V BZ-)</value>
-      <footprint>MARV_Packages:PadRow_1x02_P2.00mm</footprint>
-      <fields>
-        <field name="Footprint">MARV_Packages:PadRow_1x02_P2.00mm</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
-      <property name="Sheetname" value="BOARD 1 / RP2354B"/>
-      <property name="Sheetfile" value="mcu.kicad_sch"/>
-      <property name="ki_keywords" value="connector"/>
-      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
-      <sheetpath names="/BOARD 1 / RP2354B/" tstamps="/203e2964-cb5c-592c-ba13-6544f885ad75/"/>
-      <tstamps>c302aa50-c05a-5be7-bb32-46f09caa2ce7</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="J16">
       <value>SPARE IO 2x6 (see note)</value>
       <footprint>Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Vertical</footprint>
@@ -2206,37 +2158,11 @@
         </unit>
       </units>
     </comp>
-    <comp ref="Q20">
-      <value>2N7002</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
-      <datasheet>https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF</datasheet>
-      <fields>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
-        <field name="Datasheet">https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Transistor_FET" part="2N7002" description="0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23"/>
-      <property name="Sheetname" value="BOARD 1 / RP2354B"/>
-      <property name="Sheetfile" value="mcu.kicad_sch"/>
-      <property name="ki_keywords" value="N-Channel Switching MOSFET"/>
-      <property name="ki_fp_filters" value="SOT?23*"/>
-      <sheetpath names="/BOARD 1 / RP2354B/" tstamps="/203e2964-cb5c-592c-ba13-6544f885ad75/"/>
-      <tstamps>27532089-6f92-527c-820a-cde18897ba65</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="3"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="R20">
       <value>33 / 1%, VREG_AVDD filter</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2258,9 +2184,9 @@
     </comp>
     <comp ref="R21">
       <value>1k / 1%, crystal drive limit</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2282,9 +2208,9 @@
     </comp>
     <comp ref="R22">
       <value>27 / 1%, USB D+ series</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2306,9 +2232,9 @@
     </comp>
     <comp ref="R23">
       <value>27 / 1%, USB D- series</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2330,9 +2256,9 @@
     </comp>
     <comp ref="R24">
       <value>1k, BOOTSEL strap</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2354,9 +2280,9 @@
     </comp>
     <comp ref="R25">
       <value>4.7k, I2C1 SDA pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2378,9 +2304,9 @@
     </comp>
     <comp ref="R26">
       <value>4.7k, I2C1 SCL pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2402,9 +2328,9 @@
     </comp>
     <comp ref="R27">
       <value>100k / 1%, VBAT top</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2426,9 +2352,9 @@
     </comp>
     <comp ref="R28">
       <value>10k / 1%, VBAT bottom</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2450,9 +2376,9 @@
     </comp>
     <comp ref="R29">
       <value>10k / 1%, VBUS top</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2474,9 +2400,9 @@
     </comp>
     <comp ref="R30">
       <value>15k / 1%, VBUS bottom</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2496,59 +2422,11 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R33">
-      <value>1k, gate series</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
-      <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="Sheetname" value="BOARD 1 / RP2354B"/>
-      <property name="Sheetfile" value="mcu.kicad_sch"/>
-      <property name="ki_keywords" value="R res resistor"/>
-      <property name="ki_fp_filters" value="R_*"/>
-      <sheetpath names="/BOARD 1 / RP2354B/" tstamps="/203e2964-cb5c-592c-ba13-6544f885ad75/"/>
-      <tstamps>eb788e05-415f-5552-b67c-90ecb2c5f255</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R34">
-      <value>100k, gate pull-down</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
-      <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="Sheetname" value="BOARD 1 / RP2354B"/>
-      <property name="Sheetfile" value="mcu.kicad_sch"/>
-      <property name="ki_keywords" value="R res resistor"/>
-      <property name="ki_fp_filters" value="R_*"/>
-      <sheetpath names="/BOARD 1 / RP2354B/" tstamps="/203e2964-cb5c-592c-ba13-6544f885ad75/"/>
-      <tstamps>02f3ee9e-903d-56fb-8a08-64f570400f0f</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="R53">
       <value>1k / 1%, CURR series</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2570,9 +2448,9 @@
     </comp>
     <comp ref="R54">
       <value>1k, ESC telemetry series</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2594,9 +2472,9 @@
     </comp>
     <comp ref="R55">
       <value>100 / 1%, WS2812 data series</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2817,10 +2695,10 @@
       </units>
     </comp>
     <comp ref="C51">
-      <value>1u / 10 V X7R 0603, U21 VDD</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, U21 VDD</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2865,10 +2743,10 @@
       </units>
     </comp>
     <comp ref="C53">
-      <value>1u / 10 V X7R 0603, U21 VDDIO</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, U21 VDDIO</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2913,10 +2791,10 @@
       </units>
     </comp>
     <comp ref="C55">
-      <value>1u / 10 V X7R 0603, U22 VDD</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, U22 VDD</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -2961,10 +2839,10 @@
       </units>
     </comp>
     <comp ref="C57">
-      <value>1u / 10 V X7R 0603, U22 VDDIO</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, U22 VDDIO</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3009,10 +2887,10 @@
       </units>
     </comp>
     <comp ref="C59">
-      <value>1u / 10 V X7R 0603, U23 VS</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, U23 VS</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3057,10 +2935,10 @@
       </units>
     </comp>
     <comp ref="C61">
-      <value>1u / 10 V X7R 0603, U23 VDD_IO</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, U23 VDD_IO</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3082,9 +2960,9 @@
     </comp>
     <comp ref="R48">
       <value>10k, IMU_CS pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3106,9 +2984,9 @@
     </comp>
     <comp ref="R50">
       <value>10k, BARO_CS pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3130,9 +3008,9 @@
     </comp>
     <comp ref="R51">
       <value>10k, HG_ACC_CS pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3284,10 +3162,10 @@
       </units>
     </comp>
     <comp ref="C63">
-      <value>1u / 10 V X7R 0603, U24 VCC</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <value>1u / 10 V X7R 0402, U24 VCC</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3356,10 +3234,10 @@
       </units>
     </comp>
     <comp ref="C66">
-      <value>47u / 6.3 V X5R, at the socket</value>
-      <footprint>Capacitor_SMD:C_1210_3225Metric</footprint>
+      <value>47u / 6.3 V X5R 0805, at the socket</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_1210_3225Metric</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3415,9 +3293,9 @@
     </comp>
     <comp ref="R35">
       <value>10k, FLASH_CS1 pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3439,9 +3317,9 @@
     </comp>
     <comp ref="R36">
       <value>10k, SD_CMD pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3463,9 +3341,9 @@
     </comp>
     <comp ref="R37">
       <value>10k, SD_D0 pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3487,9 +3365,9 @@
     </comp>
     <comp ref="R38">
       <value>10k, SD_D1 pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3511,9 +3389,9 @@
     </comp>
     <comp ref="R39">
       <value>10k, SD_D2 pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3535,9 +3413,9 @@
     </comp>
     <comp ref="R40">
       <value>10k, SD_D3 pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3559,9 +3437,9 @@
     </comp>
     <comp ref="R41">
       <value>10k, SD_DET pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <footprint>Resistor_SMD:R_0201_0603Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Footprint">Resistor_SMD:R_0201_0603Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3752,23 +3630,6 @@
         <pin num="SH" name="SHIELD" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="Connector_Generic" part="Conn_01x02">
-      <description>Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
-      <footprints>
-        <fp>Connector*:*_1x??_*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">J</field>
-        <field name="Value">Conn_01x02</field>
-        <field name="Footprint"/>
-        <field name="Datasheet"/>
-        <field name="Description">Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
-      </fields>
-      <pins>
-        <pin num="1" name="Pin_1" type="passive"/>
-        <pin num="2" name="Pin_2" type="passive"/>
-      </pins>
-    </libpart>
     <libpart lib="Connector_Generic" part="Conn_01x03">
       <description>Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
       <footprints>
@@ -3892,26 +3753,6 @@
         <pin num="2" name="G" type="passive"/>
         <pin num="3" name="3" type="passive"/>
         <pin num="4" name="G" type="passive"/>
-      </pins>
-    </libpart>
-    <libpart lib="Device" part="D_Schottky">
-      <description>Schottky diode</description>
-      <footprints>
-        <fp>TO-???*</fp>
-        <fp>*_Diode_*</fp>
-        <fp>*SingleDiode*</fp>
-        <fp>D_*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">D</field>
-        <field name="Value">D_Schottky</field>
-        <field name="Footprint"/>
-        <field name="Datasheet"/>
-        <field name="Description">Schottky diode</field>
-      </fields>
-      <pins>
-        <pin num="1" name="K" type="passive"/>
-        <pin num="2" name="A" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Device" part="FerriteBead">
@@ -4345,25 +4186,6 @@
         <pin num="2" name="2" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="Transistor_FET" part="2N7002">
-      <description>0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23</description>
-      <docs>https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF</docs>
-      <footprints>
-        <fp>SOT?23*</fp>
-      </footprints>
-      <fields>
-        <field name="Reference">Q</field>
-        <field name="Value">2N7002</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
-        <field name="Datasheet">https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF</field>
-        <field name="Description">0.115A Id, 60V Vds, N-Channel MOSFET, SOT-23</field>
-      </fields>
-      <pins>
-        <pin num="1" name="G" type="input"/>
-        <pin num="2" name="S" type="passive"/>
-        <pin num="3" name="D" type="passive"/>
-      </pins>
-    </libpart>
   </libparts>
   <libraries>
     <library logical="Connector">
@@ -4405,9 +4227,6 @@
     <library logical="Switch">
       <uri>${KICAD10_SYMBOL_DIR}/Switch.kicad_sym</uri>
     </library>
-    <library logical="Transistor_FET">
-      <uri>${KICAD10_SYMBOL_DIR}/Transistor_FET.kicad_sym</uri>
-    </library>
   </libraries>
   <nets>
     <net code="1" name="5V_IN" class="Power">
@@ -4438,30 +4257,16 @@
       <node ref="R24" pin="2" pintype="passive"/>
       <node ref="SW2" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="5" name="BUZZ_D" class="Default">
-      <node ref="D22" pin="2" pinfunction="A_2" pintype="passive"/>
-      <node ref="J15" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="Q20" pin="3" pinfunction="D_3" pintype="passive"/>
-    </net>
-    <net code="6" name="BUZZ_G" class="Default">
-      <node ref="Q20" pin="1" pinfunction="G_1" pintype="input"/>
-      <node ref="R33" pin="2" pintype="passive"/>
-      <node ref="R34" pin="1" pintype="passive"/>
-    </net>
-    <net code="7" name="BUZZ_PWM" class="Default">
-      <node ref="R33" pin="1" pintype="passive"/>
-      <node ref="U20" pin="36" pinfunction="GPIO28_36" pintype="bidirectional"/>
-    </net>
-    <net code="8" name="CURR_SENSE" class="ESC">
+    <net code="5" name="CURR_SENSE" class="PWM_ESC">
       <node ref="C78" pin="1" pintype="passive"/>
       <node ref="R53" pin="2" pintype="passive"/>
       <node ref="U20" pin="53" pinfunction="GPIO42/ADC2_53" pintype="bidirectional"/>
     </net>
-    <net code="9" name="CURR_SENSE_RAW" class="ESC">
+    <net code="6" name="CURR_SENSE_RAW" class="PWM_ESC">
       <node ref="J3" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R53" pin="1" pintype="passive"/>
     </net>
-    <net code="10" name="DVDD" class="Default">
+    <net code="7" name="DVDD" class="Default">
       <node ref="C42" pin="1" pintype="passive"/>
       <node ref="C43" pin="1" pintype="passive"/>
       <node ref="C44" pin="1" pintype="passive"/>
@@ -4472,28 +4277,28 @@
       <node ref="U20" pin="51" pinfunction="DVDD_51" pintype="passive"/>
       <node ref="U20" pin="65" pinfunction="VREG_FB_65" pintype="passive"/>
     </net>
-    <net code="11" name="ELRS_RX" class="Default">
+    <net code="8" name="ELRS_RX" class="Default">
       <node ref="J7" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="6" pinfunction="GPIO8_6" pintype="bidirectional"/>
     </net>
-    <net code="12" name="ELRS_TX" class="Default">
+    <net code="9" name="ELRS_TX" class="Default">
       <node ref="J7" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="7" pinfunction="GPIO9_7" pintype="bidirectional"/>
     </net>
-    <net code="13" name="ESC_TELEM" class="ESC">
+    <net code="10" name="ESC_TELEM" class="PWM_ESC">
       <node ref="J3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R54" pin="1" pintype="passive"/>
     </net>
-    <net code="14" name="ESC_TELEM_RX" class="ESC">
+    <net code="11" name="ESC_TELEM_RX" class="PWM_ESC">
       <node ref="R54" pin="2" pintype="passive"/>
       <node ref="U20" pin="38" pinfunction="GPIO30_38" pintype="bidirectional"/>
     </net>
-    <net code="15" name="FLASH_CS1" class="Default">
+    <net code="12" name="FLASH_CS1" class="Default">
       <node ref="R35" pin="2" pintype="passive"/>
       <node ref="U20" pin="77" pinfunction="GPIO0_77" pintype="bidirectional"/>
       <node ref="U24" pin="1" pinfunction="~{CS}_1" pintype="input"/>
     </net>
-    <net code="16" name="GND" class="Default">
+    <net code="13" name="GND" class="Default">
       <node ref="C10" pin="2" pintype="passive"/>
       <node ref="C11" pin="2" pintype="passive"/>
       <node ref="C12" pin="2" pintype="passive"/>
@@ -4566,7 +4371,6 @@
       <node ref="J14" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J14" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J14" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
-      <node ref="J16" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
       <node ref="J16" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J3" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="J4" pin="A1" pinfunction="GND_A1" pintype="passive"/>
@@ -4577,10 +4381,8 @@
       <node ref="J6" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J7" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J9" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
-      <node ref="Q20" pin="2" pinfunction="S_2" pintype="passive"/>
       <node ref="R28" pin="2" pintype="passive"/>
       <node ref="R30" pin="2" pintype="passive"/>
-      <node ref="R34" pin="2" pintype="passive"/>
       <node ref="R4" pin="2" pintype="passive"/>
       <node ref="R43" pin="2" pintype="passive"/>
       <node ref="R45" pin="2" pintype="passive"/>
@@ -4612,236 +4414,240 @@
       <node ref="Y1" pin="2" pinfunction="G_2" pintype="passive"/>
       <node ref="Y1" pin="4" pinfunction="G_4" pintype="passive"/>
     </net>
-    <net code="17" name="GPS_RX" class="Default">
+    <net code="14" name="GPS_RX" class="Default">
       <node ref="J6" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="11" pinfunction="GPIO12_11" pintype="bidirectional"/>
     </net>
-    <net code="18" name="GPS_TX" class="Default">
+    <net code="15" name="GPS_TX" class="Default">
       <node ref="J6" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="12" pinfunction="GPIO13_12" pintype="bidirectional"/>
     </net>
-    <net code="19" name="HG_ACC_CS" class="SensorSPI">
+    <net code="16" name="HG_ACC_CS" class="SensorSPI">
       <node ref="R51" pin="2" pintype="passive"/>
       <node ref="U20" pin="17" pinfunction="GPIO17_17" pintype="bidirectional"/>
       <node ref="U23" pin="7" pinfunction="CS_7" pintype="input"/>
     </net>
-    <net code="20" name="HG_ACC_INT" class="SensorSPI">
+    <net code="17" name="HG_ACC_INT" class="SensorSPI">
       <node ref="U20" pin="37" pinfunction="GPIO29_37" pintype="bidirectional"/>
       <node ref="U23" pin="8" pinfunction="INT1_8" pintype="output"/>
     </net>
-    <net code="21" name="IMU_CS" class="SensorSPI">
+    <net code="18" name="IMU_CS" class="SensorSPI">
       <node ref="R48" pin="2" pintype="passive"/>
       <node ref="U20" pin="20" pinfunction="GPIO20_20" pintype="bidirectional"/>
       <node ref="U21" pin="12" pinfunction="AP_CS_12" pintype="input"/>
     </net>
-    <net code="22" name="IMU_INT1" class="SensorSPI">
+    <net code="19" name="IMU_INT1" class="SensorSPI">
       <node ref="U20" pin="23" pinfunction="GPIO23_23" pintype="bidirectional"/>
       <node ref="U21" pin="4" pinfunction="INT1_4" pintype="output"/>
     </net>
-    <net code="23" name="IMU_INT2" class="SensorSPI">
+    <net code="20" name="IMU_INT2" class="SensorSPI">
       <node ref="U20" pin="25" pinfunction="GPIO24_25" pintype="bidirectional"/>
       <node ref="U21" pin="9" pinfunction="INT2/FSYNC/CLKIN_9" pintype="bidirectional"/>
     </net>
-    <net code="24" name="IO_GPIO1" class="Default">
+    <net code="21" name="IO_GPIO1" class="Default">
       <node ref="J16" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="78" pinfunction="GPIO1_78" pintype="bidirectional"/>
     </net>
-    <net code="25" name="IO_GPIO21" class="Default">
+    <net code="22" name="IO_GPIO21" class="Default">
       <node ref="J16" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="21" pinfunction="GPIO21_21" pintype="bidirectional"/>
     </net>
-    <net code="26" name="IO_GPIO27" class="Default">
+    <net code="23" name="IO_GPIO27" class="Default">
       <node ref="J16" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="U20" pin="28" pinfunction="GPIO27_28" pintype="bidirectional"/>
     </net>
-    <net code="27" name="IO_GPIO31" class="Default">
+    <net code="24" name="IO_GPIO28" class="Default">
+      <node ref="J16" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
+      <node ref="U20" pin="36" pinfunction="GPIO28_36" pintype="bidirectional"/>
+    </net>
+    <net code="25" name="IO_GPIO31" class="Default">
       <node ref="J16" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="U20" pin="39" pinfunction="GPIO31_39" pintype="bidirectional"/>
     </net>
-    <net code="28" name="IO_GPIO43" class="Default">
+    <net code="26" name="IO_GPIO43" class="Default">
       <node ref="J16" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="U20" pin="54" pinfunction="GPIO43/ADC3_54" pintype="bidirectional"/>
     </net>
-    <net code="29" name="IO_GPIO44" class="Default">
+    <net code="27" name="IO_GPIO44" class="Default">
       <node ref="J16" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="U20" pin="55" pinfunction="GPIO44/ADC4_55" pintype="bidirectional"/>
     </net>
-    <net code="30" name="IO_GPIO45" class="Default">
+    <net code="28" name="IO_GPIO45" class="Default">
       <node ref="J16" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="U20" pin="56" pinfunction="GPIO45/ADC5_56" pintype="bidirectional"/>
     </net>
-    <net code="31" name="IO_GPIO46" class="Default">
+    <net code="29" name="IO_GPIO46" class="Default">
       <node ref="J16" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="U20" pin="57" pinfunction="GPIO46/ADC6_57" pintype="bidirectional"/>
     </net>
-    <net code="32" name="IO_GPIO47" class="Default">
+    <net code="30" name="IO_GPIO47" class="Default">
       <node ref="J16" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
       <node ref="U20" pin="58" pinfunction="GPIO47/ADC7_58" pintype="bidirectional"/>
     </net>
-    <net code="33" name="LED_DATA" class="Default">
+    <net code="31" name="LED_DATA" class="Default">
       <node ref="R55" pin="1" pintype="passive"/>
       <node ref="U20" pin="27" pinfunction="GPIO26_27" pintype="bidirectional"/>
     </net>
-    <net code="34" name="LED_DIN" class="Default">
+    <net code="32" name="LED_DIN" class="Default">
       <node ref="D20" pin="3" pinfunction="DIN_3" pintype="input"/>
       <node ref="R55" pin="2" pintype="passive"/>
     </net>
-    <net code="35" name="MAG_SCL" class="Default">
+    <net code="33" name="MAG_SCL" class="Default">
       <node ref="J9" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R26" pin="2" pintype="passive"/>
       <node ref="U20" pin="4" pinfunction="GPIO7_4" pintype="bidirectional"/>
     </net>
-    <net code="36" name="MAG_SDA" class="Default">
+    <net code="34" name="MAG_SDA" class="Default">
       <node ref="J9" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="R25" pin="2" pintype="passive"/>
       <node ref="U20" pin="3" pinfunction="GPIO6_3" pintype="bidirectional"/>
     </net>
-    <net code="37" name="PWM1" class="ESC">
+    <net code="35" name="PWM1" class="PWM_ESC">
       <node ref="J3" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="U20" pin="79" pinfunction="GPIO2_79" pintype="bidirectional"/>
     </net>
-    <net code="38" name="PWM2" class="ESC">
+    <net code="36" name="PWM2" class="PWM_ESC">
       <node ref="J3" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="U20" pin="80" pinfunction="GPIO3_80" pintype="bidirectional"/>
     </net>
-    <net code="39" name="PWM3" class="ESC">
+    <net code="37" name="PWM3" class="PWM_ESC">
       <node ref="J3" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="1" pinfunction="GPIO4_1" pintype="bidirectional"/>
     </net>
-    <net code="40" name="PWM4" class="ESC">
+    <net code="38" name="PWM4" class="PWM_ESC">
       <node ref="J3" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="2" pinfunction="GPIO5_2" pintype="bidirectional"/>
     </net>
-    <net code="41" name="PWM5" class="Default">
+    <net code="39" name="PWM5" class="PWM_ESC">
       <node ref="J12" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U20" pin="8" pinfunction="GPIO10_8" pintype="bidirectional"/>
     </net>
-    <net code="42" name="PWM6" class="Default">
+    <net code="40" name="PWM6" class="PWM_ESC">
       <node ref="J12" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="9" pinfunction="GPIO11_9" pintype="bidirectional"/>
     </net>
-    <net code="43" name="PWM7" class="Default">
+    <net code="41" name="PWM7" class="PWM_ESC">
       <node ref="J12" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="U20" pin="13" pinfunction="GPIO14_13" pintype="bidirectional"/>
     </net>
-    <net code="44" name="PWM8" class="Default">
+    <net code="42" name="PWM8" class="PWM_ESC">
       <node ref="J12" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="U20" pin="14" pinfunction="GPIO15_14" pintype="bidirectional"/>
     </net>
-    <net code="45" name="PWR_GOOD" class="Default">
+    <net code="43" name="PWR_GOOD" class="Default">
       <node ref="R10" pin="2" pintype="passive"/>
       <node ref="SW1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U12" pin="3" pinfunction="EN_3" pintype="input"/>
       <node ref="U20" pin="35" pinfunction="RUN_35" pintype="input"/>
       <node ref="U7" pin="5" pinfunction="PG_5" pintype="output"/>
     </net>
-    <net code="46" name="PWR_SRC_ST" class="Default">
+    <net code="44" name="PWR_SRC_ST" class="Default">
       <node ref="R47" pin="2" pintype="passive"/>
       <node ref="U20" pin="48" pinfunction="GPIO39_48" pintype="bidirectional"/>
       <node ref="U25" pin="9" pinfunction="ST_9" pintype="open_collector"/>
     </net>
-    <net code="47" name="QSPI_SCLK" class="Default">
+    <net code="45" name="QSPI_SCLK" class="Default">
       <node ref="U20" pin="71" pinfunction="QSPI_SCLK_71" pintype="output"/>
       <node ref="U24" pin="6" pinfunction="CLK_6" pintype="input"/>
     </net>
-    <net code="48" name="QSPI_SD0" class="Default">
+    <net code="46" name="QSPI_SD0" class="Default">
       <node ref="U20" pin="72" pinfunction="QSPI_SD0_72" pintype="bidirectional"/>
       <node ref="U24" pin="5" pinfunction="DI/IO_{0}_5" pintype="bidirectional"/>
     </net>
-    <net code="49" name="QSPI_SD1" class="Default">
+    <net code="47" name="QSPI_SD1" class="Default">
       <node ref="U20" pin="74" pinfunction="QSPI_SD1_74" pintype="bidirectional"/>
       <node ref="U24" pin="2" pinfunction="DO/IO_{1}_2" pintype="bidirectional"/>
     </net>
-    <net code="50" name="QSPI_SD2" class="Default">
+    <net code="48" name="QSPI_SD2" class="Default">
       <node ref="U20" pin="73" pinfunction="QSPI_SD2_73" pintype="bidirectional"/>
       <node ref="U24" pin="3" pinfunction="~{WP}/IO_{2}_3" pintype="bidirectional"/>
     </net>
-    <net code="51" name="QSPI_SD3" class="Default">
+    <net code="49" name="QSPI_SD3" class="Default">
       <node ref="U20" pin="70" pinfunction="QSPI_SD3_70" pintype="bidirectional"/>
       <node ref="U24" pin="7" pinfunction="~{HOLD}/~{RESET}/IO_{3}_7" pintype="bidirectional"/>
     </net>
-    <net code="52" name="QSPI_SS" class="Default">
+    <net code="50" name="QSPI_SS" class="Default">
       <node ref="R24" pin="1" pintype="passive"/>
       <node ref="U20" pin="75" pinfunction="~{QSPI_SS}_75" pintype="output"/>
     </net>
-    <net code="53" name="SD_CLK" class="Default">
+    <net code="51" name="SD_CLK" class="Default">
       <node ref="J11" pin="5" pinfunction="CLK_5" pintype="input"/>
       <node ref="U20" pin="40" pinfunction="GPIO32_40" pintype="bidirectional"/>
     </net>
-    <net code="54" name="SD_CMD" class="Default">
+    <net code="52" name="SD_CMD" class="Default">
       <node ref="J11" pin="3" pinfunction="CMD_3" pintype="input"/>
       <node ref="R36" pin="2" pintype="passive"/>
       <node ref="U20" pin="42" pinfunction="GPIO33_42" pintype="bidirectional"/>
     </net>
-    <net code="55" name="SD_D0" class="Default">
+    <net code="53" name="SD_D0" class="Default">
       <node ref="J11" pin="7" pinfunction="DAT0_7" pintype="bidirectional"/>
       <node ref="R37" pin="2" pintype="passive"/>
       <node ref="U20" pin="43" pinfunction="GPIO34_43" pintype="bidirectional"/>
     </net>
-    <net code="56" name="SD_D1" class="Default">
+    <net code="54" name="SD_D1" class="Default">
       <node ref="J11" pin="8" pinfunction="DAT1_8" pintype="bidirectional"/>
       <node ref="R38" pin="2" pintype="passive"/>
       <node ref="U20" pin="44" pinfunction="GPIO35_44" pintype="bidirectional"/>
     </net>
-    <net code="57" name="SD_D2" class="Default">
+    <net code="55" name="SD_D2" class="Default">
       <node ref="J11" pin="1" pinfunction="DAT2_1" pintype="bidirectional"/>
       <node ref="R39" pin="2" pintype="passive"/>
       <node ref="U20" pin="45" pinfunction="GPIO36_45" pintype="bidirectional"/>
     </net>
-    <net code="58" name="SD_D3" class="Default">
+    <net code="56" name="SD_D3" class="Default">
       <node ref="J11" pin="2" pinfunction="DAT3/CD_2" pintype="bidirectional"/>
       <node ref="R40" pin="2" pintype="passive"/>
       <node ref="U20" pin="46" pinfunction="GPIO37_46" pintype="bidirectional"/>
     </net>
-    <net code="59" name="SD_DET" class="Default">
+    <net code="57" name="SD_DET" class="Default">
       <node ref="J11" pin="9" pinfunction="DET_B_9" pintype="passive"/>
       <node ref="R41" pin="2" pintype="passive"/>
       <node ref="U20" pin="47" pinfunction="GPIO38_47" pintype="bidirectional"/>
     </net>
-    <net code="60" name="SENS_MISO" class="SensorSPI">
+    <net code="58" name="SENS_MISO" class="SensorSPI">
       <node ref="U20" pin="16" pinfunction="GPIO16_16" pintype="bidirectional"/>
       <node ref="U21" pin="1" pinfunction="AP_SDO_1" pintype="output"/>
       <node ref="U22" pin="5" pinfunction="SDO/ADDR_5" pintype="bidirectional"/>
       <node ref="U23" pin="12" pinfunction="SDO/ALT_ADDRESS_12" pintype="bidirectional"/>
     </net>
-    <net code="61" name="SENS_MOSI" class="SensorSPI">
+    <net code="59" name="SENS_MOSI" class="SensorSPI">
       <node ref="U20" pin="19" pinfunction="GPIO19_19" pintype="bidirectional"/>
       <node ref="U21" pin="14" pinfunction="AP_SDA/AP_SDIO/AP_SDI_14" pintype="input"/>
       <node ref="U22" pin="4" pinfunction="SDI/SDA_4" pintype="bidirectional"/>
       <node ref="U23" pin="13" pinfunction="SDA/SDI/SDIO_13" pintype="bidirectional"/>
     </net>
-    <net code="62" name="SENS_SCK" class="SensorSPI">
+    <net code="60" name="SENS_SCK" class="SensorSPI">
       <node ref="U20" pin="18" pinfunction="GPIO18_18" pintype="bidirectional"/>
       <node ref="U21" pin="13" pinfunction="AP_SCLK_13" pintype="input"/>
       <node ref="U22" pin="2" pinfunction="SCK_2" pintype="input"/>
       <node ref="U23" pin="14" pinfunction="SCL/SCLK_14" pintype="input"/>
     </net>
-    <net code="63" name="SWCLK" class="Default">
+    <net code="61" name="SWCLK" class="Default">
       <node ref="J10" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U20" pin="33" pinfunction="SWCLK_33" pintype="input"/>
     </net>
-    <net code="64" name="SWDIO" class="Default">
+    <net code="62" name="SWDIO" class="Default">
       <node ref="J10" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="34" pinfunction="SWDIO_34" pintype="bidirectional"/>
     </net>
-    <net code="65" name="U7_FB" class="Default">
+    <net code="63" name="U7_FB" class="Default">
       <node ref="R7" pin="2" pintype="passive"/>
       <node ref="R8" pin="1" pintype="passive"/>
       <node ref="U7" pin="9" pinfunction="FB_9" pintype="input"/>
     </net>
-    <net code="66" name="U7_SCONF" class="Default">
+    <net code="64" name="U7_SCONF" class="Default">
       <node ref="R9" pin="1" pintype="passive"/>
       <node ref="U7" pin="10" pinfunction="S-CONF_10" pintype="input"/>
     </net>
-    <net code="67" name="U7_SS" class="Default">
+    <net code="65" name="U7_SS" class="Default">
       <node ref="C13" pin="1" pintype="passive"/>
       <node ref="U7" pin="8" pinfunction="NR/SS_8" pintype="output"/>
     </net>
-    <net code="68" name="U7_SW" class="Power">
+    <net code="66" name="U7_SW" class="Power">
       <node ref="L2" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U7" pin="2" pinfunction="SW_2" pintype="power_out"/>
     </net>
-    <net code="69" name="U7_VO" class="Power">
+    <net code="67" name="U7_VO" class="Power">
       <node ref="C10" pin="1" pintype="passive"/>
       <node ref="C11" pin="1" pintype="passive"/>
       <node ref="C12" pin="1" pintype="passive"/>
@@ -4849,72 +4655,72 @@
       <node ref="L2" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="U7" pin="3" pinfunction="VO_3" pintype="input"/>
     </net>
-    <net code="70" name="U25_ILM" class="Default">
+    <net code="68" name="U25_ILM" class="Default">
       <node ref="R46" pin="1" pintype="passive"/>
       <node ref="U25" pin="10" pinfunction="ILM_10" pintype="passive"/>
     </net>
-    <net code="71" name="U25_OV1" class="Default">
+    <net code="69" name="U25_OV1" class="Default">
       <node ref="R44" pin="2" pintype="passive"/>
       <node ref="R45" pin="1" pintype="passive"/>
       <node ref="U25" pin="5" pinfunction="OV1_5" pintype="input"/>
     </net>
-    <net code="72" name="U25_PR1" class="Default">
+    <net code="70" name="U25_PR1" class="Default">
       <node ref="R42" pin="2" pintype="passive"/>
       <node ref="R43" pin="1" pintype="passive"/>
       <node ref="U25" pin="6" pinfunction="PR1_6" pintype="input"/>
     </net>
-    <net code="73" name="U25_SS" class="Default">
+    <net code="71" name="U25_SS" class="Default">
       <node ref="C70" pin="1" pintype="passive"/>
       <node ref="U25" pin="11" pinfunction="SS_11" pintype="passive"/>
     </net>
-    <net code="74" name="U26_BST" class="Power">
+    <net code="72" name="U26_BST" class="Power">
       <node ref="C75" pin="1" pintype="passive"/>
       <node ref="U26" pin="6" pinfunction="BST_6" pintype="passive"/>
     </net>
-    <net code="75" name="U26_EN" class="Default">
+    <net code="73" name="U26_EN" class="Default">
       <node ref="R52" pin="2" pintype="passive"/>
       <node ref="U26" pin="2" pinfunction="EN_2" pintype="input"/>
     </net>
-    <net code="76" name="U26_SW" class="Power">
+    <net code="74" name="U26_SW" class="Power">
       <node ref="C75" pin="2" pintype="passive"/>
       <node ref="L3" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U26" pin="5" pinfunction="SW_5" pintype="output"/>
     </net>
-    <net code="77" name="USB_CC1" class="Default">
+    <net code="75" name="USB_CC1" class="Default">
       <node ref="J4" pin="A5" pinfunction="CC1_A5" pintype="bidirectional"/>
       <node ref="R4" pin="1" pintype="passive"/>
     </net>
-    <net code="78" name="USB_CC2" class="Default">
+    <net code="76" name="USB_CC2" class="Default">
       <node ref="J4" pin="B5" pinfunction="CC2_B5" pintype="bidirectional"/>
       <node ref="R5" pin="1" pintype="passive"/>
     </net>
-    <net code="79" name="USB_DM" class="USB">
+    <net code="77" name="USB_DM" class="USB">
       <node ref="J4" pin="A7" pinfunction="D-_A7" pintype="bidirectional"/>
       <node ref="J4" pin="B7" pinfunction="D-_B7" pintype="bidirectional"/>
       <node ref="U8" pin="3" pinfunction="I/O2_3" pintype="passive"/>
     </net>
-    <net code="80" name="USB_DM_MCU" class="USB">
+    <net code="78" name="USB_DM_MCU" class="USB">
       <node ref="R23" pin="1" pintype="passive"/>
       <node ref="U8" pin="4" pinfunction="I/O2_4" pintype="passive"/>
     </net>
-    <net code="81" name="USB_DM_RP" class="USB">
+    <net code="79" name="USB_DM_RP" class="USB">
       <node ref="R23" pin="2" pintype="passive"/>
       <node ref="U20" pin="66" pinfunction="USB_DM_66" pintype="bidirectional"/>
     </net>
-    <net code="82" name="USB_DP" class="USB">
+    <net code="80" name="USB_DP" class="USB">
       <node ref="J4" pin="A6" pinfunction="D+_A6" pintype="bidirectional"/>
       <node ref="J4" pin="B6" pinfunction="D+_B6" pintype="bidirectional"/>
       <node ref="U8" pin="1" pinfunction="I/O1_1" pintype="passive"/>
     </net>
-    <net code="83" name="USB_DP_MCU" class="USB">
+    <net code="81" name="USB_DP_MCU" class="USB">
       <node ref="R22" pin="1" pintype="passive"/>
       <node ref="U8" pin="6" pinfunction="I/O1_6" pintype="passive"/>
     </net>
-    <net code="84" name="USB_DP_RP" class="USB">
+    <net code="82" name="USB_DP_RP" class="USB">
       <node ref="R22" pin="2" pintype="passive"/>
       <node ref="U20" pin="67" pinfunction="USB_DP_67" pintype="bidirectional"/>
     </net>
-    <net code="85" name="USB_VBUS" class="Power">
+    <net code="83" name="USB_VBUS" class="Power">
       <node ref="C7" pin="1" pintype="passive"/>
       <node ref="C72" pin="1" pintype="passive"/>
       <node ref="J4" pin="A4" pinfunction="VBUS_A4" pintype="passive"/>
@@ -4925,7 +4731,7 @@
       <node ref="U25" pin="2" pinfunction="IN2_2" pintype="power_in"/>
       <node ref="U8" pin="5" pinfunction="VBUS_5" pintype="passive"/>
     </net>
-    <net code="86" name="V3V3_ANA" class="Power">
+    <net code="84" name="V3V3_ANA" class="Power">
       <node ref="C26" pin="1" pintype="passive"/>
       <node ref="C40" pin="1" pintype="passive"/>
       <node ref="C50" pin="1" pintype="passive"/>
@@ -4953,7 +4759,7 @@
       <node ref="U23" pin="3" pinfunction="RESERVED_3" pintype="passive"/>
       <node ref="U23" pin="6" pinfunction="VS_6" pintype="power_in"/>
     </net>
-    <net code="87" name="V3V3_SYS" class="Power">
+    <net code="85" name="V3V3_SYS" class="Power">
       <node ref="C22" pin="1" pintype="passive"/>
       <node ref="C23" pin="1" pintype="passive"/>
       <node ref="C24" pin="1" pintype="passive"/>
@@ -5002,7 +4808,7 @@
       <node ref="U20" pin="76" pinfunction="IOVDD_76" pintype="passive"/>
       <node ref="U24" pin="8" pinfunction="VCC_8" pintype="power_in"/>
     </net>
-    <net code="88" name="V5_SYS" class="Power">
+    <net code="86" name="V5_SYS" class="Power">
       <node ref="C17" pin="1" pintype="passive"/>
       <node ref="C19" pin="1" pintype="passive"/>
       <node ref="C20" pin="1" pintype="passive"/>
@@ -5012,8 +4818,6 @@
       <node ref="C8" pin="1" pintype="passive"/>
       <node ref="C9" pin="1" pintype="passive"/>
       <node ref="D20" pin="4" pinfunction="VDD_4" pintype="power_in"/>
-      <node ref="D22" pin="1" pinfunction="K_1" pintype="passive"/>
-      <node ref="J15" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J6" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J7" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U12" pin="1" pinfunction="IN_1" pintype="power_in"/>
@@ -5022,7 +4826,7 @@
       <node ref="U7" pin="1" pinfunction="EN/SYNC_1" pintype="input"/>
       <node ref="U7" pin="6" pinfunction="VIN_6" pintype="power_in"/>
     </net>
-    <net code="89" name="VBAT" class="Power">
+    <net code="87" name="VBAT" class="Power">
       <node ref="C73" pin="1" pintype="passive"/>
       <node ref="C74" pin="1" pintype="passive"/>
       <node ref="J3" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
@@ -5030,72 +4834,72 @@
       <node ref="R52" pin="1" pintype="passive"/>
       <node ref="U26" pin="3" pinfunction="IN_3" pintype="power_in"/>
     </net>
-    <net code="90" name="VBAT_SENSE" class="Default">
+    <net code="88" name="VBAT_SENSE" class="Default">
       <node ref="C48" pin="1" pintype="passive"/>
       <node ref="R27" pin="2" pintype="passive"/>
       <node ref="R28" pin="1" pintype="passive"/>
       <node ref="U20" pin="49" pinfunction="GPIO40/ADC0_49" pintype="bidirectional"/>
     </net>
-    <net code="91" name="VBUS_SENSE" class="Default">
+    <net code="89" name="VBUS_SENSE" class="Default">
       <node ref="C49" pin="1" pintype="passive"/>
       <node ref="R29" pin="2" pintype="passive"/>
       <node ref="R30" pin="1" pintype="passive"/>
       <node ref="U20" pin="52" pinfunction="GPIO41/ADC1_52" pintype="bidirectional"/>
     </net>
-    <net code="92" name="VREG_AVDD" class="Default">
+    <net code="90" name="VREG_AVDD" class="Default">
       <node ref="C41" pin="1" pintype="passive"/>
       <node ref="R20" pin="2" pintype="passive"/>
       <node ref="U20" pin="61" pinfunction="VREG_AVDD_61" pintype="power_in"/>
     </net>
-    <net code="93" name="VREG_LX" class="Default">
+    <net code="91" name="VREG_LX" class="Default">
       <node ref="L20" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U20" pin="63" pinfunction="VREG_LX_63" pintype="power_out"/>
     </net>
-    <net code="94" name="XIN" class="Default">
+    <net code="92" name="XIN" class="Default">
       <node ref="C46" pin="1" pintype="passive"/>
       <node ref="U20" pin="30" pinfunction="XIN_30" pintype="input"/>
       <node ref="Y1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="95" name="XOUT" class="Default">
+    <net code="93" name="XOUT" class="Default">
       <node ref="R21" pin="1" pintype="passive"/>
       <node ref="U20" pin="31" pinfunction="XOUT_31" pintype="output"/>
     </net>
-    <net code="96" name="XTAL_DRV" class="Default">
+    <net code="94" name="XTAL_DRV" class="Default">
       <node ref="C47" pin="1" pintype="passive"/>
       <node ref="R21" pin="2" pintype="passive"/>
       <node ref="Y1" pin="3" pinfunction="3_3" pintype="passive"/>
     </net>
-    <net code="97" name="unconnected-(D20-DOUT-Pad1)" class="Default">
+    <net code="95" name="unconnected-(D20-DOUT-Pad1)" class="Default">
       <node ref="D20" pin="1" pinfunction="DOUT_1" pintype="output+no_connect"/>
     </net>
-    <net code="98" name="unconnected-(J4-SBU1-PadA8)" class="Default">
+    <net code="96" name="unconnected-(J4-SBU1-PadA8)" class="Default">
       <node ref="J4" pin="A8" pinfunction="SBU1_A8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="99" name="unconnected-(J4-SBU2-PadB8)" class="Default">
+    <net code="97" name="unconnected-(J4-SBU2-PadB8)" class="Default">
       <node ref="J4" pin="B8" pinfunction="SBU2_B8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="100" name="unconnected-(U12-NC-Pad4)" class="Default">
+    <net code="98" name="unconnected-(U12-NC-Pad4)" class="Default">
       <node ref="U12" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
-    <net code="101" name="unconnected-(U21-RESV-Pad2)" class="Default">
+    <net code="99" name="unconnected-(U21-RESV-Pad2)" class="Default">
       <node ref="U21" pin="2" pinfunction="RESV_2" pintype="passive+no_connect"/>
     </net>
-    <net code="102" name="unconnected-(U21-RESV-Pad3)" class="Default">
+    <net code="100" name="unconnected-(U21-RESV-Pad3)" class="Default">
       <node ref="U21" pin="3" pinfunction="RESV_3" pintype="passive+no_connect"/>
     </net>
-    <net code="103" name="unconnected-(U21-RESV-Pad7)" class="Default">
+    <net code="101" name="unconnected-(U21-RESV-Pad7)" class="Default">
       <node ref="U21" pin="7" pinfunction="RESV_7" pintype="passive+no_connect"/>
     </net>
-    <net code="104" name="unconnected-(U21-RESV-Pad10)" class="Default">
+    <net code="102" name="unconnected-(U21-RESV-Pad10)" class="Default">
       <node ref="U21" pin="10" pinfunction="RESV_10" pintype="passive+no_connect"/>
     </net>
-    <net code="105" name="unconnected-(U21-RESV-Pad11)" class="Default">
+    <net code="103" name="unconnected-(U21-RESV-Pad11)" class="Default">
       <node ref="U21" pin="11" pinfunction="RESV_11" pintype="passive+no_connect"/>
     </net>
-    <net code="106" name="unconnected-(U23-INT2-Pad9)" class="Default">
+    <net code="104" name="unconnected-(U23-INT2-Pad9)" class="Default">
       <node ref="U23" pin="9" pinfunction="INT2_9" pintype="output+no_connect"/>
     </net>
-    <net code="107" name="unconnected-(U23-NC-Pad10)" class="Default">
+    <net code="105" name="unconnected-(U23-NC-Pad10)" class="Default">
       <node ref="U23" pin="10" pinfunction="NC_10" pintype="no_connect"/>
     </net>
   </nets>

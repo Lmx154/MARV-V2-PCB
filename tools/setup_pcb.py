@@ -129,7 +129,13 @@ NETCLASSES = [
     ("Power",     0.50, 0.15, 0.80, 0.40, 0.50, 0.20, 10,
      ["VBAT", "5V_IN", "V5_SYS", "USB_VBUS", "V3V3_SYS", "V3V3_ANA",
       "U7_SW", "U7_VO", "U26_SW", "U26_BST"]),
-    ("USB",       0.30, 0.20, 0.60, 0.30, 0.30, 0.20, 20,
+    # USB clearance is 0.18 mm, not the 0.20 mm of the pair gap: R22/R23 are
+    # 0201 series resistors and the R_0201_0603Metric land has 0.18 mm between
+    # its own two pads, which are two different USB nets.  0.20 mm made that
+    # intrinsic gap a DRC error.  Nothing is routed tighter for it - the pair
+    # still runs at dp_gap 0.20 mm, and 0.18 mm is well above the 0.127 mm
+    # board minimum and JLC's capability.
+    ("USB",       0.30, 0.18, 0.60, 0.30, 0.30, 0.20, 20,
      ["USB_DP", "USB_DM", "USB_DP_MCU", "USB_DM_MCU", "USB_DP_RP",
       "USB_DM_RP"]),
     # PWM_ESC covers both actuator groups: PWM1-4 leave on the J3 ESC pad row,
@@ -149,7 +155,7 @@ NETCLASSES = [
 # switches keep a silkscreen reference designator, the per-pad function labels
 # are the silkscreen.  Every other reference stays on F.Fab (hidden on silk).
 REF_ON_SILK = ("J3", "J4", "J6", "J7", "J9", "J10", "J11", "J12", "J13",
-               "J14", "J15", "J16", "SW1", "SW2")
+               "J14", "J16", "SW1", "SW2")
 
 # --------------------------------------------------------------------------
 # placement rules that are circuit requirements, checked after placement
@@ -194,10 +200,9 @@ PAD_LABELS = {
     "J7":  ["VCC", "TX", "RX", "GND"],
     "J9":  ["VCC", "SCL", "SDA", "GND"],
     "J10": ["SWCLK", "SWDIO", "GND"],
-    "J15": ["5V", "BZ-"],
     "J12": ["S5", "S6", "S7", "S8"],
     "J16": ["3V3", "GND", "IO1", "IO21", "IO27", "IO31",
-            "A43", "A44", "A45", "A46", "A47", "GND"],
+            "A43", "A44", "A45", "A46", "A47", "IO28"],
 }
 # whole-row labels (ref, text) placed at the row end instead of per pad
 ROW_LABELS = {"J13": "5V", "J14": "GND"}
@@ -1072,7 +1077,8 @@ def floorplan(B, comps):
     B.anchor("SW1", 0, ("org", -8.6), ("cymax", H - 0.1))  # RESET
     B.anchor("SW2", 0, ("org", 8.6), ("cymax", H - 0.1))   # BOOTSEL
     B.anchor("J10", 0, ("padc", -H + 9.5), ("padmax", E))  # DBG
-    B.anchor("J15", 0, ("padc", H - 9.0), ("padmax", E))   # buzzer
+    # the top edge is DBG left, USB centre, the two buttons flanking it and the
+    # RGB LED: the buzzer pad row that used to sit at x = H - 9.0 is deleted
     B.place("D20", 8.6, H - 7.2, 0)                        # RGB LED
 
     # ---------------- fixed interior ----------------
@@ -1108,7 +1114,6 @@ def floorplan(B, comps):
         (-H + 3.4, -3.4, -H + 5.9, 4.6),            # J7 labels
         (-H + 3.4, -14.8, -H + 5.9, -6.8),          # J9 labels
         (-H + 4.5, H - 6.2, -H + 14.5, H - 3.4),    # J10 labels
-        (H - 14.5, H - 6.2, H - 4.5, H - 3.4),      # J15 labels
         (-0.5, j12[3] - 0.1, 12.0, j12[3] + 3.0),   # servo signal row labels
         (10.5, j16[1] - 3.8, H - 1.0, j16[1] - 0.2),  # J16 pin labels
         (11.3, -H + 0.5, 14.5, -H + 5.5),           # J13/J14 row labels
@@ -1174,11 +1179,6 @@ def floorplan(B, comps):
                      north),
         "led":      (["C79", "R55"], (7.0, H - 10.5),
                      [(3.0, 11.0, 12.0, H - 5.0)]),
-        # the buzzer driver follows J15 on the top edge, but below ~54 mm the
-        # H2 grommet keepout takes the whole top right corner, so the region
-        # reaches down past it to the strip above the microSD socket
-        "buzz":     (["Q20", "D22", "R33", "R34"], (H - 9.0, H - 9.5),
-                     [(10.5, 6.0, H - 1.5, H - 3.6)]),
         "sd_byp":   (["C64", "C65", "C66"], (12.4, 4.0), east[:1] + east[2:]),
         "sd_pu":    (["R36", "R37", "R38", "R39", "R40", "R41"],
                      (14.5, -13.0), east[1:] + east[:1]),
@@ -1238,7 +1238,7 @@ def floorplan(B, comps):
 
     # order matters: the groups that have only one place to go come first
     order = ["mcu_ring", "sens", "flash", "usb", "mux", "i2c",
-             "buck5", "u7", "v5bulk", "adc_div", "led", "buzz",
+             "buck5", "u7", "v5bulk", "adc_div", "led",
              "sd_byp", "sd_pu"]
     for name in order:
         refs, seed, bounds = groups[name]
@@ -1323,7 +1323,6 @@ def silkscreen(B):
         B.pad_labels(ref, PAD_LABELS[ref], 1.6, 0.0, 0, just=-1)
     # top edge: labels below the pads
     B.pad_labels("J10", PAD_LABELS["J10"], 0.0, -2.9, 90)
-    B.pad_labels("J15", PAD_LABELS["J15"], 0.0, -2.4, 90)
     # right edge: spare IO block - 12 pins on a 2.54 mm grid leave no room
     # between the pads, so the labels go in two rows under the block, the
     # nearer row belonging to the nearer pin row
