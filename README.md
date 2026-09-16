@@ -1,6 +1,6 @@
 # MARV V2 flight controller
 
-Flight controller for rockets/drones that stacks on a MicoAir AM32 4-in-1 ESC (2-6S, no BEC): RP2354B MCU, ICM-45686 IMU, BMP581 barometer, ADXL375 high-g, QSPI flash-or-PSRAM socket + microSD logging, 8 PWM outputs (4 to the ESC, 4 servo), a 3-column x 14-row 2.54 mm THT IO block on the right edge (J6 signal / J7 power / J8 GND per row, 5 V or 3V3 depending on the row) carrying GPS / ELRS / magnetometer / the 4 servo outputs plus 4 exposed spare GPIO, a solder-pad ESC row (J3) and DBG pad row (J10) plus 10 sensor-bus test points (TP1-TP10), all on the back (B.Cu) so front-side assembly stays single-sided, battery monitoring off VBAT_SENSE and the ESC's current-sense output (no shunt-based coulomb counter), ESC current sense and KISS telemetry input, WS2812C RGB status LED, USB-C. Raw pack (6-25.2 V) comes in on the ESC pad row and an on-board AP63205 buck makes 5 V; USB is the fallback source through a TPS2121 priority mux. Solder pads only for the ESC row (J3) and the DBG landing (J10); every other external signal is on the 2.54 mm J6/J7/J8 IO block. Firmware and PCB layout are not done; the PCB is empty.
+Flight controller for rockets/drones that stacks on a MicoAir AM32 4-in-1 ESC (2-6S, no BEC): RP2354B MCU, ICM-45686 IMU, BMP581 barometer, ADXL375 high-g, microSD logging plus an optional (DNP, back-side) QSPI flash-or-PSRAM expansion socket, 8 PWM outputs (4 to the ESC, 4 servo), a 3-column x 14-row 2.54 mm THT IO block on the right edge (J6 signal / J7 power / J8 GND per row, 5 V or 3V3 depending on the row) carrying GPS / ELRS / magnetometer / the 4 servo outputs plus 4 exposed spare GPIO, a solder-pad ESC row (J3, vertical against the left edge) and DBG pad row (J10) plus 10 sensor-bus test points (TP1-TP10) and the unpopulated QSPI expansion land (U24/C62/C63), all on the back (B.Cu) so front-side assembly stays single-sided — nothing on the back is ever reflowed, battery monitoring off VBAT_SENSE and the ESC's current-sense output (no shunt-based coulomb counter), ESC current sense and KISS telemetry input, WS2812C RGB status LED, USB-C. Raw pack (6-25.2 V) comes in on the ESC pad row and an on-board AP63205 buck makes 5 V; USB is the fallback source through a TPS2121 priority mux. Solder pads only for the ESC row (J3) and the DBG landing (J10); every other external signal is on the 2.54 mm J6/J7/J8 IO block. Firmware and PCB layout are not done; the PCB is empty.
 
 ## File map
 
@@ -14,7 +14,7 @@ Flight controller for rockets/drones that stacks on a MicoAir AM32 4-in-1 ESC (2
 - `MARV_Packages.3dshapes/` — the STEP models those footprints reference, with [provenance, licences and SHA256 sums](MARV_Packages.3dshapes/PROVENANCE.md).
 - `simulations/` — ngspice decks and [results](simulations/README.md).
 - `reports/` — ERC report, netlist export, schematic PDF.
-- [power_bom.csv](power_bom.csv) — preliminary BOM, not purchase-ready.
+- [power_bom.csv](power_bom.csv) — preliminary BOM, not purchase-ready; the `Fit` column marks U24/C62/C63 as `DNP` (the optional QSPI expansion).
 - `backups/` — pre-revision schematic and DESIGN_SPEC snapshots.
 
 `tools/build_power.py` overwrites generated sheets: edit the generator, not the sheets.

@@ -6,6 +6,20 @@ Current design: [DESIGN_SPEC.md](../DESIGN_SPEC.md). Evaluated against the V3V3_
 
 **The decks start at the buck output.** The pack and the VBAT→5 V conversion are *not* modeled: 5V_IN is represented behaviorally as a 5.0 V source behind 0.10 ohm of effective output impedance with a **2 A hard current limit** (the AP63205's rated continuous output; its high-side peak current limit is 2.5 A min / 2.8 A typ / 3.1 A max, Diodes DS41326 Rev. 2-2). Nothing here proves the buck's loop, its efficiency, its thermal behaviour or its hot-plug survival — those are bench items. The 5V_IN node capacitance is now 44.1 uF (C76+C77 buck COUT + C71), down from the ~110 uF the removed XT30 input network carried, which makes every handover corner strictly harder (board fits 3 x 22 uF nominal; the deck keeps the derated 44 uF as the conservative case). No USB current limiter modeled.
 
+**C19, the V5_SYS hold-up, is 100 uF / 6.3 V polymer (`CPOLY=100u`, 80 uF derated at -20%), not the 220 uF / 10 V it was.** The change was made in the decks first and kept only because every predicate still passed. V5_SYS minima after it, against a 3.5 V predicate floor:
+
+| Corner | V5_SYS min at CPOLY=100u/80u | was at 220u/176u |
+| --- | --- | --- |
+| integrated `nominal` | 4.4146 V | 4.4224 V |
+| integrated `lossy_path` | 4.4129 V | 4.4204 V |
+| integrated `usb_only` | 4.7515 V | 4.7515 V |
+| integrated `vbat_only` | 4.9075 V | 4.9075 V |
+| handover `vin5_removed_usb_present` typical, 0.5 / 0.8 A | 4.415 / 4.403 V | 4.422 / 4.416 V |
+| handover `vin5_removed_usb_present` worst-case, 0.5 / 0.8 A | 4.403 / 4.374 V | 4.415 / 4.401 V |
+| handover `buck_fault_8v4` worst-case, 0.5 / 0.8 A | 4.833 / 4.728 V | 4.833 / 4.728 V |
+
+The binding number is the worst-case handover at 0.8 A: **4.374 V, 0.874 V above the floor**. The CSYS sensitivity sweep (worst-case, 0.5 A) now reads 20u = 4.403 V, 47u = 4.406 V, 100u = 4.411 V — all still >= 3.5 V. What this does *not* prove is ESR: the model assumes 40 mOhm flat, so the MPN has to be a polymer (Panasonic 6TPE100MAZB, KEMET T520/T530 B case), not a general-purpose tantalum.
+
 ## Source model
 
 U25 is modeled as a `muxctl` source-selection subckt (UV / OV1 / PR1 comparators and their hysteresis) plus one `muxpath` subckt per input channel (RON, tSW switchover, always-on reverse-current blocking via IRCB/tRCB). There is no body diode in this model: unlike the LM66100 pair it replaced, the TPS2121 blocks reverse current on both inputs at all times.

@@ -142,16 +142,35 @@ BOARD_THICKNESS = 1.6
 # left-edge pocket, the bottom-right corner and ten 1 mm pads' worth of sensor
 # island - the three things the envelope was standing on.
 BACK_PAD_ROWS = ("J3", "J10")
+# THE OPTIONAL FLASH/PSRAM EXPANSION (lead's decision A).  U24 and its two
+# bypass caps C62/C63 are DNP in the schematic - `(dnp yes) (in_bom no)`, see
+# tools/build_power.py Sheet.add - and their land patterns go on B.Cu, under
+# the MCU against its QSPI pads.  They are the ONE exception to "the back
+# carries bare pads only": a DNP land is not an assembled component, nothing
+# on it is reflowed, so the front is still the single sided assembly the
+# stack-up rests on.  check_back() asserts all three really do carry the DNP
+# attribute, so a part that is accidentally populated fails the build rather
+# than quietly appearing on the back of a reflowed board.
+# R35, the FLASH_CS1 pull-up, stays POPULATED on the FRONT: GPIO0 has to be
+# held deselected whether or not the socket is fitted.
+BACK_DNP_PARTS = ("U24", "C62", "C63")
 # every back-side part gets a visible reference on B.SilkS: nothing else is
 # there to collide with, and a bare pad with no legend is unusable on a bench.
 BACK_REF_SILK = True
-# J3, the ESC row: VERTICAL, pad 1 (CURR) at the top, its centre this far in
-# from the LEFT edge - between U26 and L3 on the
-# front, so the VBAT pad lands under the buck's own input and the four PWM
-# pads point at the MCU.  Rotation 270 is what puts pad 1 at the top of a
-# flipped row; check_back() asserts it, because the flip mirrors the
-# footprint and a wrong rotation silently reverses the harness order.
-ESC_BACK_X = 9.35
+# J3, the ESC row: VERTICAL against the LEFT BOARD EDGE, pad 1 (CURR) at the
+# top, pad outer edge PAD_EDGE_INSET in from Edge.Cuts - edge-aligned exactly
+# as the DBG row J10 is against the bottom edge - and centred in Y between
+# the two left grommets.  Eight pads on 2.00 mm pitch span +-7.0 mm of pad
+# centres (+-7.7 mm of copper), and the grommets' O 5 mm copper keepout at
+# y = +-15.25 only reaches |y| = 12.75, so the row clears both by 5 mm with
+# nothing but the keepout deciding it.  Its labels go INBOARD (+x), which is
+# the band nothing else on the back uses.
+# Why the edge: the harness leaves the stack at the board edge instead of
+# from under the middle of the board, and the left margin is dead area on
+# both sides now that the front carries nothing outboard of the left holes.
+# Rotation 270 is what puts pad 1 at the top of a flipped row; check_back()
+# asserts it, because the flip mirrors the footprint and a wrong rotation
+# silently reverses the harness order.
 ESC_BACK_Y = 0.0
 ESC_BACK_ROT = 270
 # TP1-TP10: two columns this far right of the sensor island's left edge, on a
@@ -159,6 +178,9 @@ ESC_BACK_ROT = 270
 # downward - directly under U21/U22/U23, so every via is the board thickness
 # and nothing else.
 J10_LABEL_DY = 3.3       # J10's captions stand this far above its pads
+FLASH_LEGEND_SZ = 0.60   # = RULES["min_text_height"]; the U24 legend is
+FLASH_LEGEND_DY = 1.30   # three lines and has to fit the corridor between
+                         # J3's label band and the J10 pads
 TP_GRID_X = (0.6, 3.0)
 TP_GRID_Y = 0.6
 TP_GRID_DY = 2.4
@@ -408,8 +430,15 @@ def read_netlist(path):
         ref = c.get("ref")
         sheet = c.find("sheetpath")
         tstamps = sheet.get("tstamps") if sheet is not None else "/"
+        # KiCad emits <property name="dnp"/> (and exclude_from_bom) for a
+        # symbol marked DO NOT POPULATE.  It is carried onto the footprint so
+        # the board file, the position files and check_back() all agree with
+        # the schematic instead of restating it.
+        props = {pr.get("name") for pr in c.findall("property")}
         comps[ref] = dict(ref=ref, value=c.findtext("value") or "",
                           fp=c.findtext("footprint") or "",
+                          dnp="dnp" in props,
+                          no_bom="exclude_from_bom" in props,
                           path=tstamps + (c.findtext("tstamps") or ""))
     nets = []
     for n in root.find("nets").findall("net"):
@@ -605,12 +634,18 @@ class Builder:
             ref_fld.SetTextSize(pcbnew.VECTOR2I(mm(SILK_TEXT), mm(SILK_TEXT)))
             ref_fld.SetTextThickness(mm(SILK_THICK))
             fp.Value().SetVisible(False)
+            if c.get("dnp"):
+                fp.SetDNP(True)
+                fp.SetExcludedFromPosFiles(True)
+            if c.get("no_bom"):
+                fp.SetExcludedFromBOM(True)
             # THE BACK SIDE: flip here, before any geometry is measured, so
             # Geom reads B.CrtYd and every anchor, the packer and the checks
             # see the real back-side outline.  Flipping about the footprint's
             # own origin mirrors X *inside* the footprint and leaves the
             # placement to the tables below.
-            if ref in BACK_PAD_ROWS or TEST_POINTS.match(ref):
+            if (ref in BACK_PAD_ROWS or ref in BACK_DNP_PARTS
+                    or TEST_POINTS.match(ref)):
                 fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
                 ref_fld.SetVisible(BACK_REF_SILK)
                 self.back.add(ref)
@@ -1314,29 +1349,55 @@ class Builder:
         return out
 
     def check_back(self, clr=0.2):
-        """The back side carries BARE PADS ONLY (lead's decision A).
+        """The back side carries BARE PADS and DNP LANDS ONLY (decision A).
 
-        Three things are asserted here, because none of them is visible in a
+        Five things are asserted here, because none of them is visible in a
         front-side courtyard check:
           1. exactly the allowed refs are flipped, and every one of them
              really is - a component that drifted to B.Cu breaks the
              single-sided-assembly rule the whole stack-up rests on;
-          2. J3 pin 1 (CURR) is still the TOP pad of the vertical row - the
+          2. every back-side part that is NOT a bare pad row or a test point
+             carries the DNP attribute, and every DNP part on the board is
+             one of those back-side lands.  That is what keeps "single sided
+             assembly" true with a socket on the back: a DNP land is never
+             populated, so nothing is reflowed on B.Cu.  A part that lost its
+             `(dnp yes)` in the schematic fails the build here rather than
+             turning into a back-side component nobody can assemble;
+          3. J3 pin 1 (CURR) is still the TOP pad of the vertical row - the
              flip mirrors the footprint, so a wrong rotation silently
              reverses the ESC harness order;
-          3. back pads clear the grommets' O 5 mm *.Cu keepout zone and every
+          4. back pads clear the grommets' O 5 mm *.Cu keepout zone and every
              front-side HOLE (the IO block's 42 through pins, the USB-C shield
-             pegs, the NPTH mounting holes), which pass through to B.Cu.
+             pegs, the NPTH mounting holes), which pass through to B.Cu;
+          5. R35, the FLASH_CS1 pull-up, is still populated on the FRONT.
         """
         out = []
-        allowed = set(BACK_PAD_ROWS) | {r for r in self.fps
-                                        if TEST_POINTS.match(r)}
+        bare = set(BACK_PAD_ROWS) | {r for r in self.fps
+                                     if TEST_POINTS.match(r)}
+        allowed = bare | set(BACK_DNP_PARTS)
         for ref, fp in sorted(self.fps.items()):
             if fp.IsFlipped() and ref not in allowed:
                 out.append("%s is on the BACK; assembly is single sided "
                            "(front only)" % ref)
             if ref in allowed and not fp.IsFlipped():
                 out.append("%s should be on the back and is not" % ref)
+        for ref in sorted(set(BACK_DNP_PARTS) & set(self.fps)):
+            if not self.fps[ref].IsDNP():
+                out.append("%s is a back-side land but is not marked DNP in "
+                           "the schematic" % ref)
+            if not self.fps[ref].IsExcludedFromBOM():
+                out.append("%s is DNP but still in the BOM" % ref)
+        for ref, fp in sorted(self.fps.items()):
+            if fp.IsDNP() and ref not in BACK_DNP_PARTS:
+                out.append("%s is DNP but is not one of the back-side "
+                           "expansion lands" % ref)
+            if ref in bare and fp.IsDNP():
+                out.append("%s is a bare pad row / test point and must not "
+                           "be DNP" % ref)
+        if "R35" in self.fps and (self.fps["R35"].IsFlipped()
+                                  or self.fps["R35"].IsDNP()):
+            out.append("R35 (FLASH_CS1 pull-up) must stay populated on the "
+                       "front")
         if "J3" in self.fps and self.fps["J3"].IsFlipped():
             ys = {p.GetNumber(): CY - tomm(p.GetPosition().y)
                   for p in self.fps["J3"].Pads()}
@@ -1495,12 +1556,14 @@ def floorplan(B, comps):
                    it
       top edge     J11 microSD, card ejecting +Y, left of centre
       interior     U20 right of centre; the sensor island between the MCU and
-                   the IO block; U24 below the MCU; U7/L2/U12 above it;
-                   U26/L3/U25/C19 in the left-centre pocket
-      BACK         J3 (ESC row, vertical, CURR at the top) under the
-                   left-centre power pocket, J10 (DBG) at the bottom right,
-                   TP1-TP10 directly under the sensor island.  Bare pads only
-                   - see back_side() and BACK_PAD_ROWS.
+                   the IO block; U7/L2/U12 above it; U26/L3/U25/C19 in the
+                   left-centre pocket
+      BACK         J3 (ESC row, vertical, CURR at the top) hard against the
+                   LEFT EDGE, J10 (DBG) at the bottom right, TP1-TP10
+                   directly under the sensor island, and the DNP flash/PSRAM
+                   expansion U24 + C62/C63 under the MCU's QSPI pads.  Bare
+                   pads and unpopulated lands only - see back_side(),
+                   BACK_PAD_ROWS and BACK_DNP_PARTS.
     """
     HX, HY = B.HX, B.HY
 
@@ -1536,11 +1599,11 @@ def floorplan(B, comps):
     # actually placed): the bottom-edge row is anchored to it, and it is only
     # named here because the row is placed first.
     mcu_x0 = HX - 24.55
-    # The bottom-edge group is anchored to the MCU, not to absolute x.  U24,
-    # the flash socket, hangs off the MCU's QSPI edge directly above SW2, and
-    # the MCU is pinned to the RIGHT board edge (see mcu_x); anchored to the
-    # board centre - or worse, to the left edge - the two walk towards each
-    # other as --width shrinks and the socket ends up inside the switch.
+    # The bottom-edge group is anchored to the MCU, not to absolute x: the
+    # MCU is pinned to the RIGHT board edge (see mcu_x), so anchored to the
+    # board centre - or worse, to the left edge - the row and the QFN walk
+    # towards each other as --width shrinks and the switches end up under the
+    # package.
     # Tied to mcu_x the whole row keeps its spacing at any width, and the
     # width is taken out of the left-centre pocket, which is where the ESC
     # row's old margin went.  The offsets are the ones the 48.7 mm board had.
@@ -1600,9 +1663,10 @@ def floorplan(B, comps):
     # a circuit requirement (CAP_NEAR), and the grommet keepouts break the
     # interior into pockets too narrow for the packer to discover a sane
     # switcher block on its own.
-    #   U26 + L3 (the VBAT buck) go in the left-centre pocket, which is now
-    #   directly ABOVE the J3 VBAT pad: the row is on the back at
-    #   (-HX + ESC_BACK_X, -5), so VBAT rises through the board into the buck.
+    #   U26 + L3 (the VBAT buck) go in the left-centre pocket, just inboard
+    #   of the J3 VBAT pad: the row is on the back against the left edge with
+    #   its pad 7 (VBAT) at y = -5, so VBAT crosses about 5 mm of board and
+    #   one via into the buck's own input.
     #   U7 + L2 (the 3.3 V buck) go in the top band above the MCU, with L2 to
     #   the LEFT of U7 because the TPS62913's SW (pad 2) and VO (pad 3) are
     #   both on that side of the RPU package.  L2 is the reason the band is at
@@ -1622,10 +1686,18 @@ def floorplan(B, comps):
     l2_x = max(mcu_x + 0.8, j11[2] + 2.6)
     B.place("L2", l2_x, HY - 3.6, 0)
     B.place("U7", l2_x + 4.5, HY - 3.6, 0)
-    # U12, the analog LDO: above the MCU with the other 3.3 V regulators, but
-    # at the right-hand end of that band so it is also next to the sensor
-    # island it feeds.  Anchored because the U7 loop fills the band otherwise.
-    B.place("U12", max(mcu_x + 8.4, xtal_x + 6.0), 10.0, 0)
+    # U12, the analog LDO: at the right-hand end of the band above the MCU,
+    # where the sensor island starts.  Anchored because the U7 loop fills the
+    # band otherwise.  It sits at the TOP OF THE ISLAND rather than up beside
+    # U7: DESIGN_SPEC "Heat and interference" puts U12 on the analog island
+    # with the sensors and away from both switchers, and the 3.4 mm this
+    # frees under U7 is where the post-bead output caps C23/C24 go - at the
+    # old y = 10.0 they were the two parts CAP_NEAR could not satisfy (C24
+    # was 7.2 mm out), because the H2 grommet keepout owns the middle of the
+    # band from y = 11.7 up and the microSD socket owns everything left of
+    # L2.  The clearance above is C47's courtyard, the crystal's right load
+    # capacitor, which is the one anchored part in the way.
+    B.place("U12", max(mcu_x + 8.4, xtal_x + 6.0), 6.6, 0)
     # U25, the priority mux, and C19, its 220 uF output bulk: anchored side by
     # side in the left-centre pocket, where VBAT and 5V_IN already are.
     B.place("U25", min(-HX + POCKET_L + 12.95, mcu[0] - 1.8),
@@ -1640,10 +1712,10 @@ def floorplan(B, comps):
     # U8, the USB ESD array, sits beside the receptacle rather than being
     # packed: the two switches take the whole band above J4.
     B.place("U8", -HX + POCKET_L + 2.35, buck_y - 4.6, 0)
-    # U24, the QSPI flash/PSRAM socket, is anchored for the same reason:
-    # DESIGN_SPEC puts it "adjacent to the MCU's QSPI pads", which with U20 at
-    # 180 deg is the bottom edge of the QFN.
-    B.place("U24", mcu_x + 1.8, -10.2, 0)
+    # U24, the QSPI flash/PSRAM socket, is NOT on the front any more: it is a
+    # DNP expansion land on the BACK, against the same QSPI pads - see
+    # back_side() and BACK_DNP_PARTS.  The pocket under the MCU that it used
+    # to fill went back to the MCU decoupling.
     # THE SENSOR ISLAND is anchored, not packed.  The strip between the QFN and
     # the IO block's row-label band is 7.4 mm wide; packed from a seed the
     # three sensors scatter across it and leave slivers 1.9 mm wide, which is
@@ -1670,8 +1742,9 @@ def floorplan(B, comps):
 
     # ---------------- reserved bands (silk pad labels) ----------------
     # Only the front silk needs reserving.  The ESC row's and the DBG row's
-    # label bands went to the back with their pads, and the back is empty, so
-    # what is left is the board name and the IO block's row captions.
+    # label bands and the U24 expansion legend are all on the back with their
+    # pads, and the back is empty, so what is left on the front is the board
+    # name and the IO block's row captions.
     reserved = [
         (-HX + 0.4, -HY + 0.4, -HX + 6.6, -HY + 2.2),   # board name
     ]
@@ -1748,7 +1821,13 @@ def floorplan(B, comps):
         "i2c":      (["R25", "R26"], (mcu_x + 7.0, 4.5),
                      east + ring + north),
         # the ESC telemetry series resistor belongs at the J3 TX pad
-        "flash":    (["U24", "C62", "C63", "R35"], (mcu_x + 1.8, -14.5),
+        # U24/C62/C63 are on the BACK (back_side(), BACK_DNP_PARTS) and are
+        # already in `fixed` by the time this table is used, so the only
+        # front-side member left is R35, the FLASH_CS1 pull-up - which is
+        # exactly the part that stays populated.  The three DNP refs are kept
+        # in the list so that anything new on their nets still votes itself
+        # into this group rather than into mcu_ring.
+        "flash":    (["U24", "C62", "C63", "R35"], (mcu_x + 1.8, -12.0),
                      south),
         "usb":      (["U8", "R22", "R23", "R4", "R5", "C7"], (-14.5, -6.5),
                      sw + west + ring),
@@ -1771,8 +1850,10 @@ def floorplan(B, comps):
                       "C52", "C53", "C54", "C55", "C56", "C57", "C58", "C59",
                       "C60", "C61", "R48", "R50", "R51"],
                      (isl_x + 1.5, -3.0), east + south),
-        "reg3v3":   (["U12", "C25", "C26", "R10"], (mcu_x + 8.4, 12.5),
-                     north + ring),
+        # C25/C26 are U12's own input and output caps and belong beside it on
+        # the island; R10 is the PG pull-up and can sit anywhere on the band.
+        "reg3v3":   (["U12", "C25", "C26", "R10"], (mcu_x + 9.4, 6.6),
+                     east + north + ring),
         # C20/C21 are the V5_SYS local bulk "at the array" and C22 the
         # V3V3_SYS one: the array is the right edge now, so they belong in the
         # top band beside U12, not in the left pocket where the old left-edge
@@ -1875,8 +1956,13 @@ def floorplan(B, comps):
 
 
 def back_side(B, isl_x, mx_r):
-    """Place the three things that live on B.Cu: the ESC pad row J3, the DBG
-    pad row J10 and the ten test points.  Bare pads, no components.
+    """Place what lives on B.Cu: the ESC pad row J3, the DBG pad row J10, the
+    ten test points, and the DNP flash/PSRAM expansion U24 + C62/C63.
+
+    Bare pads and unpopulated lands only - nothing here is assembled, so the
+    front is still the single-sided assembly side; check_back() asserts both
+    halves of that (what is flipped, and that everything flipped which is not
+    a pad row or a test point carries the DNP attribute).
 
     Nothing here is packed.  The back is empty by construction, so each
     position is solved from the one obstacle that does reach through the
@@ -1886,10 +1972,16 @@ def back_side(B, isl_x, mx_r):
     HX, HY = B.HX, B.HY
 
     # ---- J3, the ESC pad row -------------------------------------------
-    # Under the left-centre power pocket (see ESC_BACK_*).  The row is 14 mm
-    # of pads and the left grommets are 30.5 mm apart at x = -HX + 4.0, so it
-    # clears both by more than 6 mm in x alone.
-    B.place("J3", -HX + ESC_BACK_X, ESC_BACK_Y, ESC_BACK_ROT)
+    # AGAINST THE LEFT EDGE (see ESC_BACK_*), vertical, pad 1 (CURR) at the
+    # top: the pad OUTER edge sits PAD_EDGE_INSET in from Edge.Cuts, exactly
+    # as J10 sits against the bottom edge, and the row is centred in Y
+    # between the two left grommets.  Both anchors are solved rather than
+    # tabulated so --width/--height keep the alignment.  0.5 mm of copper to
+    # the edge is 0.2 mm above the EDGE_COPPER rule, and the row's +-7.7 mm
+    # of copper stops 5.05 mm short of the grommets' O 5 mm copper keepout,
+    # which reaches only |y| = 12.75; check_back() asserts both.
+    B.anchor("J3", ESC_BACK_ROT, ("padmin", -HX + PAD_EDGE_INSET),
+             ("padc", ESC_BACK_Y))
 
     # ---- J10, the DBG landing ------------------------------------------
     # Bottom edge, as far RIGHT as the H3 grommet lets it go.  On the front
@@ -1912,6 +2004,37 @@ def back_side(B, isl_x, mx_r):
         0.0, -MOUNT_Y - hi, lo + MOUNT_Y) ** 2, 0.0)) - out
         for out, lo, hi in boxes)
     B.anchor("J10", 0, ("org", x_max), ("padmin", pad_lo))
+
+    # ---- U24 + C62/C63, the OPTIONAL flash/PSRAM expansion ---------------
+    # DNP parts, not bare pads (see BACK_DNP_PARTS).  Placed against U20's
+    # QSPI pads 70-75, which face DOWN because the QFN is at 180 deg, so the
+    # six QSPI nets drop straight through the board into the socket and the
+    # stubs are one via plus the board thickness.  Solved from the pads, not
+    # tabulated: the MCU moves with --width.
+    QSPI = ("70", "71", "72", "73", "74", "75")
+    qx = sum(B.pad_pos("U20", n)[0] for n in QSPI) / len(QSPI)
+    qy = min(B.pad_pos("U20", n)[1] for n in QSPI)
+    # x: the socket's RIGHT courtyard edge stops clear of the left test-point
+    # column's mirrored TPnn caption, which stands 1.1 mm left of that column
+    # and is the widest thing on the back between the two.  The land is
+    # 7.5 mm wide and the six QSPI pads span 2.0 mm, so the pad row still
+    # sits over the socket with room to spare - the island, not the QFN, is
+    # what bounds this.
+    # y: courtyard 1.05 mm below the QSPI pad row.  Front and back courtyards
+    # may overlap, but keeping the socket off the package keeps the back
+    # readable and every QSPI via reachable.
+    x_max = isl_x + TP_GRID_X[0] - 1.1 - B.text_extent("TP10", SILK_TEXT)[0] \
+        - 0.45
+    u24 = B.anchor("U24", 0, ("cymax", min(qx + 3.75, x_max)),
+                   ("cymax", qy - 1.05))
+    # The two bypass caps in a row directly under the socket (u24 is its
+    # courtyard rect, so this is solved from the land, not from a table), on
+    # its RIGHT half: J4's four through-hole shield pegs and its two USB
+    # mounting holes come through to B.Cu under the bottom-left of the board,
+    # and the caps' own mirrored captions hang below them.
+    ucx = (u24[0] + u24[2]) / 2.0
+    for ref, dx in (("C62", 0.55), ("C63", 2.95)):
+        B.place(ref, ucx + dx, u24[1] - 0.75, 0)
 
     # ---- TP1-TP10 -------------------------------------------------------
     # A fixed 2 x 5 grid under the sensor island.  owner = the sensor whose
@@ -1957,15 +2080,58 @@ def back_silk(B):
     beside a pad is free by construction and the labels are simply drawn where
     they belong; check_silk() asserts they cleared the copper anyway.
     """
-    # J3: the row is vertical, so each pad label sits INBOARD of its pad,
-    # left aligned, in the band the row's own courtyard does not use.
+    # J3: the row is vertical against the LEFT edge, so each pad label sits
+    # INBOARD (+x) of its pad, in the band nothing else on the back uses.
     B.back_pad_labels("J3", PAD_LABELS["J3"], 2.2, 0.0)
     jx, jy = B.pos("J3")
-    B.text("ESC", jx, jy + 10.6, 0, size=0.9, thick=0.15, back=True)
-    B.back_ref("J3", 0.0, -10.6)
+    # 10.6 mm out, not 9.6: the pad row's own silkscreen box reaches 9.3 mm
+    # from the row centre along the row, and a label on it is a DRC
+    # silk_overlap as well as unreadable.
+    B.text("ESC", jx + 1.0, jy + 10.6, 0, size=0.9, thick=0.15, back=True)
+    B.back_ref("J3", 1.0, -10.6)
     # J10: labels above the pads, rotated 90, as on the front
     B.back_pad_labels("J10", PAD_LABELS["J10"], 0.0, J10_LABEL_DY, 90)
     B.back_ref("J10", 0.0, 6.0)
+    # U24, the OPTIONAL flash/PSRAM expansion: the legend is the whole point
+    # of a DNP land - a bare SOIC-8 with no legend tells a user nothing about
+    # what fits in it.  Three lines under the socket, mirrored like
+    # everything else on the back, plus an explicit pin-1 marker beside pin 1
+    # (the footprint's own pin-1 dot came round with the flip, but a DNP land
+    # is hand-soldered, so the orientation is spelled out).
+    if "U24" in B.fps:
+        ux, uy = B.pos("U24")
+        crt = dict(B.placed)["U24"]
+        # The MPN line is split in two: the corridor ABOVE the socket - the
+        # only clear one, J4's through-hole shield pegs owning the back of
+        # the bottom edge and J3's label band the left - is 18 mm wide and
+        # one line of both part numbers is 18.2 mm at the 0.6 mm DRC text
+        # minimum.  Four short lines fit with margin; one long one does not.
+        lines = ["FLASH / PSRAM EXPANSION",
+                 "SOIC-8 150mil, QMI CS1",
+                 "W25Q64JVSSIQ or",
+                 "APS6404L-3SQR-SN"]
+        w = max(B.text_extent(t, FLASH_LEGEND_SZ)[0] for t in lines)
+        # centred over the socket, pulled left of the test-point column - of
+        # its mirrored TPnn CAPTIONS, which stand 1.1 mm left of the pads and
+        # reach further left than the pads do
+        tp_left = (min(B.pos(r)[0] for r in B.back if TEST_POINTS.match(r))
+                   - 1.1 - B.text_extent("TP10", SILK_TEXT)[0])
+        lx = min(ux, tp_left - 0.6 - w / 2.0)
+        for i, t in enumerate(lines):
+            B.text(t, lx, crt[3] + 1.6 + (len(lines) - 1 - i)
+                   * FLASH_LEGEND_DY, 0, size=FLASH_LEGEND_SZ,
+                   thick=LABEL_THICK, back=True)
+        # pin 1 is outboard on the row the flip put it on, so the marker goes
+        # beside it in x, where nothing else on the back is
+        p1x, p1y = B.pad_pos("U24", "1")
+        B.text("1", p1x + math.copysign(1.9, p1x - ux), p1y, 0,
+               size=FLASH_LEGEND_SZ, thick=LABEL_THICK, back=True)
+        B.back_ref("U24", (crt[0] - ux) - 1.2, 0.0)
+        # below their own pads: the socket is directly above them and J4's
+        # shield pegs come through to the left
+        for ref in ("C62", "C63"):
+            B.back_ref(ref, 0.0,
+                       -(B.text_extent(ref, SILK_TEXT)[1] / 2.0 + 0.7))
     # the test points: the reference IS the label.  The left column reads
     # outward to the left and the right column outward to the right, so no
     # label ever crosses the other column's pads.

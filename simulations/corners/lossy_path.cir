@@ -21,7 +21,7 @@ MARV P3 integrated power - BEHAVIORAL architectural model, not vendor silicon
 .param R5VIN=0.15 RUSB=0.525 ETA_BUCK=0.92 COUT=52.8u
 .param RONHI=0.056 TSW=100u TRCB=10u IRCB=1 VRCB=0.025
 .param VUVR=2.65 VUVF=2.55 VOVR=5.862 VOVF=5.751 VPRR=4.494 VPRF=4.410 VCMP=0.280
-.param CSYS=14u CPOLY=176u ILO=0.5 IHI=0.8 ILDO=10m
+.param CSYS=14u CPOLY=80u ILO=0.5 IHI=0.8 ILDO=10m
 * Measurement window: the span over which a source is guaranteed present in
 * the on-disk default (nominal) timing -- 5V_IN 5-40 ms, USB 30-55 ms, so a
 * source is present continuously from 5 ms to 55 ms. usb_only/bec_only

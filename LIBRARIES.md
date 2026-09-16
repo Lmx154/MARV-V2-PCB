@@ -71,7 +71,9 @@ offset 0.45 mm clear of the pads, a filled 0.5 mm silk **pin-1 dot** 0.8 mm
 outside pad 1, an F.Fab copy and an F.CrtYd rectangle 0.25 mm outside
 everything. Overall pad field is `(N-1) x 2.00 + 1.4` mm wide by 2.2 mm tall.
 **Both instances (J3, J10) are placed flipped to the back** by
-`tools/setup_pcb.py` (`BACK_PAD_ROWS`): KiCad's `Flip()` swaps every F.*/B.*
+`tools/setup_pcb.py` (`BACK_PAD_ROWS`), J3 vertical against the **left** board
+edge and J10 horizontal against the **bottom** edge, both with their pad outer
+edge `PAD_EDGE_INSET` = 0.5 mm in from Edge.Cuts: KiCad's `Flip()` swaps every F.*/B.*
 layer pair on the footprint (F.Cu -> B.Cu, F.Mask -> B.Mask, F.SilkS -> B.SilkS,
 F.CrtYd -> B.CrtYd, mirrored in X), so the footprint file itself never
 mentions the back — it is authored front-side like every other part, and only
@@ -110,14 +112,41 @@ footprint's F.*/B.* layers, so a bare F.Cu pad becomes a bare B.Cu pad with no
 footprint-file change. They land directly under the sensor cluster (U21/U22/U23)
 so the whole sensor SPI bus is reachable from underneath with the stack apart.
 
-### Flash / PSRAM socket (U24)
+### Flash / PSRAM socket (U24) — DNP, on the back
 
-The U24 land is `Package_SO:SOIC-8_3.9x4.9mm_P1.27mm` (150 mil), which fits both
-the default **W25Q64JVSSIQ** (Winbond, 8 MB NOR flash) and an
-**APS6404L-3SQR-SN** (AP Memory, 8 MB QSPI PSRAM) with no board change — the two
-are pin-identical on this bus. The RP2350 QMI has per-chip-select timing and
-format registers on CS1, so a PSRAM there is a supported configuration, not just
-a mechanical fit. Default fit is the flash.
+The U24 land is `Package_SO:SOIC-8_3.9x4.9mm_P1.27mm` (150 mil, the stock KiCad
+footprint, unmodified), which fits both a **W25Q64JVSSIQ** (Winbond, 8 MB NOR
+flash) and an **APS6404L-3SQR-SN** (AP Memory, 8 MB QSPI PSRAM) with no board
+change — the two are pin-identical on this bus. The RP2350 QMI has
+per-chip-select timing and format registers on CS1, so a PSRAM there is a
+supported configuration, not just a mechanical fit.
+
+**U24, C62 and C63 are DNP and live on B.Cu.** They are not fitted by default
+and not in the BOM: `tools/build_power.py`'s `Sheet.add(..., dnp=True)` emits
+KiCad's `(dnp yes)` + `(in_bom no)` symbol attributes and prefixes the Value
+field with `DNP:`; `power_bom.csv` carries a `Fit` column whose value for these
+three rows is `DNP`. The kicadxml netlist export turns those attributes into
+`<property name="dnp"/>` and `<property name="exclude_from_bom"/>`, which
+`tools/setup_pcb.py` reads in `read_netlist()` and applies to the footprint with
+`SetDNP()` / `SetExcludedFromBOM()` / `SetExcludedFromPosFiles()`, so the board
+file, the position files and the schematic cannot disagree.
+
+Placement is `BACK_DNP_PARTS` in `tools/setup_pcb.py`: the same `Flip()` path as
+the pad rows, positioned against U20's QSPI pads 70-75 (which face down, U20
+being at 180°) and pulled left only far enough to clear the test-point column's
+mirrored `TPnn` captions. Its B.SilkS legend — `FLASH / PSRAM EXPANSION`,
+`SOIC-8 150mil, QMI CS1`, `W25Q64JVSSIQ or`, `APS6404L-3SQR-SN`, plus a `1`
+pin-1 marker — is what makes a bare unpopulated land usable; the MPN line is
+split in two because one line of both part numbers is 18.2 mm at the 0.6 mm DRC
+text minimum, and the clear corridor on the back (J4's four through-hole shield
+pegs own the bottom edge, J3's label band the left) is 18 mm.
+
+`check_back()` asserts the whole arrangement: exactly which refs are flipped,
+that every flipped part which is **not** a pad row or a test point carries DNP,
+that nothing else on the board is DNP, that no bare pad row is DNP, and that
+**R35 (the FLASH_CS1 pull-up) is neither flipped nor DNP** — GPIO0 must be held
+deselected whether or not the socket is fitted. `tools/check_power_netlist.py`
+asserts the same DNP set from the netlist side.
 
 Everything else on the board uses stock KiCad footprints (`Resistor_SMD`,
 `Capacitor_SMD`, `Package_SO`, `Package_TO_SOT_SMD`,
@@ -216,6 +245,18 @@ settles in seconds:
   (Figure 32 landing pattern, Figure 23 pin-out): pads are 0.325 mm radial × 0.30 mm tangential, 0.7625 mm from package centre, with 0.20 mm pad gaps (Bosch minimum; JLC 4-layer minimum 0.127 mm copper gap, 0.10 mm mask web, so no local mask expansion).
   Corrected 2026-09-15: the 2-pad edges were at ±0.5 mm and the corner pads overlapped; found by PCB DRC.
   Do not place vias or traces beneath the package, and keep solder mask and contamination away from the pressure port.
+- **C19, the V5_SYS bulk, is `Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B`**
+  (100 uF / 6.3 V polymer, ESR <= 40 mOhm — Panasonic 6TPE100MAZB or a KEMET
+  T520/T530 B case), not the EIA-7343-31 D case it used to be. The part is
+  polarised: the footprint's pin 1 is the **anode (+)** and the silkscreen bar
+  marks it. Do not substitute a general-purpose tantalum electrolytic — the
+  6.3 V rating only works on a 5.0 V rail at the 1.26x derating polymers allow,
+  and the 40 mOhm ESR is what the handover simulations assume.
+- Both pad rows sit 0.5 mm in from Edge.Cuts, so the footprint's own silkscreen
+  box (0.45 mm clear of the pads) overhangs the board edge. DRC reports that as
+  a footprint-internal `silk_edge_clearance` warning on J3 (3) and J10 (3); it
+  is cosmetic — the fab clips silk at the edge — and it is the accepted cost of
+  edge-aligning the pads.
 - The ADXL375 footprint follows Figure 38 of the Rev. B datasheet rather than
   KiCad's generic 3 x 5 mm LGA footprint. Place the sensor close to a rigid PCB
   mounting point and keep its orientation marker visible.

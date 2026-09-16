@@ -64,12 +64,14 @@ MARV P3 source-handover corner - TPS2121 behavioral model, not vendor silicon
 * measurement. Every predicate below is evaluated from 2 ms, after startup.
 * VSYS bulk cap defaults to the schematic-nominal 20 uF ceramic (C8+C9); the
 * worst-case corner substitutes the derated 14 uF value. A separate polymer
-* branch (Cpoly+Rpolyesr) models C19, 220 uF nominal / 176 uF at the same
-* -20% derating, with its 40 mOhm ESR in series.
+* branch (Cpoly+Rpolyesr) models C19, 100 uF nominal / 80 uF at the same
+* -20% derating, with its 40 mOhm ESR in series.  C19 was a 220 uF / 10 V D
+* case (176 uF derated) until the envelope re-pack; the B-case 100 uF part
+* is what these decks now prove.
 .param R5VIN=0.10 RUSB=0.35
 .param RONHI=0.100 TSW=100u TRCB=10u IRCB=2 VRCB=0.050
 .param VUVR=2.65 VUVF=2.55 VOVR=5.862 VOVF=5.751 VPRR=4.494 VPRF=4.410 VCMP=0.280
-.param CSYS=100u CPOLY=176u ILOAD=0.5
+.param CSYS=100u CPOLY=80u ILOAD=0.5
 
 * ---------------------------------------------------------------------------
 * muxctl: the TPS2121's shared channel-selection logic. Unlike the LM66100

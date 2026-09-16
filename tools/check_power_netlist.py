@@ -158,6 +158,23 @@ assert not _retired & _refs, sorted(_retired & _refs)
 assert not [n for n in nets if n.upper().startswith('BUZZ')], sorted(
     n for n in nets if n.upper().startswith('BUZZ'))
 assert {'H1','H2','H3','H4'} <= _refs, 'mounting-hole group missing'
+# DO NOT POPULATE: the QSPI flash/PSRAM socket is an OPTIONAL back-side expansion, so U24 and its two
+# bypass caps carry KiCad's (dnp yes) + (in_bom no) attributes -- which the kicadxml export emits as
+# <property name="dnp"/> and <property name="exclude_from_bom"/>.  Their NETS still exist and every
+# U24 pin mapping above is still checked: a DNP part owns its land pattern and its nets, it is simply
+# not fitted.  R35, the FLASH_CS1 pull-up, is NOT DNP -- GPIO0 must be held deselected whether or not
+# the socket is populated -- and nothing else on the board may be DNP either, because tools/setup_pcb.py
+# uses exactly this attribute to decide what is allowed on B.Cu (check_back()).
+_DNP = {'U24', 'C62', 'C63'}
+_props = {c.get('ref'): {p.get('name') for p in c.findall('property')}
+          for c in root.find('components')}
+for _r in sorted(_DNP):
+    assert _r in _props, (_r, 'DNP part missing from the netlist')
+    assert 'dnp' in _props[_r], (_r, 'must carry (dnp yes)')
+    assert 'exclude_from_bom' in _props[_r], (_r, 'must carry (in_bom no)')
+_unexpected = sorted(r for r, p in _props.items() if 'dnp' in p)
+assert _unexpected == sorted(_DNP), ('unexpected DNP parts', _unexpected)
+assert 'dnp' not in _props.get('R35', set()), 'R35 (FLASH_CS1 pull-up) must stay populated'
 # every U25 programming node is exactly the two or three pins it should be, nothing else leaks in
 assert nets['U25_PR1']=={('U25','6'),('R42','2'),('R43','1')},nets['U25_PR1']
 assert nets['U25_OV1']=={('U25','5'),('R44','2'),('R45','1')},nets['U25_OV1']
@@ -264,5 +281,5 @@ assert not [n for n in nets if n in ('IO_GPIO1','IO_GPIO21','IO_GPIO27','IO_GPIO
 
 print(f'PASS: 48-GPIO pin plan (4 exposed spares, 6 unconnected), {len(expected)} critical pin mappings, the FB divider,\n'
       f'      USB supply pins, the VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS boundary, the ESC pad-row order, the\n'
-      f'      J6/J7/J8 IO-block row map, the ten sensor test points, the PWM1-4 / PWM5-8 split and footprint\n'
-      f'      coverage for {len(components)} components.')
+      f'      J6/J7/J8 IO-block row map, the ten sensor test points, the PWM1-4 / PWM5-8 split, the {len(_DNP)} DNP\n'
+      f'      flash-expansion parts (U24/C62/C63, R35 populated) and footprint coverage for {len(components)} components.')

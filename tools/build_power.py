@@ -132,8 +132,8 @@ CUSTOM={'MARV_Power:TPS2121RUX':'''(symbol "TPS2121RUX" (exclude_from_sim no) (i
 # crystal load caps) or larger than 22 uF must pass an explicit foot= at the
 # call site and keeps the larger body its voltage / DC-bias derating needs:
 # C17/C46/C47 (50 V, 0402), C74/C75 (50 V, 0402), C73 (10u/50 V, 0805),
-# C76/C77/C80 (22u/25 V, 0805), C66 (47u/6.3 V, 0805), C19 (220u polymer,
-# EIA-7343).  The two exceptions are enforced below by raising rather than
+# C76/C77/C80 (22u/25 V, 0805), C66 (47u/6.3 V, 0805), C19 (100u/6.3 V
+# polymer, EIA-3528 B case).  The two exceptions are enforced below by raising rather than
 # guessing.
 CAP_PACKAGE=[(4.7e-6,'C_0402_1005Metric'),(22e-6,'C_0603_1608Metric')]
 SI_MULT={'p':1e-12,'n':1e-9,'u':1e-6}
@@ -145,7 +145,10 @@ def passive_footprint(kind,value):
         return 'Resistor_SMD:R_0201_0603Metric'
     if kind!='C':
         return OTHER_PACKAGE[kind]
-    m=re.match(r'\s*([\d.]+)\s*([pnu])\s*/\s*([\d.]+)\s*V',value)
+    # a DNP part carries its fit state in the Value field (see Sheet.add);
+    # the package is still chosen from the capacitance behind that prefix,
+    # because an unpopulated part still needs a correct land pattern.
+    m=re.match(r'\s*(?:DNP:\s*)?([\d.]+)\s*([pnu])\s*/\s*([\d.]+)\s*V',value)
     if not m:
         raise ValueError((value,'capacitor value must start "<C> / <V> V"'))
     farads=float(m.group(1))*SI_MULT[m.group(2)]
@@ -173,7 +176,12 @@ class Sheet:
     def label(self,net,x,y,angle=0):
         self.n+=1
         self.items.append(f'(global_label {q(net)} (shape passive) (at {x} {y} {angle}) (effects (font (size 0.9 0.9)) (justify {"right" if angle==180 else "left"})) (uuid {uid(self.name+"lab"+str(self.n))}))')
-    def add(self,ref,libid,value,x,y,nets,foot=None,refofs=None,vlab=False):
+    def add(self,ref,libid,value,x,y,nets,foot=None,refofs=None,vlab=False,dnp=False):
+        """dnp=True marks the symbol DO NOT POPULATE and excludes it from the
+        BOM: KiCad's own `(dnp yes)` / `(in_bom no)` symbol attributes, which
+        ERC, the netlist export, the BOM and pcbnew all read.  The net list is
+        unchanged - a DNP part still owns its nets and its land pattern, it is
+        simply not fitted.  See the U24 flash-socket note on BOARD 3."""
         x,y=round(round(x/1.27)*1.27,5),round(round(y/1.27)*1.27,5)
         sym=symbol(libid)
         if libid not in self.libs:
@@ -181,7 +189,8 @@ class Sheet:
             self.libs[libid]=embedded
         props={unquote(p[1]):unquote(p[2]) for p in children(sym,'property')}
         fp=foot if foot is not None else props.get('Footprint','')
-        inst=f'(symbol (lib_id {q(libid)}) (at {x} {y} 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid {uid(ref)})'
+        attrs='(in_bom no) (on_board yes) (dnp yes)' if dnp else '(in_bom yes) (on_board yes) (dnp no)'
+        inst=f'(symbol (lib_id {q(libid)}) (at {x} {y} 0) (unit 1) {attrs} (uuid {uid(ref)})'
         if refofs:
             rx,ry,vy=refofs[0],refofs[1],refofs[1]+2.54
         else:
@@ -210,11 +219,11 @@ class Sheet:
             inst+=f' (pin {q(num)} (uuid {uid(ref+"pin"+num)}))'
         inst+=f' (instances (project "MARV-V2" (path "/{uid("power-root")}/{self.id}" (reference {q(ref)}) (unit 1)))))'
         self.items.append(inst)
-        self.bom.append((ref,value,fp,self.name))
-    def passive(self,ref,kind,value,x,y,a,b,foot=None):
+        self.bom.append((ref,value,fp,self.name,'DNP' if dnp else 'populated'))
+    def passive(self,ref,kind,value,x,y,a,b,foot=None,dnp=False):
         if foot is None:
             foot=passive_footprint(kind,value)
-        self.add(ref,'Device:'+kind,value,x,y,{'1':a,'2':b},foot)
+        self.add(ref,'Device:'+kind,value,x,y,{'1':a,'2':b},foot,dnp=dnp)
     def render(self):
         return f'(kicad_sch (version 20250114) (generator "eeschema") (uuid {self.id}) (paper "A3") (title_block (title {q(self.title)}) (date "2026-09-14") (rev "P0 - REVIEW ONLY")) (lib_symbols '+ '\n'.join(dump(s) for s in self.libs.values())+')\n'+'\n'.join(self.items)+'\n(embedded_fonts no))\n'
 
@@ -477,16 +486,21 @@ def sensors_sheet():
 
 def storage_sheet():
     s=Sheet('storage','BOARD 3 / log flash and microSD',7)
-    s.note('Log flash on the shared QSPI bus with GPIO0/QMI CS1n as its chip select, and a latched microSD wired for\n'
-           '4-bit PIO (also SPI-compatible). Both on V3V3_SYS with local bulk, per the rail split in DESIGN_SPEC.\n'
-           'U24 IS A SOCKET, NOT ONE PART: the 150-mil SOIC-8 land takes either the default W25Q64JVSSIQ NOR flash or an\n'
-           'APS6404L-3SQR-SN 8 MB QSPI PSRAM - see the U24 note below.',15,10,1.6)
-    s.add('U24','Memory_Flash:W25Q32JVSS','W25Q64JVSSIQ, 64 Mbit QSPI NOR',95,75,
+    s.note('An OPTIONAL QSPI expansion socket on the shared QSPI bus with GPIO0/QMI CS1n as its chip select, and a\n'
+           'latched microSD wired for 4-bit PIO (also SPI-compatible). Both on V3V3_SYS with local bulk, per the rail\n'
+           'split in DESIGN_SPEC.\n'
+           'U24, C62 AND C63 ARE DNP - NOT FITTED BY DEFAULT AND NOT IN THE BOM. The land is on the BACK of the board\n'
+           '(B.Cu) as a user expansion: firmware and logs use the RP2354B in-package 2 MB flash and the J11 microSD.\n'
+           'U24 IS A SOCKET, NOT ONE PART: the 150-mil SOIC-8 land takes either a W25Q64JVSSIQ NOR flash or an\n'
+           'APS6404L-3SQR-SN 8 MB QSPI PSRAM - see the U24 note below. R35 stays POPULATED.',15,10,1.6)
+    s.add('U24','Memory_Flash:W25Q32JVSS','DNP: W25Q64JVSSIQ, 64 Mbit QSPI NOR (optional back-side expansion)',95,75,
           {'1':'FLASH_CS1','2':'QSPI_SD1','3':'QSPI_SD2','4':'GND','5':'QSPI_SD0','6':'QSPI_SCLK','7':'QSPI_SD3','8':V3},
-          'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm',refofs=(85,100),vlab=True)
+          'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm',refofs=(85,100),vlab=True,dnp=True)
+    # R35 stays POPULATED on the front: it is the FLASH_CS1 idle pull-up, and
+    # GPIO0 has to be held deselected whether or not the socket is fitted.
     s.passive('R35','R','10k, FLASH_CS1 pull-up',170,75,V3,'FLASH_CS1')
-    s.passive('C62','C','100n / 16 V X7R, U24 VCC',210,75,V3,'GND')
-    s.passive('C63','C','1u / 10 V X7R 0402, U24 VCC',250,75,V3,'GND')
+    s.passive('C62','C','DNP: 100n / 16 V X7R, U24 VCC',210,75,V3,'GND',dnp=True)
+    s.passive('C63','C','DNP: 1u / 10 V X7R 0402, U24 VCC',250,75,V3,'GND',dnp=True)
     s.add('J11','Connector:Micro_SD_Card_Det2','microSD, Molex 104031-0811 push-push',110,175,
           {'1':'SD_D2','2':'SD_D3','3':'SD_CMD','4':V3,'5':'SD_CLK','6':'GND','7':'SD_D0','8':'SD_D1',
            '9':'SD_DET','10':'GND','SH':'GND'},'MARV_Packages:microSD_HC_Molex_104031-0811',refofs=(88,150))
@@ -507,8 +521,14 @@ def storage_sheet():
            'this bus: 1 CE#/CS#, 2 SO/SIO1, 3 SIO2 (WP# on the flash), 4 VSS/GND, 5 SI/SIO0, 6 SCLK, 7 SIO3 (HOLD# on the\n'
            'flash), 8 VCC - so no board change is needed to swap them. The RP2350 QMI supports a PSRAM on CS1 with its own\n'
            'timing/chip-select registers (RP2350 datasheet Sec 12.14 QMI, M1_TIMING/M1_RFMT/M1_WFMT), which is what makes\n'
-           'the alternative real rather than mechanical. Default fit is the W25Q64 flash; fit the PSRAM instead only if\n'
-           'firmware needs XIP-addressable RAM more than it needs log space.\n'
+           'the alternative real rather than mechanical. Fit the W25Q64 flash for log space or the PSRAM for\n'
+           'XIP-addressable RAM - neither is fitted at build.\n'
+           'DNP / BACK SIDE. U24, C62 and C63 carry (dnp yes) + (in_bom no): the land pattern, the nets and R35 are on\n'
+           'the board, the parts are not bought and not placed. The socket and its two bypass caps sit on B.Cu under\n'
+           'the MCU, against U20 QSPI pads 70-75, so the QSPI stubs are the board thickness plus a via; the front stays\n'
+           'a single-sided assembly because nothing DNP is reflowed. A B.SilkS legend beside the land says what fits.\n'
+           'CONSEQUENCE FOR THE BUDGET: the 25 mA QSPI-flash burst is NOT in the V3V3_SYS load budget any more\n'
+           '(DESIGN_SPEC "Rails and load budget"); add it back if the socket is populated.\n'
            'SYMBOL SUBSTITUTION: KiCad 10 ships no W25Q64JVSS symbol (Memory_Flash has W25Q16JVSS, W25Q32JVSS, W25Q128JV*\n'
            'only). U24 therefore uses Memory_Flash:W25Q32JVSS, whose pinout is identical across the whole W25Q JV family;\n'
            'the Value field carries the real MPN. See LIBRARIES.md.',15,245,1.3)
@@ -580,11 +600,12 @@ def build():
              'spec is tSW = 100 us typ (Sec 7.5), not the 5 us tFSW that needs CP2 >= VREF.\n'
              'ILM (Sec 9.3.2 Eq.2, ILM = 65.2 / RILM^0.861 with RILM in kOhm, valid 18-100 kOhm): R46 80.6k -> 1.49 A typ; the datasheet\n'
              'characterises RILM = 80k as 1.0 / 1.5 / 2.0 A min/typ/max. Fast-trip OCP is 2.4 x ILM (Sec 9.3.3).\n'
-             'SS (Sec 9.3.1 / Table 9-1): C70 100 nF -> 780 V/s at 5 V, so the ~240 uF on V5_SYS draws ~190 mA of inrush and OUT ramps in ~6.4 ms.\n'
+             'SS (Sec 9.3.1 / Table 9-1): C70 100 nF -> 780 V/s at 5 V, so the ~120 uF on V5_SYS draws ~94 mA of inrush and OUT ramps in ~6.4 ms.\n'
              'ST (Sec 6, Sec 10.2.3) is an open-drain status output: HIGH when IN1 (or neither input) drives OUT, LOW when IN2 does. R47 10k to\n'
              'V3V3_SYS is inside the RST = 6-20 kOhm recommended operating range of Sec 7.3; PWR_SRC_ST lands on RP2354B GPIO39 (pin 48).\n'
-             'Sec 11 gives no numeric minimum COUT, only "increase the capacitance on OUT to avoid output voltage drop"; C19 220 uF + C8/C9\n'
-             '2 x 10 uF on POWER 2 already exceed the 100-200 uF the datasheet design examples use, so no extra output capacitor is added here.\n'
+             'Sec 11 gives no numeric minimum COUT, only "increase the capacitance on OUT to avoid output voltage drop"; C19 100 uF + C8/C9\n'
+             '2 x 10 uF on POWER 2 give 120 uF nominal, inside the 100-200 uF the datasheet design examples use, so no extra output capacitor\n'
+             'is added here. C19 was a 220 uF / 10 V D case until the handover decks were re-run at 100 uF and every predicate still passed.\n'
              'WHAT CHANGED WITH THE ON-BOARD BUCK: IN1 is no longer an external BEC of unknown quality, it is U26\'s regulated 5.00 V +/-1% output.\n'
              'PR1 therefore sits far above its 4.494 V rising threshold whenever the pack is connected, so IN1 selection is unconditional in normal\n'
              'operation, and OV1 (5.862 V typ, 5.585 V worst case) can only trip on a U26 failure - it is now a backstop against a shorted high-side\n'
@@ -637,7 +658,8 @@ def build():
     for ref,x in [('C8',25),('C9',25)]:
         out.passive(ref,'C','10u / 10 V X7S 0603',x,55 if ref=='C8' else 105,'V5_SYS','GND')
     out.passive('C17','C','2.2n / 50 V X7R, VIN-PGND HF bypass',55,60,'V5_SYS','GND',foot='Capacitor_SMD:C_0402_1005Metric')
-    out.passive('C19','C','220u / 10 V polymer, ESR ~40 mOhm',25,155,'V5_SYS','GND','Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D')
+    out.passive('C19','C','100u / 6.3 V polymer, ESR <= 40 mOhm (e.g. Panasonic 6TPE100MAZB or KEMET T520/T530 B case)',
+                25,155,'V5_SYS','GND','Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B')
     for ref,x in [('C10',245),('C11',310),('C12',375)]:
         out.passive(ref,'C','22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)',x,50,'U7_VO','GND')
     for ref,x in [('C23',245),('C24',310)]:
@@ -653,7 +675,13 @@ def build():
              'the 66 uF nominal of the first stage is ~40 uF effective and the 44 uF post-bead stage is ~26 uF. The\n'
              'ngspice decks still carry the NOMINAL 66 uF (simulations/*.cir COUT), so the modelled rail is optimistic\n'
              'by that margin - an open item, not a result. Do not read the effective value off the BOM either.\n'
-             '0201 resistors and 22 uF 0603 ceramics are machine-place parts - JLC assembles them, a bench iron does not.',245,163,1.25)
+             '0201 resistors and 22 uF 0603 ceramics are machine-place parts - JLC assembles them, a bench iron does not.\n'
+             'C19, THE V5_SYS BULK, IS 100 uF / 6.3 V POLYMER IN AN EIA-3528-21 (B) CASE, down from 220 uF / 10 V in an EIA-7343-31 (D)\n'
+             'case: 8.9 x 4.9 mm of courtyard became 4.3 x 3.2 mm. The handover decks (simulations/source_handover.cir CPOLY, and the\n'
+             'integrated deck) were re-run at 100 uF nominal / 80 uF derated and every predicate still passes - V5_SYS holds well above\n'
+             'the 3.5 V floor across the 100 us TPS2121 switchover - which is what licenses the smaller case. ESR must stay <= 40 mOhm\n'
+             '(the value modelled): Panasonic 6TPE100MAZB or a KEMET T520/T530 B case. 6.3 V on a 5.0 V rail is a 1.26x derating, the\n'
+             'normal polymer figure; a tantalum electrolytic would need 2x and would not qualify.',245,163,1.25)
     out.note('V3V3_SYS feedback (TPS62913 datasheet Sec 8.2.2.2.6, Eq.8): VOUT = VFB x (1 + R1/R2); VFB = 0.8 V typ, 0.792-0.812 V spec (Sec 6.5).\nR2 = 4.99 kOhm (<=5 kOhm per datasheet noise guidance). R1 = R2 x (VOUT/VFB - 1) = 4.99k x (3.3/0.8 - 1) = 4.99k x 3.125 = 15.59 kOhm -> nearest 1% E96 = 15.8 kOhm.\nActual VOUT = 0.8 V x (1 + 15.8k/4.99k) = 3.33 V nominal (3.30-3.38 V across VFB tolerance).',15,180,1.3)
     out.note('S-CONF = 6.04 kOhm to GND (Table 7-1): 2.2 MHz switching, triangle spread-spectrum ON, output discharge OFF, no external sync.\n2.2 MHz + 2.2uH matches the VIN=5V/VOUT<=3.3V design table (Table 8-2). TPS62913 runs fixed-frequency PWM at all loads, no light-load skip mode (Sec 7.4.1) -- forced PWM is inherent; there is no separate MODE pin on this device.\nVO (pin 3) senses the node between L1 and the ferrite bead (device internal loop); the FB divider senses V3V3_SYS after the bead for low-noise remote regulation (Sec 7.1 / 8.2.2.2.4).',15,215,1.3)
     out.add('U12','Regulator_Linear:TPS7A20xxxDBV','TPS7A2033PDBVR',95,200,{'1':'V5_SYS','2':'GND','3':'PWR_GOOD','4':None,'5':'V3V3_ANA'})
@@ -741,7 +769,7 @@ def build():
     root.append('(sheet_instances (path "/" (page "1"))) (embedded_fonts no))\n')
     files={'MARV-V2.kicad_sch':'\n'.join(root).replace('(fields_autoplaced yes)', '(fields_autoplaced)')}
     files.update({s.name+'.kicad_sch':s.render() for s in sheets})
-    files['power_bom.csv']='Reference,Value,Footprint,Sheet\n'+'\n'.join(','.join(q(v) for v in row) for s in sheets for row in s.bom if not row[0].startswith('#'))+'\n'
+    files['power_bom.csv']='Reference,Value,Footprint,Sheet,Fit\n'+'\n'.join(','.join(q(v) for v in row) for s in sheets for row in s.bom if not row[0].startswith('#'))+'\n'
     backup=ROOT/'backups/MARV-V2.before-power.kicad_sch'
     if not backup.exists():
         files['backups/MARV-V2.before-power.kicad_sch']=(ROOT/'MARV-V2.kicad_sch').read_text()

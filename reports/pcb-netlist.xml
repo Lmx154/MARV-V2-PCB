@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-16T07:28:46</date>
+    <date>2026-09-16T08:20:25</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -915,10 +915,10 @@
       </units>
     </comp>
     <comp ref="C19">
-      <value>220u / 10 V polymer, ESR ~40 mOhm</value>
-      <footprint>Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D</footprint>
+      <value>100u / 6.3 V polymer, ESR &lt;= 40 mOhm (e.g. Panasonic 6TPE100MAZB or KEMET T520/T530 B case)</value>
+      <footprint>Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B</footprint>
       <fields>
-        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D</field>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -3346,7 +3346,7 @@
       </units>
     </comp>
     <comp ref="C62">
-      <value>100n / 16 V X7R, U24 VCC</value>
+      <value>DNP: 100n / 16 V X7R, U24 VCC</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
@@ -3356,6 +3356,8 @@
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/BOARD 3 / log flash and microSD/" tstamps="/ee71bdc5-8bfd-5022-911d-47d370d195fb/"/>
@@ -3370,7 +3372,7 @@
       </units>
     </comp>
     <comp ref="C63">
-      <value>1u / 10 V X7R 0402, U24 VCC</value>
+      <value>DNP: 1u / 10 V X7R 0402, U24 VCC</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
@@ -3380,6 +3382,8 @@
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/BOARD 3 / log flash and microSD/" tstamps="/ee71bdc5-8bfd-5022-911d-47d370d195fb/"/>
@@ -3668,7 +3672,7 @@
       </units>
     </comp>
     <comp ref="U24">
-      <value>W25Q64JVSSIQ, 64 Mbit QSPI NOR</value>
+      <value>DNP: W25Q64JVSSIQ, 64 Mbit QSPI NOR (optional back-side expansion)</value>
       <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
       <datasheet>http://www.winbond.com/resource-files/w25q32jv%20revg%2003272018%20plus.pdf</datasheet>
       <fields>
@@ -3679,6 +3683,8 @@
       <libsource lib="Memory_Flash" part="W25Q32JVSS" description="32Mbit / 4MiB Serial Flash Memory, Standard/Dual/Quad SPI, 2.7-3.6V, SOIC-8 (208 mil)"/>
       <property name="Sheetname" value="BOARD 3 / log flash and microSD"/>
       <property name="Sheetfile" value="storage.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="flash memory SPI"/>
       <property name="ki_fp_filters" value="*SOIC*5.3x5.3mm*P1.27mm*"/>
       <sheetpath names="/BOARD 3 / log flash and microSD/" tstamps="/ee71bdc5-8bfd-5022-911d-47d370d195fb/"/>
