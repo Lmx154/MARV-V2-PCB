@@ -5,7 +5,7 @@ is *not* trustworthy about it. Referenced from `MARV_Packages.pretty/*.kicad_mod
 as `${KIPRJMOD}/MARV_Packages.3dshapes/<name>.step`, so the project is
 self-contained for layout: no `KICAD10_3DMODEL_DIR` dependency for these parts.
 
-All nine files were checked to start with `ISO-10303-21;` and to declare
+All twelve files were checked to start with `ISO-10303-21;` and to declare
 millimetres (`SI_UNIT(.MILLI.,.METRE.)`).
 
 Sizes and SHA256 are of the files as committed.
@@ -84,8 +84,10 @@ approximately those of the real parts.
 | `ICM-45686.step` | `InvenSense_LGA-14_2.5x3mm_P0.5mm_ICM45686` (U21) | `Package_LGA.3dshapes/LGA-14_3x2.5mm_P0.5mm_LayoutBorder3x4y.step` | 120321 | `135b7bb3b2262aa62b4493c9b0e06504cf329c6e4970fa84d0f8d063763daeb5` |
 | `BMP581.step` | `Bosch_LGA-10_2x2mm_BMP581` (U22) | `Package_LGA.3dshapes/ST_HLGA-10_2x2mm_P0.5mm_LayoutBorder3x2y.step` | 94751 | `9bcea244bfa35c4f7fc21560ce40574b3457f0c80160e0c728d72e17a2419040` |
 | `ADXL375.step` | `Analog_LGA-14_3x5mm_P0.8mm_ADXL375` (U23) | `Package_LGA.3dshapes/LGA-14_3x5mm_P0.8mm_LayoutBorder1x6y.step` | 120280 | `5dc3991aa9836ef8c4adbbd416d6b7120b072db0b1c3fb70a61b01c8794d014e` |
+| `PinHeader_2x16_P2.54mm_Vertical_IOArray.step` | `PinHeader_2x16_P2.54mm_Vertical_IOArray` (J6) | `Connector_PinHeader_2.54mm.3dshapes/PinHeader_2x16_P2.54mm_Vertical.step` | 997472 | `0e162ef1cee6472ba8273b03a891d26f7d23c353a5756e917a2720cb4ba89a8c` |
+| `PinHeader_1x04_P2.54mm_Vertical_ServoRow.step` | `PinHeader_1x04_P2.54mm_Vertical_ServoRow` (J12-J14) | `Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x04_P2.54mm_Vertical.step` | 145684 | `a74079b8d06bda78847623b39ee1855ffd1d9a8c1e896b349e4f1dc2056d44d9` |
 
-Both hashes are byte-identical to the installed KiCad files, so the copies are
+All hashes are byte-identical to the installed KiCad files, so the copies are
 verifiable against any `kicad-packages3d` 10.0.6 installation.
 
 - **ICM-45686**: TDK's download pages are session-gated and expose no direct

@@ -12,9 +12,10 @@ if the symbol has a pin with that same designator; otherwise they're
 mechanical, not electrical, and are excluded from the comparison (the raw,
 unfiltered pad count is still available in --json output).
 
-Footprints whose *name* matches --no-3d-ok (default "^(PadRow_|MountingHole_)")
-are exempt from the 3D-model check: solder pad rows and mechanical holes have
-no body to model, so a missing model is the correct state, not a defect. They
+Footprints whose *name* matches --no-3d-ok (default
+"^(PadRow_|MountingHole_|TestPoint_)") are exempt from the 3D-model check:
+solder pad rows, mechanical holes and bare test-point pads have no body to
+model, so a missing model is the correct state, not a defect. They
 report OK with the 3D-model cell set to "pads only". The exemption applies ONLY
 to the NO_3D_REF status -- a footprint that references a model file that does
 not exist still fails with 3D_FILE_MISSING, and every other check is unchanged.
@@ -276,7 +277,7 @@ def md_escape(text):
     return (text or '').replace('|', '\\|').replace('\n', ' ')
 
 
-DEFAULT_NO_3D_OK = r'^(PadRow_|MountingHole_)'
+DEFAULT_NO_3D_OK = r'^(PadRow_|MountingHole_|TestPoint_)'
 
 
 def resolve_component(comp, fp_table, env, pin_nums, no_3d_ok=None):

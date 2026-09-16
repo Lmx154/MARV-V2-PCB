@@ -8,6 +8,28 @@ from build_power import parse, children, unquote
 root=ET.parse(sys.argv[1]).getroot()
 nets={n.get('name'):{(p.get('ref'),p.get('pin')) for p in n.findall('node')} for n in root.find('nets')}
 pin_net={pin:name for name,ps in nets.items() for pin in ps}
+
+# PINOUT dictionary mapping GPIO number to expected net name. Extracted from MCU_GPIO tuples in build_power.py;
+# those tuples are authoritative and mirror the actual generator assignments.
+PINOUT={
+ 0:'FLASH_CS1', 1:'IO_GPIO1', 2:'PWM1', 3:'PWM2', 4:'PWM3', 5:'PWM4',
+ 6:'MAG_SDA', 7:'MAG_SCL', 8:'ELRS_RX', 9:'ELRS_TX', 10:'PWM5', 11:'PWM6',
+ 12:'GPS_RX', 13:'GPS_TX', 14:'PWM7', 15:'PWM8', 16:'SENS_MISO', 17:'HG_ACC_CS',
+ 18:'SENS_SCK', 19:'SENS_MOSI', 20:'IMU_CS', 21:'IO_GPIO21', 22:'BARO_CS', 23:'IMU_INT1',
+ 24:'IMU_INT2', 25:'BARO_INT', 26:'LED_DATA', 27:'IO_GPIO27', 28:'IO_GPIO28', 29:'HG_ACC_INT',
+ 30:'ESC_TELEM_RX', 31:'IO_GPIO31', 32:'SD_CLK', 33:'SD_CMD', 34:'SD_D0', 35:'SD_D1',
+ 36:'SD_D2', 37:'SD_D3', 38:'SD_DET', 39:'PWR_SRC_ST', 40:'VBAT_SENSE', 41:'VBUS_SENSE',
+ 42:'CURR_SENSE', 43:'IO_GPIO43', 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
+}
+
+# PAD_OF_GPIO mapping GPIO number to U20 pad number. Extracted from MCU_GPIO tuples in build_power.py.
+PAD_OF_GPIO={
+ 0:'77', 1:'78', 2:'79', 3:'80', 4:'1', 5:'2', 6:'3', 7:'4', 8:'6', 9:'7', 10:'8', 11:'9',
+ 12:'11', 13:'12', 14:'13', 15:'14', 16:'16', 17:'17', 18:'18', 19:'19', 20:'20', 21:'21',
+ 22:'22', 23:'23', 24:'25', 25:'26', 26:'27', 27:'28', 28:'36', 29:'37', 30:'38', 31:'39',
+ 32:'40', 33:'42', 34:'43', 35:'44', 36:'45', 37:'46', 38:'47', 39:'48', 40:'49', 41:'52',
+ 42:'53', 43:'54', 44:'55', 45:'56', 46:'57', 47:'58',
+}
 expected={
  ('U7','1'):'V5_SYS',('U7','2'):'U7_SW',('U7','3'):'U7_VO',('U7','4'):'GND',
  ('U7','5'):'PWR_GOOD',('U7','6'):'V5_SYS',('U7','7'):'GND',('U7','8'):'U7_SS',
@@ -41,19 +63,11 @@ expected={
  ('D20','2'):'GND',('D20','3'):'LED_DIN',('D20','4'):'V5_SYS',('C79','1'):'V5_SYS',('C79','2'):'GND',
  # SWD solder pads
  ('J10','1'):'SWCLK',('J10','2'):'SWDIO',('J10','3'):'GND',
- # spare-IO block: 3.3 V, one ground and the ten GPIOs no on-board function claims. Pin 12 was the
- # second ground until the buzzer was deleted; it now carries GPIO28 (pin 36), which that driver owned.
- ('J16','1'):'V3V3_SYS',('J16','2'):'GND',('J16','3'):'IO_GPIO1',('J16','4'):'IO_GPIO21',
- ('J16','5'):'IO_GPIO27',('J16','6'):'IO_GPIO31',('J16','7'):'IO_GPIO43',('J16','8'):'IO_GPIO44',
- ('J16','9'):'IO_GPIO45',('J16','10'):'IO_GPIO46',('J16','11'):'IO_GPIO47',('J16','12'):'IO_GPIO28',
+ # the RP2354B end of the ten spare GPIOs that leave on the J6 IO array
  ('U20','78'):'IO_GPIO1',('U20','21'):'IO_GPIO21',('U20','28'):'IO_GPIO27',('U20','39'):'IO_GPIO31',
  ('U20','36'):'IO_GPIO28',
  ('U20','54'):'IO_GPIO43',('U20','55'):'IO_GPIO44',('U20','56'):'IO_GPIO45',('U20','57'):'IO_GPIO46',
  ('U20','58'):'IO_GPIO47',
- # Peripheral ports, Pixhawk DS-009 order. UART: 1 VCC, 2 TX (board TX = module RX net), 3 RX, 4 GND.
- ('J6','1'):'V5_SYS',('J6','2'):'GPS_RX',('J6','3'):'GPS_TX',('J6','4'):'GND',
- ('J7','1'):'V5_SYS',('J7','2'):'ELRS_RX',('J7','3'):'ELRS_TX',('J7','4'):'GND',
- ('J9','1'):'V3V3_SYS',('J9','2'):'MAG_SCL',('J9','3'):'MAG_SDA',('J9','4'):'GND',
  ('C20','1'):'V5_SYS',('C21','1'):'V5_SYS',('C22','1'):'V3V3_SYS',
  # RP2354B rails (MCU sheet). ADC_AVDD (59) stays on the LDO rail; the VREG_AVDD RC filter is fed
  # from V3V3_SYS, so R20 pin 1 must be V3V3_SYS and pin 61 must still reach it only through R20.
@@ -85,6 +99,22 @@ expected={
  ('U20','12'):'GPS_TX',('U20','11'):'GPS_RX',('U20','7'):'ELRS_TX',('U20','6'):'ELRS_RX',
  ('U20','3'):'MAG_SDA',('U20','4'):'MAG_SCL',
 }
+# J6 IO ARRAY, 2 columns x 16 rows, EVERY PIN. Odd pins are the outer (signal) column, even pins the
+# inner (power/GND) column; row n is pins (2n-1, 2n).  This is the single connector that replaced the
+# three DS-009 solder-pad rows (old J6/J7/J9) and the J16 2x6 spare-IO block, so it is the one table
+# that catches a mis-wired port, a signal on the wrong rail, or a 5 V pin below row 4.
+J6_ROWS=[('GPS_RX','V5_SYS'),('GPS_TX','GND'),('ELRS_RX','V5_SYS'),('ELRS_TX','GND'),
+         ('MAG_SDA','V3V3_SYS'),('MAG_SCL','GND'),('IO_GPIO44','V3V3_SYS'),('IO_GPIO45','GND'),
+         ('IO_GPIO46','V3V3_SYS'),('IO_GPIO47','GND'),('IO_GPIO43','V3V3_SYS'),('IO_GPIO1','GND'),
+         ('IO_GPIO21','V3V3_SYS'),('IO_GPIO27','GND'),('IO_GPIO28','V3V3_SYS'),('IO_GPIO31','GND')]
+for _i,(_sig,_pwr) in enumerate(J6_ROWS):
+    expected[('J6',str(2*_i+1))]=_sig
+    expected[('J6',str(2*_i+2))]=_pwr
+# TEST POINTS: the whole sensor SPI interface is probeable. TP1-TP3 are the shared bus, TP4-TP6 the
+# three chip selects, TP7-TP10 the four interrupts. Each must land on its net and nowhere else.
+TESTPOINTS={'TP1':'SENS_SCK','TP2':'SENS_MOSI','TP3':'SENS_MISO','TP4':'IMU_CS','TP5':'BARO_CS',
+            'TP6':'HG_ACC_CS','TP7':'IMU_INT1','TP8':'IMU_INT2','TP9':'BARO_INT','TP10':'HG_ACC_INT'}
+expected.update({(_r,'1'):_n for _r,_n in TESTPOINTS.items()})
 # J13 is row 2 of the servo block: 5V_IN, the U26 buck output, ahead of the U25 power mux.
 # Only four channels now -- PWM1-4 leave on the ESC pad row, so J12/J13/J14 are 1x04 rows.
 expected.update({('J13',str(i)):'5V_IN' for i in range(1,5)})
@@ -111,8 +141,10 @@ assert {('J4','A4'),('J4','A9'),('J4','B4'),('J4','B9')} <= nets['USB_VBUS']
 # gone, J3 is now the ESC pad row); D21/R31/R32 the two discrete status LEDs (one WS2812C now); BZ1 the
 # through-hole buzzer, and with it the whole buzzer driver - J15 pads, Q20 gate, D22 flyback, R33/R34
 # gate network - deleted in this revision, which is what frees GPIO28 for J16 pin 12.
+# The IO-array revision retires J7 (ELRS pad row), J9 (MAG pad row) and J16 (the 2x6 spare-IO block):
+# their nets moved onto J6, which is now a 2x16 through-hole array instead of a 1x04 pad row.
 _retired = {'U3','U5','D23','C16','C67','C68','C69','D21','R31','R32','BZ1',
-            'J15','Q20','D22','R33','R34'}
+            'J15','Q20','D22','R33','R34','J7','J9','J16'}
 _refs = {c.get('ref') for c in root.find('components')}
 assert not _retired & _refs, sorted(_retired & _refs)
 # and no net of the deleted driver survives either (BUZZ_PWM / BUZZ_G / BUZZ_D / BUZZER*)
@@ -136,10 +168,18 @@ assert nets['VBAT']=={('J3','7'),('U26','3'),('C73','1'),('C74','1'),('R52','1')
 #    mux PR1/OV1 dividers, the mux IN1 bypass and the servo row J13. No source connector sits on it.
 assert {ref for ref,pin in nets['5V_IN'] if ref.startswith('J')}=={'J13'},nets['5V_IN']
 assert {('L3','2'),('U26','1'),('U25','7'),('C76','1'),('C77','1'),('C80','1')} <= nets['5V_IN'],nets['5V_IN']
-# 3. V5_SYS (mux output) may reach the two avionics UART ports (J6/J7 VCC) and nothing else with a
-#    connector reference (the J15 buzzer pads are gone). The servo row J13, the ESC row J3 and USB J4
-#    must stay off it, so servo/ESC current never crosses the mux and no source connector back-feeds it.
-assert {ref for ref,pin in nets['V5_SYS'] if ref.startswith('J')}=={'J6','J7'},nets['V5_SYS']
+# 3. V5_SYS (mux output) may reach exactly the two 5 V pins of the J6 IO array (pins 2 and 6, the GPS
+#    and ELRS rows) and nothing else with a connector reference. The servo row J13, the ESC row J3 and
+#    USB J4 must stay off it, so servo/ESC current never crosses the mux and no source back-feeds it.
+assert {(ref,pin) for ref,pin in nets['V5_SYS'] if ref.startswith('J')}=={('J6','2'),('J6','6')},nets['V5_SYS']
+# 3a. V3V3_SYS leaves the board only on the array's six 3.3 V pins (rows 5,7,9,11,13,15) and on the
+#     microSD socket; no other connector may carry the system rail.
+assert {(ref,pin) for ref,pin in nets['V3V3_SYS'] if ref.startswith('J')}=={
+    ('J6','10'),('J6','14'),('J6','18'),('J6','22'),('J6','26'),('J6','30'),('J11','4')},nets['V3V3_SYS']
+# 3b. No 5 V pin below row 4 of the array: every even pin from 8 upward is V3V3_SYS or GND, which is
+#     what makes a one-row plug-in mistake harmless for a 3.3 V module.
+for _p in range(8,33,2):
+    assert pin_net[('J6',str(_p))] in ('GND','V3V3_SYS'),('J6',_p,pin_net[('J6',str(_p))])
 # 4. The buck's own programming nodes are exactly what they should be, nothing leaks in.
 assert nets['U26_SW']=={('U26','5'),('L3','1'),('C75','2')},nets['U26_SW']
 assert nets['U26_BST']=={('U26','6'),('C75','1')},nets['U26_BST']
@@ -179,5 +219,26 @@ for ref,c in components.items():
  pads={unquote(p[1]) for p in children(parse(path.read_text()),'pad') if unquote(p[1])}
  used={pin for rr,pin in pin_net if rr==ref}
  assert used<=pads,(ref,fp,'pins absent in footprint',used-pads)
-print(f'PASS: {len(expected)} critical pin mappings, the FB divider, USB supply pins, the VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS\n'
-      f'      boundary, the ESC pad-row order, the PWM1-4 / PWM5-8 split and footprint coverage for {len(components)} components.')
+
+# Validate the 48-GPIO pin plan: every GPIO must be on the expected net per PINOUT.
+for gpio_num in range(48):
+ pad = PAD_OF_GPIO[gpio_num]
+ expected_net = PINOUT[gpio_num]
+ actual_net = pin_net.get(('U20', pad))
+ assert actual_net == expected_net, \
+  f"PINOUT.md violated: GPIO{gpio_num} (U20 pad {pad}) is on {actual_net}, plan says {expected_net}; update PINOUT.md, build_power.py and this table together"
+
+# Validate spare GPIO assignment: the ten IO_GPIO* nets must appear on exactly the expected GPIOs
+# and each must appear on J6.
+spare_gpio_set = {1, 21, 27, 28, 31, 43, 44, 45, 46, 47}
+spare_nets = {'IO_GPIO1', 'IO_GPIO21', 'IO_GPIO27', 'IO_GPIO28', 'IO_GPIO31', 'IO_GPIO43', 'IO_GPIO44', 'IO_GPIO45', 'IO_GPIO46', 'IO_GPIO47'}
+actual_spare_nets = {PINOUT[g] for g in spare_gpio_set}
+assert actual_spare_nets == spare_nets, f"Spare GPIO nets mismatch: {actual_spare_nets} vs expected {spare_nets}"
+for gpio_num in spare_gpio_set:
+ net_name = PINOUT[gpio_num]
+ j6_nodes = {(ref, pin) for ref, pin in nets[net_name] if ref == 'J6'}
+ assert j6_nodes, f"Spare GPIO {gpio_num} ({net_name}) does not appear on J6"
+
+print(f'PASS: 48-GPIO pin plan, {len(expected)} critical pin mappings, the FB divider, USB supply pins, the VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS\n'
+      f'      boundary, the ESC pad-row order, the J6 IO-array row map, the ten sensor test points, the\n'
+      f'      PWM1-4 / PWM5-8 split and footprint coverage for {len(components)} components.')

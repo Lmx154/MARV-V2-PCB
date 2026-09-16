@@ -230,7 +230,7 @@ ANA='V3V3_ANA'
 # (package pin, GPIO name, net or None for no-connect, function note)
 MCU_GPIO=[
  ('77','GPIO0','FLASH_CS1','QMI CS1n, log flash select'),
- ('78','GPIO1','IO_GPIO1','spare -> J16 pin 3'),
+ ('78','GPIO1','IO_GPIO1','IO array -> J6 pin 23'),
  ('79','GPIO2','PWM1','PWM1 A'),
  ('80','GPIO3','PWM2','PWM1 B'),
  ('1','GPIO4','PWM3','PWM2 A'),
@@ -250,17 +250,17 @@ MCU_GPIO=[
  ('18','GPIO18','SENS_SCK','SPI0 SCK'),
  ('19','GPIO19','SENS_MOSI','SPI0 TX'),
  ('20','GPIO20','IMU_CS','ICM-45686 AP_CS'),
- ('21','GPIO21','IO_GPIO21','spare -> J16 pin 4'),
+ ('21','GPIO21','IO_GPIO21','IO array -> J6 pin 25'),
  ('22','GPIO22','BARO_CS','BMP581 CSB'),
  ('23','GPIO23','IMU_INT1','ICM-45686 INT1'),
  ('25','GPIO24','IMU_INT2','ICM-45686 INT2/FSYNC/CLKIN'),
  ('26','GPIO25','BARO_INT','BMP581 INT'),
  ('27','GPIO26','LED_DATA','WS2812C-2020 data, 100 R series (R55)'),
- ('28','GPIO27','IO_GPIO27','spare -> J16 pin 5'),
- ('36','GPIO28','IO_GPIO28','spare -> J16 pin 12'),
+ ('28','GPIO27','IO_GPIO27','IO array -> J6 pin 27'),
+ ('36','GPIO28','IO_GPIO28','IO array -> J6 pin 29'),
  ('37','GPIO29','HG_ACC_INT','ADXL375 INT1'),
  ('38','GPIO30','ESC_TELEM_RX','ESC KISS telemetry in (PIO UART RX), 1k series R54'),
- ('39','GPIO31','IO_GPIO31','spare -> J16 pin 6'),
+ ('39','GPIO31','IO_GPIO31','IO array -> J6 pin 31'),
  ('40','GPIO32','SD_CLK','microSD CLK (PIO)'),
  ('42','GPIO33','SD_CMD','microSD CMD'),
  ('43','GPIO34','SD_D0','microSD DAT0'),
@@ -272,11 +272,11 @@ MCU_GPIO=[
  ('49','GPIO40','VBAT_SENSE','ADC0, VBAT 100k/10k divider, 36.3 V FS'),
  ('52','GPIO41','VBUS_SENSE','ADC1, USB_VBUS 10k/15k divider'),
  ('53','GPIO42','CURR_SENSE','ADC2, ESC current sense, 1k + 100n'),
- ('54','GPIO43','IO_GPIO43','ADC3 -> J16 pin 7'),
- ('55','GPIO44','IO_GPIO44','ADC4 -> J16 pin 8'),
- ('56','GPIO45','IO_GPIO45','ADC5 -> J16 pin 9'),
- ('57','GPIO46','IO_GPIO46','ADC6 -> J16 pin 10'),
- ('58','GPIO47','IO_GPIO47','ADC7 -> J16 pin 11'),
+ ('54','GPIO43','IO_GPIO43','ADC3 -> J6 pin 21'),
+ ('55','GPIO44','IO_GPIO44','ADC4 -> J6 pin 13'),
+ ('56','GPIO45','IO_GPIO45','ADC5 -> J6 pin 15'),
+ ('57','GPIO46','IO_GPIO46','ADC6 -> J6 pin 17'),
+ ('58','GPIO47','IO_GPIO47','ADC7 -> J6 pin 19'),
 ]
 
 def mcu_sheet():
@@ -326,9 +326,10 @@ def mcu_sheet():
            'VREG_AVDD RC = 33 ohm + 4.7 uF (design guide Sec 2.1), taken from V3V3_SYS; VREG_FB is tied to DVDD, VREG_PGND to GND, EP to GND.',15,247,1.3)
 
     s.note('PORT NAMING: a port label is named for the peripheral pin it comes from, so GPS_TX / ELRS_TX are module outputs\n'
-           'and land on MCU UART RX pins, while GPS_RX / ELRS_RX are module inputs fed by the MCU UART TX pins. On J6/J7\n'
-           '(POWER 3, Pixhawk DS-009 order 1 VCC / 2 TX / 3 RX / 4 GND) pin 2 is therefore GPS_RX / ELRS_RX.\n'
-           'J6 and J7 VCC are on V5_SYS; J9 VCC stays on V3V3_SYS. All port SIGNAL pins remain 3.3 V CMOS.\n'
+           'and land on MCU UART RX pins, while GPS_RX / ELRS_RX are module inputs fed by the MCU UART TX pins. On the J6 IO\n'
+           'array (POWER 3) the UART rows are therefore 1 GPS_RX (silk T0) / 2 GPS_TX (R0) / 3 ELRS_RX (T1) / 4 ELRS_TX (R1),\n'
+           'and rows 5/6 are MAG_SDA / MAG_SCL. The GPS and ELRS rows take V5_SYS on their even pin; every row from 5 down\n'
+           'takes V3V3_SYS or GND. All array SIGNAL pins remain 3.3 V CMOS.\n'
            'GPIO39 (pin 48) is no longer spare: it reads PWR_SRC_ST, the open-drain ST output of U25 (TPS2121), which is\n'
            'high while 5V_IN (IN1) powers V5_SYS and low while USB VBUS (IN2) does.',155,233,1.3)
     rows=['%-7s %3s  %-12s %s'%(g,p_,n or '(no connect)',f) for p_,g,n,f in MCU_GPIO]
@@ -337,25 +338,24 @@ def mcu_sheet():
 
     s.add('J10','Connector_Generic:Conn_01x03','DBG pads (SWCLK SWDIO GND)',250,92,
           {'1':'SWCLK','2':'SWDIO','3':'GND'},'MARV_Packages:PadRow_1x03_P2.00mm')
-    s.note('J10 is a 3-pad SWD landing (SWCLK / SWDIO / GND), not a 10-pin Cortex header: the board carries solder pads\n'
-           'for every bus (DESIGN_SPEC "Physical design"). The debugger reference 3V3 and the debugger-driven reset line\n'
+    s.note('J10 is a 3-pad SWD landing (SWCLK / SWDIO / GND), not a 10-pin Cortex header: solder pads are kept for the two\n'
+           'ports that mate with something fixed - the ESC row J3 and this one (DESIGN_SPEC "Connection philosophy").\n'
+           'The debugger reference 3V3 and the debugger-driven reset line\n'
            'of the old 2x05 header are both gone - power the board from VBAT or USB while debugging, and use SW1 (RUN via\n'
            'PWR_GOOD) for reset. RUN is still held by the TPS62913 power-good pull-up on POWER 2, so the MCU cannot run\n'
            'before V3V3_SYS is in regulation.',180,104,1.3)
 
-    # J16 spare-IO block: the ten GPIOs that no on-board function claims, plus one 3.3 V and one ground.
-    # GPIO43-47 are ADC3-ADC7 (ADC0-2 are taken by VBAT_SENSE / VBUS_SENSE / CURR_SENSE), so five of the
-    # ten signal pins are analog-capable; label those in silk at layout.  Pin 12 was the block's second
-    # ground and now carries GPIO28, freed by deleting the buzzer driver (DESIGN_SPEC revision record).
-    s.add('J16','Connector_Generic:Conn_02x06_Odd_Even','SPARE IO 2x6 (see note)',340,92,
-          {'1':V3,'2':'GND','3':'IO_GPIO1','4':'IO_GPIO21','5':'IO_GPIO27','6':'IO_GPIO31',
-           '7':'IO_GPIO43','8':'IO_GPIO44','9':'IO_GPIO45','10':'IO_GPIO46','11':'IO_GPIO47','12':'IO_GPIO28'},
-          'Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Vertical')
-    s.note('J16 SPARE IO (2.54 mm THT, right edge). 1 V3V3_SYS | 2 GND | 3 GPIO1 | 4 GPIO21 | 5 GPIO27 | 6 GPIO31 |\n'
-           '7 GPIO43* | 8 GPIO44* | 9 GPIO45* | 10 GPIO46* | 11 GPIO47* | 12 GPIO28.  * = ADC-capable (ADC3-ADC7);\n'
-           'silk-mark those five at layout. Pin 12 was the second ground; it now carries GPIO28, which the deleted\n'
-           'buzzer driver used to own, so the block has one ground (pin 2) and ten GPIOs. These GPIOs are no longer\n'
-           'no-connect, so every RP2354B GPIO still terminates somewhere: 38 on board functions and ports, 10 here.',300,112,1.3)
+    # The ten GPIOs that no on-board function claims leave on the J6 IO array (POWER 3), rows 7-16,
+    # odd (outer) column.  GPIO43-47 are ADC3-ADC7 (ADC0-2 are taken by VBAT_SENSE / VBUS_SENSE /
+    # CURR_SENSE), so five of the ten are analog-capable.  There is no separate spare-IO block any
+    # more: the old J16 2x6 and the J6/J7/J9 pad rows are one 2x16 connector now.
+    s.note('SPARE IO -> J6 (POWER 3, IO array 2x16, left edge). GPIO44 pin 13 | GPIO45 pin 15 | GPIO46 pin 17 |\n'
+           'GPIO47 pin 19 | GPIO43 pin 21 | GPIO1 pin 23 | GPIO21 pin 25 | GPIO27 pin 27 | GPIO28 pin 29 |\n'
+           'GPIO31 pin 31.  GPIO43-47 are ADC3-ADC7; their silk labels are A43-A47 rather than IOnn to say so.\n'
+           'Each of those odd pins has its own even neighbour: V3V3_SYS on odd rows, GND on even rows, so a spare\n'
+           'GPIO is always next to a 3.3 V pin and one row away from a ground. GPIO28 lost the buzzer driver in the\n'
+           'small-passives revision and is an ordinary spare here. Every RP2354B GPIO still terminates somewhere:\n'
+           '38 on board functions and ports, 10 spare on the array; none are no-connect.',300,92,1.3)
 
     right=[(250+35*c,140+28*r) for r in range(3) for c in range(4)]
     s.passive('R27','R','100k / 1%, VBAT top',*right[0],'VBAT','VBAT_SENSE')
@@ -428,6 +428,25 @@ def sensors_sheet():
     for ref,(x,y),net in zip(['R48','R50','R51'],[(100,170),(100,198),(130,198)],
                              ['IMU_CS','BARO_CS','HG_ACC_CS']):
         s.passive(ref,'R','10k, %s pull-up'%net,x,y,ANA,net)
+    # TEST POINTS. TP1-TP10 are 1.0 x 1.0 mm bare F.Cu pads on the shared sensor SPI bus, its three chip
+    # selects and its four interrupts: the whole sensor interface is probeable without lifting a package.
+    # They are the only place these nets are reachable - the sensors are LGA/LGA-like parts with no
+    # accessible leads, so a logic analyser has nowhere else to land.
+    TESTPOINTS=[('TP1','SENS_SCK'),('TP2','SENS_MOSI'),('TP3','SENS_MISO'),
+                ('TP4','IMU_CS'),('TP5','BARO_CS'),('TP6','HG_ACC_CS'),
+                ('TP7','IMU_INT1'),('TP8','IMU_INT2'),('TP9','BARO_INT'),('TP10','HG_ACC_INT')]
+    for i,(ref,net) in enumerate(TESTPOINTS):
+        s.add(ref,'Connector:TestPoint','TP %s'%net,30+38*i,148,{'1':net},
+              'TestPoint:TestPoint_Pad_1.0x1.0mm',refofs=(25+38*i,136))
+    s.note('TEST POINTS TP1-TP10 (TestPoint:TestPoint_Pad_1.0x1.0mm, 1 x 1 mm bare F.Cu pad, no 3D model by design -\n'
+           'tools/audit_footprints.py --no-3d-ok covers ^TestPoint_ along with the pad rows and mounting holes).\n'
+           'TP1 SENS_SCK | TP2 SENS_MOSI | TP3 SENS_MISO | TP4 IMU_CS | TP5 BARO_CS | TP6 HG_ACC_CS | TP7 IMU_INT1 |\n'
+           'TP8 IMU_INT2 | TP9 BARO_INT | TP10 HG_ACC_INT. Placement: inside the sensor cluster, within 6 mm of\n'
+           'U21/U22/U23 (tools/setup_pcb.py checks it). They add ten stubs to the SPI bus, which is why they are 1 mm\n'
+           'pads next to the parts rather than a header somewhere else: at 10 MHz SCK a short stub is a capacitive load,\n'
+           'a long one is a transmission line. No series resistors and no ground pad of their own - probe ground comes\n'
+           'off a mounting hole or the J6 array.',15,160,1.3)
+
     s.note('R48, R50, R51: 10k pull-ups to V3V3_ANA on the three SPI chip selects (IMU_CS, BARO_CS, HG_ACC_CS). R49\n'
            '(the former second IMU chip-select pull-up) is removed along with that net - the ICM-45686 has a single\n'
            'chip select. Same rationale as R35 on FLASH_CS1 (BOARD 3): every sensor is held deselected before the RP2354B\n'
@@ -670,28 +689,55 @@ def build():
              'window where the sensors were biased from an unregulated V5_SYS while the MCU was still held in reset.',15,240,1.3)
     out.add('U8','Power_Protection:USBLC6-2SC6','USBLC6-2SC6',245,220,{'1':'USB_DP','2':'GND','3':'USB_DM','4':'USB_DM_MCU','5':'USB_VBUS','6':'USB_DP_MCU'})
 
-    periph=Sheet('power_periph','POWER 3 / peripheral ports',4)
-    periph.note('PIXHAWK DS-009 PIN ORDER ON SOLDER PADS. UART ports (J6, J7): 1 VCC, 2 TX, 3 RX, 4 GND. I2C port (J9): 1 VCC, 2 SCL,\n'
-                '3 SDA, 4 GND. The connector is gone, the ORDER is not: all three are 1x04 solder pad rows (MARV_Packages:PadRow_1x04_P2.00mm,\n'
-                '1.4 x 2.2 mm pads on 2.00 mm pitch, F.Cu only) on the left board edge, so a DS-009 pigtail is soldered on rather than mated.\n'
-                'Label each pad in silk at layout and mark pad 1.\n'
-                'Pin 2 of a UART port is the BOARD TX, i.e. the RP2354B UART TX output, which lands on the module RX input - that is the\n'
-                'GPS_RX / ELRS_RX net, because a port label is named for the peripheral pin it belongs to (see the MCU sheet). Pin 3 is the\n'
-                'board RX, fed by the module TX: GPS_TX / ELRS_TX.',15,15,1.4)
-    periph.passive('C20','C','10u / 10 V X7R 0603',25,55,'V5_SYS','GND')
-    periph.add('J6','Connector_Generic:Conn_01x04','UART_GPS (DS-009: VCC/TX/RX/GND)',95,55,{'1':'V5_SYS','2':'GPS_RX','3':'GPS_TX','4':'GND'},'MARV_Packages:PadRow_1x04_P2.00mm')
-
-    periph.passive('C21','C','10u / 10 V X7R 0603',25,105,'V5_SYS','GND')
-    periph.add('J7','Connector_Generic:Conn_01x04','UART_ELRS (DS-009: VCC/TX/RX/GND)',95,105,{'1':'V5_SYS','2':'ELRS_RX','3':'ELRS_TX','4':'GND'},'MARV_Packages:PadRow_1x04_P2.00mm')
-
-    periph.passive('C22','C','10u / 10 V X7R 0603',25,155,'V3V3_SYS','GND')
-    periph.add('J9','Connector_Generic:Conn_01x04','I2C_MAG (DS-009: VCC/SCL/SDA/GND)',95,155,{'1':'V3V3_SYS','2':'MAG_SCL','3':'MAG_SDA','4':'GND'},'MARV_Packages:PadRow_1x04_P2.00mm')
-
-    periph.note('RAILS: J6 and J7 VCC are on V5_SYS - GNSS and ELRS modules are 5 V-powered with their own on-module regulators, and their\n'
-                'C20 / C21 10 uF local bulk moved to V5_SYS with them. Their SIGNAL pins stay 3.3 V CMOS straight from the RP2354B, which is\n'
-                'what both module families expect. J9 VCC stays on V3V3_SYS: the magnetometer bus is 3.3 V and its pull-ups (R25/R26 on the\n'
-                'MCU sheet) bias to V3V3_SYS, so a 5 V port pin there would fight them. J9 pin 2 = MAG_SCL, pin 3 = MAG_SDA.',15,200,1.4)
-
+    periph=Sheet('power_periph','POWER 3 / IO array',4)
+    periph.note('J6 IO ARRAY - ONE 2x16 THROUGH-HOLE BLOCK ON THE LEFT EDGE, 2.54 mm, madflight style. It replaces the three 1x04\n'
+                'solder-pad ports (the old J6 GPS / J7 ELRS / J9 MAG rows) and the old J16 2x6 spare-IO block: every signal that leaves\n'
+                'this board except the ESC row (J3) and the SWD pads (J10) now leaves on this one connector.\n'
+                'COLUMN RULE: ODD pins are the OUTER column (signal, board edge side), EVEN pins the INNER column (power or ground), so\n'
+                'every signal sits next to the rail its module wants and a 2-pin, a 3-pin or a full 2x16 shell all plug in the same way.\n'
+                'DS-009 NAMING IS KEPT: a port label is named for the PERIPHERAL pin it belongs to, so GPS_RX / ELRS_RX are module inputs\n'
+                'driven by the RP2354B UART TX pins (rows 1 and 3, silk T0 / T1) and GPS_TX / ELRS_TX are module outputs that land on the\n'
+                'MCU UART RX pins (rows 2 and 4, silk R0 / R1). The Pixhawk DS-009 ORDER of the old pad rows is gone with the pad rows;\n'
+                'what survives is the naming convention and the rail assignment (GPS and ELRS on 5 V, magnetometer on 3.3 V).',15,10,1.35)
+    periph.passive('C20','C','10u / 10 V X7R 0603',25,60,'V5_SYS','GND')
+    periph.passive('C21','C','10u / 10 V X7R 0603',25,85,'V5_SYS','GND')
+    periph.passive('C22','C','10u / 10 V X7R 0603',25,110,'V3V3_SYS','GND')
+    periph.note('C20 / C21: V5_SYS local bulk at the array (rows 1-4, the GPS and ELRS supply pins).\nC22: V3V3_SYS local bulk at the array (rows 5-16).',15,130,1.3)
+    # J6 IO array, 2 columns x 16 rows.  Odd = outer (signal) column, even = inner (power/GND) column,
+    # pin 1 at the top of the block on the left board edge.  Row n is pins (2n-1, 2n).
+    J6_ROWS=[('GPS_RX','V5_SYS','T0','UART0 TX -> GPS RX (GPIO12)'),
+             ('GPS_TX','GND','R0','UART0 RX <- GPS TX (GPIO13)'),
+             ('ELRS_RX','V5_SYS','T1','UART1 TX -> ELRS RX (GPIO8)'),
+             ('ELRS_TX','GND','R1','UART1 RX <- ELRS TX (GPIO9)'),
+             ('MAG_SDA',V3,'SDA','I2C1 SDA (GPIO6), 4.7k pull-up on the MCU sheet'),
+             ('MAG_SCL','GND','SCL','I2C1 SCL (GPIO7), 4.7k pull-up on the MCU sheet'),
+             ('IO_GPIO44',V3,'A44','GPIO44 = ADC4'),
+             ('IO_GPIO45','GND','A45','GPIO45 = ADC5'),
+             ('IO_GPIO46',V3,'A46','GPIO46 = ADC6'),
+             ('IO_GPIO47','GND','A47','GPIO47 = ADC7'),
+             ('IO_GPIO43',V3,'A43','GPIO43 = ADC3'),
+             ('IO_GPIO1','GND','IO1','GPIO1'),
+             ('IO_GPIO21',V3,'IO21','GPIO21'),
+             ('IO_GPIO27','GND','IO27','GPIO27'),
+             ('IO_GPIO28',V3,'IO28','GPIO28 (the deleted buzzer driver used to own it)'),
+             ('IO_GPIO31','GND','IO31','GPIO31')]
+    periph.add('J6','Connector_Generic:Conn_02x16_Odd_Even','IO array 2x16 (signal | power/GND)',150,130,
+               {str(2*i+1):sig for i,(sig,pwr,silk,fn) in enumerate(J6_ROWS)} |
+               {str(2*i+2):pwr for i,(sig,pwr,silk,fn) in enumerate(J6_ROWS)},
+               'MARV_Packages:PinHeader_2x16_P2.54mm_Vertical_IOArray',refofs=(136,100))
+    periph.note('J6 ROW MAP (row n = pins 2n-1 odd / 2n even; silk label per row on the outer column)\n'
+                +'\n'.join('%2d  %-4s %-11s | %-8s  %s'%(i+1,silk,sig,pwr,fn)
+                           for i,(sig,pwr,silk,fn) in enumerate(J6_ROWS)),220,95,1.3)
+    periph.note('RAILS ON THE ARRAY: rows 1-4 (GPS, ELRS) take V5_SYS on their even pin - GNSS and ELRS modules are 5 V-powered with\n'
+                'their own on-module regulators, and their C20 / C21 10 uF local bulk sits on V5_SYS with them; their SIGNAL pins stay\n'
+                '3.3 V CMOS straight from the RP2354B, which is what both module families expect. Rows 5-16 take V3V3_SYS: the\n'
+                'magnetometer bus is 3.3 V and its pull-ups (R25/R26 on the MCU sheet) bias to V3V3_SYS, so a 5 V pin there would fight\n'
+                'them, and the ten spare GPIOs are 3.3 V CMOS. Every even pin on rows 2, 4, 6, 8, 10, 12, 14, 16 is GND, so each\n'
+                'signal has a return within one row of it. NO 5 V ANYWHERE BELOW ROW 4: a 3.3 V-only module cannot be fed 5 V by\n'
+                'plugging it one row out of place, because rows 5-16 carry 3.3 V or ground and nothing else.\n'
+                'CURRENT: rows 1-4 are outside the V3V3_SYS budget and count against the U26 buck through the mux; rows 5-16 count in\n'
+                'the V3V3_SYS budget (DESIGN_SPEC "Rails and load budget"). No fuse and no per-row current limit: the array is a\n'
+                'system-integration connector, not a protected port.',15,205,1.35)
 
     mcu=mcu_sheet(); sens=sensors_sheet(); sto=storage_sheet(); act=actuators_sheet()
     sheets=[src,out,periph,mcu,sens,sto,act]

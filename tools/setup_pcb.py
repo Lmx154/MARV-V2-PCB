@@ -154,8 +154,8 @@ NETCLASSES = [
 # The board is a dense single-sided assembly: only the connectors and the
 # switches keep a silkscreen reference designator, the per-pad function labels
 # are the silkscreen.  Every other reference stays on F.Fab (hidden on silk).
-REF_ON_SILK = ("J3", "J4", "J6", "J7", "J9", "J10", "J11", "J12", "J13",
-               "J14", "J16", "SW1", "SW2")
+REF_ON_SILK = ("J3", "J4", "J6", "J10", "J11", "J12", "J13", "J14",
+               "SW1", "SW2")
 
 # --------------------------------------------------------------------------
 # placement rules that are circuit requirements, checked after placement
@@ -173,6 +173,11 @@ CAP_NEAR_MM = 6.0
 INDUCTORS = ["L2", "L3"]
 SENSORS = ["U21", "U22", "U23"]
 IND_SENSOR_MM = 8.0
+# TP1-TP10 probe the sensor SPI bus, its chip selects and its interrupts.  A
+# test point that is not at the part it probes is a stub, so each one has to
+# land within this distance (body to body) of the nearest sensor.
+TEST_POINTS = re.compile(r"^TP\d+$")
+TP_NEAR_MM = 6.0
 
 SILK_TEXT = 0.8          # refdes height, mm
 SILK_THICK = 0.12
@@ -193,20 +198,67 @@ SERVO_FP = "PinHeader_1x04_P2.54mm_Vertical_ServoRow"
 SERVO_REFS = ("J12", "J13", "J14")
 SERVO_CRTYD = (-1.2, -1.815, 1.2, 9.435)
 
+# J6, the 2 x 16 through-hole IO array on the left edge (DESIGN_SPEC "Edge
+# allocation"): odd pins are the outer column (signal) at the board edge, even
+# pins the inner column (power/GND), pin 1 at the top.  Rotation 0 of
+# PinHeader_2x16_P2.54mm_Vertical already gives exactly that.
+#
+# GEOMETRY, and why the courtyard is trimmed.  The block is 5.08 mm across the
+# two pin columns; with 1.7 mm pads that is a 4.24 mm strip of copper.  It has
+# to fit between the board edge and the Ø8 mm grommet-flange keepouts of H1/H4
+# at x = -15.25, i.e. in x < -19.25 (the check uses MOUNT_KEEPOUT_R + 0.05, so
+# -19.30).  The stock courtyard is the plastic body + 0.5 mm on every side,
+# which leaves 0.13 mm of margin at 50 mm and none at all below it.  The board
+# instance therefore carries a courtyard trimmed to the body in X only (the Y
+# end margins are untouched): on the left there is nothing but the board edge
+# to keep clear of, and on the right the reserved silk band below does the
+# keeping-clear.  Trimming is honest here and only here -- it is the same
+# trade the servo rows make, and it is the board instance, not the library.
+IO_ARRAY = "J6"
+IO_ARRAY_SRC = ("/usr/share/kicad/footprints/Connector_PinHeader_2.54mm.pretty/"
+                "PinHeader_2x16_P2.54mm_Vertical.kicad_mod")
+IO_ARRAY_FP = "PinHeader_2x16_P2.54mm_Vertical_IOArray"
+IO_ARRAY_CRTYD = (-1.27, -1.78, 3.81, 39.88)    # footprint-local, y-down
+IO_ARRAY_EDGE = 0.4         # outer pad copper to Edge.Cuts (rule is 0.3)
+IO_ARRAY_LABEL_X = 0.25     # label column, right of the inner pad edge
+IO_ARRAY_LABEL_DY = 0.63    # signal label above / power label below the row
+IO_ARRAY_LABEL_SZ = 0.60    # = RULES["min_text_height"]; see silkscreen()
+IO_ARRAY_LABEL_CLR = 0.2    # reserved margin left and right of a label
+
 # per-pad silkscreen labels: ref -> {pad number: label}
 PAD_LABELS = {
     "J3":  ["CURR", "TX", "M4", "M3", "M2", "M1", "VBAT", "GND"],
-    "J6":  ["VCC", "TX", "RX", "GND"],
-    "J7":  ["VCC", "TX", "RX", "GND"],
-    "J9":  ["VCC", "SCL", "SDA", "GND"],
+    # J6 in pin order 1..32: odd = the signal (outer) column, even = the
+    # power/GND (inner) column.  Kept in one flat list so pad_labels() and the
+    # netlist row table index it the same way.
+    "J6":  ["T0", "5V", "R0", "G", "T1", "5V", "R1", "G",
+            "SDA", "3V3", "SCL", "G", "A44", "3V3", "A45", "G",
+            "A46", "3V3", "A47", "G", "A43", "3V3", "IO1", "G",
+            "IO21", "3V3", "IO27", "G", "IO28", "3V3", "IO31", "G"],
     "J10": ["SWCLK", "SWDIO", "GND"],
     "J12": ["S5", "S6", "S7", "S8"],
-    "J16": ["3V3", "GND", "IO1", "IO21", "IO27", "IO31",
-            "A43", "A44", "A45", "A46", "A47", "IO28"],
 }
 # whole-row labels (ref, text) placed at the row end instead of per pad
 ROW_LABELS = {"J13": "5V", "J14": "GND"}
 
+
+
+def localize_model(txt, name):
+    """Point the vendored footprint's (model ...) at a project-local STEP copy
+    (MARV_Packages.3dshapes/<name>.step), copying the KiCad model there if
+    missing, so the project stays self-contained like every other vendored
+    footprint (see LIBRARIES.md)."""
+    import shutil
+    m = re.search(r'\(model "([^"]+)"', txt)
+    if not m:
+        return txt
+    src = m.group(1).replace("${KICAD10_3DMODEL_DIR}", "/usr/share/kicad/3dmodels") \
+                    .replace("${KICAD9_3DMODEL_DIR}", "/usr/share/kicad/3dmodels")
+    dst_rel = "MARV_Packages.3dshapes/" + name + ".step"
+    dst = os.path.join(PRJ, dst_rel)
+    if not os.path.exists(dst) and os.path.exists(src):
+        shutil.copyfile(src, dst)
+    return txt.replace(m.group(1), "${KIPRJMOD}/" + dst_rel, 1)
 
 def vendor_servo_footprint():
     """write MARV_Packages/<SERVO_FP>: the stock 1x04 header with its
@@ -234,11 +286,52 @@ def vendor_servo_footprint():
             '\t\t(layer "F.CrtYd")\n\t)' % (x0, y0, x1, y1))
     i = txt.rindex("\n\t(pad ")
     txt = txt[:i] + rect + txt[i:]
+    txt = localize_model(txt, SERVO_FP)
     out = os.path.join(PRJ, "MARV_Packages.pretty", SERVO_FP + ".kicad_mod")
     old = open(out).read() if os.path.exists(out) else None
     if old != txt:
         open(out, "w").write(txt)
     return "MARV_Packages:" + SERVO_FP
+
+
+def vendor_io_array_footprint():
+    """write MARV_Packages/<IO_ARRAY_FP>: the stock 2x16 header with its
+    courtyard trimmed to the plastic body across the rows and its silkscreen
+    outline dropped, for the reasons in the IO_ARRAY comment above.  Same
+    treatment, and the same reason, as the servo rows: the board draws what it
+    needs at board level.  Pads, drills, fabrication layer and the 3D model
+    reference are untouched, so this is the stock part."""
+    txt = open(IO_ARRAY_SRC).read()
+    txt = re.sub(r'\(footprint "[^"]+"', '(footprint "%s"' % IO_ARRAY_FP,
+                 txt, 1)
+    txt = re.sub(r'\(descr "[^"]*"',
+                 '(descr "Through hole straight pin header, 2x16, 2.54mm '
+                 'pitch, double rows -- MARV V2 copy for the J6 IO array. The '
+                 'courtyard is trimmed to the plastic body across the rows '
+                 '(+-0 mm side margin instead of 0.5 mm) because the block '
+                 'sits between the board edge and the two grommet keepouts '
+                 'with nothing to spare, and the silkscreen outline is '
+                 'dropped because the row labels need that band; the board '
+                 'draws the end ticks and the pin-1 mark instead. Pads, '
+                 'drills, fabrication layer and 3D model are unchanged."',
+                 txt, 1)
+
+    def drop(m):
+        return "" if ('F.CrtYd' in m.group(0)
+                      or 'F.SilkS' in m.group(0)) else m.group(0)
+    txt = re.sub(r"\n\t\(fp_\w+\n.*?\n\t\)", drop, txt, flags=re.S)
+    x0, y0, x1, y1 = IO_ARRAY_CRTYD
+    rect = ('\n\t(fp_rect\n\t\t(start %s %s)\n\t\t(end %s %s)\n\t\t(stroke\n'
+            '\t\t\t(width 0.05)\n\t\t\t(type solid)\n\t\t)\n\t\t(fill no)\n'
+            '\t\t(layer "F.CrtYd")\n\t)' % (x0, y0, x1, y1))
+    i = txt.rindex("\n\t(pad ")
+    txt = txt[:i] + rect + txt[i:]
+    txt = localize_model(txt, IO_ARRAY_FP)
+    out = os.path.join(PRJ, "MARV_Packages.pretty", IO_ARRAY_FP + ".kicad_mod")
+    old = open(out).read() if os.path.exists(out) else None
+    if old != txt:
+        open(out, "w").write(txt)
+    return "MARV_Packages:" + IO_ARRAY_FP
 
 
 def mm(v):
@@ -370,7 +463,8 @@ class Builder:
         self.fps = {}
         self.geom = {}
         self.placed = []        # (ref, courtyard rect in board coords)
-        self.texts = []         # board level silkscreen text
+        self.texts = []         # board level silkscreen text, movable
+        self.pinned = []        # board level silkscreen text, fixed position
         self.problems = []
         self.notes = []
 
@@ -426,13 +520,15 @@ class Builder:
     def load_components(self, comps, nets):
         self.nets = [(n, [(r, p) for r, p in nodes]) for n, nodes in nets]
         libs = footprint_libs()
-        servo = vendor_servo_footprint()
+        vendored = {r: vendor_servo_footprint() for r in SERVO_REFS}
+        vendored[IO_ARRAY] = vendor_io_array_footprint()
         for ref in sorted(comps):
             c = comps[ref]
             fpid = c["fp"]
-            if ref in SERVO_REFS and fpid != servo:
+            if ref in vendored and fpid != vendored[ref]:
                 raise SystemExit("%s: schematic says %s, the board needs the "
-                                 "courtyard-trimmed %s" % (ref, fpid, servo))
+                                 "courtyard-trimmed %s"
+                                 % (ref, fpid, vendored[ref]))
             lib, name = fpid.split(":")
             if lib not in libs:
                 raise SystemExit("no such footprint library: %s" % lib)
@@ -741,6 +837,16 @@ class Builder:
                 return (x, y + math.copysign(out, y))
         return fallback
 
+    def segment(self, a, b, layer=None, width=0.12):
+        s = pcbnew.PCB_SHAPE(self.board)
+        s.SetShape(pcbnew.SHAPE_T_SEGMENT)
+        s.SetStart(to_kicad(*a))
+        s.SetEnd(to_kicad(*b))
+        s.SetLayer(pcbnew.F_SilkS if layer is None else layer)
+        s.SetWidth(mm(width))
+        self.board.Add(s)
+        return s
+
     def shrink_courtyard(self, ref, x0, y0, x1, y1):
         """replace the F.CrtYd outline of a footprint instance by a rectangle
         (footprint local coordinates)."""
@@ -793,7 +899,7 @@ class Builder:
             self.board.Add(s)
 
     def text(self, s, x, y, rot=0, size=LABEL_TEXT, thick=LABEL_THICK,
-             layer=None, just=0):
+             layer=None, just=0, pin=False):
         t = pcbnew.PCB_TEXT(self.board)
         t.SetText(s)
         t.SetLayer(pcbnew.F_SilkS if layer is None else layer)
@@ -804,8 +910,35 @@ class Builder:
         if just:
             t.SetHorizJustify(just)
         self.board.Add(t)
-        self.texts.append(t)
+        # a pinned label is on a grid that was computed to fit (the J6 array
+        # rows): silk_fix must not move it, only keep everything else off it
+        (self.pinned if pin else self.texts).append(t)
         return t
+
+    def text_extent(self, s, size=LABEL_TEXT, thick=LABEL_THICK):
+        """(width, height) in mm of the bounding box a silk label will have"""
+        t = pcbnew.PCB_TEXT(self.board)
+        t.SetText(s)
+        t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size)))
+        t.SetTextThickness(mm(thick))
+        bb = t.GetBoundingBox()
+        return tomm(bb.GetWidth()), tomm(bb.GetHeight())
+
+    def io_array_labels(self):
+        """(text, x, y) of every J6 row caption, left aligned.  floorplan()
+        reserves their boxes and silkscreen() draws them from the same list,
+        so the reserved area is exactly the silk it protects."""
+        out = []
+        xs = sorted({round(tomm(p.GetPosition().x), 3) - CX
+                     for p in self.fps[IO_ARRAY].Pads()})
+        x = xs[-1] + 0.85 + IO_ARRAY_LABEL_X
+        for pad in self.fps[IO_ARRAY].Pads():
+            num = int(pad.GetNumber())
+            y = CY - tomm(pad.GetPosition().y)
+            out.append((PAD_LABELS[IO_ARRAY][num - 1], x,
+                        y + (IO_ARRAY_LABEL_DY if num % 2
+                             else -IO_ARRAY_LABEL_DY)))
+        return out
 
     def pad_labels(self, ref, labels, dx, dy, rot, just=0):
         """put one silk label per pad, offset (dx, dy) from the pad centre."""
@@ -867,12 +1000,19 @@ class Builder:
                     and it.GetClass() != "PCB_TEXT"):
                 add_shape(it)
 
+        # the pinned labels never move; they are obstacles for everything else
+        done = []
+        for t in self.pinned:
+            bb = t.GetBoundingBox()
+            done.append((tomm(bb.GetLeft()) - CX - clr,
+                         CY - tomm(bb.GetBottom()) - clr,
+                         tomm(bb.GetRight()) - CX + clr,
+                         CY - tomm(bb.GetTop()) + clr))
         items = [(t, None) for t in self.texts]
         for ref in REF_ON_SILK:
             fp = self.fps.get(ref)
             if fp is not None and fp.Reference().IsVisible():
                 items.append((fp.Reference(), ref))
-        done = []
         hidden = []
         for obj, ref in items:
             base = obj.GetPosition()
@@ -1023,6 +1163,18 @@ class Builder:
             if near:
                 print("  sens  %-4s to %s" % (li, "  ".join(
                     "%s %.1f" % (s, d) for d, s in sorted(near))))
+        tps = sorted((r for r in rect if TEST_POINTS.match(r)),
+                     key=lambda r: int(r[2:]))
+        worst = []
+        for r in tps:
+            d = min(bbox_gap(rect[r], rect[s]) for s in SENSORS if s in rect)
+            worst.append((d, r))
+            if d > TP_NEAR_MM:
+                out.append("%s is %.1f mm from the nearest sensor "
+                           "(limit %.1f mm)" % (r, d, TP_NEAR_MM))
+        if worst:
+            print("  probe %2d test points, worst %s %.1f mm from a sensor"
+                  % (len(worst), max(worst)[1], max(worst)[0]))
         return out
 
     def report_area(self):
@@ -1059,18 +1211,19 @@ def floorplan(B, comps):
     B.anchor("J12", 90, ("padc", servo_x), ("padc", -TH + 5.08))     # signal
 
     # ---------------- LEFT edge ----------------
-    # 1x4 pad rows, pin 1 (VCC) at the top of each row
-    for ref, y in (("J6", 12.0), ("J7", 0.6), ("J9", -10.8)):
-        B.anchor(ref, 270, ("padmin", -E), ("padc", y))
+    # J6 IO array, the whole left edge: 2 x 16 on 2.54 mm, odd pins outside.
+    # The courtyard is trimmed first because shrink_courtyard() refuses to work
+    # on a rotated footprint and because g() caches the geometry per rotation.
+    B.anchor(IO_ARRAY, 0, ("padmin", -H + IO_ARRAY_EDGE), ("padc", 0.0))
+    j6 = dict(B.placed)[IO_ARRAY]
 
     # ---------------- RIGHT edge ----------------
-    # microSD: card opening towards +X, contacts 0.3 mm in from the edge
+    # microSD: card opening towards +X, contacts 0.3 mm in from the edge.
+    # Nothing else: the spare-IO block that used to sit under it is part of the
+    # J6 array now, which leaves the lower right corner free for passives.
     B.anchor("J11", 270, ("padmax", H - EDGE_COPPER - 0.1),
              ("cymax", MOUNT - MOUNT_KEEPOUT_R - 0.35))
     j11 = dict(B.placed)["J11"]
-    # spare IO 2x6, rotated so the 6 pin direction runs along X
-    B.anchor("J16", 90, ("padmax", E), ("cymax", j11[1] - 0.7))
-    j16 = dict(B.placed)["J16"]
 
     # ---------------- TOP edge ----------------
     B.anchor("J4", 180, ("org", 0.0), ("org", H - 3.65))   # USB-C, face flush
@@ -1101,24 +1254,40 @@ def floorplan(B, comps):
     #   (pad 3) are both on that side of the RPU package.
     B.place("U26", -8.5, -H + 8.2, 0)
     B.place("L3", -8.5, -H + 13.2, 0)
-    l2x = -H + 8.6
+    # L2 sits one label width further from the edge than it used to: the J6
+    # row captions run down the whole left edge now, and at -H + 8.6 the
+    # inductor body covered the A43 / IO1 rows.
+    l2x = -H + 9.5
     B.place("L2", l2x, -7.2, 0)
     B.place("U7", l2x + 4.5, -7.2, 0)
+    # U24, the QSPI flash/PSRAM socket, is anchored rather than packed for the
+    # same reason the switchers are: DESIGN_SPEC puts it "adjacent to the
+    # MCU's QSPI pads" (U20 pins 70-75, the top edge of the QFN at y = +4.95),
+    # and that is a circuit requirement, not a preference.  With the ten
+    # sensor test points now competing for the north strip the packer put it
+    # 18 mm away in the bottom-right corner; anchored here its nearest pad is
+    # ~6 mm from the QSPI pads.  C62/C63/R35 still pack around it.
+    B.place("U24", 6.5, 11.5, 0)
 
     j12 = dict(B.placed)["J12"]
 
     # ---------------- reserved bands (silk pad labels) ----------------
     reserved = [
         (-18.5, -H + 3.4, -0.5, -H + 6.2),          # J3 labels
-        (-H + 3.4, 8.0, -H + 5.9, 16.0),            # J6 labels
-        (-H + 3.4, -3.4, -H + 5.9, 4.6),            # J7 labels
-        (-H + 3.4, -14.8, -H + 5.9, -6.8),          # J9 labels
         (-H + 4.5, H - 6.2, -H + 14.5, H - 3.4),    # J10 labels
         (-0.5, j12[3] - 0.1, 12.0, j12[3] + 3.0),   # servo signal row labels
-        (10.5, j16[1] - 3.8, H - 1.0, j16[1] - 0.2),  # J16 pin labels
         (11.3, -H + 0.5, 14.5, -H + 5.5),           # J13/J14 row labels
         (-H + 2.8, -H + 1.5, -H + 10.2, -H + 5.4),  # board name / ESC label
     ]
+    # J6 row captions: 32 small boxes rather than one slab down the whole left
+    # edge.  Most of them are two or three characters ("G", "5V", "3V3"); only
+    # the four IOnn rows are wide, and they are at the bottom of the block,
+    # away from the analog island.  Reserving the slab instead cost the island
+    # the room the sensor test points need.
+    for s, lx, ly in B.io_array_labels():
+        w, h = B.text_extent(s, IO_ARRAY_LABEL_SZ)
+        reserved.append((lx - IO_ARRAY_LABEL_CLR, ly - h / 2 - 0.05,
+                         lx + w + IO_ARRAY_LABEL_CLR, ly + h / 2 + 0.05))
     B.build_grid(reserved)
 
     # ---------------- switcher loops ----------------
@@ -1188,10 +1357,17 @@ def floorplan(B, comps):
         "mux":      (["U25", "C70", "C71", "C72", "R42", "R43", "R44", "R45",
                       "R46", "R47"], (-13.0, -2.0),
                      left_mid + ring_w + left_lo),
-        # the analog island: the three MEMS sensors, their decoupling and the
+        # The analog island: the three MEMS sensors, their decoupling and the
         # LDO that feeds them (DESIGN_SPEC: "U12 and the sensors on the
-        # ground-referenced analog island"), kept IND_SENSOR_MM clear of L2/L3
-        "sens":     (["U21", "U22", "U23", "U12", "C25", "C26", "C50", "C51",
+        # ground-referenced analog island"), kept IND_SENSOR_MM clear of L2/L3.
+        # It is packed in two passes with the test points in between: the four
+        # ICs first, then TP1-TP10 against the sensor each one probes, then the
+        # decoupling.  Packing the decoupling first leaves no 2 mm hole next to
+        # a sensor for a test point, and a test point that is not at its part
+        # is a stub on the SPI bus - see place_testpoints().
+        "sens_ic":  (["U21", "U22", "U23", "U12"],
+                     (-15.0, 7.0), left_up + north_w),
+        "sens":     (["C25", "C26", "C50", "C51",
                       "C52", "C53", "C54", "C55", "C56", "C57", "C58", "C59",
                       "C60", "C61", "R48", "R50", "R51"],
                      (-15.0, 7.0), left_up + north_w),
@@ -1205,8 +1381,12 @@ def floorplan(B, comps):
     assigned.update({r: "u7" for r, _ in u7_loop})
     assigned.update({r: "buck5" for r, _ in buck_loop})
     fixed = {r for r, _ in B.placed}
+    # the test points are packed after every cluster, into whatever the sensor
+    # cluster left free, so they must not be swept into a cluster here
+    tps = sorted((r for r in B.fps if TEST_POINTS.match(r)),
+                 key=lambda r: int(r[2:]))
     for ref in sorted(B.fps):
-        if ref in assigned or ref in fixed:
+        if ref in assigned or ref in fixed or ref in tps:
             continue
         votes = {}
         for net, nodes in B.nets:
@@ -1236,8 +1416,77 @@ def floorplan(B, comps):
             print("  region %-8s %6.0f mm2 total, %6.0f mm2 free"
                   % (nm, tot, fr))
 
-    # order matters: the groups that have only one place to go come first
-    order = ["mcu_ring", "sens", "flash", "usb", "mux", "i2c",
+    # ---------------- test points ----------------
+    # TP1-TP10 are 1 x 1 mm pads on the sensor SPI bus, its three chip selects
+    # and its four interrupts.  A test point away from the part it probes is a
+    # stub on a 10 MHz bus, so each one is seeded on the sensor whose net it
+    # carries (the three shared bus nets go to the IMU) and bounded to a halo
+    # around it; check_rules() then holds every one within TP_NEAR_MM of a
+    # sensor.  They are packed IMMEDIATELY AFTER the sens cluster and before
+    # any other group, because by the time the rest of the board is packed
+    # there is nothing left next to the sensors.
+    def place_testpoints():
+        far = 0.0
+        # owner = the sensor whose net this pad carries; the three shared bus
+        # nets (SCK/MOSI/MISO) touch all three, and those go to the IMU.
+        own_of = {}
+        for r in tps:
+            owner = SENSORS[0]
+            for net, nodes in B.nets:
+                if (r, "1") in nodes:
+                    own = [s for s in SENSORS if any(n == s for n, _ in nodes)]
+                    if len(own) == 1:
+                        owner = own[0]
+                    break
+            own_of[r] = owner
+        # round robin over the sensors rather than TP1..TP10 in order: six of
+        # the ten belong to the IMU, and taken in order they would use up every
+        # free cell on the island before the barometer and the high-g pad get
+        # one.  One pad per sensor per pass keeps all three probeable.
+        queue = {s: [r for r in tps if own_of[r] == s] for s in SENSORS}
+        order_tp = []
+        while any(queue.values()):
+            for s in SENSORS:
+                if queue[s]:
+                    order_tp.append(queue[s].pop(0))
+        for r in order_tp:
+            owner = own_of[r]
+            seed = B.pos(owner)
+            # First choice: a halo of TP_NEAR_MM/sqrt(2) around the owner, so
+            # that anything inside it is within TP_NEAR_MM of that sensor even
+            # corner to corner.  Then the same halo at full reach, where the
+            # corners are further than TP_NEAR_MM but place_near always takes
+            # the spot NEAREST the sensor, so only a pad that has nowhere
+            # closer lands out there - and check_rules() is what says whether
+            # it did.  Then the union over all three sensors.
+            tight = TP_NEAR_MM / math.sqrt(2.0)
+            for bounds in ([b for b in B.halo([owner], tight)],
+                           [b for b in B.halo([owner], TP_NEAR_MM)],
+                           [b for s in SENSORS
+                            for b in B.halo([s], TP_NEAR_MM)]):
+                d = B.place_near(r, seed, (0,), bounds=bounds)
+                if d is not None:
+                    break
+            if d is None:
+                # no scattering: a test point that cannot sit at its sensor is
+                # a placement failure, not a pad to drop somewhere else
+                B.problems.append("testpoints: no room for %s at %s"
+                                  % (r, owner))
+                B.place(r, -B.H + 4, -B.H - 35 - 3 * int(r[2:]), 0)
+            else:
+                far = max(far, d)
+        print("  cluster %-9s %2d parts, seeded on the part they probe, max "
+              "spread %.1f mm" % ("testpts", len(tps), far))
+
+    # Order matters: the groups that have only one place to go come first.
+    # "mux" moved ahead of the analog island in the IO-array revision.  The
+    # island is over-subscribed once the ten test points are in it, so its
+    # decoupling spills out of left_up through the grown-bounds fallback; with
+    # the mux packed afterwards that spill took left_mid and pushed U25 16 mm
+    # to the bottom of the board.  U25 only fits in left_mid, the sensor
+    # decoupling can spill anywhere near its part, so the mux books its room
+    # first (U25 5.1 mm from its seed instead of 16.5 mm).
+    order = ["mcu_ring", "mux", "sens_ic", "sens", "flash", "usb", "i2c",
              "buck5", "u7", "v5bulk", "adc_div", "led",
              "sd_byp", "sd_pu"]
     for name in order:
@@ -1259,6 +1508,8 @@ def floorplan(B, comps):
                   % len(refs))
         else:
             B.cluster(name, refs, seed, bounds)
+        if name == "sens_ic" and tps:
+            place_testpoints()
         if os.environ.get("SETUP_PCB_BOX") == name:
             bx = [float(v) for v in os.environ["SETUP_PCB_BOXR"].split(",")]
             for ref, rect in B.placed:
@@ -1318,25 +1569,36 @@ def silkscreen(B):
         p = pads[-1].GetPosition()
         B.text(ROW_LABELS[ref], tomm(p.x) - CX + 1.6, CY - tomm(p.y), 0,
                just=-1)
-    # left edge: labels to the right of the pads
-    for ref in ("J6", "J7", "J9"):
-        B.pad_labels(ref, PAD_LABELS[ref], 1.6, 0.0, 0, just=-1)
+    # left edge, J6 IO array.  There is no room for a label beside each pad:
+    # the two pin columns are 2.54 mm apart and only ~4 mm of board separates
+    # the inner column from the H1/H4 grommet keepouts.  Every ROW therefore
+    # gets a two-line caption in a single band to the right of the block - the
+    # signal name (odd, outer pin) above the row centreline, its power/GND pin
+    # (even, inner) below it - so the block reads as a table.  The geometry is
+    # exact rather than searched: at 0.60 mm (the DRC text minimum) a label
+    # bounding box is 1.12 mm tall, two of them 1.26 mm apart inside a row
+    # leave 0.14 mm, and the next row's caption another 0.16 mm, so the labels
+    # are pinned and silk_fix keeps the other silk off them instead of
+    # shuffling them.  The vendored footprint has no silkscreen outline of its
+    # own (vendor_io_array_footprint: it would eat the label band), so the
+    # board draws the two end ticks and the pin-1 dot here instead.
+    fp = B.fps[IO_ARRAY]
+    xs = sorted({round(tomm(p.GetPosition().x), 3) - CX for p in fp.Pads()})
+    ys = sorted({round(CY - tomm(p.GetPosition().y), 3) for p in fp.Pads()})
+    for s, lx, ly in B.io_array_labels():
+        B.text(s, lx, ly, 0, size=IO_ARRAY_LABEL_SZ, just=-1, pin=True)
+    for y in (ys[-1] + 1.1, ys[0] - 1.1):
+        B.segment((xs[0] - 0.85, y), (xs[-1] + 0.85, y))
+    dot = pcbnew.PCB_SHAPE(B.board)                     # pin-1 mark
+    dot.SetShape(pcbnew.SHAPE_T_CIRCLE)
+    dot.SetCenter(to_kicad(xs[0], ys[-1] + 2.0))
+    dot.SetEnd(to_kicad(xs[0] + 0.25, ys[-1] + 2.0))
+    dot.SetLayer(pcbnew.F_SilkS)
+    dot.SetWidth(mm(0.25))
+    dot.SetFilled(True)
+    B.board.Add(dot)
     # top edge: labels below the pads
     B.pad_labels("J10", PAD_LABELS["J10"], 0.0, -2.9, 90)
-    # right edge: spare IO block - 12 pins on a 2.54 mm grid leave no room
-    # between the pads, so the labels go in two rows under the block, the
-    # nearer row belonging to the nearer pin row
-    fp = B.fps["J16"]
-    pads = list(fp.Pads())
-    ys = sorted({round(tomm(p.GetPosition().y), 2) for p in pads})
-    block = min(r[1] for ref, r in B.placed if ref == "J16")
-    for pad in pads:
-        idx = int(pad.GetNumber()) - 1
-        px = tomm(pad.GetPosition().x) - CX
-        py = round(tomm(pad.GetPosition().y), 2)
-        row = 0 if py == ys[-1] else 1      # ys[-1] = lowest on the board
-        B.text(PAD_LABELS["J16"][idx], px - 1.3, block - 1.3 - 1.5 * row, 0,
-               size=LABEL_SMALL)
 
 
 # --------------------------------------------------------------------------

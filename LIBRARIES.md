@@ -5,13 +5,18 @@ normally; KiCad reads `sym-lib-table` and `fp-lib-table` automatically, so there
 is nothing to install globally.
 
 Every footprint the board uses that is not a plain passive now resolves inside
-the project: `MARV_Packages.pretty/` holds the footprints, and each one points at
-a STEP file in `MARV_Packages.3dshapes/` via `${KIPRJMOD}`. Seven of those
-footprints are byte-for-byte copies of official KiCad footprints, vendored so the
-project carries its own 3D models; their pads, courtyards and silkscreen are
-unchanged from the KiCad originals (only `descr`, the `(model ...)` node and the
-per-item uuids differ). Five further footprints are project-authored solder-pad
-rows and one mechanical hole, which by design carry no 3D model at all. Model provenance, licences and SHA256 sums:
+the project: `MARV_Packages.pretty/` holds the footprints, and all of them
+point at a STEP file in `MARV_Packages.3dshapes/` via `${KIPRJMOD}`. Eight of those
+footprints are byte-for-byte copies of official KiCad footprints, vendored so
+the project carries its own 3D model (seven of them) or a courtyard/silkscreen
+trimmed for a tight edge fit (the IO array); their pads are unchanged from the
+KiCad originals (only `descr`, the `(model ...)` node where repointed,
+courtyard/silkscreen where noted, and the per-item uuids differ). Two further
+footprints are project-authored solder-pad rows (`PadRow_1x03/08_P2.00mm`, for
+J3 and J10) and one is a mechanical hole (`MountingHole_4.0mm_Grommet`), which
+by design carry no 3D model at all — as does `TestPoint:TestPoint_Pad_1.0x1.0mm`
+(TP1-TP10), used directly from the KiCad official library rather than vendored.
+Model provenance, licences and SHA256 sums:
 [MARV_Packages.3dshapes/PROVENANCE.md](MARV_Packages.3dshapes/PROVENANCE.md).
 
 ## Symbols
@@ -47,8 +52,10 @@ All rows below are `MARV_Packages:<name>`.
 | U25 | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm` | vendored KiCad official | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm.step` | FreeCAD-generated (`tools/3d/gen_rux0012a_tps2121.py`) from TI drawing 4224010/A; **height 0.9 mm is assumed — the drawing gives only "1 MAX"** |
 | D20 | `LED_WS2812B-2020_PLCC4_2.0x2.0mm` | vendored KiCad official | `LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | FreeCAD-generated (`tools/3d/gen_ws2812c_2020.py`) from the WS2812C-2020 datasheet page 2; this KiCad install ships no 2020 body even though its own footprint references one |
 | J3 | `PadRow_1x08_P2.00mm` | project-authored | — (pads only) | none by design |
-| J6, J7, J9 | `PadRow_1x04_P2.00mm` | project-authored | — (pads only) | none by design |
 | J10 | `PadRow_1x03_P2.00mm` | project-authored | — (pads only) | none by design |
+| J6 | `PinHeader_2x16_P2.54mm_Vertical_IOArray` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`) | `PinHeader_2x16_P2.54mm_Vertical_IOArray.step` (project copy of KiCad's PinHeader_2x16 model) | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_2x16_P2.54mm_Vertical.step` |
+| J12-J14 | `PinHeader_1x04_P2.54mm_Vertical_ServoRow` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`), courtyard trimmed so three rows abut on the 2.54 mm grid | `PinHeader_1x04_P2.54mm_Vertical_ServoRow.step` | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x04_P2.54mm_Vertical.step` |
+| TP1-TP10 | `TestPoint:TestPoint_Pad_1.0x1.0mm` | KiCad official, used directly (not vendored into `MARV_Packages.pretty`) | — (pads only) | none by design |
 | H1-H4 | `MountingHole_4.0mm_Grommet` | project-authored | — (mechanical) | none by design |
 | L3 | `L_Coilcraft_XxL4030` | vendored KiCad official (shared with L2) | `L_Coilcraft_XxL4030.step` | Coilcraft manufacturer model (XGL4030 series body) |
 | J4 | `USB_C_Receptacle_HRO_TYPE-C-31-M-12` | vendored KiCad official | `USB_C_Receptacle_HRO_TYPE-C-31-M-12.step`, `offset 0 -1.05 0`, `rotate 0 0 180` | **EasyEDA/LCSC-contributed, not HRO's**; check against the HRO drawing before trusting it mechanically |
@@ -57,18 +64,24 @@ All rows below are `MARV_Packages:<name>`.
 
 ### Project-authored pad rows and the grommet hole
 
-`PadRow_1x03/04/08_P2.00mm` are one family: N SMD pads, **1.4 x 2.2 mm oval,
+`PadRow_1x03/08_P2.00mm` are one family — just the two members now that the IO
+array replaced the 1x04 solder-pad ports: N SMD pads, **1.4 x 2.2 mm oval,
 2.00 mm pitch**, on **F.Cu and F.Mask only** (no paste — these are hand/reflow
 wire-and-flex landings, not a connector land), a silkscreen box offset 0.45 mm
 clear of the pads, a filled 0.5 mm silk **pin-1 dot** 0.8 mm outside pad 1, an
 F.Fab copy and an F.CrtYd rectangle 0.25 mm outside everything. Overall pad field
 is `(N-1) x 2.00 + 1.4` mm wide by 2.2 mm tall. They carry **no 3D model on
-purpose**; `tools/audit_footprints.py --no-3d-ok` (default `^(PadRow_|MountingHole_)`)
-reports them OK with "pads only". Per-pad function labels are *not* in the
-footprint — add them as silkscreen text at layout, and mark pad 1, because the
-same footprint serves J3 (ESC), J6/J7/J9 (ports) and J10 (SWD). The 1x02 member
-of the family (`PadRow_1x02_P2.00mm`) is gone with the buzzer that was its only
-user; regenerate it from the same rules if a two-pad row is ever needed again.
+purpose**; `tools/audit_footprints.py --no-3d-ok` (default
+`^(PadRow_|MountingHole_|TestPoint_)`) reports them OK with "pads only".
+Per-pad function labels are *not* in the footprint — add them as silkscreen
+text at layout, and mark pad 1, because the same footprint serves J3 (ESC,
+1x08) and J10 (DBG, 1x03) — the only two ports left that mate with something
+fixed and pad-shaped. The 1x04 member (`PadRow_1x04_P2.00mm`, formerly J6/J7/J9)
+and the 1x02 member (`PadRow_1x02_P2.00mm`, gone with the buzzer before it) are
+both retired; regenerate either from the same rules if a solder-pad row of that
+size is ever needed again. Every other external signal now leaves on the J6 IO
+array (`PinHeader_2x16_P2.54mm_Vertical_IOArray`, below) or the servo block
+(`PinHeader_1x04_P2.54mm_Vertical_ServoRow`) instead of a solder pad row.
 
 **J3 pitch is an assumption.** MicoAir publishes no pad drawing for the AM32
 4-in-1 ESC's FC row, so 2.00 mm is a best guess. The pad **order** (CURR, TX, M4,
@@ -191,6 +204,19 @@ settles in seconds:
 - The ADXL375 footprint follows Figure 38 of the Rev. B datasheet rather than
   KiCad's generic 3 x 5 mm LGA footprint. Place the sensor close to a rigid PCB
   mounting point and keep its orientation marker visible.
+- J6 IO array (`PinHeader_2x16_P2.54mm_Vertical_IOArray`) is a vendored copy of
+  KiCad's stock `PinHeader_2x16_P2.54mm_Vertical` (`descr` node in the
+  footprint file has the full rationale). Two changes, pads/drills/fab
+  layer/3D model otherwise untouched: the **courtyard is trimmed to the
+  plastic body across the two pin columns** (+-0 mm side margin instead of the
+  stock 0.5 mm) because the block has to fit between the board edge and the
+  Ø8 mm H1/H4 grommet-flange keepouts with nothing to spare — `tools/setup_pcb.py`
+  computes this as a 4.24 mm copper strip that needs `x < -19.30` mm, which the
+  stock courtyard does not clear below 50 mm board size; and the **silkscreen
+  outline is dropped** because the per-row labels (silk T0/R0/T1/R1/SDA/SCL/...,
+  `PAD_LABELS["J6"]`) need that band — the board draws the end ticks and the
+  pin-1 mark at board level instead. Its 3D model is a project copy in
+  `MARV_Packages.3dshapes`, like every other vendored footprint on this page.
 - U26 AP63205WU (VBAT buck): keep the C73/C74 input loop and the SW node tight —
   VIN, GND and the SW/L3 loop are the high-di/dt path, and the datasheet asks for
   vias under the input/output capacitor grounds. FB (pin 1) is a *sense* input on
