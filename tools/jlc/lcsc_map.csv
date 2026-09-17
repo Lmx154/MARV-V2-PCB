@@ -1,33 +1,18 @@
 spec,footprint,lcsc,comment,jlc_package,qty,refs,ref_override,note
-AP63205WU-7,Package_TO_SOT_SMD:TSOT-23-6,C2071056,AP63205WU-7,,1,U26,,
-10u / 50 V X5R 0805 GRM21BR61H106KE43,Capacitor_SMD:C_0805_2012Metric,C440198,10uF 50V X5R 10%,,1,C73,,"exact spec MPN, and it is Basic"
-100n / 50 V X7R 0402,Capacitor_SMD:C_0402_1005Metric,C307331,100nF 50V X7R 10%,,2,"C74,C75",,
-100k / 1%,Resistor_SMD:R_0402_1005Metric,C25741,100k 1% 0402,,2,"R27,R52",,Basic; same part as the 100k line
-4.7u,MARV_Packages:L_Changjiang_FTC404030S,C39676083,4.7uH FTC404030S4R7MGCA,,1,L3,L3,"Isat 6.0 A worst case (30% drop), Irms 4.0 A (40 C), DCR 46 mOhm max; replaces XGL4030-472MEC (357 in stock at $7.82)"
-22u / 25 V X5R 0805 GRM21BR61E226ME44,Capacitor_SMD:C_0805_2012Metric,C45783,22uF 25V X5R 20%,,3,"C76,C77,C80",,spec MPN C86816 has 12 in stock; this Basic part replaces it
-32.4k / 1%,Resistor_SMD:R_0402_1005Metric,C22369333,32.4k 1% 0402,,1,R42,,no Basic 32.4k; cheapest in stock
-10k / 1%,Resistor_SMD:R_0402_1005Metric,C25744,10k 1% 0402,,5,"R28,R29,R43,R45,R47",,Basic; same part as the 10k line
-45.3k / 1%,Resistor_SMD:R_0402_1005Metric,C137977,45.3k 1% 0402,,1,R44,,no Basic 45.3k; cheapest in stock
-TPS2121RUXR,MARV_Packages:Texas_VQFN-HR-12_2x2.5mm_P0.5mm,C485916,TPS2121RUXR,,1,U25,,
-100n / 16 V X7R,Capacitor_SMD:C_0402_1005Metric,C1525,100nF 16V X7R 10%,,28,"C30,C31,C32,C33,C34,C35,C36,C37,C38,C40,C42,C43,C44,C48,C49,C50,C52,C54,C56,C58,C60,C62,C64,C70,C71,C72,C78,C79",,
-80.6k / 1%,Resistor_SMD:R_0402_1005Metric,C2998147,80.6k 1% 0402,,1,R46,,no Basic 80.6k; cheapest in stock
+100k / 1%,Resistor_SMD:R_0402_1005Metric,C25741,100k 1% 0402,,3,"R7,R27,R52",,"Basic; same part as the 100k line (Q1 gate pull-down, VBAT sense top, U7 EN)"
+AP63203WU-7,Package_TO_SOT_SMD:TSOT-23-6,C780769,AP63203WU-7,,1,U7,,"fixed 3.3 V / 2 A synchronous buck, TSOT26; JLC Extended (no Basic synchronous buck exists)"
+AO3401A,Package_TO_SOT_SMD:SOT-23,C15127,AO3401A P-MOSFET -30V -4A,,1,Q1,,"JLC Basic; the 5V_IN side of the OR (drain 5V_IN, source V5_SYS, gate USB_VBUS)"
+1N5819WS,Diode_SMD:D_SOD-323,C191023,1N5819WS Schottky 40V 1A,,1,D1,,"JLC Basic; the USB side of the OR (anode USB_VBUS, cathode V5_SYS)"
+4.7u,MARV_Packages:L_Changjiang_FTC404030S,C39676083,4.7uH FTC404030S4R7MGCA,,1,L2,L2,"Isat 6.0 A worst case (30% drop), Irms 4.0 A (40 C), DCR 46 mOhm max; AP63203 Sec 10 licenses 2.2-10 uH, and this is the part the removed AP63205 stage already sourced"
+10k / 1%,Resistor_SMD:R_0402_1005Metric,C25744,10k 1% 0402,,2,"R28,R29",,Basic; same part as the 10k line
+100n / 16 V X7R,Capacitor_SMD:C_0402_1005Metric,C1525,100nF 16V X7R 10%,,27,"C9,C13,C30,C31,C32,C33,C34,C35,C36,C37,C38,C40,C42,C43,C44,C48,C49,C50,C52,C54,C56,C58,C60,C62,C64,C78,C79",,
 USB_C_PROGRAM_POWER,MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12,C165948,USB-C TYPE-C-31-M-12,,1,J4,,
 5.1k / 1%,Resistor_SMD:R_0402_1005Metric,C25905,5.1k 1% 0402,,2,"R4,R5",,Basic
 1u / 10 V X7R 0402,Capacitor_SMD:C_0402_1005Metric,C52923,1uF 25V X5R 10%,,10,"C7,C25,C26,C51,C53,C55,C57,C59,C61,C63",,X5R not X7R; 25V rating improves DC-bias vs the 10V spec
-TPS62913RPUR,MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm,C5189914,TPS62913RPUR,,1,U7,,
-2.2u / Isat 5.5 A (30 %),MARV_Packages:L_Changjiang_FTC303020D,C7423318,2.2uH FTC303020D2R2MBCA,,1,L2,L2,"Isat 5.5 A worst case (30% drop) clears the TPS62913 ~4.5 A limit; Irms 4.3 A (40 C), DCR 45 mOhm max; XGL3020 is not on JLC"
-8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv),Inductor_SMD:L_0603_1608Metric,C3764407,BLE18PS080SN1D,,1,FB1,,
-10u / 10 V X7S 0603,Capacitor_SMD:C_0603_1608Metric,C96446,10uF 25V X5R 20%,,2,"C8,C9",,X5R not X7S; no Basic X7S exists in 0603
-2.2n / 50 V X7R,Capacitor_SMD:C_0402_1005Metric,C1531,2.2nF 50V X7R 10%,,1,C17,,
 100u / 6.3 V polymer,Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B,C79109,100uF 6.3V polymer 35mR,,1,C19,,"exact spec MPN 6TPE100MAZB, ESR 35mR <= 40mR"
-22u / 10 V X5R 0603 GRM188R61A226ME15,Capacitor_SMD:C_0603_1608Metric,C86295,22uF 10V X5R 20%,,5,"C10,C11,C12,C23,C24",,no Basic 22uF 0603 above 6.3V
-470n / 16 V X7R 0402,Capacitor_SMD:C_0402_1005Metric,C471404,470nF 16V X7R 10%,,1,C13,,no Basic/Preferred 470nF in 0402
-10k / 0.1%,Resistor_SMD:R_0402_1005Metric,C190095,10k 0.1% 25ppm 0402 RT0402BRD0710KL,,1,R7,,"U7 FB divider top; Yageo RT0402BRD07 thin film, same series as R8 so the RATIO tracks"
-3.16k / 0.1%,Resistor_SMD:R_0402_1005Metric,C852759,3.16k 0.1% 25ppm 0402 RT0402BRD073K16L,,1,R8,,U7 FB divider bottom; 0.8 x (1 + 10k/3.16k) = 3.3316 V
-6.04k / 1%,Resistor_SMD:R_0402_1005Metric,C25913,6.04k 1% 0402,,1,R9,,no Basic 6.04k; cheapest in stock (C97819 has 26x the stock at +$0.0008)
-100k,Resistor_SMD:R_0402_1005Metric,C25741,100k 1% 0402,,1,R10,,Basic
+22u / 10 V X5R 0603 GRM188R61A226ME15,Capacitor_SMD:C_0603_1608Metric,C86295,22uF 10V X5R 20%,,2,"C10,C11",,no Basic 22uF 0603 above 6.3V
+100k,Resistor_SMD:R_0402_1005Metric,C25741,100k 1% 0402,,1,R10,,Basic; MCU_RUN pull-up
 TPS7A2033PDBVR,Package_TO_SOT_SMD:SOT-23-5,C2862740,TPS7A2033PDBVR,,1,U12,,
-USBLC6-2SC6,Package_TO_SOT_SMD:SOT-23-6,C2687116,USBLC6-2SC6,,1,U8,,
 10u / 10 V X7R 0603,Capacitor_SMD:C_0603_1608Metric,C96446,10uF 25V X5R 20%,,4,"C20,C21,C22,C65",,X5R not X7R; 25V rating cuts DC-bias loss on the 5V rail
 IO array signal column (innermost),MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow,C2905490,1x14 2.54mm header,,1,J6,,"THT; recommended UNPOPULATED, see audit"
 IO array power column (5V / 3V3 per row),MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow,C2905490,1x14 2.54mm header,,1,J7,,"THT; recommended UNPOPULATED, see audit"

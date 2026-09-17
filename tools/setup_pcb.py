@@ -82,19 +82,55 @@ CX, CY = 100.0, 100.0
 # physical parameters (lead's decisions)
 # --------------------------------------------------------------------------
 # Envelope: the madflight FC3v2 outline (lead's decision).  Rectangular, and
-# the standard 30.5 x 30.5 mm mounting square is OFF-CENTRE in X - 7.0 mm of
-# margin outside the left holes (which is where the ESC pad row J3 lives) and
-# 13.2 mm outside the right holes (which is where the 3-column IO block lives).
-# The envelope the lead specified is 50.7 x 41.6.  This revision moved the ESC
-# pad row J3, the DBG pad row J10 and TP1-TP10 to the BACK (see BACK_* below),
-# which gave back the 7 mm left-edge pocket J3 used to need and the ten 1 mm
-# pads that used to sit on the sensor island, so the envelope shrank again:
-# the delivered board is the smallest size that still passes every placement
-# rule (see the shrink study in DESIGN_SPEC "Envelope").  46.6 mm is where the
-# IO block's fixed row-caption band reaches the right-hand grommet keepouts,
-# 39.0 mm is where the microSD socket on the top edge reaches the top pair.
-BOARD_W = 46.6           # board width  (X), mm  -- see --width
-BOARD_H = 41.2           # board height (Y), mm  -- see --height
+# the standard 30.5 x 30.5 mm mounting square is OFF-CENTRE in X - 4.0 mm of
+# margin outside the left holes (only what the grommet flange keepout needs,
+# since J3 moved to the back) and 16.2 mm outside the right holes, which is
+# where the 3-column IO block and its caption band live.
+#
+# HISTORY.  The lead's original envelope was 50.7 x 41.6.  Moving the ESC pad
+# row J3, the DBG pad row J10 and TP1-TP10 to the BACK (see BACK_* below) gave
+# back the 7 mm left-edge pocket J3 needed and the ten 1 mm pads that used to
+# sit on the sensor island, and the board shrank to 46.6 x 41.2 - the smallest
+# size that still *placed*, i.e. 0 fit problems.  At that size 31 placement
+# CHECKS still failed: every one a satellite (a decoupling cap, a divider leg,
+# a bus pull-up) that could not reach its pin inside SAT_NEAR_MM because the
+# neighbourhood it had to sit in was full.  This revision grows the board to
+# 50.7 x 45.5 to give those neighbourhoods room; the 4.1 mm of extra width
+# goes into the left-centre pocket (U25/U26/L3 and the QFN's left flank) and
+# the 4.3 mm of extra height into the top band (U7/L2 over the microSD) and
+# the band under the MCU.  Nothing on the board is placed by hand: the count
+# went from 31 to 0 in two steps, and only the second of them was size.
+#
+# Growing the board moves the board edges but NOT the mounting square in the
+# interior, so parts anchored to an edge walk towards the grommets.  Three
+# groups did exactly that and are now solved against the keepout circles
+# instead (search "keepout" in floorplan()): U7/L2 against H2, the buck band
+# U26/L3/U25 against the H1/H4 pair, and U8 against H4.
+#
+# THE LAST FOUR, and what they cost.  At 50.7 x 45.0 four checks were left,
+# each of them the LAST rank 0 cap on a pin that already carried two, and
+# each of them geometrically placeable - the satellite packer, which served
+# a class of satellites one part at a time nearest-first, simply did not find
+# the arrangement that placed it.  Three of them (C44 on the QFN's left
+# flank, C80 on the buck output, C9 on U7's VIN) went away when
+# place_satellites() stopped packing a class part by part and started
+# solving it as one arrangement, and the fourth (L20, the QFN's VREG
+# inductor, 0.1 mm too wide for the gap its own rank 0 neighbours left it)
+# when a part that misses its limit was given the right to be placed FIRST on
+# a second run - see sat_assign() and place_satellites().
+#
+# THE HALF MILLIMETRE.  45.0 -> 45.5 is the one thing here that is size and
+# not search.  U7's top strip is the only home for six satellites and it
+# hangs from the TOP EDGE (band_y in floorplan()), so board height walked
+# straight past it into the bottom of the board: at every height from 45.0 to
+# 46.0 the strip was the same 2.25 mm and the second 10 uF VIN cap C9, which
+# is 1.54 mm across, had nowhere inside its 3 mm to go.  Letting the band
+# down to 5.0 mm below the edge makes the strip 3.25 mm and takes the cap -
+# and the room to let it down at all is what the extra half millimetre is.
+# 45.0 with the same band is 1 check; 45.5 and 46.0 with it are 0, so the
+# smaller of the two is the default.
+BOARD_W = 50.7           # board width  (X), mm  -- see --width
+BOARD_H = 45.5           # board height (Y), mm  -- see --height
 CORNER_R = 2.0           # Edge.Cuts corner radius, mm
 MOUNT_PITCH = 30.5       # standard four-hole square, hole centre to hole centre
 # Left margin: with J3 on the back there is nothing outboard of the left holes
@@ -102,8 +138,8 @@ MOUNT_PITCH = 30.5       # standard four-hole square, hole centre to hole centre
 # the O 6.5 mm flange courtyard needs 3.25 mm plus 0.5 mm to the board edge,
 # i.e. a hole centre 3.75 mm in; 4.0 mm is that with 0.25 mm to spare.
 MOUNT_MARGIN_L = 4.0     # left board edge to the left hole centres
-MOUNT_X_L = -BOARD_W / 2.0 + MOUNT_MARGIN_L          # -19.30 at 46.6 mm
-MOUNT_X_R = MOUNT_X_L + MOUNT_PITCH                  # +11.20 at 46.6 mm
+MOUNT_X_L = -BOARD_W / 2.0 + MOUNT_MARGIN_L          # -21.35 at 50.7 mm
+MOUNT_X_R = MOUNT_X_L + MOUNT_PITCH                  # +9.15 at 50.7 mm
 MOUNT_Y = MOUNT_PITCH / 2.0                          # +-15.25, centred in Y
 # MOUNT_X_L/R above are the DEFAULT-width values, quoted here because they are
 # the numbers in DESIGN_SPEC; Builder recomputes both from the width actually
@@ -111,11 +147,25 @@ MOUNT_Y = MOUNT_PITCH / 2.0                          # +-15.25, centred in Y
 # with it the IO block's right-hand margin) rather than eating it.
 MOUNT_KEEPOUT_R = 3.25   # grommet flange courtyard radius of the H* footprint
                          # (O 6.5 mm; it was O 8.0 mm before this revision -
-                         # see MARV_Packages.pretty/MountingHole_4.0mm_Grommet)
-MOUNT_COPPER_R = 2.5     # the same footprint's O 5.0 mm *.Cu keepout zone.
-                         # The flange courtyard above is a FRONT-side keepout
-                         # for parts; this one is copper on every layer, so it
-                         # is what the back-side pads have to clear.
+                         # see MARV_Packages.pretty/
+                         # MountingHole_4.0mm_Grommet_Pad_Via)
+MOUNT_RING_R = 3.2       # the same footprint's O 6.4 mm GND pad ring: plated
+                         # copper on EVERY layer, on net GND, stitched by the
+                         # eight 0.6/0.3 mm vias at r = 2.7 mm.  It replaced
+                         # the O 5.0 mm copper keepout zone of the old
+                         # MountingHole_4.0mm_Grommet, so the hole is now a
+                         # ground bond, not a hole in the pour.
+MOUNT_COPPER_CLR = 0.15  # copper clearance to that ring = the Default
+                         # netclass clearance in NETCLASSES below (GND matches
+                         # no pattern, so it is Default), which is also what
+                         # every net that reaches the back side resolves to
+                         # (Default / Power / PWM_ESC / SensorSPI are all
+                         # 0.15 mm).  Asserted against NETCLASSES below.
+MOUNT_COPPER_R = MOUNT_RING_R + MOUNT_COPPER_CLR
+                         # O 6.7 mm.  The flange courtyard above is a
+                         # FRONT-side keepout for parts; this circle is the
+                         # ring plus its copper clearance, so it is what the
+                         # back-side pads have to clear.
 EDGE_COPPER = 0.3        # copper-to-edge design rule, mm
 PAD_EDGE_INSET = 0.5     # pad outer edge this far in from Edge.Cuts
 POCKET_L = 0.9           # left board edge to the left-centre pocket.  It
@@ -161,9 +211,9 @@ BACK_REF_SILK = True
 # top, pad outer edge PAD_EDGE_INSET in from Edge.Cuts - edge-aligned exactly
 # as the DBG row J10 is against the bottom edge - and centred in Y between
 # the two left grommets.  Eight pads on 2.00 mm pitch span +-7.0 mm of pad
-# centres (+-7.7 mm of copper), and the grommets' O 5 mm copper keepout at
-# y = +-15.25 only reaches |y| = 12.75, so the row clears both by 5 mm with
-# nothing but the keepout deciding it.  Its labels go INBOARD (+x), which is
+# centres (+-7.7 mm of copper), and the grommets' O 6.4 mm GND ring plus its
+# copper clearance (MOUNT_COPPER_R) at y = +-15.25 only reaches |y| = 11.9,
+# so the row clears both by 4.2 mm with nothing but the ring deciding it.  Its labels go INBOARD (+x), which is
 # the band nothing else on the back uses.
 # Why the edge: the harness leaves the stack at the board edge instead of
 # from under the middle of the board, and the left margin is dead area on
@@ -237,9 +287,13 @@ NETCLASSES = [
     # are disjoint today, but the priorities stay consistent with that rule.
     ("Rail3V3",   0.30, 0.15, 0.60, 0.30, 0.30, 0.20, 5,
      ["V3V3_SYS", "V3V3_ANA"]),
+    # VBAT is NOT in this class any more: since the on-board pack buck was
+    # removed it is a sense wire into a 100k divider and carries no current
+    # (DESIGN_SPEC "Decisions", 2026-09-17), so it resolves to Default like
+    # any other analog input.  What is left is the three real 5 V / 3.3 V
+    # power rails and the AP63203's own two switching nodes.
     ("Power",     0.50, 0.15, 0.80, 0.40, 0.50, 0.20, 10,
-     ["VBAT", "5V_IN", "V5_SYS", "USB_VBUS",
-      "U7_SW", "U7_VO", "U26_SW", "U26_BST"]),
+     ["5V_IN", "V5_SYS", "USB_VBUS", "U7_SW", "U7_BST"]),
     # USB clearance is 0.18 mm, not the 0.20 mm of the pair gap: R22/R23 are
     # 0201 series resistors and the R_0201_0603Metric land has 0.18 mm between
     # its own two pads, which are two different USB nets.  0.20 mm made that
@@ -262,6 +316,21 @@ NETCLASSES = [
      ["SENS_*", "*_CS", "*_INT", "*_INT1", "*_INT2"]),
 ]
 
+# MOUNT_COPPER_R is quoted above the net classes (it is a geometry constant),
+# but the clearance in it is read from them, not assumed.  GND matches no
+# pattern, so the ring resolves to Default; every net that reaches the back
+# side - Default, Power, PWM_ESC, SensorSPI - is on the same 0.15 mm, and the
+# effective clearance between two nets is the wider of the two classes.  USB
+# (0.18 mm) is deliberately not in that list: it is an 0201 land exception on
+# the front, nowhere near a grommet.  If any of the four ever runs looser the
+# grommet ring's copper clearance would be understated and check_back() would
+# go soft, so it fails here instead.
+_MOUNT_CLR_CLASSES = ("Default", "Power", "PWM_ESC", "SensorSPI")
+assert MOUNT_COPPER_CLR == max(c[2] for c in NETCLASSES
+                               if c[0] in _MOUNT_CLR_CLASSES), (
+    "MOUNT_COPPER_CLR %.3f no longer matches the netclass clearances it is "
+    "taken from" % MOUNT_COPPER_CLR)
+
 # The board is a dense single-sided assembly: only the connectors and the
 # switches keep a silkscreen reference designator, the per-pad function labels
 # are the silkscreen.  Every other reference stays on F.Fab (hidden on silk).
@@ -278,11 +347,10 @@ REF_ON_SILK = ("J4", "J6", "J7", "J8", "J11", "SW1", "SW2")
 # layout can put their centres within 6 mm of the IC centre, while a 6 mm gap
 # between the bodies is exactly the "keep the loop short" requirement.
 # Seeds for the packer are in POWER_LOOP (see floorplan()).
-CAP_NEAR = {"U7":  ["C8", "C10", "C11", "C12", "C23", "C24", "FB1"],
-            "U26": ["C73", "C76", "C77", "C80"]}
+CAP_NEAR = {"U7": ["C8", "C9", "C10", "C11", "C13"]}
 CAP_NEAR_MM = 6.0
 # no switching inductor within this distance (body to body) of a MEMS sensor
-INDUCTORS = ["L2", "L3"]
+INDUCTORS = ["L2"]
 SENSORS = ["U21", "U22", "U23"]
 IND_SENSOR_MM = 8.0
 # TP1-TP10 probe the sensor SPI bus, its chip selects and its interrupts.  A
@@ -302,6 +370,15 @@ TP_NEAR_MM = 6.0
 # over.  Enforced in floorplan() against every IC and connector courtyard on
 # those two flanks, and the resulting gaps are printed.
 U20_CORRIDOR = 2.6
+# THE TOP BAND above the MCU used to hold the TPS62913 3.3 V stage (U7 + L2 +
+# FB1 + a 0.1 % divider + five 22 uF), walled by the microSD socket on the
+# left and the H2 grommet keepout on the right, and it was the tightest
+# neighbourhood on the board: two tuning constants (U7_SEP, the L2-to-U7
+# centre distance, and U7_LANE, the gap kept to the H2 keepout circle) existed
+# only to make that stage's own loop fit.  The BEC revision moved the whole
+# power chain into the left-centre pocket the removed U26/L3/U25 row used to
+# own, so both constants are gone with the stage they served; the band is now
+# just another region the cluster packer may use.
 
 # --------------------------------------------------------------------------
 # SATELLITES: the passive that belongs AT a pin (lead's decision)
@@ -388,63 +465,46 @@ SATELLITES = {
     # R25/R26 (I2C), R36-R41 (SD) and R55 are NOT the MCU's any more: see
     # the J6 / J11 / D20 blocks below.
 
-    # ---- U7 TPS62913 (the 3.3 V buck) --------------------------------
-    # input loop first, smallest package nearest the pin: the 2.2 nF is the
-    # high-frequency bypass and owns the slot against pin 6.
-    "C17": ("U7", "6", "VIN 2n2",   0, 0),
-    "C8":  ("U7", "6", "VIN 10u",   0, 1),
-    "C9":  ("U7", "6", "VIN 10u",   0, 2),
-    # output loop: the three 22 uF on VO, then the bead, then the post-bead
-    # caps on the bead's own output pad
-    "C10": ("U7", "3", "VO 22u",    0, 0),
-    "C11": ("U7", "3", "VO 22u",    0, 1),
-    "C12": ("U7", "3", "VO 22u",    0, 2),
-    "FB1": ("U7", "3", "VO bead",   1, 0),
-    "C13": ("U7", "8", "NR/SS 470n", 0, 3),
-    "R7":  ("U7", "9", "FB div hi", 1, 1),
-    "R8":  ("U7", "9", "FB div lo", 1, 2),
-    "R9":  ("U7", "10", "S-CONF",   1, 3),
-    "R10": ("U7", "5", "PG pull-up", 2, 0),
-    # after the bead: the V3V3_SYS side of the rail
-    "C23": ("FB1", "2", "V3V3 22u",  1, 0),
-    "C24": ("FB1", "2", "V3V3 22u",  1, 1),
+    # ---- U7 AP63203WU-7 (the 3.3 V buck) -----------------------------
+    # TSOT26 pads: 1 FB, 2 EN, 3 VIN, 4 GND, 5 SW, 6 BST.  FB is a SENSE
+    # input tied straight to the output on the fixed-output parts, so the
+    # output capacitors are written against pad 1 - exactly the way the
+    # removed AP63205 stage wrote its own output caps against its FB pad.
+    # Input loop first, smallest package nearest the pin.
+    "C9":  ("U7", "3", "VIN 100n",  0, 0),
+    "C8":  ("U7", "3", "VIN 10u",   0, 1),
+    "C10": ("U7", "1", "VO 22u",    0, 0),
+    "C11": ("U7", "1", "VO 22u",    0, 1),
+    "C13": ("U7", "6", "BST 100n",  0, 0),
+    "R52": ("U7", "2", "EN 100k",   2, 0),
     # rank 3 (bulk, on the rail): the microSD socket's own V3V3_SYS supply
-    # pad is as valid an anchor on that rail as the bead's output pad, and
-    # putting the bulk caps there instead frees FB1's own cells for C23/C24.
+    # pad is as valid an anchor on that rail as the buck's output pad, and
+    # putting the bulk caps there keeps the buck's own cells for C10/C11.
     "C64": ("J11", ("net", "V3V3_SYS"), "V3V3 bulk",  3, 0),
     "C65": ("J11", ("net", "V3V3_SYS"), "V3V3 bulk",  3, 1),
     "C66": ("J11", ("net", "V3V3_SYS"), "V3V3 bulk",  3, 2),
 
-    # ---- U26 AP63205 (the 5 V buck) ----------------------------------
-    "C74": ("U26", "3", "VIN 100n", 0, 0),
-    "C73": ("U26", "3", "VIN 10u",  0, 1),
-    "C75": ("U26", "6", "BST 100n", 0, 0),
-    "C76": ("U26", "1", "VO 22u",   0, 0),
-    "C77": ("U26", "1", "VO 22u",   0, 1),
-    "C80": ("U26", "1", "VO 22u",   0, 2),
-    "R52": ("U26", "2", "EN",       2, 0),
-
-    # ---- U25 TPS2121 (the priority mux) ------------------------------
-    "C71": ("U25", "7",  "IN1 100n",   0, 0),
-    "C72": ("U25", "2",  "IN2 100n",   0, 0),
-    "C70": ("U25", "11", "SS 100n",    0, 0),
-    "R42": ("U25", "6",  "PR1 div hi", 1, 0),
-    "R43": ("U25", "6",  "PR1 div lo", 1, 1),
-    "R44": ("U25", "5",  "OV1 div hi", 1, 0),
-    "R45": ("U25", "5",  "OV1 div lo", 1, 1),
-    "R46": ("U25", "10", "ILIM",       2, 0),
-    "R47": ("U25", "9",  "ST pull-up", 2, 0),
-    # the V5_SYS bulk hangs off the mux's OUT pin, which is where the rail
-    # starts.  Rank 3: it holds the rail up, not the pin, and C19 (the
-    # 100 uF polymer, 8.9 x 4.9 mm) is the biggest passive on the board -
-    # ranked with the decoupling it simply ate the mux's pocket.
-    "C19": ("U25", "1",  "V5_SYS 100u", 3, 0),
-    "C20": ("U25", "1",  "V5_SYS 10u",  3, 1),
-    "C21": ("U25", "1",  "V5_SYS 10u",  3, 2),
+    # ---- Q1 / D1, the 5 V OR (SOT-23: 1 G, 2 S, 3 D) ------------------
+    # D1's cathode and Q1's source are the same node (V5_SYS), so the diode
+    # is written against the source pad: rank 1, because what has to be
+    # short is the OR node itself, not a decoupling loop.  R7 is the gate
+    # pull-down and is a DC part - rank 2 is near enough.
+    "D1":  ("Q1", "2", "USB Schottky",  1, 0),
+    "R7":  ("Q1", "1", "gate 100k",     2, 0),
+    # C19, the 100 uF polymer, is the 5V_IN hold-up at the pad row.  It
+    # hangs off Q1's DRAIN pad, which is the 5V_IN node, at rank 3: it
+    # holds a rail up over milliseconds, not a pin over nanoseconds.
+    "C19": ("Q1", "3",  "5V_IN 100u", 3, 0),
 
     # ---- U12 TPS7A2033 (the analog LDO) ------------------------------
     "C25": ("U12", "1", "IN 1u",  0, 0),
     "C26": ("U12", "5", "OUT 1u", 0, 0),
+
+    # R10, the MCU_RUN pull-up.  It used to be the TPS62913's power-good
+    # pull-up and sat with the regulators; the AP63203 has no PG pin, so it
+    # is a plain pull-up on the RUN pin and belongs at that pin - pad 35,
+    # on the QFN's left flank beside the reset button.
+    "R10": ("U20", "35", "RUN pull-up", 2, 0),
 
     # ---- J4 USB-C ----------------------------------------------------
     # The CC pull-downs are what the host measures, so they belong on the
@@ -488,6 +548,17 @@ SATELLITES = {
 SAT_NEAR_MM = {0: 3.0, 1: 4.0, 2: 6.0, 3: 10.0}
 # the part is placed this far clear of the owner's courtyard edge
 SAT_CLEAR = 0.35
+# ...and this far ALONG that edge, away from the package centre, per mm the
+# pad itself is off centre (sat_seed()).  Seeded straight out of the edge, the
+# satellites of the pads at the two ENDS of a long flank spiral into the
+# middle of it - which is the only place the pads in the middle of the flank
+# can be served from - and the middle rows then fall out to the far side of
+# the board.  At 1.0 the seed sits twice as far off centre as its own pad, so
+# a pad at the end of the flank claims the end of it and the middle stays for
+# the middle.  On the QFN's left flank (twenty pins, eight of them rank 0)
+# this is worth four placement checks; it is a SEARCH bias only - every rule,
+# limit and clearance is applied to the result exactly as before.
+SAT_TANGENT = 1.0
 # A satellite blocks the grid this far OUTSIDE its own courtyard.  The
 # generic packer uses 0.1 mm; a satellite uses none, because the search
 # already leaves 0.05 mm of its own around every candidate and the courtyard
@@ -505,24 +576,39 @@ SAT_RADIUS = (3.0, 6.0)
 # a wide search.
 SAT_PASSES = ((SAT_RADIUS[0], 1.0), (SAT_RADIUS[1], 1.0),
               (SAT_RADIUS[0], None), (SAT_RADIUS[1], None), (None, None))
+# The two closed passes place a whole class at once (sat_assign()) instead of
+# one part at a time.  SAT_CANDS caps how many positions each part offers the
+# search - the list is nearest-first, so this is a reach, not a rule: at 80 a
+# 0402 on the QFN's left flank offers every cell of its column, which is what
+# the eight rank 0 caps that share that column have to choose between.
+# SAT_NODES caps the effort spent on one independent group of parts; when it
+# runs out the group falls back to the same order without backtracking, which
+# is what the old pass did.  Both are effort knobs: no placement RULE, limit
+# or clearance depends on either, and the search is deterministic.
+SAT_CANDS = 80
+SAT_NODES = 4000
+# how many times place_satellites() may re-run the whole table with the parts
+# that missed their limit pinned first.  Each round is a complete, legal
+# placement; the loop stops as soon as a round misses nothing, or as soon as
+# pinning stops finding anything new.
+SAT_ROUNDS = 4
 # which region a *new* part on a satellite's net should be packed with, so
 # that taking the satellites out of the region lists does not change how an
 # unlisted part votes itself a home (see floorplan())
-SAT_GROUP = {"U20": "mcu_ring", "U7": "u7", "FB1": "u7", "U26": "buck5",
-             "U25": "mux", "U12": "reg3v3", "J4": "usb",
+SAT_GROUP = {"U20": "mcu_ring", "U7": "buck3v3", "Q1": "power_in",
+             "U12": "reg3v3", "J4": "usb",
              "U21": "sens", "U22": "sens", "U23": "sens",
              "J11": "sd_pu", "J6": "i2c", "D20": "led"}
-# the order the owners are served in.  FB1 is itself a satellite of U7, so it
-# has to be placed before its own caps are.
-SAT_OWNERS = ("U20", "U7", "FB1", "U26", "U25", "U12",
+# the order the owners are served in.
+SAT_OWNERS = ("U20", "U7", "Q1", "U12",
               "U21", "U22", "U23", "J4", "J11", "J6", "D20")
 # the order owners are served in WITHIN one rank (lead's decision, distinct
 # from SAT_OWNERS above, which only orders when each owner's satellites
 # become eligible at all).  place_satellites() competes satellites
 # nearest-first inside one (rank, owner) class at a time, in this order;
 # an owner missing from the list is served last.
-SAT_OWNER_PRIORITY = ["U20", "U7", "U26", "U25", "U12", "U21", "U22", "U23",
-                      "FB1", "J11", "J6", "J4", "D20"]
+SAT_OWNER_PRIORITY = ["U20", "U7", "Q1", "U12", "U21", "U22", "U23",
+                      "J11", "J6", "J4", "D20"]
 # Already-placed parts whose pin distance is reported but never flagged: the
 # crystal group is anchored at XIN/XOUT by floorplan() and is not the
 # packer's to move.
@@ -569,7 +655,9 @@ IO_END_TICK = 1.10       # end tick, from the first/last row centre.  The
 
 # per-pad silkscreen labels: ref -> {pad number: label}
 PAD_LABELS = {
-    "J3":  ["CURR", "TX", "M4", "M3", "M2", "M1", "VBAT", "GND"],
+    # nine pads: the six ESC signals, then this board's power entry -
+    # 5 V in from the external BEC, GND, and the raw-pack SENSE wire.
+    "J3":  ["CURR", "TX", "M4", "M3", "M2", "M1", "5V", "GND", "VBAT"],
     # the IO block, row 1 (top) to row 14: the signal name and the rail its
     # power pin carries.  io_labels(), the reserved silk bands in floorplan()
     # and the netlist row table all index this same list.
@@ -1278,7 +1366,10 @@ class Builder:
         Outward, not "towards the pad": a 0402 whose centre is put on the pad
         overlaps the package, and the packer would then spiral it to whatever
         side happens to be free.  Seeded outside the edge the pad belongs to,
-        the first free cell it finds is the one against that pin."""
+        the first free cell it finds is the one against that pin.
+
+        The seed is also pushed ALONG that edge, away from the package centre,
+        by SAT_TANGENT per mm the pad is off centre - see SAT_TANGENT."""
         px, py = self.pad_pos(owner, pad)
         cy = dict(self.placed)[owner]
         out = ((-1, 0, px - cy[0]), (1, 0, cy[2] - px),
@@ -1287,7 +1378,11 @@ class Builder:
         g = self.g(ref, rot)
         depth = (g.cy[2] - g.cy[0]) if nx else (g.cy[3] - g.cy[1])
         step = max(edge, 0.0) + SAT_CLEAR + depth / 2.0
-        return (px + nx * step, py + ny * step), (nx, ny)
+        if nx:
+            return (px + nx * step,
+                    py + SAT_TANGENT * (py - (cy[1] + cy[3]) / 2.0)), (nx, ny)
+        return (px + SAT_TANGENT * (px - (cy[0] + cy[2]) / 2.0),
+                py + ny * step), (nx, ny)
 
     def sat_spot(self, ref, owner, pad, maxrad, step=0.25, gap=0.05):
         """The free slot for `ref` that puts its OWNER-NET pad nearest the
@@ -1346,9 +1441,282 @@ class Builder:
                 best = (hit[0], hit[2], hit[1])
         return best
 
-    def place_satellites(self, owners):
-        """Put every satellite of every listed owner against the pin it
-        serves.
+    def sat_cands(self, ref, owner, pad, maxrad, lim, step=0.25, gap=0.05):
+        """EVERY position `ref` could legally take, best first: the same
+        lattice, the same seeds, the same rotations and the same free-cell
+        test sat_spot() uses, but the whole list instead of the winner.
+
+        sat_spot() answers "where would this part go on its own"; the
+        coordinated packer needs "where COULD it go", because the slot it
+        wants is routinely the only slot one of its rank-mates has.
+
+        A candidate is kept only if it is free NOW, inside the board's copper
+        edge and within `lim` of its pin, so every entry is a placement that
+        satisfies the part's own rule; the only thing that can still
+        invalidate it is a sibling of the same class taking the cells.  Two
+        rotations that put the same courtyard on the same cells (0/180, and
+        90/270) are the same obstacle to everyone else, so only the better
+        scoring of the pair is kept - it halves the branching for nothing.
+
+        Each entry is (sortkey, spot, distance, free-cell box, blocked-cell
+        box); the two boxes are grid index ranges, i.e. exactly the cells
+        free() reads and the cells commit_spot() would set.
+        """
+        px, py = self.pad_pos(owner, pad)
+        out = {}
+        for rot in (0, 90, 180, 270):
+            seed, n = self.sat_seed(ref, owner, pad, rot)
+            g = self.g(ref, rot)
+            cw, ch = g.cy[2] - g.cy[0], g.cy[3] - g.cy[1]
+            pw, ph = g.pad[2] - g.pad[0], g.pad[3] - g.pad[1]
+            lim_x = self.HX - EDGE_COPPER - pw / 2.0 - 0.05
+            lim_y = self.HY - EDGE_COPPER - ph / 2.0 - 0.05
+            # courtyard centre -> the satellite's own owner-net pad
+            ox, oy = self.pad_offset(ref, self.satpad[ref], rot)
+            ox -= (g.cy[0] + g.cy[2]) / 2.0
+            oy -= (g.cy[1] + g.cy[3]) / 2.0
+            radial = (cw >= ch) == bool(n[0])
+            reach = (2.2 * max(self.HX, self.HY) if maxrad is None
+                     else maxrad + step / 2.0)
+            for rad in np.arange(0.0, reach, step):
+                for (cx, cy) in self._ring(seed, rad, step):
+                    if abs(cx) > lim_x or abs(cy) > lim_y:
+                        continue
+                    d = math.hypot(cx + ox - px, cy + oy - py)
+                    if lim is not None and d > lim + 1e-6:
+                        continue
+                    rect = (cx - cw / 2.0 - gap, cy - ch / 2.0 - gap,
+                            cx + cw / 2.0 + gap, cy + ch / 2.0 + gap)
+                    if not self.free(rect):
+                        continue
+                    key = (round(d / 0.05), 0 if radial else 1, rot)
+                    cell = (round(cx / step), round(cy / step),
+                            round(cw * 1000), round(ch * 1000))
+                    if cell in out and out[cell][0] <= key:
+                        continue
+                    # the cells the part would really take: the placed
+                    # courtyard, indexed exactly as block_rect() would
+                    x = cx - (g.cy[0] + g.cy[2]) / 2.0
+                    y = cy - (g.cy[1] + g.cy[3]) / 2.0
+                    blk = (max(self._ix(x + g.cy[0] - SAT_GROW), 0),
+                           min(self._ix(x + g.cy[2] + SAT_GROW) + 1, self.gnx),
+                           max(self._iy(y + g.cy[1] - SAT_GROW), 0),
+                           min(self._iy(y + g.cy[3] + SAT_GROW) + 1, self.gny))
+                    out[cell] = (key, (d, cx, cy, rot, cw, ch), d,
+                                 (self._ix(rect[0]), self._ix(rect[2]) + 1,
+                                  self._iy(rect[1]), self._iy(rect[3]) + 1),
+                                 blk)
+        cands = sorted(out.values(), key=lambda c: (c[0], c[3]))
+        return cands[:SAT_CANDS]
+
+    @staticmethod
+    def _box_hits(box, other):
+        """do two grid index boxes (i0, i1, j0, j1) share a cell?"""
+        return (box[0] < other[1] and other[0] < box[1] and
+                box[2] < other[3] and other[2] < box[3])
+
+    def sat_assign(self, items, rad, slack, pins=(), gap=0.05):
+        """Place one CLASS of satellites as a set instead of one at a time.
+
+        The old packer took the class nearest-first: whichever part could get
+        closest to its own pin took its own best cell, then the next, and so
+        on.  That is exactly wrong when several parts have to share one
+        corridor.  The QFN's left flank is the canonical case - twenty pins,
+        eight of them rank 0, and one column of 0402 within the 3 mm limit -
+        and nearest-first lets a pin in the MIDDLE of the flank take the cell
+        at the TOP of the column, because that cell is 1.4 mm from it and
+        nothing says the cell belongs to the pin two rows up, which has
+        nowhere else to go.  The column then runs out at the bottom and the
+        last cap is 3.46 mm out.
+
+        So the class is solved as one problem: every part's feasible
+        positions are enumerated (sat_cands()), parts that cannot interfere
+        are split into independent components, and each component is searched
+        MOST-CONSTRAINED-FIRST - the part with the fewest surviving positions
+        moves first, each part still taking the position NEAREST its own pin,
+        and a choice that leaves a rank-mate with nothing is undone and
+        retried.  Nothing is relaxed: a candidate is only ever a cell that is
+        free, on the board and inside the part's own rank limit, so a
+        solution here is a solution the old packer would have accepted - it
+        just could not find it.
+
+        Parts that no arrangement can seat are left in the pool for the
+        cleanup passes, exactly as a part that missed its limit was before.
+
+        A class does NOT look ahead to the ranks behind it.  Two ways of
+        doing that were tried and both made the board worse: dealing the
+        later ranks out greedily at every arrangement scores them
+        pessimistically (the greedy seats fewer of them than the real pass
+        does) and differently at every leaf, so the search optimises the
+        noise, and merely keeping every one of them a free cell is a
+        constraint they cannot all satisfy at once anyway.  What the two
+        cases that really need it get instead is a pin - see
+        place_satellites().
+
+        Returns {ref: spot}; the grid is left untouched, so the caller
+        commits the result through commit_spot() as usual.
+        """
+        refs, cands, rank, first = [], [], [], []
+        for it in items:
+            ref = it[4]
+            owner, pad = self.sat[ref][0], self.sat[ref][1]
+            cs = self.sat_cands(ref, owner, pad, rad,
+                                None if slack is None
+                                else slack * SAT_NEAR_MM[it[1]], gap=gap)
+            if cs:
+                refs.append(ref)
+                cands.append(cs)
+                rank.append(it[1])
+                first.append(0 if ref in pins else 1)
+        n = len(refs)
+        if not n:
+            return {}
+        # independent components: two parts can only compete if some cell is
+        # in reach of both, so group by overlapping candidate hulls.
+        hull = []
+        for cs in cands:
+            f = [c[3] for c in cs]
+            hull.append((min(b[0] for b in f), max(b[1] for b in f),
+                         min(b[2] for b in f), max(b[3] for b in f)))
+        root = list(range(n))
+        nbr = {i: [] for i in range(n)}
+
+        def find(i):
+            while root[i] != i:
+                root[i] = root[root[i]]
+                i = root[i]
+            return i
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                if self._box_hits(hull[i], hull[j]):
+                    nbr[i].append(j)
+                    nbr[j].append(i)
+                    ri, rj = find(i), find(j)
+                    if ri != rj:
+                        root[max(ri, rj)] = min(ri, rj)
+        nbr = {i: tuple(v) for i, v in nbr.items()}
+        comps = {}
+        for i in range(n):
+            comps.setdefault(find(i), []).append(i)
+        spots = {}
+        for _, comp in sorted(comps.items()):
+            for i, k in self._sat_pack(comp, cands, rank, nbr,
+                                       first).items():
+                spots[refs[i]] = cands[i][k][1]
+        return spots
+
+    def _sat_pack(self, comp, cands, rank, nbr, first):
+        """the arrangement of one independent neighbourhood: {part: position}.
+
+        Depth first, pinned parts first, then rank, then
+        most-constrained-first inside a rank and nearest-first inside a part,
+        with the positions a placement kills struck off its neighbours' lists
+        as it is made - so a dead end is seen when it is made and not when
+        the last part runs out of board, and a choice that leaves a rank-mate
+        with nothing is undone and retried.  Nothing is relaxed anywhere in
+        here: every candidate came out of sat_cands(), i.e. is on the board,
+        on free cells and within the part's OWN rank limit, so whatever the
+        search settles on is an arrangement the old packer would have
+        accepted - it just could not find it.
+
+        The FIRST arrangement that seats everybody ends the search; that is
+        the ordinary answer and the first descent usually is it.  A part no
+        arrangement can seat falls through to the cleanup passes, as it
+        always has - but which part that is is now the rank: standing aside
+        costs 1000x more per rank up the list, and the cheapest arrangement
+        the budget finds is the one taken, so a rank 1 divider leg is given
+        up before a rank 0 decoupling cap however the two are tangled.
+
+        SAT_NODES bounds the effort.  It is an effort knob only: the first
+        descent already produces an arrangement, and what the budget buys is
+        how hard a neighbourhood that does not fit is argued with.
+        """
+        fb = {i: np.array([c[3] for c in cands[i]], dtype=np.int32)
+              for i in comp}
+        blk = {i: [c[4] for c in cands[i]] for i in comp}
+        live = {i: np.ones(len(cands[i]), dtype=bool) for i in comp}
+        cnt = {i: len(cands[i]) for i in comp}
+        # what standing this part aside costs: one of any rank before one of
+        # the rank below it, whatever the counts
+        wt = {i: 1000 ** (3 - rank[i]) for i in comp}
+        budget = [0]
+        best = [None, None]                    # cost, {part: candidate}
+        path = {}
+
+        def take(i, k):
+            """block candidate k of part i; returns the undo record"""
+            b = blk[i][k]
+            undo = []
+            for q in nbr[i]:
+                f = fb[q]
+                hit = (live[q] & (f[:, 0] < b[1]) & (b[0] < f[:, 1])
+                       & (f[:, 2] < b[3]) & (b[2] < f[:, 3]))
+                n = int(hit.sum())
+                if n:
+                    live[q] &= ~hit
+                    cnt[q] -= n
+                    undo.append((q, hit, n))
+            return undo
+
+        def drop(undo):
+            for q, hit, n in undo:
+                live[q] |= hit
+                cnt[q] += n
+
+        def dfs(rest, cost):
+            if budget[0] <= 0 or cost >= best[0]:
+                return
+            if not rest:
+                best[0], best[1] = cost, dict(path)
+                return
+            # pinned first, then rank (a 100 nF on a supply pin moves before
+            # the bulk cap that shares the rail), then fail first: fewest
+            # surviving positions, then the class order
+            i = min(rest, key=lambda q: (first[q], rank[q], cnt[q], q))
+            left = tuple(q for q in rest if q != i)
+            for k in np.nonzero(live[i])[0]:
+                budget[0] -= 1
+                if budget[0] <= 0:
+                    return
+                undo = take(i, int(k))
+                path[i] = int(k)
+                dfs(left, cost)
+                del path[i]
+                drop(undo)
+                if not best[0]:
+                    return                     # everybody is seated
+            dfs(left, cost + wt[i])            # nowhere to put this one
+
+        def search(cap, effort):
+            best[0], best[1] = cap, None
+            budget[0] = effort
+            path.clear()
+            dfs(tuple(comp), 0)
+            return best[1]
+
+        # everybody seated, if there is any such arrangement at all: the cap
+        # of 1 prunes the first part stood aside, so this is cheap to fail
+        sel = search(1, SAT_NODES)
+        if sel is None:
+            sel = search(math.inf, SAT_NODES)
+        if sel is not None:
+            return sel
+        # out of effort before even one complete arrangement: the same order
+        # without the backtracking, which is what the old pass did
+        sel, rest = {}, list(comp)
+        while rest:
+            i = min(rest, key=lambda q: (first[q], rank[q], cnt[q], q))
+            rest.remove(i)
+            if cnt[i]:
+                sel[i] = int(np.nonzero(live[i])[0][0])
+                take(i, sel[i])
+        return sel
+
+    def sat_round(self, owners, pins):
+        """One pass of the whole satellite table: every satellite of every
+        listed owner against the pin it serves.  Returns the owners that
+        needed a wide search.
 
         Order is the whole algorithm here, and the first cut of it got it
         wrong three different ways.
@@ -1397,17 +1765,22 @@ class Builder:
         the same occupancy grid, so board edge, mounting-hole keepouts,
         reserved silk bands and every courtyard already down are respected.
         """
-        # class key: owners are forced into one shared (0, 0) class ahead of
-        # every rank; everything else classes by (rank, SAT_OWNER_PRIORITY
-        # index).  Then: rank (for SAT_NEAR_MM), owner priority again (a
-        # static tie-break, redundant with the class key but harmless),
-        # order in the owner, ref.
+        # class key: owners are forced into one shared class ahead of every
+        # rank (their own satellites cannot be seeded until they are down);
+        # everything else classes by rank.  Then: rank (for SAT_NEAR_MM),
+        # owner priority (a static tie-break), order in the owner, ref.
         opri = {o: i for i, o in enumerate(SAT_OWNER_PRIORITY)}
 
         def _opri(o):
             return opri.get(o, len(SAT_OWNER_PRIORITY))
-        pool = sorted((0 if r in owners else v[3] + 1, v[3],
-                       _opri(v[0]), v[4], r)
+        # a PINNED part (see place_satellites()) joins the rank 0 class
+        # whatever its own rank - it keeps its own limit, it is only served
+        # early - and inside that class it is the first part the search
+        # seats, so the rest of the class is arranged around IT instead of
+        # the other way round.  The search may still move it: it is an order,
+        # not a position.
+        pool = sorted((0 if r in owners else (1 if r in pins else v[3] + 1),
+                       v[3], _opri(v[0]), v[4], r)
                       for r, v in self.sat.items()
                       if v[0] in owners and v[0] in self.fps)
         pris = sorted({it[0] for it in pool})
@@ -1419,19 +1792,33 @@ class Builder:
                     # caps cannot be seeded until it is down, so a part whose
                     # owner is still parked waits for the next round.
                     down = {r for r, _ in self.placed}
+                    todo = [it for it in pool if it[0] == pri]
+                    ready = [it for it in todo
+                             if self.sat[it[4]][0] in down]
+                    if slack is not None:
+                        # a CLOSED pass: solve the class as a set
+                        got = (self.sat_assign(ready, rad, slack, pins)
+                               if ready else {})
+                        for item in ready:
+                            ref = item[4]
+                            if ref not in got:
+                                continue
+                            if phase:
+                                wide.setdefault(self.sat[ref][0], []).append(
+                                    "%s@%s" % (ref, rad or "board"))
+                            self.commit_spot(ref, got[ref], SAT_GROW)
+                            pool.remove(item)
+                        # the only reason to go round again is a part that
+                        # was waiting for its own owner to come down
+                        if not got or len(ready) == len(todo):
+                            break
+                        continue
                     pick = None
-                    for item in pool:
-                        if item[0] != pri:
-                            continue
+                    for item in ready:
                         ref = item[4]
                         owner, pad = self.sat[ref][0], self.sat[ref][1]
-                        if owner not in down:
-                            continue
-                        lim = (None if slack is None
-                               else slack * SAT_NEAR_MM[item[1]])
                         spot = self.sat_spot(ref, owner, pad, rad)
-                        if spot is None or (lim is not None and
-                                            spot[2] > lim + 1e-6):
+                        if spot is None:
                             continue
                         if pick is None or spot[2] < pick[0]:
                             pick = (spot[2], item, spot[1])
@@ -1451,12 +1838,83 @@ class Builder:
                                  % (owner, ref, owner, self.sat[ref][1]))
             self.place(ref, -self.HX + 4,
                        -self.HY - 25 - 4 * len(self.problems), 0)
+        return wide
+
+    def sat_over(self, owners):
+        """the satellites that did not make their own rank's limit, worst
+        rank first - i.e. exactly the rows check_satellites() would flag"""
+        opri = {o: i for i, o in enumerate(SAT_OWNER_PRIORITY)}
+        out = []
+        for ref, (owner, pad, _, rank, order) in self.sat.items():
+            if owner not in owners or owner not in self.fps:
+                continue
+            d = math.hypot(*[a - b for a, b in
+                             zip(self.pad_pos(ref, self.satpad[ref]),
+                                 self.pad_pos(owner, pad))])
+            if d > SAT_NEAR_MM[rank] + 1e-6:
+                out.append((rank, opri.get(owner, len(opri)), order, ref))
+        return tuple(it[3] for it in sorted(out))
+
+    def place_satellites(self, owners):
+        """Put every satellite of every listed owner against the pin it
+        serves - and if one of them cannot be, put THAT one down first and
+        do the whole thing again.
+
+        sat_round() solves each neighbourhood as one arrangement (see
+        sat_assign()), but it still solves them in rank order, and rank order
+        is not always the order the board wants.  Two of them end up one cell
+        short that way: the QFN's VREG inductor L20, which is rank 1 and
+        needs 2.7 mm of the row its own rank 0 neighbours pack solid, and
+        U7's feedback divider R8, which is rank 1 and wants the corner the
+        third VIN cap takes.  Neither is a rule that has to give: there IS an
+        arrangement that seats them, it is just not reachable from a rank 0
+        arrangement chosen without them in mind.
+
+        So a part that misses its limit is PINNED - placed first on its next
+        round, on the spot it would have taken with the neighbourhood empty -
+        and the round is run again with the rest of the table packing around
+        it.  A pin is not a relaxation: it is placed by the same search
+        under the same limit, and if pinning it costs someone else their
+        limit the round is worse, not better, and is thrown away.  The best
+        round wins, ties to the earliest, so the answer is the plain
+        rank-order one unless pinning strictly beat it.
+
+        Ordinary packing constraints all still apply, in every round: the
+        spot comes out of the same occupancy grid, so board edge,
+        mounting-hole keepouts, reserved silk bands and every courtyard
+        already down are respected.
+        """
+        mark = (len(self.placed), self.occ.copy(), len(self.problems))
+        pins, best, wide = (), None, {}
+        for _ in range(SAT_ROUNDS):
+            wide = self.sat_round(owners, pins)
+            over = self.sat_over(owners)
+            if best is None or len(over) < len(best[1]):
+                best = (pins, over)
+            if not over:
+                break
+            more = tuple(dict.fromkeys(pins + over))
+            if more == pins:
+                break                          # nothing new to try
+            del self.placed[mark[0]:]
+            self.occ = mark[1].copy()
+            del self.problems[mark[2]:]
+            pins = more
+        if best[0] != pins:                    # the last round was not it
+            del self.placed[mark[0]:]
+            self.occ = mark[1].copy()
+            del self.problems[mark[2]:]
+            wide = self.sat_round(owners, best[0])
         for owner in owners:
             n = sum(1 for v in self.sat.values() if v[0] == owner)
             if not n:
                 continue
-            print("  sat   %-4s %2d parts%s"
-                  % (owner, n, "  WIDE SEARCH: " + ",".join(wide[owner])
+            print("  sat   %-4s %2d parts%s%s"
+                  % (owner, n,
+                     "  PINNED: " + ",".join(r for r in best[0]
+                                             if self.sat[r][0] == owner)
+                     if any(self.sat[r][0] == owner for r in best[0]) else "",
+                     "  WIDE SEARCH: " + ",".join(wide[owner])
                      if owner in wide else ""))
 
     def sat_blocker(self, ref, owner, pad, lim):
@@ -1944,7 +2402,20 @@ class Builder:
         """the five planes: GND/In1, V3V3_SYS/In2, V3V3_ANA/In2 (analog
         island, priority 2 so it wins over the V3V3_SYS pour on the same
         layer), GND/F, GND/B.  Filled here so the saved .kicad_pcb already
-        carries filled copper for Freerouting to read as planes."""
+        carries filled copper for Freerouting to read as planes.
+
+        No outline here is cut around the mounting holes and none ever was:
+        the only hole any of these outlines carries is the V3V3_ANA keyhole
+        in the V3V3_SYS pour (see _keyhole_poly).  The grommets used to be
+        punched out of every fill by the O 5.0 mm copperpour-not-allowed
+        rule area inside the old MountingHole_4.0mm_Grommet footprint; with
+        that zone gone, the three GND pours (F, B, In1) simply flood into
+        the H* pad ring, which is on GND and carries (zone_connect 2) - a
+        solid connection, KiCad's own MountingHole_*_Pad_Via convention,
+        which also spares the 0.6 mm stitching pads a thermal spoke they are
+        too small to take.  The two In2 rails are not on GND, so the filler
+        clears the ring by the zone clearance, which is exactly what is
+        wanted: the ring is the ground bond, In2 just gets out of its way."""
         ana = self._analog_zone_poly()
         self._add_plane(pcbnew.In1_Cu, "GND", "gen:GND:In1", 0,
                         0.20, 0.20, self._board_rect_poly())
@@ -2262,8 +2733,9 @@ class Builder:
         holes = {"H1", "H2", "H3", "H4"}
         # The grommet FLANGE keepout is a front-side courtyard: it keeps
         # *parts* off the hole.  A back-side pad row is not a part and does
-        # not see the flange - what it has to clear is the footprint's O 5 mm
-        # *.Cu keepout zone, which is checked pad by pad in check_back().
+        # not see the flange - what it has to clear is the footprint's
+        # O 6.4 mm GND pad ring plus its copper clearance (MOUNT_COPPER_R),
+        # which is checked pad by pad in check_back().
         for ref in holes & set(self.fps):
             x, y = self.pos(ref)
             for rj, aj in self.placed:
@@ -2337,9 +2809,11 @@ class Builder:
           3. J3 pin 1 (CURR) is still the TOP pad of the vertical row - the
              flip mirrors the footprint, so a wrong rotation silently
              reverses the ESC harness order;
-          4. back pads clear the grommets' O 5 mm *.Cu keepout zone and every
-             front-side HOLE (the IO block's 42 through pins, the USB-C shield
-             pegs, the NPTH mounting holes), which pass through to B.Cu;
+          4. back pads clear the grommets' O 6.4 mm GND pad ring by the
+             copper clearance (MOUNT_COPPER_R) and every front-side HOLE (the
+             IO block's 42 through pins, the USB-C shield pegs, the four
+             plated grommet holes and their stitching vias), which pass
+             through to B.Cu;
           5. R35, the FLASH_CS1 pull-up, is still populated on the FRONT.
         """
         out = []
@@ -2374,7 +2848,7 @@ class Builder:
                   for p in self.fps["J3"].Pads()}
             if ys and ys.get("1") != max(ys.values()):
                 out.append("J3 pad 1 (CURR) is not the top pad of the row")
-        # back pads vs the grommet copper keepout
+        # back pads vs the grommet GND ring (ring radius + copper clearance)
         for ref in sorted(self.back & set(self.fps)):
             for box in self.pad_boxes(ref, clr):
                 for h in ("H1", "H2", "H3", "H4"):
@@ -2382,8 +2856,8 @@ class Builder:
                         continue
                     hx, hy = self.pos(h)
                     if rect_circle_overlap(box, hx, hy, MOUNT_COPPER_R):
-                        out.append("%s pad in the %s copper keepout" %
-                                   (ref, h))
+                        out.append("%s pad inside the %s GND ring "
+                                   "clearance" % (ref, h))
                         break
         # back pads vs front-side holes
         drills = []
@@ -2527,8 +3001,8 @@ def floorplan(B, comps):
                    it
       top edge     J11 microSD, card ejecting +Y, left of centre
       interior     U20 right of centre; the sensor island between the MCU and
-                   the IO block; U7/L2/U12 above it; U26/L3/U25/C19 in the
-                   left-centre pocket
+                   the IO block; U12 at the top of that island; the whole
+                   power chain Q1 / U7 / L2 / C19 in the left-centre pocket
       BACK         J3 (ESC row, vertical, CURR at the top) hard against the
                    LEFT EDGE, J10 (DBG) at the bottom right, TP1-TP10
                    directly under the sensor island, and the DNP flash/PSRAM
@@ -2596,8 +3070,16 @@ def floorplan(B, comps):
     # socket is the widest thing on the top edge and the keepout is what says
     # how far left it can start, so anchoring it to the hole (not to a fixed
     # x) keeps the arrangement when --width moves the hole.
+    # 1.6 mm down from the top edge, not 0.6: the socket's eight signal pads
+    # run along the TOP of its own courtyard and its body owns everything
+    # below them, so the only cell a pull-up on SD_CMD (pad 3, 5.98 mm in from
+    # the socket's left edge) can reach inside SAT_NEAR_MM rank 2 is the band
+    # ABOVE the courtyard.  At 0.6 mm that band is 0.6 mm wide and R36 was
+    # 9.0 mm out round the left-hand corner - and C64/C66, the V3V3_SYS bulk
+    # on pad 4, with it.  1.6 mm is one 0402 plus its clearances, and it is
+    # still hard against the top edge.
     B.anchor("J11", 0, ("cymin", mx_l + MOUNT_KEEPOUT_R + 0.4),
-             ("cymax", HY - 0.6))
+             ("cymax", HY - 1.6))
     j11 = dict(B.placed)["J11"]
 
     # ---------------- fixed interior ----------------
@@ -2629,7 +3111,12 @@ def floorplan(B, comps):
     # derived from mcu_y, so it is shifted by the same amount as the QFN to
     # keep its 0.76 mm gap to XIN/XOUT.
     xtal_x = max(mcu_x + 1.8, j11[2] + 3.9)
-    xtal_y = mcu_y + 8.2
+    # 9.2 mm above the QFN centre, not 8.2: at 8.2 the crystal group left
+    # 0.76 mm over the package's TOP edge, which takes no 0402, so the
+    # decoupling for pins 29-32 (C33/C43) had to come round a corner.  The
+    # extra millimetre is taken out of the band this revision's extra height
+    # opened between the crystal and the microSD socket.
+    xtal_y = mcu_y + 9.2
     B.place("Y1", xtal_x, xtal_y, 0)               # crystal at XIN/XOUT
     B.place("C46", xtal_x - 3.0, xtal_y, 90)
     B.place("C47", xtal_x + 3.0, xtal_y, 90)
@@ -2654,73 +3141,46 @@ def floorplan(B, comps):
                           for r, x, _ in ISLAND])
     isl_x = isl_x0 + isl_dx
 
-    # The two switchers are anchored rather than packed: their loop geometry is
-    # a circuit requirement (CAP_NEAR), and the grommet keepouts break the
+    # THE POWER CHAIN is anchored rather than packed: its loop geometry is a
+    # circuit requirement (CAP_NEAR), and the grommet keepouts break the
     # interior into pockets too narrow for the packer to discover a sane
     # switcher block on its own.
-    #   U26 + L3 (the VBAT buck) go in the left-centre pocket, just inboard
-    #   of the J3 VBAT pad: the row is on the back against the left edge with
-    #   its pad 7 (VBAT) at y = -5, so VBAT crosses about 5 mm of board and
-    #   one via into the buck's own input.
-    #   U7 + L2 (the 3.3 V buck) go in the top band above the MCU, with L2 to
-    #   the LEFT of U7 because the TPS62913's SW (pad 2) and VO (pad 3) are
-    #   both on that side of the RPU package.  L2 is the reason the band is at
-    #   the top: IND_SENSOR_MM keeps it 8 mm clear of the sensor island, and
-    #   the island is the strip between the MCU and the IO block.
-    # the left-pocket chain is pinned to the LEFT edge (the ESC row is there
-    # and VBAT comes in on it), the top band to the TOP edge
-    # y is measured from the BOTTOM edge: the two switches sit on a band just
-    # above the USB-C receptacle and that band rises as the board gets shorter,
-    # so a fixed y walks the buck into SW1.
-    buck_y = -HY + 15.8
-    # POCKET_L below is why these are 2.5 mm further left than they were:
-    # the ESC row and its label band used to own the first 3.4 mm of the
-    # left edge and now nothing does.
-    # The mux's x is solved first (U20_CORRIDOR: it has to stand clear of the
-    # QFN's LEFT flank), because the buck and its inductor only follow it
-    # left if it would otherwise land on them - which, at 0.4 mm of vertical
-    # clearance between the two rows, it does not.
-    u25_y = buck_y + 4.5
-    g25 = B.g("U25", 0)
-    u25_x = min(-HX + POCKET_L + 12.95, mcu[0] - U20_CORRIDOR - g25.cy[2])
-    u25_box = (u25_x + g25.cy[0], u25_y + g25.cy[1],
-               u25_x + g25.cy[2], u25_y + g25.cy[3])
-    pocket_dx = 0.0
-    for r, rx in (("U26", 5.95), ("L3", 10.95)):
-        g = B.g(r, 0)
-        box = (-HX + POCKET_L + rx + g.cy[0], buck_y + g.cy[1],
-               -HX + POCKET_L + rx + g.cy[2], buck_y + g.cy[3])
-        if bbox_overlap(u25_box, box, 0.001):
-            pocket_dx = min(pocket_dx, u25_box[0] - 0.25 - box[2])
-    B.place("U26", -HX + POCKET_L + 5.95 + pocket_dx, buck_y, 0)
-    B.place("L3", -HX + POCKET_L + 10.95 + pocket_dx, buck_y, 0)
-    l2_x = max(mcu_x + 0.8, j11[2] + 2.6)
-    B.place("L2", l2_x, HY - 3.6, 0)
-    B.place("U7", l2_x + 4.5, HY - 3.6, 0)
-    # U12, the analog LDO: at the right-hand end of the band above the MCU,
-    # where the sensor island starts.  Anchored because the U7 loop fills the
-    # band otherwise.  It sits at the TOP OF THE ISLAND rather than up beside
-    # U7: DESIGN_SPEC "Heat and interference" puts U12 on the analog island
-    # with the sensors and away from both switchers, and the 3.4 mm this
-    # frees under U7 is where the post-bead output caps C23/C24 go - at the
-    # old y = 10.0 they were the two parts CAP_NEAR could not satisfy (C24
-    # was 7.2 mm out), because the H2 grommet keepout owns the middle of the
-    # band from y = 11.7 up and the microSD socket owns everything left of
-    # L2.  The clearance above is C47's courtyard, the crystal's right load
-    # capacitor, which is the one anchored part in the way.
-    # It moves right with the rest of the island (isl_dx, U20_CORRIDOR).
+    #
+    # SINCE THE BEC REVISION THE WHOLE CHAIN LIVES IN THE LEFT-CENTRE POCKET,
+    # left to right:
+    #   Q1  the OR-ing P-FET, nearest the left edge.  5V_IN arrives on the
+    #       BACK at J3 pad 7 hard against that edge, and C19 (the 100 uF
+    #       hold-up) is Q1's own satellite, so the BEC entry, the hold-up and
+    #       the FET are one group a few millimetres from the pad row.
+    #   U7  the AP63203 3.3 V buck, fed from Q1's source.
+    #   L2  its inductor, to the RIGHT of U7: on a TSOT26 the SW (pad 5) and
+    #       BST (pad 6) pins are both on that side of the package.
+    # This is the pocket the removed U26/L3/U25 row used to fill.  It is also
+    # the one part of the board that is far from BOTH the sensor island (which
+    # is what IND_SENSOR_MM asks of L2) and the microSD/crystal band, so the
+    # top band above the MCU - which the TPS62913 stage used to own, and which
+    # was the tightest neighbourhood on the board - is free again.
+    #
+    # y is measured from the BOTTOM edge: the chain sits on a band just above
+    # the USB-C receptacle and that band rises as the board gets shorter, so a
+    # fixed y walks it into SW1.  ...but only DOWNWARD to the mounting square:
+    # the left-centre pocket is the strip between the H1 and H4 grommet
+    # keepouts and those do not move with the board edge.  10.45 mm above
+    # -MOUNT_Y is where the two anchors meet at the old 41.2 mm height, so
+    # nothing moves at or below it.
+    buck_y = max(-HY + 15.8, -MOUNT_Y + 10.45)
+    B.place("Q1", -HX + POCKET_L + 2.1, buck_y, 0)
+    B.place("U7", -HX + POCKET_L + 7.6, buck_y, 0)
+    B.place("L2", -HX + POCKET_L + 12.6, buck_y, 0)
+    # U12, the analog LDO: at the TOP OF THE SENSOR ISLAND, where
+    # DESIGN_SPEC "Heat and interference" wants it - with the sensors and
+    # away from the switcher, which is now a whole board-width away in the
+    # left pocket.  It moves right with the rest of the island (isl_dx,
+    # U20_CORRIDOR).
     B.place("U12", u12_x0 + isl_dx, 6.6, 0)
-    # U25, the priority mux: anchored in the left-centre pocket, where VBAT
-    # and 5V_IN already are, U20_CORRIDOR clear of the QFN's left flank.
-    B.place("U25", u25_x, u25_y, 0)
-    # C19, the 100 uF polymer - 8.9 x 4.9 mm of courtyard, the biggest passive
-    # on the board - used to be anchored in the top left corner, three
-    # centimetres of rail away from the pin it holds up.  It is a satellite of
-    # the mux's OUT pad now (SATELLITES), placed before the two 10 uF beside
-    # it because it is the one that needs the room.
-    # U8, the USB ESD array, sits beside the receptacle rather than being
-    # packed: the two switches take the whole band above J4.
-    B.place("U8", -HX + POCKET_L + 2.35, buck_y - 4.6, 0)
+    # U8, the USB ESD array, is gone (DESIGN_SPEC "Decisions"): D+/D- run
+    # straight from the receptacle into R22/R23, which are packed with the
+    # rest of the USB group.
     # U24, the QSPI flash/PSRAM socket, is NOT on the front any more: it is a
     # DNP expansion land on the BACK, against the same QSPI pads - see
     # back_side() and BACK_DNP_PARTS.  The pocket under the MCU that it used
@@ -2865,7 +3325,9 @@ def floorplan(B, comps):
         # into this group rather than into mcu_ring.
         "flash":    (["U24", "C62", "C63", "R35"], (mcu_x + 1.8, -12.0),
                      south),
-        "usb":      (["U8", "R22", "R23", "R4", "R5", "C7"], (-14.5, -6.5),
+        # U8, the USBLC6 ESD array, is gone: what is left of this group is
+        # the 27 R series pair and the CC pull-downs at the receptacle.
+        "usb":      (["R22", "R23", "R4", "R5", "C7"], (-14.5, -6.5),
                      sw + west + ring),
         "led":      (["C79", "R55"], (-1.0, -15.6), south),
         "sd_byp":   (["C64", "C65", "C66"], (j11[2] - 3.0, j11[1] - 2.0),
@@ -2875,11 +3337,15 @@ def floorplan(B, comps):
         "adc_div":  (["R27", "R28", "R29", "R30"],
                      (-HX + POCKET_L + 2.1, -2.0),
                      west + sw),
-        "buck5":    (["R54"], (-HX + POCKET_L + 3.45, 8.2), west),
-        "mux":      (["U25", "C70", "C71", "C72", "R42", "R43", "R44", "R45",
-                      "R46", "R47"], (-HX + POCKET_L + 14.45, -0.5), west),
+        # The two left-pocket groups the power chain leaves behind: the ESC
+        # telemetry series resistor at the J3 TX pad, and anything new that
+        # votes itself onto the 5V_IN / V5_SYS / V3V3_SYS nodes (SAT_GROUP
+        # maps Q1 -> power_in and U7 -> buck3v3).  Both are seeded in the
+        # left-centre pocket, which is where the chain itself is anchored.
+        "power_in": (["R54"], (-HX + POCKET_L + 3.45, 8.2), west),
+        "buck3v3":  ([], (-HX + POCKET_L + 7.6, 2.0), west),
         # The analog island: the three MEMS sensors, their decoupling and the
-        # LDO that feeds them, kept IND_SENSOR_MM clear of L2/L3.  The ten test
+        # LDO that feeds them, kept IND_SENSOR_MM clear of L2.  The ten test
         # points that used to share this strip are on the back now, so the
         # decoupling has the whole island to itself - see back_side().
         "sens":     (["C50", "C51",
@@ -2887,14 +3353,14 @@ def floorplan(B, comps):
                       "C60", "C61", "R48", "R50", "R51"],
                      (isl_x + 1.5, -3.0), east + south),
         # C25/C26 are U12's own input and output caps and belong beside it on
-        # the island; R10 is the PG pull-up and can sit anywhere on the band.
-        "reg3v3":   (["U12", "C25", "C26", "R10"], (mcu_x + 9.4, 6.6),
+        # the island.  R10, the MCU_RUN pull-up, is a satellite of U20 now.
+        "reg3v3":   (["U12", "C25", "C26"], (mcu_x + 9.4, 6.6),
                      east + north + ring),
-        # C20/C21 are the V5_SYS local bulk "at the array" and C22 the
-        # V3V3_SYS one: the array is the right edge now, so they belong in the
-        # top band beside U12, not in the left pocket where the old left-edge
-        # array put them.
-        "v5bulk":   (["C19", "C20", "C21"], (mcu_x + 10.2, 10.0),
+        # C20/C21 are the 5V_IN local bulk "at the array" and C22 the
+        # V3V3_SYS one: the array is the right edge, so they belong in the
+        # top band beside U12.  C19 is not here any more - it is the 5V_IN
+        # hold-up at the J3 pad row and is a satellite of Q1.
+        "v5bulk":   (["C20", "C21"], (mcu_x + 10.2, 10.0),
                      north + east + ring),
     }
     # anything the schematic gained since this table was written follows the
@@ -2905,7 +3371,7 @@ def floorplan(B, comps):
     assigned = {r: g for g, (refs, _, _) in groups.items() for r in refs}
     assigned.update({r: SAT_GROUP[v[0]] for r, v in B.sat.items()
                      if v[0] in SAT_GROUP})
-    groups["u7"] = ([], (6.1, 13.0), north)
+    groups["u7"] = ([], (6.1, 13.0), north)   # kept: the free top band
     # THE SATELLITES ARE ALREADY DOWN (see above): strike them out of the
     # region lists so the regions hold what is actually left to pack.  They
     # are in `fixed` as well, which is the belt to this braces.
@@ -2949,8 +3415,9 @@ def floorplan(B, comps):
     # but U24's two bypass caps have only the pocket under the MCU, and the
     # microSD's only the band under the socket.  Packed the other way round the
     # island's spill took both pockets and left C62/C63 23 mm from U24.
-    order = ["mcu_ring", "mux", "sd_byp", "sd_pu", "usb", "flash", "sens",
-             "reg3v3", "i2c", "v5bulk", "adc_div", "buck5", "u7", "led"]
+    order = ["mcu_ring", "sd_byp", "sd_pu", "usb", "flash", "sens",
+             "reg3v3", "i2c", "v5bulk", "adc_div", "power_in", "buck3v3",
+             "u7", "led"]
     for name in order:
         refs, seed, bounds = groups[name]
         # the satellites and the anchored parts are already down
@@ -3010,8 +3477,8 @@ def back_side(B, isl_x, mx_r):
 
     Nothing here is packed.  The back is empty by construction, so each
     position is solved from the one obstacle that does reach through the
-    board - the grommets' O 5 mm copper keepout and the front-side holes -
-    and check_back() asserts the result rather than trusting it.
+    board - the grommets' O 6.4 mm GND ring and the front-side holes - and
+    check_back() asserts the result rather than trusting it.
     """
     HX, HY = B.HX, B.HY
 
@@ -3022,18 +3489,20 @@ def back_side(B, isl_x, mx_r):
     # between the two left grommets.  Both anchors are solved rather than
     # tabulated so --width/--height keep the alignment.  0.5 mm of copper to
     # the edge is 0.2 mm above the EDGE_COPPER rule, and the row's +-7.7 mm
-    # of copper stops 5.05 mm short of the grommets' O 5 mm copper keepout,
-    # which reaches only |y| = 12.75; check_back() asserts both.
+    # of copper stops 4.2 mm short of the grommets' O 6.4 mm GND ring plus
+    # its copper clearance, which reaches only |y| = 11.9; check_back()
+    # asserts both.
     B.anchor("J3", ESC_BACK_ROT, ("padmin", -HX + PAD_EDGE_INSET),
              ("padc", ESC_BACK_Y))
 
     # ---- J10, the DBG landing ------------------------------------------
     # Bottom edge, as far RIGHT as the H3 grommet lets it go.  On the front
-    # the limit was the flange courtyard; on the back it is the O 5 mm copper
-    # keepout, which is 0.75 mm smaller in radius, so the row sits further
-    # right than it used to.  Solved, not tabulated, so --height stays
+    # the limit is the flange courtyard; on the back it is the O 6.4 mm GND
+    # ring plus its copper clearance, 0.10 mm LARGER in radius than that
+    # courtyard, so the row sits a hair further left than a front-side part
+    # in the same corner would.  Solved, not tabulated, so --height stays
     # meaningful: as the board gets shorter the pad row climbs towards the
-    # keepout and the usable x shrinks with it.
+    # ring and the usable x shrinks with it.
     # Two things stick out to the right and both have to clear the circle: the
     # pad row itself, and the "GND" caption standing above its last pad - the
     # caption is narrower but reaches 3.3 mm further up, which is *towards*
@@ -3076,9 +3545,23 @@ def back_side(B, isl_x, mx_r):
     # its RIGHT half: J4's four through-hole shield pegs and its two USB
     # mounting holes come through to B.Cu under the bottom-left of the board,
     # and the caps' own mirrored captions hang below them.
+    # C62/C63 are NOT flipped (only U24 is in BACK_DNP_PARTS): they are
+    # front-side DNP parts under a back-side land, so unlike the land they do
+    # see the H3 grommet's FLANGE keepout - and the land follows the MCU,
+    # which is pinned to the right board edge, so a wider board walks the pair
+    # into that circle (it was a hard "mounting keepout H3/C63" from 52 mm
+    # up).  Solved against the circle, like J10 above in floorplan().
     ucx = (u24[0] + u24[2]) / 2.0
+    cap_y = u24[1] - 0.75
+    shift = 0.0
     for ref, dx in (("C62", 0.55), ("C63", 2.95)):
-        B.place(ref, ucx + dx, u24[1] - 0.75, 0)
+        g = B.g(ref, 0)
+        r = MOUNT_KEEPOUT_R + 0.05 + 0.1
+        dy = max(cap_y + g.cy[1] + MOUNT_Y, -MOUNT_Y - (cap_y + g.cy[3]), 0.0)
+        x_max = mx_r - math.sqrt(max(r * r - dy * dy, 0.0)) - g.cy[2]
+        shift = min(shift, x_max - (ucx + dx))
+    for ref, dx in (("C62", 0.55), ("C63", 2.95)):
+        B.place(ref, ucx + dx + shift, cap_y, 0)
 
     # ---- TP1-TP10 -------------------------------------------------------
     # A fixed 2 x 5 grid under the sensor island.  owner = the sensor whose
@@ -3128,9 +3611,12 @@ def back_silk(B):
     # INBOARD (+x) of its pad, in the band nothing else on the back uses.
     B.back_pad_labels("J3", PAD_LABELS["J3"], 2.2, 0.0)
     jx, jy = B.pos("J3")
-    # 10.6 mm out, not 9.6: the pad row's own silkscreen box reaches 9.3 mm
-    # from the row centre along the row, and a label on it is a DRC
-    # silk_overlap as well as unreadable.
+    # 10.6 mm out.  The row is NINE pads now (5V / GND / VBAT were added to
+    # the six ESC signals) and spans 8.7 mm of copper each way, with its
+    # pin-1 silk dot 9.65 mm out; the H1/H4 grommet GND rings plus their
+    # copper clearance reach 12.05 mm.  10.6 is the middle of that 2.4 mm
+    # band, which is why PadRow_1x09 carries NO silkscreen outline: an
+    # outline round a nine-pad row reaches both the caption and the rings.
     B.text("ESC", jx + 1.0, jy + 10.6, 0, size=0.9, thick=0.15, back=True)
     B.back_ref("J3", 1.0, -10.6)
     # J10: labels above the pads, rotated 90, as on the front

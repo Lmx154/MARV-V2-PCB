@@ -20,8 +20,9 @@ def netof(pin):
 # PINOUT dictionary mapping GPIO number to expected net name. Extracted from MCU_GPIO tuples in build_power.py;
 # those tuples are authoritative and mirror the actual generator assignments.
 # None = the pin carries a KiCad no-connect flag and must reach no net at all
-# (the six unexposed spares: the IO block is 14 rows and the ports above them
-# use the rest, so GPIO1/21/27/28/31/43 are left unconnected on purpose).
+# (the seven unexposed spares: the IO block is 14 rows and the ports above them
+# use the rest; GPIO37 joined them when the TPS2121 mux -- whose status pin it
+# read -- was removed).
 PINOUT={
  0:'FLASH_CS1', 1:'HG_ACC_INT', 2:'IMU_INT2', 3:'LED_DATA', 4:'HG_ACC_CS', 5:'PWM8',
  6:'IMU_INT1', 7:'IMU_CS', 8:'SENS_MISO', 9:None, 10:'SENS_SCK', 11:'SENS_MOSI',
@@ -29,7 +30,7 @@ PINOUT={
  18:None, 19:'PWM6', 20:'PWM5', 21:None, 22:'MAG_SDA', 23:'MAG_SCL',
  24:'GPS_RX', 25:'GPS_TX', 26:None, 27:None, 28:'SD_D0', 29:'SD_D1',
  30:'SD_D2', 31:'SD_D3', 32:'ESC_TELEM_RX', 33:'SD_CLK', 34:'SD_CMD', 35:'SD_DET',
- 36:'PWM4', 37:'PWR_SRC_ST', 38:'PWM3', 39:'PWM2', 40:'VBUS_SENSE', 41:'VBAT_SENSE',
+ 36:'PWM4', 37:None, 38:'PWM3', 39:'PWM2', 40:'VBUS_SENSE', 41:'VBAT_SENSE',
  42:'CURR_SENSE', 43:'PWM1', 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
 }
 
@@ -42,29 +43,39 @@ PAD_OF_GPIO={
  42:'53', 43:'54', 44:'55', 45:'56', 46:'57', 47:'58',
 }
 expected={
- ('U7','1'):'V5_SYS',('U7','2'):'U7_SW',('U7','3'):'U7_VO',('U7','4'):'GND',
- ('U7','5'):'PWR_GOOD',('U7','6'):'V5_SYS',('U7','7'):'GND',('U7','8'):'U7_SS',
- ('U7','9'):'U7_FB',('U7','10'):'U7_SCONF',
- ('L2','1'):'U7_SW',('L2','2'):'U7_VO',
- ('FB1','1'):'U7_VO',('FB1','2'):'V3V3_SYS',
- # U12 TPS7A20 LDO: EN (pin 3) is sequenced from PWR_GOOD, not from V5_SYS
- ('U12','1'):'V5_SYS',('U12','2'):'GND',('U12','3'):'PWR_GOOD',('U12','5'):'V3V3_ANA',
+ # U7 AP63203WU-7, FIXED 3.3 V / 2 A synchronous buck, TSOT26 (Diodes DS41326 Rev. 3-2 Pin
+ # Descriptions): 1 FB, 2 EN, 3 VIN, 4 GND, 5 SW, 6 BST.  FB is a SENSE input on the fixed-output
+ # parts (Sec 9 "Setting the Output Voltage"), so ('U7','1') must be V3V3_SYS itself and NOT a
+ # divider node - there is no divider on this board any more.
+ ('U7','1'):'V3V3_SYS',('U7','2'):'U7_EN',('U7','3'):'V5_SYS',('U7','4'):'GND',
+ ('U7','5'):'U7_SW',('U7','6'):'U7_BST',
+ ('L2','1'):'U7_SW',('L2','2'):'V3V3_SYS',
+ ('C13','1'):'U7_BST',('C13','2'):'U7_SW',                        # bootstrap cap, BST to SW
+ ('C8','1'):'V5_SYS',('C8','2'):'GND',('C9','1'):'V5_SYS',('C9','2'):'GND',
+ ('C10','1'):'V3V3_SYS',('C10','2'):'GND',('C11','1'):'V3V3_SYS',('C11','2'):'GND',
+ ('R52','1'):'V5_SYS',('R52','2'):'U7_EN',
+ # U12 TPS7A20 LDO: EN (pin 3) is tied to V3V3_SYS itself.  The AP63203 has no power-good output,
+ # so the rail does the buck-before-LDO sequencing instead of a status pin.
+ ('U12','1'):'V5_SYS',('U12','2'):'GND',('U12','3'):'V3V3_SYS',('U12','5'):'V3V3_ANA',
  ('J4','A5'):'USB_CC1',('J4','B5'):'USB_CC2',('J4','SH'):'GND',
- # J3 is the MicoAir AM32 4-in-1 ESC pad row. The order is the ESC silkscreen read left to right:
- # CURR, TX, M4, M3, M2, M1, VBAT, GND -- so pin 3 is PWM4 and pin 6 is PWM1, NOT the other way round.
- # This assertion is the one that catches a reversed motor row, which is why every pin is listed.
+ # J3 is the MicoAir AM32 4-in-1 ESC pad row, NINE pads. Pads 1-6 are the ESC silkscreen read left
+ # to right: CURR, TX, M4, M3, M2, M1 -- so pin 3 is PWM4 and pin 6 is PWM1, NOT the other way round.
+ # Pads 7-9 are this board's power entry: 7 is the external BEC's regulated 5 V, 8 is GND and 9 is
+ # the raw-pack SENSE wire. This assertion is the one that catches a reversed motor row or a 5 V pad
+ # swapped with the VBAT sense pad, which is why every pin is listed.
  ('J3','1'):'CURR_SENSE_RAW',('J3','2'):'ESC_TELEM',('J3','3'):'PWM4',('J3','4'):'PWM3',
- ('J3','5'):'PWM2',('J3','6'):'PWM1',('J3','7'):'VBAT',('J3','8'):'GND',
- # U26 AP63205WU-7, fixed 5 V / 2 A buck, TSOT-23-6 (Diodes DS41326 Rev. 2-2 Pin Descriptions):
- # 1 FB, 2 EN, 3 VIN, 4 GND, 5 SW, 6 BST. FB is a sense input on the fixed-output parts and goes
- # straight to the output, so ('U26','1') must be 5V_IN and not a divider node.
- ('U26','1'):'5V_IN',('U26','2'):'U26_EN',('U26','3'):'VBAT',('U26','4'):'GND',
- ('U26','5'):'U26_SW',('U26','6'):'U26_BST',
- ('L3','1'):'U26_SW',('L3','2'):'5V_IN',
- ('C75','1'):'U26_BST',('C75','2'):'U26_SW',                      # bootstrap cap, BST to SW
- ('C73','1'):'VBAT',('C73','2'):'GND',('C74','1'):'VBAT',('C74','2'):'GND',
- ('C76','1'):'5V_IN',('C76','2'):'GND',('C77','1'):'5V_IN',('C77','2'):'GND',('C80','1'):'5V_IN',('C80','2'):'GND',
- ('R52','1'):'VBAT',('R52','2'):'U26_EN',
+ ('J3','5'):'PWM2',('J3','6'):'PWM1',('J3','7'):'5V_IN',('J3','8'):'GND',('J3','9'):'VBAT',
+ # The 5 V OR: Q1 AO3401A (SOT-23, 1 G / 2 S / 3 D) and D1 1N5819WS (SOD-323, 1 K / 2 A).
+ # Drain on 5V_IN, source on V5_SYS, gate on USB_VBUS with R7 100k to GND; the diode's ANODE is on
+ # USB_VBUS and its CATHODE on V5_SYS. A reversed diode or a drain/source swap would put the body
+ # diode the wrong way round and let USB back-feed the BEC, so all six pins are asserted.
+ ('Q1','1'):'USB_VBUS',('Q1','2'):'V5_SYS',('Q1','3'):'5V_IN',
+ ('D1','1'):'V5_SYS',('D1','2'):'USB_VBUS',
+ ('R7','1'):'USB_VBUS',('R7','2'):'GND',
+ ('C19','1'):'5V_IN',('C19','2'):'GND',
+ # RUN: R10 100k pull-up to V3V3_SYS and SW1 to GND. It used to hang on the TPS62913's open-drain
+ # PWR_GOOD output; that net no longer exists.
+ ('R10','1'):'V3V3_SYS',('R10','2'):'MCU_RUN',('SW1','1'):'MCU_RUN',('SW1','2'):'GND',
  # ESC analog current sense and one-wire KISS telemetry, both conditioned by a 1k series resistor
  ('R53','1'):'CURR_SENSE_RAW',('R53','2'):'CURR_SENSE',('C78','1'):'CURR_SENSE',('C78','2'):'GND',
  ('U20','53'):'CURR_SENSE',                                       # GPIO42 = ADC2
@@ -77,7 +88,7 @@ expected={
  # the RP2354B end of the four spare GPIOs that leave on the IO block (rows 11-14)
  ('U20','55'):'IO_GPIO44',('U20','56'):'IO_GPIO45',('U20','57'):'IO_GPIO46',
  ('U20','58'):'IO_GPIO47',
- ('C20','1'):'V5_SYS',('C21','1'):'V5_SYS',('C22','1'):'V3V3_SYS',
+ ('C20','1'):'5V_IN',('C21','1'):'5V_IN',('C22','1'):'V3V3_SYS',
  # RP2354B rails (MCU sheet). ADC_AVDD (59) stays on the LDO rail; the VREG_AVDD RC filter is fed
  # from V3V3_SYS, so R20 pin 1 must be V3V3_SYS and pin 61 must still reach it only through R20.
  ('U20','5'):'V3V3_SYS',('U20','59'):'V3V3_ANA',('U20','61'):'VREG_AVDD',
@@ -94,7 +105,6 @@ expected={
  # second IMU chip-select pull-up) is removed: the ICM-45686 (U21) has a single chip select.
  ('R48','1'):'V3V3_ANA',('R48','2'):'IMU_CS',
  ('R50','1'):'V3V3_ANA',('R50','2'):'BARO_CS',('R51','1'):'V3V3_ANA',('R51','2'):'HG_ACC_CS',
- ('U20','46'):'PWR_SRC_ST',                                       # GPIO37 reads the mux status pin
  # sensor supplies on the analog rail. U21 is the ICM-45686 (LGA-14): VDDIO=5, VDD=8, GND=6.
  ('U21','5'):'V3V3_ANA',('U21','8'):'V3V3_ANA',('U22','1'):'V3V3_ANA',('U22','10'):'V3V3_ANA',
  ('U23','1'):'V3V3_ANA',('U23','6'):'V3V3_ANA',('U23','3'):'V3V3_ANA',('U23','11'):'GND',
@@ -112,9 +122,9 @@ expected={
 # J7 pin n (power) and J8 pin n (GND, at the board edge). This is the single connector that carries
 # GPS, ELRS, the magnetometer bus, the four servo outputs and the four exposed spares, so it is the
 # one table that catches a mis-wired port, a signal on the wrong rail, or a 5 V pin on a 3.3 V row.
-IO_ROWS=[('GPS_RX','V5_SYS'),('GPS_TX','V5_SYS'),('ELRS_RX','V5_SYS'),('ELRS_TX','V5_SYS'),
-         ('MAG_SDA','V3V3_SYS'),('MAG_SCL','V3V3_SYS'),('PWM5','V5_SYS'),('PWM6','V5_SYS'),
-         ('PWM7','V5_SYS'),('PWM8','V5_SYS'),('IO_GPIO44','V3V3_SYS'),('IO_GPIO45','V3V3_SYS'),
+IO_ROWS=[('GPS_RX','5V_IN'),('GPS_TX','5V_IN'),('ELRS_RX','5V_IN'),('ELRS_TX','5V_IN'),
+         ('MAG_SDA','V3V3_SYS'),('MAG_SCL','V3V3_SYS'),('PWM5','5V_IN'),('PWM6','5V_IN'),
+         ('PWM7','5V_IN'),('PWM8','5V_IN'),('IO_GPIO44','V3V3_SYS'),('IO_GPIO45','V3V3_SYS'),
          ('IO_GPIO46','V3V3_SYS'),('IO_GPIO47','V3V3_SYS')]
 for _i,(_sig,_pwr) in enumerate(IO_ROWS):
     expected[('J6',str(_i+1))]=_sig
@@ -125,44 +135,8 @@ for _i,(_sig,_pwr) in enumerate(IO_ROWS):
 TESTPOINTS={'TP1':'SENS_SCK','TP2':'SENS_MOSI','TP3':'SENS_MISO','TP4':'IMU_CS','TP5':'BARO_CS',
             'TP6':'HG_ACC_CS','TP7':'IMU_INT1','TP8':'IMU_INT2','TP9':'BARO_INT','TP10':'HG_ACC_INT'}
 expected.update({(_r,'1'):_n for _r,_n in TESTPOINTS.items()})
-# U25 TPS2121 priority power mux, every pin. Pin numbers are the RUX0012A VQFN-HR-12 assignment of
-# datasheet SLVSEA3F Sec 6 (Figure 6-2 / Pin Functions): 1 OUT, 2 IN2, 3 CP2, 4 OV2, 5 OV1, 6 PR1,
-# 7 IN1, 8 OUT, 9 ST, 10 ILM, 11 SS, 12 GND. CP2 and OV2 are grounded ("connect to GND if not
-# required"), which selects the internal-VREF priority scheme: IN1 = 5V_IN wins whenever PR1 > VREF.
-expected.update({('U25','1'):'V5_SYS',('U25','2'):'USB_VBUS',('U25','3'):'GND',('U25','4'):'GND',
- ('U25','5'):'U25_OV1',('U25','6'):'U25_PR1',('U25','7'):'5V_IN',('U25','8'):'V5_SYS',
- ('U25','9'):'PWR_SRC_ST',('U25','10'):'U25_ILM',('U25','11'):'U25_SS',('U25','12'):'GND',
- ('R42','1'):'5V_IN',('R42','2'):'U25_PR1',('R43','1'):'U25_PR1',('R43','2'):'GND',
- ('R44','1'):'5V_IN',('R44','2'):'U25_OV1',('R45','1'):'U25_OV1',('R45','2'):'GND',
- ('R46','1'):'U25_ILM',('R46','2'):'GND',('R47','1'):'V3V3_SYS',('R47','2'):'PWR_SRC_ST',
- ('C70','1'):'U25_SS',('C70','2'):'GND',('C71','1'):'5V_IN',('C71','2'):'GND',
- ('C72','1'):'USB_VBUS',('C72','2'):'GND'})
 for pin,net in expected.items():
  assert pin_net.get(pin)==net,(pin,net,pin_net.get(pin))
-assert nets['U7_FB']=={('U7','9'),('R7','2'),('R8','1')}
-# ...and the divider is checked by VALUE as well as by topology, because the setpoint it
-# programmes is what every ngspice deck asserts against (setpoint 3.33 V) and what
-# DESIGN_SPEC quotes.  TPS62913 datasheet Sec 8.2.2.2.6 Eq.8: VOUT = VFB x (1 + R1/R2),
-# VFB = 0.8 V typ / 0.792-0.812 V over the Sec 6.5 spec.  R1 = R7 (V3V3_SYS -> FB),
-# R2 = R8 (FB -> GND).  Both are 0.1 % thin film in 0402; 15.8k/4.99k was unbuildable
-# because no 0.1 % 15.8k exists in 0201 (reports/jlc-audit.md section 6).
-_VALUES={c.get('ref'):(c.findtext('value') or '') for c in root.find('components')}
-_RVAL={'k':1e3,'M':1e6,'R':1.0,'':1.0}
-def _ohms(v):
-    import re as _re
-    m=_re.match(r'\s*([\d.]+)\s*([kMR]?)\s*/\s*([\d.]+)%\s*$', v)
-    assert m, ('resistor value must read "<R>[k|M] / <tol>%"', v)
-    return float(m.group(1))*_RVAL[m.group(2)], float(m.group(3))
-_r1,_t1=_ohms(_VALUES['R7']); _r2,_t2=_ohms(_VALUES['R8'])
-assert _r2<=5000.0, ('TPS62913 Sec 8.2.2.2.6 wants R2 <= 5 kOhm for noise', _r2)
-assert _t1<=0.1 and _t2<=0.1, ('FB divider must be 0.1 % on both halves', _t1, _t2)
-_vnom=0.8*(1+_r1/_r2)
-assert abs(_vnom-3.33)<=3.33*0.003, ('FB divider off the 3.33 V setpoint by >0.3 %', _vnom)
-# worst case across 0.1 % on BOTH resistors stacked with the VFB spec
-_vmin=0.792*(1+(_r1*0.999)/(_r2*1.001))
-_vmax=0.812*(1+(_r1*1.001)/(_r2*0.999))
-assert 3.135<=_vmin and _vmax<=3.60, ('V3V3_SYS outside the deck predicate window', _vmin, _vmax)
-assert (_r1,_r2)==(10000.0,3160.0), ('FB divider is documented as 10k / 3.16k', _r1, _r2)
 assert {('J4','A4'),('J4','A9'),('J4','B4'),('J4','B9')} <= nets['USB_VBUS']
 # parts retired by earlier revisions and by this one must be gone, symbol and all:
 # U3/U5 the LM66100 OR-ing pair; J3's XT30 input network D23/C16/C67/C68/C69 (the 5 V input itself is
@@ -174,7 +148,14 @@ assert {('J4','A4'),('J4','A9'),('J4','B4'),('J4','B9')} <= nets['USB_VBUS']
 # are LIVE again -- they are the power and GND columns of that block, not the old ELRS pad row and
 # the old MCU-interface header.
 _retired = {'U3','U5','D23','C16','C67','C68','C69','D21','R31','R32','BZ1',
-            'J15','Q20','D22','R33','R34','J9','J16','J12','J13','J14'}
+            'J15','Q20','D22','R33','R34','J9','J16','J12','J13','J14',
+            # THE BEC REVISION (DESIGN_SPEC "Decisions", 2026-09-17): the on-board pack buck
+            # (U26/L3/C73/C74/C75/C76/C77/C80/R52-as-VBAT-EN), the TPS2121 priority mux
+            # (U25/R42-R47/C70/C71/C72), the TPS62913 3.3 V stage's second half (FB1, C12,
+            # C17, C23, C24 and the 0.1 % divider R8/R9) and the USB ESD array U8 are all gone.
+            # R52, R7 and R10 survive as designators on new jobs and are NOT in this set.
+            'U8','U25','U26','L3','FB1','C12','C17','C23','C24','C70','C71','C72',
+            'C73','C74','C75','C76','C77','C80','R8','R9','R42','R43','R44','R45','R46','R47'}
 _refs = {c.get('ref') for c in root.find('components')}
 assert not _retired & _refs, sorted(_retired & _refs)
 # and no net of the deleted driver survives either (BUZZ_PWM / BUZZ_G / BUZZ_D / BUZZER*)
@@ -198,32 +179,43 @@ for _r in sorted(_DNP):
 _unexpected = sorted(r for r, p in _props.items() if 'dnp' in p)
 assert _unexpected == sorted(_DNP), ('unexpected DNP parts', _unexpected)
 assert 'dnp' not in _props.get('R35', set()), 'R35 (FLASH_CS1 pull-up) must stay populated'
-# every U25 programming node is exactly the two or three pins it should be, nothing else leaks in
-assert nets['U25_PR1']=={('U25','6'),('R42','2'),('R43','1')},nets['U25_PR1']
-assert nets['U25_OV1']=={('U25','5'),('R44','2'),('R45','1')},nets['U25_OV1']
-assert nets['U25_ILM']=={('U25','10'),('R46','1')},nets['U25_ILM']
-assert nets['U25_SS']=={('U25','11'),('C70','1')},nets['U25_SS']
-assert nets['PWR_SRC_ST']=={('U25','9'),('R47','2'),('U20','46')},nets['PWR_SRC_ST']
-# POWER CHAIN BOUNDARY: VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS.  Servo 5 V is no longer tapped at
-# 5V_IN: the IO block has ONE power column, so all eight 5 V rows (GPS/ELRS and S5-S8) are V5_SYS and
-# servo current crosses the mux -- see the DESIGN_SPEC note on the U25 ILM budget.
-# 1. VBAT (raw 6-25.2 V pack) reaches exactly one connector (J3, the ESC row) and exactly one IC pin
-#    (U26 VIN). Nothing else may see pack voltage -- in particular no U25, U20 or U7 pin, and the only
-#    other things on the net are the buck input caps, the EN resistor and the R27 sense divider top.
+# POWER CHAIN BOUNDARY (DESIGN_SPEC "Decisions", 2026-09-17):
+#     external BEC -> J3 pin 7 -> 5V_IN -> (Q1 P-FET) -> V5_SYS -> U7 -> V3V3_SYS -> U12 -> V3V3_ANA
+#                     USB_VBUS -> (D1 Schottky) ----^
+# and, separately, raw pack -> J3 pin 9 -> VBAT -> R27, a SENSE wire that carries no load.
+# 1. VBAT reaches exactly one connector (J3, the ESC row), NO IC pin at all, and nothing but the top
+#    leg of the sense divider. Two nodes is the whole net: any third node means pack voltage has
+#    found a load, which is the failure this assertion exists to catch.
 assert {ref for ref,pin in nets['VBAT'] if ref.startswith('J')}=={'J3'},nets['VBAT']
-assert {(ref,pin) for ref,pin in nets['VBAT'] if ref.startswith('U')}=={('U26','3')},nets['VBAT']
-assert nets['VBAT']=={('J3','7'),('U26','3'),('C73','1'),('C74','1'),('R52','1'),('R27','1')},nets['VBAT']
-# 2. 5V_IN is a buck OUTPUT, not an input: it is driven by L3/U26 and feeds U25 IN1 (pin 7), the mux
-#    PR1/OV1 dividers and the mux IN1 bypass. It now reaches NO connector at all - the servo row that
-#    used to tap it is gone, so nothing leaves the board upstream of the mux.
-assert not {ref for ref,pin in nets['5V_IN'] if ref.startswith('J')},nets['5V_IN']
-assert {('L3','2'),('U26','1'),('U25','7'),('C76','1'),('C77','1'),('C80','1')} <= nets['5V_IN'],nets['5V_IN']
-# 3. V5_SYS (mux output) may reach exactly the eight 5 V pins of the IO block power column - rows 1-4
-#    (GPS, ELRS) and rows 7-10 (servo S5-S8) - and nothing else with a connector reference. The ESC
-#    row J3 and USB J4 must stay off it, so no source back-feeds the mux output.
-assert {(ref,pin) for ref,pin in nets['V5_SYS'] if ref.startswith('J')}=={
-    ('J7','1'),('J7','2'),('J7','3'),('J7','4'),
-    ('J7','7'),('J7','8'),('J7','9'),('J7','10')},nets['V5_SYS']
+assert not {(ref,pin) for ref,pin in nets['VBAT'] if ref.startswith('U')},nets['VBAT']
+assert nets['VBAT']=={('J3','9'),('R27','1')},nets['VBAT']
+# 2. 5V_IN is an INPUT now, not a buck output: it arrives on J3 pin 7 from an off-board BEC, feeds the
+#    eight 5 V rows of the IO block power column (rows 1-4 GPS/ELRS and 7-10 servo S5-S8), carries the
+#    C19 hold-up and the C20/C21 array bulk, and reaches exactly one semiconductor - Q1's DRAIN.
+assert {(ref,pin) for ref,pin in nets['5V_IN'] if ref.startswith('J')}=={
+    ('J3','7'),('J7','1'),('J7','2'),('J7','3'),('J7','4'),
+    ('J7','7'),('J7','8'),('J7','9'),('J7','10')},nets['5V_IN']
+assert {(ref,pin) for ref,pin in nets['5V_IN'] if ref[0] in 'UQD'}=={('Q1','3')},nets['5V_IN']
+assert nets['5V_IN']=={('J3','7'),('Q1','3'),('C19','1'),('C20','1'),('C21','1')} | {
+    ('J7',str(p)) for p in (1,2,3,4,7,8,9,10)},nets['5V_IN']
+# 3. V5_SYS is the OR output. It reaches NO connector pin at all: the servo/module rows moved ahead of
+#    the FET to 5V_IN, so nothing downstream of the OR leaves the board and a USB host can never drive
+#    the pad row. Its only loads are the two 3.3 V regulators and the WS2812 status LED (D20/C79,
+#    <=60 mA, kept here deliberately so the LED works on USB-only bench power).
+assert not {(ref,pin) for ref,pin in nets['V5_SYS'] if ref.startswith('J')},nets['V5_SYS']
+assert nets['V5_SYS']=={('Q1','2'),('D1','1'),('U7','3'),('U12','1'),('R52','1'),
+                        ('C8','1'),('C9','1'),('C25','1'),('D20','4'),('C79','1')},nets['V5_SYS']
+# 3z. The OR itself: the gate is USB_VBUS (so USB turns Q1 OFF), the diode anode is USB_VBUS, and
+#     nothing else may sit on the gate node except the pull-down and the VBUS sense divider.
+assert {('Q1','1'),('D1','2'),('R7','1'),('R29','1')} <= nets['USB_VBUS'],nets['USB_VBUS']
+assert nets['U7_SW']=={('U7','5'),('L2','1'),('C13','2')},nets['U7_SW']
+assert nets['U7_BST']=={('U7','6'),('C13','1')},nets['U7_BST']
+assert nets['U7_EN']=={('U7','2'),('R52','2')},nets['U7_EN']
+assert nets['MCU_RUN']=={('U20','35'),('SW1','1'),('R10','2')},nets['MCU_RUN']
+# 3y. Nets the BEC revision deleted must not come back under their old names.
+assert not [n for n in nets if n in ('PWR_GOOD','PWR_SRC_ST','U7_VO','U7_FB','U7_SS','U7_SCONF',
+                                     'U26_SW','U26_BST','U26_EN','U25_PR1','U25_OV1','U25_ILM',
+                                     'U25_SS','USB_DP_MCU','USB_DM_MCU')],sorted(nets)
 # 3a. V3V3_SYS leaves the board only on the block's six 3.3 V pins (rows 5-6 and 11-14) and on the
 #     microSD socket; no other connector may carry the system rail.
 assert {(ref,pin) for ref,pin in nets['V3V3_SYS'] if ref.startswith('J')}=={
@@ -232,10 +224,11 @@ assert {(ref,pin) for ref,pin in nets['V3V3_SYS'] if ref.startswith('J')}=={
 # 3b. The GND column is all ground, every pin of it, so every row has its own return.
 assert {(ref,pin) for ref,pin in nets['GND'] if ref=='J8'}=={
     ('J8',str(_p)) for _p in range(1,15)},sorted(p for p in nets['GND'] if p[0]=='J8')
-# 4. The buck's own programming nodes are exactly what they should be, nothing leaks in.
-assert nets['U26_SW']=={('U26','5'),('L3','1'),('C75','2')},nets['U26_SW']
-assert nets['U26_BST']=={('U26','6'),('C75','1')},nets['U26_BST']
-assert nets['U26_EN']=={('U26','2'),('R52','2')},nets['U26_EN']
+# 4. D+/D- run straight from the receptacle into the 27 R series pair: U8, the USBLC6 ESD array, is
+#    gone, so each data net is exactly the four receptacle pins plus one resistor end.
+for _d,_r in (('USB_DM','R23'),('USB_DP','R22')):
+    assert nets[_d]=={('J4','A%s'%('7' if _d=='USB_DM' else '6')),
+                      ('J4','B%s'%('7' if _d=='USB_DM' else '6')),(_r,'1')},nets[_d]
 # 5. PWM1-4 leave the board ONLY on the ESC pad row; PWM5-8 leave ONLY on the servo block.
 for n in range(1,5):
     assert {ref for ref,pin in nets['PWM%d'%n] if ref.startswith('J')}=={'J3'},nets['PWM%d'%n]
@@ -282,10 +275,10 @@ for gpio_num in range(48):
   f"PINOUT.md violated: GPIO{gpio_num} (U20 pad {pad}) is on {actual_net}, plan says {expected_net}; update PINOUT.md, build_power.py and this table together"
 
 # Validate the spare GPIO split: FOUR spares are exposed on the IO block signal column (rows 11-14),
-# SIX are deliberately unexposed and must be unconnected.  Exposing one of the six means editing
+# SEVEN are deliberately unexposed and must be unconnected.  Exposing one of them means editing
 # PINOUT.md (Rule 5), build_power.py and this table together.
 EXPOSED_SPARES = {44, 45, 46, 47}
-UNEXPOSED_SPARES = {9, 12, 18, 21, 26, 27}
+UNEXPOSED_SPARES = {9, 12, 18, 21, 26, 27, 37}
 assert not (EXPOSED_SPARES & UNEXPOSED_SPARES)
 spare_nets = {'IO_GPIO44', 'IO_GPIO45', 'IO_GPIO46', 'IO_GPIO47'}
 assert {PINOUT[g] for g in EXPOSED_SPARES} == spare_nets, \
@@ -302,7 +295,8 @@ for gpio_num in sorted(UNEXPOSED_SPARES):
 assert not [n for n in nets if n in ('IO_GPIO9','IO_GPIO12','IO_GPIO18','IO_GPIO21','IO_GPIO26','IO_GPIO27')], \
  sorted(n for n in nets if n.startswith('IO_GPIO'))
 
-print(f'PASS: 48-GPIO pin plan (4 exposed spares, 6 unconnected), {len(expected)} critical pin mappings, the FB divider,\n'
-      f'      USB supply pins, the VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS boundary, the ESC pad-row order, the\n'
+print(f'PASS: 48-GPIO pin plan (4 exposed spares, 7 unconnected), {len(expected)} critical pin mappings,\n'
+      f'      USB supply pins, the BEC -> 5V_IN -> Q1/D1 -> V5_SYS -> U7 -> V3V3_SYS boundary and the\n'
+      f'      VBAT sense-only rule, the ESC pad-row order, the\n'
       f'      J6/J7/J8 IO-block row map, the ten sensor test points, the PWM1-4 / PWM5-8 split, the {len(_DNP)} DNP\n'
       f'      flash-expansion parts (U24/C62/C63, R35 populated) and footprint coverage for {len(components)} components.')

@@ -27,9 +27,10 @@ JOINTS = {
     "MARV_Packages:Bosch_LGA-10_2x2mm_BMP581": 10,
     "MARV_Packages:InvenSense_LGA-14_2.5x3mm_P0.5mm_ICM45686": 14,
     "MARV_Packages:LED_WS2812B-2020_PLCC4_2.0x2.0mm": 4,
-    "MARV_Packages:MountingHole_4.0mm_Grommet": 0,
+    "MARV_Packages:MountingHole_4.0mm_Grommet_Pad_Via": 0,
+    "Diode_SMD:D_SOD-323": 2,
     "MARV_Packages:PadRow_1x03_P2.00mm": 0,
-    "MARV_Packages:PadRow_1x08_P2.00mm": 0,
+    "MARV_Packages:PadRow_1x09_P2.00mm": 0,
     "MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow": 14,
     "MARV_Packages:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm": 81,
     "MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm": 10,
@@ -37,6 +38,7 @@ JOINTS = {
     "MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12": 20,
     "MARV_Packages:microSD_HC_Molex_104031-0811": 14,
     "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm": 8,
+    "Package_TO_SOT_SMD:SOT-23": 3,
     "Package_TO_SOT_SMD:SOT-23-5": 5,
     "Package_TO_SOT_SMD:SOT-23-6": 6,
     "Package_TO_SOT_SMD:TSOT-23-6": 6,
@@ -47,9 +49,9 @@ JOINTS = {
 # refs that are board features, not purchased parts
 NOT_PURCHASED_PREFIX = ("H", "TP")
 NOT_PURCHASED_FP = {
-    "MARV_Packages:MountingHole_4.0mm_Grommet",
+    "MARV_Packages:MountingHole_4.0mm_Grommet_Pad_Via",
     "MARV_Packages:PadRow_1x03_P2.00mm",
-    "MARV_Packages:PadRow_1x08_P2.00mm",
+    "MARV_Packages:PadRow_1x09_P2.00mm",
     "TestPoint:TestPoint_Pad_1.0x1.0mm",
 }
 

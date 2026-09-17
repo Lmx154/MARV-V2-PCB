@@ -12,6 +12,8 @@ __pycache__/
 # ngspice scratch
 simulations/corners/*.log
 simulations/*.log
+simulations/superseded/*.log
+simulations/superseded/corners/*.log
 backups/*.kicad_pcb.prev
 # Editor / tool state
 .history/

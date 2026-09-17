@@ -271,7 +271,7 @@ MCU_GPIO=[
  ('43','GPIO34','SD_CMD','microSD CMD (PIO, GPIOBASE 16 window)'),
  ('44','GPIO35','SD_DET','microSD card detect'),
  ('45','GPIO36','PWM4','DShot via PIO (window 16-47)'),
- ('46','GPIO37','PWR_SRC_ST','U25 TPS2121 ST, open drain'),
+ ('46','GPIO37',None,'unexposed spare - no connect (was PWR_SRC_ST; the mux is gone)'),
  ('47','GPIO38','PWM3','DShot via PIO (window 16-47)'),
  ('48','GPIO39','PWM2','DShot via PIO (window 16-47)'),
  ('49','GPIO40','VBUS_SENSE','ADC0, USB_VBUS 10k/15k divider'),
@@ -308,14 +308,16 @@ N_PORTNAMES = ('PORT NAMING: a port label is named for the peripheral pin it com
     'array (POWER 3) the UART rows are therefore 1 GPS_RX (silk T0) / 2 GPS_TX (R0) / 3 ELRS_RX (T1) / 4 ELRS_TX (R1),\n'
     'rows 5/6 are MAG_SDA / MAG_SCL, rows 7-10 the PWM5-8 servo signals and rows 11-14 the four exposed spares.\n'
     'The array is three stacked 1x14 rows: J6 SIGNAL, J7 POWER, J8 GND. All array SIGNAL pins are 3.3 V CMOS.\n'
-    'GPIO37 (pin 46) is no longer spare: it reads PWR_SRC_ST, the open-drain ST output of U25 (TPS2121), which is\n'
-    'high while 5V_IN (IN1) powers V5_SYS and low while USB VBUS (IN2) does.')
+    'GPIO37 (pin 46) is SPARE and unconnected again: it used to read PWR_SRC_ST, the open-drain status output of\n'
+    'the U25 TPS2121 mux, and the mux is gone. USB presence is already readable on the VBUS_SENSE divider (GPIO40).')
 N_J10 = ('J10 is a 3-pad SWD landing (SWCLK / SWDIO / GND), not a 10-pin Cortex header: solder pads are kept for the two\n'
     'ports that mate with something fixed - the ESC row J3 and this one (DESIGN_SPEC "Connection philosophy").\n'
     'The debugger reference 3V3 and the debugger-driven reset line\n'
-    'of the old 2x05 header are both gone - power the board from VBAT or USB while debugging, and use SW1 (RUN via\n'
-    'PWR_GOOD) for reset. RUN is still held by the TPS62913 power-good pull-up on POWER 2, so the MCU cannot run\n'
-    'before V3V3_SYS is in regulation.')
+    'of the old 2x05 header are both gone - power the board from the BEC or USB while debugging, and use SW1\n'
+    '(MCU_RUN to GND) for reset. MCU_RUN is held up by R10 100k to V3V3_SYS, so RUN releases with the 3.3 V rail.\n'
+    'THE PULL-UP IS NOW A PLAIN RESISTOR, not a regulator power-good output: the AP63203 has no PG pin, so the\n'
+    'explicit "RUN cannot release before V3V3_SYS is in regulation" sequencing of the TPS62913 is gone. The\n'
+    'RP2350 brown-out detector (always on, 8 threshold steps, design guide Sec 2.2) is what covers it instead.')
 N_SPAREIO = ('SPARE IO. EXPOSED (IO array J6 signal column, POWER 3): GPIO44 row 11 (A44) | GPIO45 row 12 (A45) |\n'
     'GPIO46 row 13 (A46) | GPIO47 row 14 (A47). All four are ADC4-ADC7, which is why the silk labels are\n'
     'A44-A47 rather than IOnn; each sits next to a V3V3_SYS pin (J7) and a GND pin (J8) in the same row.\n'
@@ -324,11 +326,13 @@ N_SPAREIO = ('SPARE IO. EXPOSED (IO array J6 signal column, POWER 3): GPIO44 row
     'placed. They are left unconnected deliberately; exposing one means editing PINOUT.md, this generator\n'
     'and tools/check_power_netlist.py together. GPIO budget: 38 on board functions and ports, 4 spare on\n'
     'the array, 6 unconnected; none floats without a no-connect flag.')
-N_MECH = ('MECHANICAL: H1-H4 are the four 4.0 mm NPTH grommet\n'
-    'holes on the standard 30.5 x 30.5 mm pattern, centred\n'
-    'on the board, each with a 5.0 mm copper keepout and an\n'
-    '8.0 mm top-side courtyard for the grommet flange. No\n'
-    'pins, no nets. See DESIGN_SPEC "Physical design".')
+N_MECH = ('MECHANICAL: H1-H4 are the four 4.0 mm grommet holes\n'
+    'on the standard 30.5 x 30.5 mm pattern, off-centre in X,\n'
+    'each now a PLATED hole with a 6.4 mm GND pad ring stitched\n'
+    'by eight 0.6/0.3 mm vias, and a 6.5 mm top-side courtyard\n'
+    'for the grommet flange. Pin 1 of every hole is GND, so the\n'
+    'frame screws bond to the ground plane on every layer.\n'
+    'See DESIGN_SPEC "Mounting and orientation".')
 N_ANALOG = ('TELEMETRY AND ANALOG INPUTS (100 nF at each ADC pin).\n'
     'VBAT_SENSE: R27/R28 100k/10k scale VBAT by 1/11, so the 3.3 V ADC full scale is 36.3 V. A 6S pack at its\n'
     '25.2 V maximum reads 2.29 V and a 2S pack at 6.0 V reads 0.55 V, so the whole 2-6S window is on-scale with\n'
@@ -418,141 +422,110 @@ N_J11 = ('J11: DET_A to GND and DET_B to SD_DET with a 10k pull-up, so the input
     'shield goes to GND. 100 nF + 10 uF + 47 uF sit at the socket (DESIGN_SPEC "Rails": SD transients stay on the\n'
     'buck rail). 10k pull-ups on CMD and DAT0-DAT3 are the SD-standard idle bias and also keep DAT3/CD high for\n'
     '4-bit mode. VDD = V3V3_SYS.')
-N_SRC_HDR = ('BOARD INPUTS: VBAT 6-25.2 V (2-6S) from the ESC pad row J3, and USB VBUS ~5 V (J4). U26 (AP63205WU) makes\n'
-    '5V_IN from VBAT; 5V_IN is the priority input of the U25 power mux and also the servo 5 V bus.')
-N_U25 = ('U25 TPS2121 PRIORITY POWER MUX (TI SLVSEA3F). IN1 = 5V_IN is the priority source, IN2 = USB_VBUS the fallback; OUT = V5_SYS.\n'
-    'Reverse-current blocking is always on for BOTH channels (Sec 9.3.6, IRCB 0.2/1/2 A, tRCB 10 us, VRCB 0/25/50 mV), so neither input\n'
-    'can be back-fed from V5_SYS or from the other input. RON 56 mOhm typ / 100 mOhm max over temperature (Sec 7.5, VINx >= 5 V).\n'
-    'PR1 (Sec 10.2.4.1 Eq.5, VPR1 = VIN1 x Rb/(Rt+Rb) compared with VREF): R42 32.4k / R43 10k -> IN1 released when 5V_IN falls to\n'
-    '1.04 V / 0.23585 = 4.410 V typ and re-selected at 1.06 V / 0.23585 = 4.494 V typ (4.20-4.62 V / 4.28-4.66 V over the VREF spec).\n'
-    'The divider is centred on the RISING edge, not the falling one: the binding corner is a 5V_IN at its 4.75 V minimum meeting a\n'
-    'VREF at its 1.10 V maximum, and 4.664 V worst-case rising keeps IN1 selected everywhere inside the declared 4.75-5.5 V window.\n'
-    'OV1 (Sec 9.3.5 / 10.2.4.2 Eq.6, same divider form): R44 45.3k / R45 10k -> IN1 rejected at 1.06 V / 0.180832 = 5.862 V typ\n'
-    '(5.585-6.083 V over the VREF spec, so it can never trip inside the declared 4.75-5.5 V input window). OV2 is tied to GND: the USB\n'
-    'channel has no overvoltage cut-off ("Connect to GND if not required", Sec 6). CP2 is tied to GND, which selects the internal-VREF\n'
-    'priority scheme of Table 9-3 - that is the mode PR1-vs-VREF describes, and it costs the TPS2121 fast-switchover path: the applicable\n'
-    'spec is tSW = 100 us typ (Sec 7.5), not the 5 us tFSW that needs CP2 >= VREF.\n'
-    'ILM (Sec 9.3.2 Eq.2, ILM = 65.2 / RILM^0.861 with RILM in kOhm, valid 18-100 kOhm): R46 80.6k -> 1.49 A typ; the datasheet\n'
-    'characterises RILM = 80k as 1.0 / 1.5 / 2.0 A min/typ/max. Fast-trip OCP is 2.4 x ILM (Sec 9.3.3).\n'
-    'SS (Sec 9.3.1 / Table 9-1): C70 100 nF -> 780 V/s at 5 V, so the ~120 uF on V5_SYS draws ~94 mA of inrush and OUT ramps in ~6.4 ms.\n'
-    'ST (Sec 6, Sec 10.2.3) is an open-drain status output: HIGH when IN1 (or neither input) drives OUT, LOW when IN2 does. R47 10k to\n'
-    'V3V3_SYS is inside the RST = 6-20 kOhm recommended operating range of Sec 7.3; PWR_SRC_ST lands on RP2354B GPIO37 (pin 46).\n'
-    'Sec 11 gives no numeric minimum COUT, only "increase the capacitance on OUT to avoid output voltage drop"; C19 100 uF + C8/C9\n'
-    '2 x 10 uF on POWER 2 give 120 uF nominal, inside the 100-200 uF the datasheet design examples use, so no extra output capacitor\n'
-    'is added here. C19 was a 220 uF / 10 V D case until the handover decks were re-run at 100 uF and every predicate still passed.\n'
-    'WHAT CHANGED WITH THE ON-BOARD BUCK: IN1 is no longer an external BEC of unknown quality, it is U26\'s regulated 5.00 V +/-1% output.\n'
-    'PR1 therefore sits far above its 4.494 V rising threshold whenever the pack is connected, so IN1 selection is unconditional in normal\n'
-    'operation, and OV1 (5.862 V typ, 5.585 V worst case) can only trip on a U26 failure - it is now a backstop against a shorted high-side\n'
-    'FET pushing VBAT onto 5V_IN, not the mis-plug guard it used to be. The mis-plug case itself is gone: there is no 5 V input connector\n'
-    'left to mis-plug, and VBAT does not reach V5_SYS by any path. The divider values are kept as they are because they still bound both\n'
-    'ends of the window and cost nothing.')
-N_J3 = ('ESC PAD ROW J3 (MicoAir AM32 4-in-1 ESC, FC-connection row). Order is the ESC silkscreen read left to right:\n'
+N_SRC_HDR = ('BOARD INPUTS: REGULATED 5 V FROM AN EXTERNAL BEC on the ESC pad row J3 pin 7 (5V_IN), and USB VBUS ~5 V (J4).\n'
+    'There is no on-board pack buck any more (DESIGN_SPEC "Decisions", 2026-09-17): raw pack reaches this board only as\n'
+    'the J3 pin 9 SENSE wire VBAT, which drives the R27/R28/C48 divider and nothing else - no load, no bulk, no copper zone.\n'
+    '5V_IN is the servo / GPS / ELRS bus (IO block rows 1-4 and 7-10) and the drain of the Q1 OR-ing FET on POWER 2.')
+N_OR = ('5 V OR - Q1 P-CHANNEL FET + D1 SCHOTTKY, NOT A MUX (DESIGN_SPEC "Decisions"). 5V_IN (external BEC) and USB_VBUS\n'
+    'both reach V5_SYS, and V5_SYS feeds only the two 3.3 V regulators and the status LED.\n'
+    'Q1 AO3401A (AOS, SOT-23, LCSC C15127, JLC BASIC): VDS -30 V, ID -4.0 A, RDS(on) 60 mOhm max at VGS = -4.5 V /\n'
+    '85 mOhm max at -2.5 V, VGS(th) -0.45 to -1.0 V. DRAIN on 5V_IN, SOURCE on V5_SYS, GATE on USB_VBUS with R7 100k to GND.\n'
+    'The intrinsic body diode of a P-channel FET points DRAIN -> SOURCE, i.e. 5V_IN -> V5_SYS, which is the direction the\n'
+    'load is in - so the BEC always gets through even before the channel is enhanced.\n'
+    'NO USB: R7 (helped by the R29/R30 VBUS_SENSE divider, 25k to GND) holds the gate at 0 V, so VGS = -V5_SYS ~ -5 V and\n'
+    'the channel is hard on; the BEC carries both regulators through <= 60 mOhm.\n'
+    'USB PRESENT: the gate sits at VBUS, so VGS = VBUS - V5_SYS >= 0 and the channel is OFF. That is the one guarantee this\n'
+    'OR has to make - the host can never back-feed the BEC, the servo rows or the ESC.\n'
+    'D1 1N5819WS (SOD-323, LCSC C191023, JLC BASIC): ANODE USB_VBUS, CATHODE V5_SYS. 40 V / 1 A Schottky, VF ~0.45 V at the\n'
+    '~250 mA V5_SYS draws on USB, so V5_SYS is ~4.4-4.6 V from a 5 V host - above the AP63203 3.8 V minimum input with margin -\n'
+    'and the diode blocks the reverse direction that Q1 no longer has to.\n'
+    'BOTH PRESENT: the BEC wins whenever 5V_IN - IxRDS(on) exceeds VBUS - VF, which at these currents it always does; Q1 is\n'
+    'held off in that state, so nothing flows back into the host either way.\n'
+    'WHAT IS GIVEN UP against the TPS2121 this replaces: no priority comparator, no input over-voltage lockout, no current\n'
+    'limit, no soft-start, no open-drain status pin (GPIO37 is a plain spare again) and no seamless make-before-break -\n'
+    'the crossover is a diode, not a 100 us controlled switchover. TWO JLC BASIC PARTS INSTEAD OF ONE EXTENDED IC PLUS SIX\n'
+    'RESISTORS AND THREE CAPACITORS, and no 5 V path exists that USB can drive backwards.\n'
+    'C19 (100 uF polymer) IS ON 5V_IN AT THE PAD ROW, NOT ON V5_SYS: the hold-up belongs where the servo/module rows are,\n'
+    'which is ahead of the OR. V5_SYS carries only C8/C9 at the AP63203 input.')
+N_J3 = ('ESC PAD ROW J3 (MicoAir AM32 4-in-1 ESC, FC-connection row), NINE PADS. Pads 1-6 are the ESC silkscreen read\n'
+    'left to right; pads 7-9 are this board\'s power entry, added when the on-board pack buck was removed:\n'
     '1 CURR - analog current sense from the ESC, 12.75 mV/A, 0-3.3 V -> R53/C78 -> GPIO42 (ADC2) on BOARD 1.\n'
     '2 TX   - KISS ESC telemetry, 3.3 V, 115200 baud, ESC output only -> R54 -> GPIO32 (PIO UART RX, GPIOBASE 16 window).\n'
     '3-6 M4 M3 M2 M1 - 3.3 V DShot/PWM inputs via PIO (GPIOBASE 16 window), straight from the RP2354B (PWM4..PWM1 = GPIO36, 38, 39, 43).\n'
-    '7 VBAT - raw pack, 6-25.2 V (2-6S), the only board power input besides USB.  8 GND.\n'
-    'PITCH IS AN ASSUMPTION: MicoAir publishes no pad drawing, so MARV_Packages:PadRow_1x08_P2.00mm assumes\n'
+    '7 5V   - REGULATED 5 V IN from an external BEC wired between the ESC\'s VBAT pad and this pad. It is the ONLY\n'
+    '         power input besides USB, and it is the servo / GPS / ELRS bus: C19 100 uF polymer sits on it here.\n'
+    '8 GND.\n'
+    '9 VBAT - raw pack, 6-25.2 V (2-6S), SENSE ONLY: it reaches the R27/R28/C48 divider (GPIO41, ADC1) and nothing\n'
+    '         else. No load, no bulk capacitance, no copper zone - a 100k top leg is the entire circuit on it.\n'
+    'PITCH IS AN ASSUMPTION: MicoAir publishes no pad drawing, so MARV_Packages:PadRow_1x09_P2.00mm assumes\n'
     '2.00 mm. The ORDER is authoritative; confirm the pitch against the physical ESC before fab.\n'
-    'The ESC-side low-ESR electrolytic on VBAT is MANDATORY: this board carries ceramic input capacitance only\n'
-    '(C73 10 uF + C74 100 nF), and a ceramic-only pack connection rings to roughly twice pack voltage on hot\n'
-    'plug. There is no TVS on VBAT by design - nothing that clamps below 32 V survives a 6S pack.')
-N_U26 = ('U26 AP63205WU-7 VBAT BUCK (Diodes DS41326 Rev. 2-2). 3.8-32 V in, FIXED 5.0 V out (4.95/5.00/5.05 V,\n'
-    'Electrical Characteristics VFB row), 2 A, 1.1 MHz with +/-6% frequency spread spectrum, 4 ms internal\n'
-    'soft-start, 22 uA quiescent, TSOT-23-6. VIN abs max 35 V DC / 40 V for 400 ms vs a 25.2 V 6S pack.\n'
-    'Component values are Table 3 "Recommended Component Selections for AP63205" and Figure 21 verbatim:\n'
-    'L 4.7 uH (L3), C1 10 uF (C73), C2 3 x 22 uF (C76/C77/C80; datasheet minimum is 2 x 22 uF), C3 100 nF bootstrap BST-SW (C75).\n'
-    'FB (pin 1) is a SENSE input on the fixed-output parts and goes straight to the 5 V output - Sec 9 "Setting\n'
-    'the Output Voltage": only the adjustable AP63200/AP63201 take a divider. FB abs max 6.0 V.\n'
-    'EN (pin 2): "The EN pin is a high voltage pin and can be directly connected to VIN" (Sec 3 "Enable"), abs\n'
-    'max 35 V, threshold 1.18 V rising / 1.10 V falling, internal 1.5 uA pull-up. R52 100k from VBAT is that\n'
-    'connection with a series element, so a VBAT transient reaches the EN clamp through 100k rather than\n'
-    'directly, and so a UVLO divider (Eq.1/Eq.2) or a start-delay cap (Eq.3) can be added later without\n'
-    'touching the VBAT copper. Device UVLO is 3.5 V typ rising regardless.\n'
-    'L3: CJIANG FTC404030S4R7MGCA, 4.7 uH +/-20% at 1 MHz / 1.0 Vrms, DCR 41 mOhm typ / 46 max, Irms 4.3 A typ /\n'
-    '4.0 A worst case, Isat 7.0 A typ / 6.0 A worst case, 4.1 x 4.1 x 3.0 mm molded metal-composite, shielded\n'
-    '(SZ CJIANG FTC series datasheet Rev 7.0 2025/11/05). CRITERIA ARE THE DATASHEET\'S NOTES 3 AND 4: Irms is the DC\n'
-    'current for an approximate 40 C rise, Isat the DC current for an approximate 30% drop in L0; Note 7 makes the usable\n'
-    'rating the LESSER of the two, so L3 is Irms-limited at 4.0 A. Isat(30%) = 6.0 A worst case clears the AP63205\n'
-    'high-side peak current limit at its 3.1 A maximum by 94%, so the inductor does not saturate even in a current-limit\n'
-    'or hiccup event, and Irms 4.0 A clears the 2.39 A operating peak. DCR is inside the datasheet\'s\n'
-    '"less than 100 mOhm" guidance: 46 mOhm max costs ~0.18 W at 2 A against the XGL4030\'s ~0.13 W.\n'
-    'IT REPLACES THE COILCRAFT XGL4030-472MEC, which is orderable at JLCPCB (C7159276) but had 357 pieces in stock at\n'
-    '$7.82 each - 15% of the per-board component cost standing on one reel (reports/jlc-audit.md section 6). The FTC part\n'
-    'is a STRICT IMPROVEMENT on the number that sized this inductor: worst-case Isat 6.0 A against the XGL\'s 3.2 A at 20% /\n'
-    '4.4 A at 30%. What it costs is DCR (31.5 -> 46 mOhm max) and AEC-Q200 grading - the CJIANG sheet tests to AEC-Q200\n'
-    'METHODS but does not claim the qualification, and carries the usual "not warranted for aircraft equipment" clause.\n'
-    'VOLTAGE: datasheet Note 8 gives a 20 V DC withstand. In the on-time L3 sees VIN - VOUT, which at a full 6S pack\n'
-    '(25.2 V) is 20.2 V - AT the rating. Below 5S this is not close. FLAGGED IN DESIGN_SPEC "Open items".\n'
-    '4 x 4 x 3.0 mm. THIS ONE STILL CANNOT SHRINK THE WAY L2 DID: L2 is 3.0 x 3.0 x 2.0 because the TPS62913 runs it at\n'
-    '~1 A, but L3 has to clear the AP63205 3.1 A high-side limit and carry a 2.39 A operating peak, and no 3 x 3 part at\n'
-    '4.7 uH holds DCR under 50 mOhm at that current - the nearest, FTC303020D4R7MBCA (LCSC C48888332, Isat 4.0 A worst\n'
-    'case, Irms 3.8 A), is 60 mOhm typ. If height ever has to come out of here, FTC404020S4R7MGCA is the same 4 x 4 land\n'
-    'at 2.0 mm tall, but a 2.0 mm core stores less energy: Isat falls to 5.5 A worst case and DCR rises to 58 mOhm max.\n'
-    'Ripple at 25.2 V in / 2 A out is 0.78 A pk-pk (Eq.7), peak 2.39 A (Eq.8).\n'
-    'DERATING CAVEAT: C73 and C76/C77/C80 are the datasheet nominal values, and ceramic DC-bias derating is NOT\n'
-    'in them - a 10 uF/50 V 0805 at 25 V and a 22 uF/25 V 0805 at 5 V both lose roughly half. The EVB user\n'
-    'guide asks for >= 44 uF of COUT (nominal 66 uF: all three 22 uF fitted) and the board fits the third 22 uF (C80).\n'
-    'PACKAGES: C73 is a 10 uF/50 V X5R 0805 (GRM21BR61H106KE43) and C76/C77/C80 are 22 uF/25 V X5R 0805\n'
-    '(GRM21BR61E226ME44) - down from 1206 for the 50 mm single-sided envelope; C74/C75 are 50 V X7R 0402.\n'
-    'Same capacitance, same voltage rating, smaller body: the DC-bias loss above is the 0805 figure and is\n'
-    'not made worse by the package change at these ratings, but none of these parts is bench-reworkable.')
-N_VBUS_IN2 = ('USB_VBUS feeds U25 IN2 directly; no inrush or current limiting on this sheet.\nData ESD protection is on POWER 2. No servo rail connection.')
+    'THE BEC IS OFF-BOARD AND IS NOT OPTIONAL: the AM32 ESC has none, so a 2-6S BEC module (or a 1S boost) has to be\n'
+    'wired from the pack to pad 7. Its output capacitance, its inrush and its transient behaviour are outside this\n'
+    'board; what the board provides on 5V_IN is C19 100 uF polymer plus the IO-block bulk C20/C21.\n'
+    'THERE IS NO TVS AND NO REVERSE PROTECTION ON PAD 7 OR PAD 9, by design: pad 9 carries no current, and a 5 V pad\n'
+    'that a user can mis-wire to the pack is a build error the board does not try to survive.')
+N_U7 = ('U7 AP63203WU-7, V5_SYS -> V3V3_SYS BUCK (Diodes DS41326 Rev. 3-2). 3.8-32 V in, FIXED 3.3 V out, 2 A,\n'
+    '1.1 MHz with +/-6% frequency spread spectrum, 4 ms internal soft-start, 22 uA quiescent, TSOT26.\n'
+    'It replaces the TPS62913 two-stage stage (U7 + L2 + FB1 + a 0.1 % divider + five 22 uF) at ~8 parts instead of ~25.\n'
+    'PASSIVES ARE TABLE 2 "Recommended Component Selections for AP63203" (3.3 V row) and Figure 21, the AP63203/AP63205\n'
+    'typical application, with one documented substitution:\n'
+    '  L  3.9 uH in Table 2  -> 4.7 uH (L2). Sec 10 "Inductor" licenses it explicitly: "it is recommended to select an\n'
+    '     inductor of approximately 2.2uH to 10uH with a DC current rating of at least 35% higher than the maximum load\n'
+    '     current... Use a larger inductance for improved efficiency under light load conditions", and this rail is a\n'
+    '     light load (~180 mA typical / ~300 mA peak). 4.7 uH is a part the board already sources.\n'
+    '  C1 10 uF   -> C8, 10 uF / 25 V X5R 0603, at VIN.  C9 100 nF 0402 is an HF bypass beyond the datasheet, the same\n'
+    '     addition the removed AP63205 stage carried as C74.\n'
+    '  C2 2 x 22 uF -> C10 / C11, 22 uF / 10 V X5R 0603 (GRM188R61A226ME15) at the output, exactly the table value.\n'
+    '  C3 100 nF  -> C13, bootstrap BST-SW.\n'
+    'FB (pin 1) is a SENSE input on the fixed-output parts and goes straight to V3V3_SYS - Sec 9 "Setting the Output\n'
+    'Voltage": only the adjustable AP63200/AP63201 take a divider (Eq.6). So there is no feedback divider, no 0.1 %\n'
+    'resistor pair and no setpoint arithmetic on this board any more: VOUT is the part number.\n'
+    'EN (pin 2): "The EN pin is a high voltage pin and can be directly connected to VIN", abs max 35 V, threshold\n'
+    '1.18 V rising / 1.10 V falling, internal 1.5 uA pull-up. R52 100k from V5_SYS is that connection with a series\n'
+    'element, so a UVLO divider (Eq.1/Eq.2) or a start-delay cap (Eq.3) can be added later without touching copper.\n'
+    'OPERATING POINT at VIN = 5.0 V, VOUT = 3.3 V, fsw = 1.1 MHz, Eq.7: dIL = 3.3 x 1.7 / (5.0 x 4.7u x 1.1M) = 0.22 A\n'
+    'pk-pk (0.27 A at the -20% inductance limit), so Eq.8 gives a 0.41 A inductor peak at the 0.3 A peak rail load.\n'
+    'On USB, VIN falls to ~4.5 V behind D1 and dIL drops to 0.17 A; the part stays in CCM-adjacent light-load operation\n'
+    'either way and neither case comes near the 2 A rating or the inductor.\n'
+    'DERATING CAVEAT: C8 and C10/C11 are the datasheet NOMINAL values and ceramic DC-bias derating is not in them -\n'
+    'a 22 uF / 10 V 0603 at 3.3 V keeps roughly 60 %, so the 44 uF of COUT is ~26 uF effective. That is still above\n'
+    'the 2 x 22 uF the table asks for in nominal terms and is the same derating the removed stage carried.\n'
+    'L2: CJIANG FTC404030S4R7MGCA (LCSC C39676083), the inductor the removed AP63205 stage used as L3 - 4.7 uH +/-20%,\n'
+    'DCR 41 mOhm typ / 46 max, Irms 4.3 A typ / 4.0 A worst case, Isat 7.0 A typ / 6.0 A worst case, 4.1 x 4.1 x 3.0 mm\n'
+    'molded metal-composite, shielded (SZ CJIANG FTC series datasheet Rev 7.0 2025/11/05, Notes 3/4/7: the usable rating\n'
+    'is the LESSER of Irms and Isat, so 4.0 A). At a 0.41 A peak that is a 10x margin - enormously over-rated for this\n'
+    'rail, and deliberately so: it is a part already on the BOM and on the reel, and it costs 46 mOhm x 0.3 A^2 = 4 mW.\n'
+    'IF THE 4 x 4 x 3.0 mm FOOTPRINT EVER HAS TO SHRINK, the FTC303020D family (3 x 3 x 2.0, LCSC C7423318 at 2.2 uH) is\n'
+    'the same library footprint family and 2.2 uH is still inside the datasheet\'s 2.2-10 uH window - at 0.47 A pk-pk ripple.')
+N_VBUS_IN2 = ('USB_VBUS feeds the D1 Schottky and the Q1 gate on POWER 2 directly; no inrush or current limiting on this\n'
+    'sheet, and no data ESD array any more - U8 USBLC6-2SC6 was JLC Extended and is removed (DESIGN_SPEC "Decisions"),\n'
+    'so D+/D- go straight from J4 into the 27 R series pair R22/R23, as on the madflight FC3v2. The RP2354B USB pins\n'
+    'carry their own on-die ESD structures; a board-level array is what this design gives up, deliberately.')
 N_3V3_HDR = ('AVIONICS ONLY: 300 mA continuous / 500 mA short peak, provisional. NO SERVO POWER.')
 N_PKG = ('PASSIVE PACKAGES (DESIGN_SPEC "Physical design"): resistors are 0402, ceramics <= 4.7 uF are 0402 and the\n'
     '10-22 uF ceramics are 0603. RESISTORS ARE 0402, NOT 0201: JLCPCB has no Basic 0201 resistor of any value, so\n'
-    'every 0201 line carried a per-unique-part Extended setup fee, and the 0.1 % values the U7 divider needs are not\n'
-    'stocked in 0201 at all - see reports/jlc-audit.md. 0402 makes 8 of the 13 resistor values Basic and is\n'
-    'hand-reworkable, which 0201 is not. C10/C11/C12 (1st-stage COUT) and C23/C24 (post-bead Cf) are 22 uF / 10 V X5R\n'
-    '0603 (GRM188R61A226ME15): at 3.3 V DC bias an X5R 22 uF 0603 keeps roughly 60 % of its nominal value, so\n'
-    'the 66 uF nominal of the first stage is ~40 uF effective and the 44 uF post-bead stage is ~26 uF. The\n'
-    'ngspice decks still carry the NOMINAL 66 uF (simulations/*.cir COUT), so the modelled rail is optimistic\n'
-    'by that margin - an open item, not a result. Do not read the effective value off the BOM either.\n'
-    'The 22 uF 0603 ceramics remain machine-place parts - JLC assembles them, a bench iron will not rework one.\n'
-    'C19, THE V5_SYS BULK, IS 100 uF / 6.3 V POLYMER IN AN EIA-3528-21 (B) CASE, down from 220 uF / 10 V in an EIA-7343-31 (D)\n'
-    'case: 8.9 x 4.9 mm of courtyard became 4.3 x 3.2 mm. The handover decks (simulations/source_handover.cir CPOLY, and the\n'
-    'integrated deck) were re-run at 100 uF nominal / 80 uF derated and every predicate still passes - V5_SYS holds well above\n'
-    'the 3.5 V floor across the 100 us TPS2121 switchover - which is what licenses the smaller case. ESR must stay <= 40 mOhm\n'
-    '(the value modelled): Panasonic 6TPE100MAZB or a KEMET T520/T530 B case. 6.3 V on a 5.0 V rail is a 1.26x derating, the\n'
-    'normal polymer figure; a tantalum electrolytic would need 2x and would not qualify.')
-N_FB = ('V3V3_SYS feedback (TPS62913 datasheet Sec 8.2.2.2.6, Eq.8): VOUT = VFB x (1 + R1/R2); VFB = 0.8 V typ, 0.792-0.812 V spec (Sec 6.5).\n'
-    'R2 = 3.16 kOhm (<=5 kOhm per datasheet noise guidance). R1 = R2 x (VOUT/VFB - 1) = 3.16k x 3.1625 = 9.99 kOhm -> E96 10.0 kOhm.\n'
-    'Actual VOUT = 0.8 V x (1 + 10k/3.16k) = 0.8 x 4.16456 = 3.3316 V nominal, +0.05% off the 3.33 V the decks model.\n'
-    'THE PAIR IS 10k / 3.16k, NOT 15.8k / 4.99k, BECAUSE OF WHAT IS BUYABLE: 15.8 kOhm does not exist at 0.1 % in 0201 at\n'
-    'JLCPCB at any stock level, so the divider as previously specified could not be built (reports/jlc-audit.md section 6).\n'
-    'Both halves are now Yageo RT0402BRD07 thin film, 0.1 % / 25 ppm, 0402: R7 = RT0402BRD0710KL (LCSC C190095),\n'
-    'R8 = RT0402BRD073K16L (LCSC C852759). SAME SERIES ON PURPOSE - a divider cares about the RATIO, and two parts from\n'
-    'one thin-film series track each other far better than their individual 25 ppm/C tempcos suggest.\n'
-    'WINDOW, worst case, 0.1 % on BOTH resistors stacked with the VFB spec: ratio 10.01k/3.15684k = 3.17093 at one end and\n'
-    '9.99k/3.16316k = 3.15825 at the other, so VOUT spans 0.792 x 4.15825 = 3.293 V to 0.812 x 4.17093 = 3.387 V.\n'
-    'That is 3.29-3.39 V, not the 3.30-3.38 V the old text quoted - the old figure was the VFB term alone with the resistors\n'
-    'treated as exact. Both windows sit inside the 3.135-3.60 V predicate the ngspice decks assert on V3V3_SYS.\n'
-    'Divider current rises from 160 uA (0.8 V / 4.99k) to 253 uA (0.8 V / 3.16k): 0.3 % of the 80 mA typical rail load, and\n'
-    'the lower impedance is the direction the TPS62913 noise guidance points anyway.')
-N_SCONF = ('S-CONF = 6.04 kOhm to GND (Table 7-1): 2.2 MHz switching, triangle spread-spectrum ON, output discharge OFF, no external sync.\n2.2 MHz + 2.2uH matches the VIN=5V/VOUT<=3.3V design table (Table 8-2). TPS62913 runs fixed-frequency PWM at all loads, no light-load skip mode (Sec 7.4.1) -- forced PWM is inherent; there is no separate MODE pin on this device.\nVO (pin 3) senses the node between L1 and the ferrite bead (device internal loop); the FB divider senses V3V3_SYS after the bead for low-noise remote regulation (Sec 7.1 / 8.2.2.2.4).')
+    'every 0201 line carried a per-unique-part Extended setup fee - see reports/jlc-audit.md. 0402 makes most of the\n'
+    'resistor values Basic and is hand-reworkable, which 0201 is not. THE 0.1 % PAIR IS GONE with the TPS62913: the\n'
+    'AP63203 is a fixed-output part and has no feedback divider, so no 0.1 % thin-film line is ordered at all.\n'
+    'C10/C11 (AP63203 COUT) are 22 uF / 10 V X5R 0603 (GRM188R61A226ME15): at 3.3 V DC bias an X5R 22 uF 0603 keeps\n'
+    'roughly 60 % of its nominal value, so the 44 uF nominal is ~26 uF effective. Do not read the effective value\n'
+    'off the BOM. The 22 uF 0603 ceramics remain machine-place parts - JLC assembles them, a bench iron will not\n'
+    'rework one.\n'
+    'C19, THE 5V_IN BULK, IS 100 uF / 6.3 V POLYMER IN AN EIA-3528-21 (B) CASE. It moved from V5_SYS to 5V_IN with the\n'
+    'BEC decision: hold-up belongs on the rail the servo and module rows are on, which is now ahead of the OR-ing FET,\n'
+    'and V5_SYS keeps only C8/C9 at the AP63203 input. ESR must stay <= 40 mOhm: Panasonic 6TPE100MAZB or a KEMET\n'
+    'T520/T530 B case. 6.3 V on a 5.0 V rail is a 1.26x derating, the normal polymer figure; a tantalum electrolytic\n'
+    'would need 2x and would not qualify.\n'
+    'THE ngspice DECKS IN simulations/ STILL MODEL THE OLD TOPOLOGY (a TPS2121 mux fed by an on-board pack buck, and a\n'
+    'TPS62913-class 3.3 V stage). They were not re-derived for the BEC + P-FET + AP63203 tree, so every number they\n'
+    'produce is now history, not evidence - see DESIGN_SPEC "Open items".')
 N_ANA = ('3V3_ANA feeds ICM-45686, BMP581, ADXL375 and the RP2354B ADC_AVDD pin (100 nF at each pin on the MCU sheet); VREG_AVDD is filtered\n'
-    'from V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is on PWR_GOOD rather than V5_SYS:\n'
-    'the analog rail therefore starts only once the TPS62913 declares V3V3_SYS in regulation, and drops with it, which removes the\n'
-    'window where the sensors were biased from an unregulated V5_SYS while the MCU was still held in reset.')
-N_L2 = ('L2 INDUCTOR - CJIANG FTC303020D2R2MBCA, 3.0 x 3.0 x 2.0 mm molded metal-composite (SZ CJIANG FTC series datasheet\n'
-    'Rev 7.0 2025/11/05, the sheet LCSC serves for C7423318): 2.2 uH +/-20% at 1 MHz / 1.0 Vrms, DCR 37 mOhm typ / 45 max,\n'
-    'Irms 4.7 A typ / 4.3 A worst case, Isat 6.0 A typ / 5.5 A worst case. THE CRITERIA ARE THE DATASHEET\'S OWN NOTES 3 AND 4:\n'
-    'Irms is the DC current for an approximate 40 C rise, Isat the DC current for an approximate 30% drop in L0. Note 7:\n'
-    'the usable rated current is the LESSER of the two, so this part is Irms-limited at 4.3 A, not saturation-limited.\n'
-    'It replaces the Coilcraft XGL3020-222MEC, which is NOT ORDERABLE AT JLCPCB in any value (reports/jlc-audit.md section 6).\n'
-    'Same 3.0 x 3.0 x 2.0 envelope, same shielded (closed magnetic circuit) construction, DCR 30.5 typ / 36.5 max -> 37 typ /\n'
-    '45 max mOhm, which costs ~4 mW at the 0.8 A design load and is not a thermal factor.\n'
-    'OPERATING POINT: dIL = VOUT x (1 - VOUT/VIN)/(L x fsw) = 3.3 x 0.34/(2.2u x 2.2M) = 0.23 A pk-pk nominal, 0.29 A at the\n'
-    '-20% inductance limit, so at the 0.8 A design load the peak inductor current is ~0.95 A and stays under ~1.05 A with\n'
-    'VIN/fsw/L tolerances stacked. Isat(30%) = 5.5 A worst case is ~5.2x that.\n'
-    'THE FAULT CASE IS NOW COVERED, WHICH IT WAS NOT WITH THE XGL3020. The TPS62913 high-side current limit is ~4.5 A. The\n'
-    'XGL3020 saturated at 2.85 A (30%), BELOW that limit, so a hard short on V3V3_SYS drove the old inductor into saturation\n'
-    'before the IC limited, and the note here used to argue that away on soft-saturation and rail-size grounds. The FTC303020D\n'
-    'saturates at 5.5 A worst case, ABOVE the ~4.5 A limit, so L2 now obeys the same rule as L3/U26: the IC limits first. The\n'
-    'argument that used to be needed is gone, not weakened - do not re-derive it.\n'
-    'RE-CHECK IF THE 3.3 V BUDGET EVER EXCEEDS ~3 A CONTINUOUS: the binding number then becomes Irms 4.3 A, not Isat.\n'
-    'VOLTAGE: datasheet Note 8 gives a 20 V DC withstand. L2 sees VIN - VOUT = 1.7 V across it, two orders inside that.\n'
-    'ORIENTATION: the FTC303020D is a symmetric two-terminal molded part with no start-lead marking, so unlike the XGL there\n'
-    'is no preferred pad for the SW node - either way round is correct. Keep U7_SW on pad 1 anyway so the layout is unchanged.')
+    'from V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is tied to V3V3_SYS itself:\n'
+    'the AP63203 has no power-good output, so the sequencing is done by the rail rather than by a status pin - the LDO enables\n'
+    'when the buck output is up and drops with it, which is the same buck-before-LDO ordering PWR_GOOD used to give, at no parts.\n'
+    'What is lost is the "in regulation" qualifier: EN now releases at U12\'s own ~0.9 V enable threshold on a rising V3V3_SYS,\n'
+    'not at the point a comparator declares the buck settled. For a 10-20 mA sensor rail behind a 4 ms soft-start that is a\n'
+    'few hundred microseconds of difference, and the sensors are held in reset by firmware for far longer than that.')
 N_IO_HDR = ('IO ARRAY - ONE 3-COLUMN x 14-ROW THROUGH-HOLE BLOCK ON THE RIGHT EDGE, 2.54 mm, madflight FC3v2 style.\n'
     'It replaces the old 2x16 left-edge array AND the J12/J13/J14 servo block: every signal that leaves this board\n'
     'except the ESC row (J3) and the SWD pads (J10) now leaves on this one block.\n'
@@ -564,18 +537,17 @@ N_IO_HDR = ('IO ARRAY - ONE 3-COLUMN x 14-ROW THROUGH-HOLE BLOCK ON THE RIGHT ED
     'DS-009 NAMING IS KEPT: a port label is named for the PERIPHERAL pin it belongs to, so GPS_RX / ELRS_RX are module\n'
     'inputs driven by the RP2354B UART TX pins (rows 1 and 3, silk T0 / T1) and GPS_TX / ELRS_TX are module outputs\n'
     'that land on the MCU UART RX pins (rows 2 and 4, silk R0 / R1).')
-N_IOBULK = ('C20 / C21: V5_SYS local bulk at the array (rows 1-4 GPS/ELRS and rows 7-10 servo, the 5 V supply rows).\nC22: V3V3_SYS local bulk at the array (rows 5-6 and 11-14).')
-N_IORAILS = ('RAILS ON THE ARRAY: rows 1-4 (GPS, ELRS) and rows 7-10 (servos S5-S8) take V5_SYS; rows 5-6 (magnetometer)\n'
+N_IOBULK = ('C20 / C21: 5V_IN local bulk at the array (rows 1-4 GPS/ELRS and rows 7-10 servo, the 5 V supply rows).\nC22: V3V3_SYS local bulk at the array (rows 5-6 and 11-14).')
+N_IORAILS = ('RAILS ON THE ARRAY: rows 1-4 (GPS, ELRS) and rows 7-10 (servos S5-S8) take 5V_IN; rows 5-6 (magnetometer)\n'
     'and rows 11-14 (the four exposed spares) take V3V3_SYS. Every row has its own GND pin in the J8 column, so a\n'
     'signal return is never more than 2.54 mm away and no row can be mis-plugged into a neighbour\'s ground.\n'
-    'SERVO 5 V NOW COMES FROM V5_SYS, NOT 5V_IN. The old J13 servo row tapped 5V_IN directly at the U26 buck\n'
-    'output, ahead of the U25 priority mux, so servo current was outside the mux current limit. With one power\n'
-    'column the array cannot carry two different 5 V nets under one "5V" silk label, so all eight 5 V rows are\n'
-    'V5_SYS: servo current now crosses U25 and counts against its ILM limit (1.49 A, R46) and against the U26\n'
-    'buck. Budget servo current against BOTH - see DESIGN_SPEC "Rails and load budget".\n'
-    'CURRENT: rows 1-4 and 7-10 count against the U26 buck through the mux; rows 5-6 and 11-14 count in the\n'
-    'V3V3_SYS budget. No fuse and no per-row current limit: the array is a system-integration connector, not a\n'
-    'protected port.')
+    'THE EIGHT 5 V ROWS ARE ON 5V_IN, AHEAD OF THE OR-ING FET (DESIGN_SPEC "Decisions", 2026-09-17). 5V_IN is the\n'
+    'external BEC on J3 pin 7, so servo and module current goes from the BEC straight to the rows and never crosses\n'
+    'Q1: the FET carries only the two 3.3 V regulators and the status LED, and a USB host never sees the servo rows\n'
+    'at all. The rows are therefore NOT powered from USB - plugging in USB alone leaves every module and servo dead,\n'
+    'which is the intended bench behaviour and the reverse of the previous revision.\n'
+    'CURRENT: rows 1-4 and 7-10 count against the external BEC only; rows 5-6 and 11-14 count in the V3V3_SYS budget.\n'
+    'No fuse and no per-row current limit: the array is a system-integration connector, not a protected port.')
 N_PWMMAP = ('PWM MAP\nPWM5 = GPIO20 (row 7, S5)\nPWM6 = GPIO19 (row 8, S6)\nPWM7 = GPIO15 (row 9, S7)\nPWM8 = GPIO5 (row 10, S8)\n\n'
     'ON THE ESC PAD ROW (J3, POWER 1)\nPWM1 = GPIO43\nPWM2 = GPIO39\nPWM3 = GPIO38\nPWM4 = GPIO36')
 
@@ -1149,19 +1121,23 @@ class Sheet:
 # ---------------------------------------------------------------------------
 V3 = 'V3V3_SYS'
 ANA = 'V3V3_ANA'
+# The IO block's 5 V rows are on 5V_IN, the external BEC rail AHEAD of the Q1
+# OR-ing FET, not on V5_SYS: servo and module current must not cross the FET
+# and a USB host must never see the servo rows (DESIGN_SPEC "Decisions").
+V5 = '5V_IN'
 
 # The IO array: 14 rows, three pins each.  Row n is J6 pin n (signal) / J7 pin n (power) / J8 pin n (GND).
 # Row 1 is at the TOP of the block; the columns run GND | POWER | SIGNAL from the board edge inward.
-IO_ROWS=[('T0','GPS_RX','V5_SYS','UART1 TX -> GPS RX (GPIO24)'),
-         ('R0','GPS_TX','V5_SYS','UART1 RX <- GPS TX (GPIO25)'),
-         ('T1','ELRS_RX','V5_SYS','UART0 TX -> ELRS RX (GPIO16)'),
-         ('R1','ELRS_TX','V5_SYS','UART0 RX <- ELRS TX (GPIO17)'),
+IO_ROWS=[('T0','GPS_RX',V5,'UART1 TX -> GPS RX (GPIO24)'),
+         ('R0','GPS_TX',V5,'UART1 RX <- GPS TX (GPIO25)'),
+         ('T1','ELRS_RX',V5,'UART0 TX -> ELRS RX (GPIO16)'),
+         ('R1','ELRS_TX',V5,'UART0 RX <- ELRS TX (GPIO17)'),
          ('SDA','MAG_SDA',V3,'I2C1 SDA (GPIO22), 4.7k pull-up on the MCU sheet'),
          ('SCL','MAG_SCL',V3,'I2C1 SCL (GPIO23), 4.7k pull-up on the MCU sheet'),
-         ('S5','PWM5','V5_SYS','PWM2 A (GPIO20), servo 5'),
-         ('S6','PWM6','V5_SYS','PWM1 B (GPIO19), servo 6'),
-         ('S7','PWM7','V5_SYS','PWM7 B (GPIO15), servo 7'),
-         ('S8','PWM8','V5_SYS','PWM2 B (GPIO5), servo 8'),
+         ('S5','PWM5',V5,'PWM2 A (GPIO20), servo 5'),
+         ('S6','PWM6',V5,'PWM1 B (GPIO19), servo 6'),
+         ('S7','PWM7',V5,'PWM7 B (GPIO15), servo 7'),
+         ('S8','PWM8',V5,'PWM2 B (GPIO5), servo 8'),
          ('A44','IO_GPIO44',V3,'GPIO44 = ADC4, spare'),
          ('A45','IO_GPIO45',V3,'GPIO45 = ADC5, spare'),
          ('A46','IO_GPIO46',V3,'GPIO46 = ADC6, spare'),
@@ -1169,18 +1145,30 @@ IO_ROWS=[('T0','GPS_RX','V5_SYS','UART1 TX -> GPS RX (GPIO24)'),
 
 
 def power_vbat_sheet():
-    s = Sheet('power_vbat', 'POWER 1 / ESC pad row, VBAT and the 5 V buck', 2, 'A3')
-    s.title_note('POWER 1 - ESC PAD ROW J3, VBAT INPUT, AP63205 5 V BUCK, ANALOG SENSE.\n'
-                 'VBAT 6-25.2 V (2-6S) arrives on J3 pin 7; U26 makes 5V_IN from it.')
+    s = Sheet('power_vbat', 'POWER 1 / ESC pad row, 5 V input and analog sense', 2, 'A3')
+    s.title_note('POWER 1 - ESC PAD ROW J3 (NINE PADS), 5 V INPUT FROM AN EXTERNAL BEC, VBAT SENSE, ANALOG SENSE.\n'
+                 'Regulated 5 V arrives on J3 pin 7 as 5V_IN; pin 9 brings raw pack VBAT in as a SENSE wire only.')
 
     # --- J3, the ESC pad row, with its two analog inputs conditioned here -----
-    s.head('ESC pad row', 25.4, 55.88, 1.27)
-    j3 = s.part('J3', 'Connector_Generic:Conn_01x08', 'ESC pads (CURR TX M4 M3 M2 M1 VBAT GND)',
+    s.head('ESC pad row', 25.4, 53.34, 1.27)
+    j3 = s.part('J3', 'Connector_Generic:Conn_01x09',
+                'ESC pads (CURR TX M4 M3 M2 M1 5V GND VBAT)',
                 38.1, 76.2, {'1': 'CURR_SENSE_RAW', '2': 'ESC_TELEM', '3': 'PWM4', '4': 'PWM3',
-                             '5': 'PWM2', '6': 'PWM1', '7': 'VBAT', '8': 'GND'},
-                foot='MARV_Packages:PadRow_1x08_P2.00mm', mirror='y',
-                manual=('1', '2', '8'), stub=10.16, refofs=(25.4, 60.96), fsize=0.9)
+                             '5': 'PWM2', '6': 'PWM1', '7': '5V_IN', '8': 'GND', '9': 'VBAT'},
+                foot='MARV_Packages:PadRow_1x09_P2.00mm', mirror='y',
+                manual=('1', '2', '7', '8'), stub=10.16, refofs=(25.4, 58.42), fsize=0.9)
     s.gnd(j3['8'][0], 7.62, RIGHT)
+
+    # --- pad 7: the 5 V input rail, with the board's only bulk on it ---------
+    s.head('5 V in from the external BEC', 66.04, 104.14, 1.27)
+    rail = s.route(j3['7'][0], (60.96, j3['7'][0][1]), (60.96, 116.84), (99.06, 116.84))
+    s.flag('5V_IN', (74.93, 116.84))
+    s.label('5V_IN', rail, RIGHT)
+    c19 = s.cap('C19', '100u / 6.3 V polymer, ESR <= 40 mOhm (e.g. Panasonic 6TPE100MAZB or KEMET T520/T530 B case), 5V_IN bulk at the pad row',
+                88.9, 127.0, foot='Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B',
+                valofs=(91.44, 128.27), fsize=0.7)
+    s.wire((88.9, 116.84), c19['1'][0])
+    s.gnd(c19['2'][0], 3.81)
 
     s.head('ESC current sense and KISS telemetry conditioning', 120.65, 20.32, 1.27)
     pt = s.route(j3['1'][0], (66.04, j3['1'][0][1]), (66.04, 45.72))
@@ -1202,66 +1190,14 @@ def power_vbat_sheet():
     s.label('ESC_TELEM', s.wire((78.74, 31.75), (78.74, 25.4)), UP)
     s.label('ESC_TELEM_RX', s.wire(r54['2'][0], (109.22, 31.75)), RIGHT)
 
-    # --- U26 AP63205 buck: VBAT -> 5V_IN -------------------------------------
-    s.head('VBAT -> 5V_IN synchronous buck', 168.91, 26.67)
-    u26 = s.part('U26', 'Regulator_Switching:AP63205WU', 'AP63205WU-7', 203.2, 78.74,
-                 {'1': '5V_IN', '2': 'U26_EN', '3': 'VBAT', '4': 'GND', '5': 'U26_SW',
-                  '6': 'U26_BST'}, manual='*', refofs=(195.58, 62.23))
-    s.gnd(u26['4'][0], 5.08)
-    vbat = s.route(u26['3'][0], (121.92, 76.2))                 # the VBAT node
-    s.label('VBAT', s.wire(vbat, (109.22, 76.2)), LEFT)
-    s.flag('VBAT', (133.35, 76.2))
-    s.head('VIN bulk at the pin', 60.96, 88.9, 1.27)
-    s.wire((121.92, 76.2), (121.92, 95.25))
-    s.capcol(121.92, 95.25, 137.16,
-             [('C73', '10u / 50 V X5R 0805 GRM21BR61H106KE43, VIN bulk',
-               {'foot': 'Capacitor_SMD:C_0805_2012Metric', 'fsize': 0.85}),
-              ('C74', '100n / 50 V X7R 0402, VIN HF bypass',
-               {'foot': 'Capacitor_SMD:C_0402_1005Metric', 'fsize': 0.85})], valx=139.7)
-    s.gnd((137.16, 102.87), 3.81)
-    r52 = s.res('R52', '100k / 1%, EN to VIN', 110.49, 116.84, valofs=(113.03, 118.11),
-                fsize=0.85)
-    s.wire((110.49, 76.2), r52['1'][0])
-    s.route(r52['2'][0], (110.49, 127), (185.42, 127), (185.42, 81.28), u26['2'][0])
-    s.label('U26_EN', s.wire((160.02, 127), (160.02, 133.35)), DOWN)
-
-    # SW / BST / FB leave on three lanes; the topmost pin turns farthest out so
-    # none of the three crosses another.
-    sw = s.route(u26['5'][0], (231.14, 76.2), (231.14, 53.34))
-    s.wire((231.14, 76.2), (231.14, 86.36))
-    bst = s.route(u26['6'][0], (226.06, 78.74), (226.06, 101.6))
-    fb = s.route(u26['1'][0], (220.98, 81.28), (220.98, 114.3))
-    s.label('U26_SW', s.wire((231.14, 64.77), (241.3, 64.77)), RIGHT)
-    l3 = s.ind('L3', '4.7u, Isat 6.0 A (30 %), DCR 46 mOhm max (CJIANG FTC404030S4R7MGCA)',
-               246.38, 53.34, rot=HORZ, foot='MARV_Packages:L_Changjiang_FTC404030S',
-               refofs=(242.57, 41.91), valofs=(220.98, 44.45), fsize=0.85)
-    s.wire(sw, l3['1'][0])
-    c75 = s.cap('C75', '100n / 50 V X7R 0402, bootstrap', 241.3, 101.6, rot=HORZ,
-                foot='Capacitor_SMD:C_0402_1005Metric', refofs=(237.49, 97.79),
-                valofs=(248.92, 102.87), fsize=0.85)
-    s.wire(bst, c75['1'][0])
-    s.label('U26_BST', s.wire((231.14, 101.6), (231.14, 107.95)), DOWN)
-    s.route(c75['2'][0], (248.92, 101.6), (248.92, 86.36), (231.14, 86.36))
-
-    out = s.route(l3['2'][0], (281.94, 53.34))
-    s.route(fb, (269.24, 114.3), (269.24, 53.34))
-    s.flag('5V_IN', (261.62, 53.34))
-    s.label('5V_IN', s.wire(out, (299.72, 53.34)), RIGHT)
-    s.head('Buck output bulk (3 x 22 uF)', 302.26, 96.52, 1.27)
-    s.wire((281.94, 53.34), (281.94, 104.14))
-    s.capcol(281.94, 104.14, 298.45,
-             [('C76', '22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT',
-               {'foot': 'Capacitor_SMD:C_0805_2012Metric', 'fsize': 0.8}),
-              ('C77', '22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT',
-               {'foot': 'Capacitor_SMD:C_0805_2012Metric', 'fsize': 0.8}),
-              ('C80', '22u / 25 V X5R 0805 GRM21BR61E226ME44, buck COUT (3rd: >=44 uF after DC-bias derating, AP63205 EVB guide)',
-               {'foot': 'Capacitor_SMD:C_0805_2012Metric', 'fsize': 0.7})], valx=300.99)
-    s.gnd((298.45, 119.38), 3.81)
-
     # --- VBAT_SENSE divider --------------------------------------------------
     s.head('VBAT_SENSE divider - 1/11, 36.3 V full scale', 325.12, 26.67, 1.27)
     r27 = s.res('R27', '100k / 1%, VBAT top', 335.28, 53.34, valofs=(337.82, 54.61), fsize=0.85)
     s.label('VBAT', s.wire(r27['1'][0], (335.28, 41.91)), UP)
+    # VBAT reaches no driver pin any more (J3 pin 9 is a connector pad and both
+    # divider legs are passive), so this is the flag that makes it a net ERC
+    # will accept.  It used to sit on the U26 buck input.
+    s.flag('VBAT', (335.28, 46.99))
     r28 = s.res('R28', '10k / 1%, VBAT bottom', 335.28, 73.66, valofs=(337.82, 74.93), fsize=0.85)
     s.wire(r27['2'][0], r28['1'][0])
     s.gnd(r28['2'][0], 3.81)
@@ -1275,184 +1211,127 @@ def power_vbat_sheet():
     s.flag('GND', (340.36, 153.67))
     s.gnd((340.36, 153.67), 5.08)
 
-    s.notes([N_SRC_HDR, N_J3, N_ANALOG, N_U26], [(10, 292), (140, 292), (270, 250)], 178)
+    s.notes([N_SRC_HDR, N_J3, N_ANALOG], [(10, 292), (140, 292), (270, 250)], 178)
     return s
 
 
-def power_mux_sheet():
-    s = Sheet('power_mux', 'POWER 2 / TPS2121 priority power mux', 3, 'A3')
-    s.title_note('POWER 2 - U25 TPS2121 PRIORITY POWER MUX\n'
-                 'IN1 = 5V_IN (priority, from the U26 buck), IN2 = USB VBUS (fallback), OUT = V5_SYS.')
-    s.head('Priority mux', 165.1, 40.64)
-    u25 = s.part('U25', 'MARV_Power:TPS2121RUX', 'TPS2121RUXR', 177.8, 88.9,
-                 {'7': '5V_IN', '2': 'USB_VBUS', '6': 'U25_PR1', '5': 'U25_OV1', '4': 'GND',
-                  '3': 'GND', '1': 'V5_SYS', '8': 'V5_SYS', '9': 'PWR_SRC_ST', '10': 'U25_ILM',
-                  '11': 'U25_SS', '12': 'GND'},
-                 foot='MARV_Packages:Texas_VQFN-HR-12_2x2.5mm_P0.5mm', manual='*',
-                 refofs=(167.64, 68.58))
-    s.gnd(u25['12'][0], 5.08)
+def power_or_sheet():
+    s = Sheet('power_or', 'POWER 2 / 5 V OR - BEC P-FET and USB Schottky', 3, 'A3')
+    s.title_note('POWER 2 - Q1 AO3401A P-FET + D1 1N5819WS SCHOTTKY.  5V_IN (external BEC, J3 pin 7) OR USB_VBUS -> V5_SYS.\n'
+                 'USB present turns Q1 OFF, so a host can never back-feed the BEC, the servo rows or the ESC.')
 
-    # IN1 / 5V_IN, with its bypass at the pin
-    s.head('IN1 5V_IN (priority)', 106.68, 48.26, 1.27)
-    in1 = s.route(u25['7'][0], (152.4, 81.28), (152.4, 60.96), (111.76, 60.96))
-    s.label('5V_IN', in1, LEFT)
-    c71 = s.cap('C71', '100n / 16 V X7R, IN1 bypass at U25', 128.27, 68.58, valofs=(130.81, 69.85))
-    s.wire((128.27, 60.96), c71['1'][0])
-    s.gnd(c71['2'][0], 3.81)
+    # Q1: drain (pad 3) faces UP to 5V_IN, source (pad 2) DOWN to V5_SYS, gate
+    # (pad 1) LEFT to USB_VBUS.  A P-channel body diode points drain->source,
+    # i.e. the way the load current already wants to go.
+    s.head('BEC path - Q1 P-channel FET, drain 5V_IN, source V5_SYS', 133.35, 40.64)
+    q1 = s.part('Q1', 'Transistor_FET:AO3401A', 'AO3401A', 177.8, 88.9,
+                {'1': 'USB_VBUS', '2': 'V5_SYS', '3': '5V_IN'}, manual='*',
+                foot='Package_TO_SOT_SMD:SOT-23',
+                refofs=(185.42, 85.09), valofs=(185.42, 87.63), fsize=0.9)
 
-    # IN2 / USB VBUS, with its bypass at the pin
-    s.head('IN2 USB VBUS (fallback)', 106.68, 128.27, 1.27)
-    in2 = s.route(u25['2'][0], (139.7, 86.36), (139.7, 133.35), (111.76, 133.35))
-    s.label('USB_VBUS', in2, LEFT)
-    c72 = s.cap('C72', '100n / 16 V X7R, IN2 bypass at U25', 128.27, 140.97, valofs=(130.81, 142.24))
-    s.wire((128.27, 133.35), c72['1'][0])
-    s.gnd(c72['2'][0], 3.81)
+    # --- 5V_IN in at the drain ------------------------------------------------
+    s.label('5V_IN', s.route(q1['3'][0], (180.34, 55.88), (114.3, 55.88)), LEFT)
 
-    # PR1 and OV1 dividers off 5V_IN
-    s.head('PR1 / OV1 thresholds off 5V_IN', 33.02, 128.27, 1.27)
-    pr1 = s.route(u25['6'][0], (144.78, 91.44), (144.78, 156.21), (73.66, 156.21))
-    r42 = s.res('R42', '32.4k / 1%, PR1 top (5V_IN)', 73.66, 144.78, valofs=(76.2, 146.05))
-    s.label('5V_IN', s.wire(r42['1'][0], (73.66, 133.35)), UP)
-    r43 = s.res('R43', '10k / 1%, PR1 bottom', 73.66, 165.1, valofs=(76.2, 166.37))
-    s.wire(r42['2'][0], r43['1'][0])
-    s.gnd(r43['2'][0], 3.81)
-    s.label('U25_PR1', s.wire((109.22, 156.21), (109.22, 149.86)), UP)
+    # --- the gate, and its pull-down -----------------------------------------
+    s.head('Gate on USB_VBUS - USB present = Q1 off', 71.12, 74.93, 1.27)
+    gate = s.route(q1['1'][0], (114.3, 88.9))
+    s.label('USB_VBUS', gate, LEFT)
+    r7 = s.res('R7', '100k / 1%, Q1 gate pull-down', 140.97, 96.52,
+               valofs=(143.51, 97.79), fsize=0.85)
+    s.wire((140.97, 88.9), r7['1'][0])
+    s.gnd(r7['2'][0], 3.81)
 
-    ov1 = s.route(u25['5'][0], (149.86, 93.98), (149.86, 189.23), (38.1, 189.23))
-    r44 = s.res('R44', '45.3k / 1%, OV1 top (5V_IN)', 38.1, 177.8, valofs=(40.64, 179.07))
-    s.label('5V_IN', s.wire(r44['1'][0], (38.1, 166.37)), UP)
-    r45 = s.res('R45', '10k / 1%, OV1 bottom', 38.1, 198.12, valofs=(40.64, 199.39))
-    s.wire(r44['2'][0], r45['1'][0])
-    s.gnd(r45['2'][0], 3.81)
-    s.label('U25_OV1', s.wire((129.54, 189.23), (129.54, 182.88)), UP)
+    # --- USB path: D1, anode USB_VBUS, cathode V5_SYS ------------------------
+    s.head('USB path - D1 Schottky, the only way USB reaches V5_SYS', 106.68, 128.27, 1.27)
+    d1 = s.part('D1', 'Device:D_Schottky', '1N5819WS', 152.4, 116.84,
+                {'1': 'V5_SYS', '2': 'USB_VBUS'}, rot=180, manual='*',
+                foot='Diode_SMD:D_SOD-323',
+                refofs=(147.32, 110.49), valofs=(158.75, 118.11), fsize=0.85)
+    s.route(d1['2'][0], (127, 116.84), (127, 88.9))
 
-    # OV2 and CP2 both tied to GND next to the part
-    s.route(u25['4'][0], (154.94, 96.52), (154.94, 113.03))
-    s.route(u25['3'][0], (160.02, 99.06), (160.02, 113.03), (154.94, 113.03))
-    s.gnd((154.94, 113.03), 5.08)
-
-    # OUT -> V5_SYS
-    s.head('OUT -> V5_SYS', 198.12, 68.58, 1.27)
-    s.wire(u25['1'][0], (203.2, 81.28))
-    s.route(u25['8'][0], (203.2, 83.82), (203.2, 81.28))
-    out = s.route((203.2, 81.28), (241.3, 81.28))
-    s.flag('V5_SYS', (228.6, 81.28))
+    # --- V5_SYS out -----------------------------------------------------------
+    s.head('V5_SYS - the two 3.3 V regulators and the status LED, nothing else', 198.12, 133.35, 1.27)
+    out = s.route(q1['2'][0], (180.34, 116.84), (241.3, 116.84))
+    s.wire(d1['1'][0], (180.34, 116.84))
+    s.flag('V5_SYS', (215.9, 116.84))
     s.label('V5_SYS', out, RIGHT)
 
-    # ST status output and its pull-up
-    st = s.route(u25['9'][0], (241.3, 88.9))
-    s.label('PWR_SRC_ST', st, RIGHT)
-    r47 = s.res('R47', '10k / 1%, ST pull-up (open drain)', 226.06, 104.14, rot=180,
-                valofs=(228.6, 105.41))
-    s.wire((226.06, 88.9), r47['2'][0])
-    s.label('V3V3_SYS', s.wire(r47['1'][0], (226.06, 113.03)), DOWN)
-
-    # ILM and SS programming parts, each at its own pin
-    r46 = s.res('R46', '80.6k / 1%, ILM -> 1.49 A', 205.74, 109.22, valofs=(208.28, 110.49))
-    s.route(u25['10'][0], (205.74, 93.98), r46['1'][0])
-    s.label('U25_ILM', s.wire((201.93, 93.98), (201.93, 99.06)), DOWN)
-    s.gnd(r46['2'][0], 3.81)
-    c70 = s.cap('C70', '100n / 16 V X7R, SS soft-start', 195.58, 128.27, valofs=(198.12, 129.54))
-    s.route(u25['11'][0], (195.58, 96.52), c70['1'][0])
-    s.label('U25_SS', s.wire((195.58, 114.3), (185.42, 114.3)), LEFT)
-    s.gnd(c70['2'][0], 3.81)
-
-    s.notes([N_U25, N_VBUS_IN2], [(10, 292), (140, 292), (270, 250)], 212)
+    s.notes([N_OR, N_VBUS_IN2], [(10, 292), (140, 292), (270, 250)], 150)
     return s
 
 
 def power_3v3_sheet():
     s = Sheet('power_3v3', 'POWER 3 / 3.3 V system buck and analog LDO', 4, 'A3')
-    s.title_note('POWER 3 - U7 TPS62913 BUCK (V5_SYS -> V3V3_SYS) AND U12 TPS7A20 LDO (-> V3V3_ANA)\n'
+    s.title_note('POWER 3 - U7 AP63203WU-7 FIXED 3.3 V BUCK (V5_SYS -> V3V3_SYS) AND U12 TPS7A20 LDO (-> V3V3_ANA)\n'
                  'AVIONICS ONLY: 300 mA continuous / 500 mA short peak, provisional. NO SERVO POWER.')
 
-    s.head('V5_SYS input bulk', 85.09, 16.51, 1.27)
-    s.capcol(20.32, 34.29, 36.83, [('C8', '10u / 10 V X7S 0603', {'fsize': 0.8}),
-                                   ('C9', '10u / 10 V X7S 0603', {'fsize': 0.8}),
-                                   ('C17', '2.2n / 50 V X7R, VIN-PGND HF bypass',
-                                    {'foot': 'Capacitor_SMD:C_0402_1005Metric', 'fsize': 0.8}),
-                                   ('C19', '100u / 6.3 V polymer, ESR <= 40 mOhm (e.g. Panasonic 6TPE100MAZB or KEMET T520/T530 B case)',
-                                    {'foot': 'Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B', 'fsize': 0.7})],
-             valx=39.37)
-    s.gnd((36.83, 57.15), 3.81)
-    s.route((20.32, 34.29), (20.32, 24.13), (109.22, 24.13))
+    s.head('V5_SYS input bulk at the pin', 71.12, 16.51, 1.27)
+    s.capcol(20.32, 34.29, 36.83,
+             [('C8', '10u / 10 V X7R 0603, VIN bulk (AP63203 Table 2 C1)', {'fsize': 0.8}),
+              ('C9', '100n / 16 V X7R, VIN HF bypass', {'fsize': 0.8})], valx=39.37)
+    s.gnd((36.83, 41.91), 3.81)
+    s.route((20.32, 34.29), (20.32, 24.13), (104.14, 24.13))
     s.label('V5_SYS', s.wire((60.96, 24.13), (60.96, 20.32)), UP)
 
-    s.head('3.3 V system buck', 111.76, 60.96)
-    u7 = s.part('U7', 'Regulator_Switching:TPS62913', 'TPS62913RPUR', 127, 88.9,
-                {'1': 'V5_SYS', '2': 'U7_SW', '3': 'U7_VO', '4': 'GND', '5': 'PWR_GOOD',
-                 '6': 'V5_SYS', '7': 'GND', '8': 'U7_SS', '9': 'U7_FB', '10': 'U7_SCONF'},
-                foot='MARV_Packages:Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm', manual='*',
-                refofs=(116.84, 68.58))
-    s.route(u7['6'][0], (109.22, 78.74), (109.22, 24.13))
-    s.route(u7['1'][0], (104.14, 83.82), (104.14, 24.13))
-    s.gnd(u7['7'][0], 5.08, LEFT)
+    # U7, the AP63203: 1 FB (sense, straight to the output), 2 EN, 3 VIN,
+    # 4 GND, 5 SW, 6 BST.  There is no divider and no S-CONF resistor: the
+    # output voltage is the part number (datasheet Sec 9).
+    s.head('3.3 V system buck - fixed output, no divider', 111.76, 60.96)
+    u7 = s.part('U7', 'Regulator_Switching:AP63203WU', 'AP63203WU-7', 127, 88.9,
+                {'1': 'V3V3_SYS', '2': 'U7_EN', '3': 'V5_SYS', '4': 'GND',
+                 '5': 'U7_SW', '6': 'U7_BST'},
+                foot='Package_TO_SOT_SMD:TSOT-23-6', manual='*',
+                refofs=(116.84, 71.12))
     s.gnd(u7['4'][0], 5.08)
+    s.route(u7['3'][0], (104.14, 86.36), (104.14, 24.13))
 
-    r9 = s.res('R9', '6.04k / 1%, S-CONF: 2.2 MHz + triangle SSM, discharge off, no sync',
-               88.9, 111.76, valofs=(91.44, 116.84), fsize=0.8)
-    s.route(u7['10'][0], (88.9, 88.9), r9['1'][0])
-    s.gnd(r9['2'][0], 3.81)
-    s.label('U7_SCONF', s.wire((95.25, 88.9), (95.25, 83.82)), UP)
-    c13 = s.cap('C13', '470n / 16 V X7R 0402, NR/SS soft-start + noise filter (5 ms)',
-                93.98, 128.27, valofs=(96.52, 129.54), fsize=0.8)
-    s.route(u7['8'][0], (93.98, 93.98), c13['1'][0])
-    s.gnd(c13['2'][0], 3.81)
-    s.label('U7_SS', s.wire((99.06, 93.98), (99.06, 99.06)), DOWN)
+    # EN through R52 to VIN: "the EN pin ... can be directly connected to VIN"
+    # (Sec 3), with a series 100k so a UVLO divider or a start-delay cap can
+    # be added later without touching copper.
+    r52 = s.res('R52', '100k / 1%, EN to VIN', 78.74, 38.1, valofs=(81.28, 39.37),
+                fsize=0.85)
+    s.wire((78.74, 24.13), r52['1'][0])
+    s.route(r52['2'][0], (78.74, 109.22), (110.49, 109.22), (110.49, 91.44), u7['2'][0])
+    s.label('U7_EN', s.wire((95.25, 109.22), (95.25, 114.3)), DOWN)
 
-    # SW -> L2 -> VO node -> ferrite bead -> V3V3_SYS
-    l2 = s.ind('L2', '2.2u / Isat 5.5 A (30 %), DCR 45 mOhm max (CJIANG FTC303020D2R2MBCA)',
-               160.02, 78.74, rot=HORZ, foot='MARV_Packages:L_Changjiang_FTC303020D',
-               refofs=(156.21, 58.42), valofs=(140.97, 63.5), fsize=0.8)
-    s.route(u7['2'][0], l2['1'][0])
-    s.label('U7_SW', s.wire((147.32, 78.74), (147.32, 73.66)), UP)
-    s.route(u7['3'][0], (167.64, 83.82), (167.64, 78.74))
-    s.wire(l2['2'][0], (167.64, 78.74))
-    fb1 = s.bead('FB1', '8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv)',
-                 180.34, 78.74, rot=HORZ, foot='Inductor_SMD:L_0603_1608Metric',
-                 refofs=(176.53, 62.23), valofs=(203.2, 66.04), fsize=0.8)
-    s.wire((167.64, 78.74), fb1['1'][0])
-    v3 = s.route(fb1['2'][0], (262.89, 78.74))
-    s.flag('V3V3_SYS', (228.6, 78.74))
+    # SW leaves upward, turns over the top of the package and comes back down
+    # into L2; C13, the bootstrap cap, sits inside that loop between BST and
+    # SW so neither wire has to cross the other.
+    s.head('Bootstrap and inductor', 196.85, 74.93, 1.27)
+    sw = s.route(u7['5'][0], (139.7, 86.36), (139.7, 76.2), (161.29, 76.2))
+    s.label('U7_SW', s.wire((139.7, 81.28), (133.35, 81.28)), LEFT)
+    c13 = s.cap('C13', '100n / 16 V X7R, bootstrap BST-SW (AP63203 Table 2 C3)',
+                149.86, 81.28, rot=HORZ, fields='none', refofs=(146.05, 74.93),
+                valofs=(127, 55.88), fsize=0.8)
+    s.route(u7['6'][0], (142.24, 88.9), (142.24, 81.28), c13['1'][0])
+    s.label('U7_BST', s.wire((142.24, 83.82), (147.32, 83.82)), RIGHT)
+    s.wire(c13['2'][0], (153.67, 81.28))
+    s.wire((153.67, 81.28), (153.67, 76.2))
+    l2 = s.ind('L2', '4.7u, Isat 6.0 A (30 %), DCR 46 mOhm max (CJIANG FTC404030S4R7MGCA)',
+               165.1, 86.36, rot=HORZ, foot='MARV_Packages:L_Changjiang_FTC404030S',
+               refofs=(168.91, 66.04), valofs=(168.91, 68.58), fsize=0.85)
+    s.wire((161.29, 76.2), l2['1'][0])
+
+    v3 = s.route(l2['2'][0], (266.7, 86.36))
+    s.flag('V3V3_SYS', (241.3, 86.36))
     s.label('V3V3_SYS', v3, RIGHT)
 
-    s.head('1st-stage COUT (U7_VO)', 193.04, 90.17, 1.27)
-    s.capcol(170.18, 96.52, 186.69, [('C10', '22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)', {'fsize': 0.7}),
-                                     ('C11', '22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)', {'fsize': 0.7}),
-                                     ('C12', '22u / 10 V X5R 0603 GRM188R61A226ME15, 1st-stage COUT (~40% DC-bias loss at 3.3 V)', {'fsize': 0.7})],
-             valx=189.23)
-    s.gnd((186.69, 111.76), 3.81)
-    s.route((170.18, 78.74), (170.18, 96.52))
-    s.label('U7_VO', s.wire((170.18, 85.09), (160.02, 85.09)), LEFT)
+    # FB (pin 1) is a SENSE input on the fixed-output part: it goes straight
+    # to V3V3_SYS, taken at the far end of the output capacitors.
+    s.route(u7['1'][0], (140.97, 91.44), (140.97, 127), (215.9, 127), (215.9, 86.36))
 
-    s.head('2nd-stage Cf (post-bead, V3V3_SYS)', 260.35, 90.17, 1.27)
-    s.capcol(243.84, 96.52, 260.35, [('C23', '22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)', {'fsize': 0.7}),
-                                     ('C24', '22u / 10 V X5R 0603 GRM188R61A226ME15, 2nd-stage Cf post-bead (~40% DC-bias loss at 3.3 V)', {'fsize': 0.7})],
-             valx=262.89)
-    s.gnd((260.35, 104.14), 3.81)
-    s.route((243.84, 78.74), (243.84, 96.52))
-
-    # feedback divider (senses V3V3_SYS after the bead) and the power-good pull-up
-    s.head('Feedback divider', 200.66, 137.16, 1.27)
-    s.route(u7['9'][0], (144.78, 88.9), (144.78, 132.08), (160.02, 132.08))
-    r7 = s.res('R7', '10k / 0.1%', 160.02, 124.46, valofs=(162.56, 125.73))
-    s.label('V3V3_SYS', s.wire(r7['1'][0], (160.02, 113.03)), UP)
-    s.wire(r7['2'][0], (160.02, 132.08))
-    r8 = s.res('R8', '3.16k / 0.1%', 160.02, 139.7, valofs=(162.56, 140.97))
-    s.wire((160.02, 132.08), r8['1'][0])
-    s.gnd(r8['2'][0], 3.81)
-    s.label('U7_FB', s.wire((151.13, 132.08), (151.13, 137.16)), DOWN)
-
-    pg = s.route(u7['5'][0], (140.97, 99.06), (140.97, 151.13), (215.9, 151.13))
-    s.label('PWR_GOOD', pg, RIGHT)
-    r10 = s.res('R10', '100k', 190.5, 133.35, valofs=(193.04, 134.62))
-    s.label('V3V3_SYS', s.wire(r10['1'][0], (190.5, 124.46)), UP)
-    s.wire(r10['2'][0], (190.5, 151.13))
+    s.head('Output capacitors (Table 2: 2 x 22 uF)', 198.12, 133.35, 1.27)
+    s.capcol(177.8, 99.06, 194.31,
+             [('C10', '22u / 10 V X5R 0603 GRM188R61A226ME15, COUT (~40% DC-bias loss at 3.3 V)', {'fsize': 0.7}),
+              ('C11', '22u / 10 V X5R 0603 GRM188R61A226ME15, COUT (~40% DC-bias loss at 3.3 V)', {'fsize': 0.7})],
+             valx=218.44, refdx=-6.2)
+    s.gnd((194.31, 106.68), 3.81)
+    s.route((177.8, 86.36), (177.8, 99.06))
 
     # U12 TPS7A20 analog LDO
     s.head('Analog LDO -> V3V3_ANA', 30.48, 135.89, 1.4)
     u12 = s.part('U12', 'Regulator_Linear:TPS7A20xxxDBV', 'TPS7A2033PDBVR', 76.2, 152.4,
-                 {'1': 'V5_SYS', '2': 'GND', '3': 'PWR_GOOD', '4': None, '5': 'V3V3_ANA'},
+                 {'1': 'V5_SYS', '2': 'GND', '3': 'V3V3_SYS', '4': None, '5': 'V3V3_ANA'},
                  manual=('1', '2', '3', '5'), refofs=(68.58, 140.97))
     s.gnd(u12['2'][0], 5.08)
     vin = s.route(u12['1'][0], (48.26, 149.86))
@@ -1461,8 +1340,10 @@ def power_3v3_sheet():
                 fsize=0.85)
     s.wire((55.88, 149.86), c25['1'][0])
     s.gnd(c25['2'][0], 3.81)
+    # EN straight to V3V3_SYS: the AP63203 has no power-good pin, so the rail
+    # itself does the buck-before-LDO sequencing, at no parts (see N_ANA).
     en = s.route(u12['3'][0], (60.96, 152.4), (60.96, 170.18), (40.64, 170.18))
-    s.label('PWR_GOOD', en, LEFT)
+    s.label('V3V3_SYS', en, LEFT)
     out = s.route(u12['5'][0], (109.22, 149.86))
     s.label('V3V3_ANA', out, RIGHT)
     c26 = s.cap('C26', '1u / 10 V X7R 0402, LDO output, ESR <=100 mOhm', 95.25, 157.48,
@@ -1470,7 +1351,7 @@ def power_3v3_sheet():
     s.wire((95.25, 149.86), c26['1'][0])
     s.gnd(c26['2'][0], 3.81)
 
-    s.notes([N_FB, N_SCONF, N_ANA, N_PKG, N_L2], [(10, 292), (140, 292), (270, 250)], 182)
+    s.notes([N_U7, N_ANA, N_PKG], [(10, 292), (140, 292), (270, 250)], 190)
     return s
 
 
@@ -1718,7 +1599,7 @@ def io_block_sheet():
                                      ('C21', '10u / 10 V X7R 0603', {'fsize': 0.85})],
              valx=316.23)
     s.gnd((313.69, 49.53), 3.81)
-    s.label('V5_SYS', s.wire((297.18, 41.91), (297.18, 34.29)), UP)
+    s.label(V5, s.wire((297.18, 41.91), (297.18, 34.29)), UP)
     c22 = s.cap('C22', '10u / 10 V X7R 0603', 349.25, 46.99, valofs=(351.79, 48.26), fsize=0.85)
     s.label(V3, s.wire(c22['1'][0], (349.25, 34.29)), UP)
     s.gnd(c22['2'][0], 3.81)
@@ -1741,10 +1622,17 @@ def io_block_sheet():
     s.label('LED_DIN', s.wire((314.96, 130.81), (314.96, 125.73)), UP)
 
     s.head('Mechanical', 78.74, 152.4, 1.27)
+    # Grounded mounting holes: MountingHole_Pad (one pin) on the 6.4 mm GND
+    # pad-and-via ring footprint, so each frame screw bonds to the ground
+    # plane instead of sitting in a copper keepout.  Fields go ABOVE the
+    # symbol now - the GND power symbol hangs off the pin below it.
     for i, ref in enumerate(['H1', 'H2', 'H3', 'H4']):
-        s.part(ref, 'Mechanical:MountingHole', 'M3 grommet hole, 4.0 mm NPTH',
-               88.9 + 27.94 * i, 165.1, {}, foot='MARV_Packages:MountingHole_4.0mm_Grommet',
-               refofs=(83.82 + 27.94 * i, 158.75), valofs=(83.82 + 27.94 * i, 170.18), fsize=0.85)
+        h = s.part(ref, 'Mechanical:MountingHole_Pad', 'M3 grommet hole, 4.0 mm, GND ring',
+                   88.9 + 27.94 * i, 165.1, {'1': 'GND'}, manual='*',
+                   foot='MARV_Packages:MountingHole_4.0mm_Grommet_Pad_Via',
+                   refofs=(83.82 + 27.94 * i, 156.21), valofs=(83.82 + 27.94 * i, 158.75),
+                   fsize=0.85)
+        s.gnd(h['1'][0], 2.54)
 
     s.notes([N_IO_HDR, N_IORAILS, N_MECH,
              'IO ARRAY ROW MAP (row n = J6 pin n signal | J7 pin n power | J8 pin n GND)\n'
@@ -1755,9 +1643,9 @@ def io_block_sheet():
 
 
 def usb_debug_sheet():
-    s = Sheet('usb_debug', 'BOARD 5 / USB-C, ESD, SWD pads', 6, 'A4')
-    s.title_note('BOARD 5 - J4 USB-C 2.0 RECEPTACLE, U8 USBLC6 DATA ESD, THE 27 R D+/D- SERIES PAIR,\n'
-                 'THE VBUS SENSE DIVIDER AND THE J10 SWD LANDING PADS.')
+    s = Sheet('usb_debug', 'BOARD 5 / USB-C, D+/D- series pair, SWD pads', 6, 'A4')
+    s.title_note('BOARD 5 - J4 USB-C 2.0 RECEPTACLE, THE 27 R D+/D- SERIES PAIR, THE VBUS SENSE DIVIDER\n'
+                 'AND THE J10 SWD LANDING PADS.  NO ON-BOARD USB ESD ARRAY - U8 USBLC6 was removed.')
     s.head('USB-C receptacle', 33.02, 40.64)
     j4 = s.part('J4', 'Connector:USB_C_Receptacle_USB2.0_16P', 'USB_C_PROGRAM_POWER', 50.8, 88.9,
                 {'A1': 'GND', 'A4': 'USB_VBUS', 'A5': 'USB_CC1', 'A6': 'USB_DP', 'A7': 'USB_DM',
@@ -1789,32 +1677,24 @@ def usb_debug_sheet():
     s.wire(cc2, r5['1'][0])
     s.gnd(r5['2'][0], 3.81)
     s.label('USB_CC2', s.wire((66.04, 116.84), (66.04, 123.19)), DOWN)
-    # D- and D+ pairs into the ESD part.  The one crossover on this page is at
-    # (104.14, 88.9): USB_DM crosses USB_DP with no junction, so they stay apart.
-    s.head('Data ESD + series pair', 116.84, 60.96, 1.27)
-    u8 = s.part('U8', 'Power_Protection:USBLC6-2SC6', 'USBLC6-2SC6', 127, 101.6,
-                {'1': 'USB_DP', '2': 'GND', '3': 'USB_DM', '4': 'USB_DM_MCU', '5': 'USB_VBUS',
-                 '6': 'USB_DP_MCU'}, manual='*', refofs=(140.97, 82.55), fsize=0.85)
+    # D- and D+ from the receptacle straight into the 27 R series pair.  U8,
+    # the USBLC6-2SC6 ESD array, is REMOVED (DESIGN_SPEC "Decisions": JLC
+    # Extended, dropped), and with it the one crossover this page used to
+    # have - the two pairs no longer cross anywhere.
+    s.head('D+/D- series pair - no ESD array', 116.84, 60.96, 1.27)
     s.route(j4['A7'][0], (81.28, 86.36), (81.28, 88.9))
     s.route(j4['B7'][0], (81.28, 88.9))
-    s.route((81.28, 86.36), (104.14, 86.36), (104.14, 104.14), (121.92, 104.14))
+    s.route((81.28, 86.36), (104.14, 86.36), (104.14, 104.14), (146.05, 104.14))
     s.label('USB_DM', s.wire((95.25, 86.36), (95.25, 81.28)), UP)
     s.route(j4['A6'][0], (86.36, 91.44), (86.36, 93.98))
     s.route(j4['B6'][0], (86.36, 93.98))
-    s.route((86.36, 93.98), (99.06, 93.98), (99.06, 101.6), (121.92, 101.6))
-    s.label('USB_DP', s.wire((113.03, 101.6), (113.03, 96.52)), UP)
-    s.route(u8['5'][0], (127, 96.52), (127, 78.74), (140.97, 78.74))
-    s.label('USB_VBUS', (140.97, 78.74), RIGHT)
-    s.gnd(u8['2'][0], 5.08)
+    s.route((86.36, 93.98), (99.06, 93.98), (99.06, 123.19), (146.05, 123.19))
+    s.label('USB_DP', s.wire((113.03, 123.19), (113.03, 128.27)), DOWN)
     r23 = s.res('R23', '27 / 1%, USB D- series', 149.86, 104.14, rot=HORZ,
                 refofs=(144.78, 100.33), valofs=(144.78, 96.52), fsize=0.85)
-    s.route(u8['4'][0], (146.05, 104.14))
-    s.label('USB_DM_MCU', s.wire((139.7, 104.14), (139.7, 95.25)), UP)
     s.label('USB_DM_RP', s.wire(r23['2'][0], (168.91, 104.14)), RIGHT)
     r22 = s.res('R22', '27 / 1%, USB D+ series', 149.86, 123.19, rot=HORZ,
                 refofs=(144.78, 119.38), valofs=(144.78, 129.54), fsize=0.85)
-    s.route(u8['6'][0], (135.89, 101.6), (135.89, 123.19), (146.05, 123.19))
-    s.label('USB_DP_MCU', s.wire((139.7, 123.19), (139.7, 132.08)), DOWN)
     s.label('USB_DP_RP', s.wire(r22['2'][0], (168.91, 123.19)), RIGHT)
 
     # VBUS sense divider
@@ -1837,7 +1717,7 @@ def usb_debug_sheet():
                  manual=('3',), stub=7.62, refofs=(201.93, 120.65))
     s.gnd(j10['3'][0], 7.62, RIGHT)
 
-    s.notes([N_J10], [(10, 206)], 152)
+    s.notes([N_J10, N_VBUS_IN2], [(10, 206)], 148)
     return s
 
 
@@ -1852,7 +1732,7 @@ def mcu_sheet():
     nets.update({'59': ANA, '61': 'VREG_AVDD'})
     nets.update({'10': 'DVDD', '32': 'DVDD', '51': 'DVDD', '63': 'VREG_LX', '65': 'DVDD',
                  '62': 'GND', '81': 'GND'})
-    nets.update({'30': 'XIN', '31': 'XOUT', '33': 'SWCLK', '34': 'SWDIO', '35': 'PWR_GOOD'})
+    nets.update({'30': 'XIN', '31': 'XOUT', '33': 'SWCLK', '34': 'SWDIO', '35': 'MCU_RUN'})
     nets.update({'66': 'USB_DM_RP', '67': 'USB_DP_RP'})
     nets.update({'70': 'QSPI_SD3', '71': 'QSPI_SCLK', '72': 'QSPI_SD0', '73': 'QSPI_SD2',
                  '74': 'QSPI_SD1', '75': 'QSPI_SS'})
@@ -1944,12 +1824,21 @@ def mcu_sheet():
     # --- RUN / BOOTSEL switches, right at the pins they strap ---
     s.head('Reset and BOOTSEL', 168.91, 140.97, 1.27)
     sw1 = s.part('SW1', 'Switch:SW_Push', 'RESET (RUN to GND)', 193.04, 116.84,
-                 {'1': 'PWR_GOOD', '2': 'GND'}, foot='Button_Switch_SMD:SW_SPST_B3U-1000P',
+                 {'1': 'MCU_RUN', '2': 'GND'}, foot='Button_Switch_SMD:SW_SPST_B3U-1000P',
                  mirror='y', manual='*',
                  refofs=(185.42, 109.22), valofs=(185.42, 111.76), fsize=0.8)
     s.wire(sw1['1'][0], u20['35'][0])
     s.gnd(sw1['2'][0], 5.08, LEFT)
-    s.label('PWR_GOOD', s.wire((205.74, 116.84), (205.74, 111.76)), UP)
+    s.label('MCU_RUN', (205.74, 111.76), RIGHT)
+    # RUN pull-up.  It used to be the TPS62913's open-drain PWR_GOOD output
+    # through this same 100k, which held RUN down until the buck declared
+    # V3V3_SYS in regulation; the AP63203 has no PG pin, so R10 is a plain
+    # pull-up to V3V3_SYS now and the RP2350's always-on brown-out detector
+    # is what holds the core in reset below the rail (design guide Sec 2.2).
+    r10 = s.res('R10', '100k, RUN pull-up', 205.74, 104.14,
+                refofs=(196.85, 100.33), valofs=(190.5, 107.95), fsize=0.8)
+    s.wire((205.74, 116.84), r10['2'][0])
+    s.label(V3, s.wire(r10['1'][0], (205.74, 96.52)), UP)
     r24 = s.res('R24', '1k, BOOTSEL strap', 204.47, 134.62, rot=270,
                 refofs=(199.39, 130.81), valofs=(186.69, 143.51), fsize=0.8)
     s.wire(r24['1'][0], u20['75'][0])
@@ -2008,7 +1897,7 @@ def mcu_sheet():
     return s
 
 
-PAGES = [('power_vbat', power_vbat_sheet), ('power_mux', power_mux_sheet),
+PAGES = [('power_vbat', power_vbat_sheet), ('power_or', power_or_sheet),
          ('power_3v3', power_3v3_sheet), ('mcu', mcu_sheet), ('usb_debug', usb_debug_sheet),
          ('imu', imu_sheet), ('baro', baro_sheet), ('highg', highg_sheet), ('sd', sd_sheet),
          ('qspi_expansion', qspi_sheet), ('io_block', io_block_sheet)]
@@ -2017,9 +1906,11 @@ ROOT_NOTE = ('MARV V2 flight controller - schematic index.  One page per subsyst
              'with its own decoupling, pull-ups, series resistors, test points and connectors wired to it, and a\n'
              'global label is used only where a net leaves the page.  See DESIGN_SPEC.md for the design itself.\n'
              '\n'
-             'Inputs: VBAT 6-25.2 V (2-6S) from the MicoAir AM32 ESC pad row J3, and USB VBUS.\n'
-             'Rails: 5V_IN from the U26 AP63205 buck, V5_SYS from the U25 TPS2121 priority mux, V3V3_SYS from the\n'
-             'TPS62913 buck, V3V3_ANA from the TPS7A20 LDO.  Servo 5 V is V5_SYS, downstream of the mux.')
+             'Inputs: regulated 5 V from an EXTERNAL BEC on the MicoAir AM32 ESC pad row J3 pin 7, and USB VBUS.\n'
+             'J3 pin 9 brings raw pack VBAT in as a SENSE wire only - no load, no bulk, no copper zone.\n'
+             'Rails: 5V_IN is the BEC rail and the servo/module bus; V5_SYS is 5V_IN OR USB through the Q1/D1 OR and\n'
+             'feeds only the two 3.3 V regulators and the status LED; V3V3_SYS from the AP63203 buck, V3V3_ANA from\n'
+             'the TPS7A20 LDO.')
 
 
 def build():

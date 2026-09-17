@@ -1,17 +1,17 @@
-ERC report (2026-09-16T19:44:20, Encoding UTF8)
+ERC report (2026-09-17T02:46:16, Encoding UTF8)
 Report includes: Errors, Warnings, Exclusions
 
 ***** Sheet /
 
-***** Sheet /POWER 1 / ESC pad row, VBAT and the 5 V buck/
+***** Sheet /POWER 1 / ESC pad row, 5 V input and analog sense/
 
-***** Sheet /POWER 2 / TPS2121 priority power mux/
+***** Sheet /POWER 2 / 5 V OR - BEC P-FET and USB Schottky/
 
 ***** Sheet /POWER 3 / 3.3 V system buck and analog LDO/
 
 ***** Sheet /BOARD 1 / RP2354B/
 
-***** Sheet /BOARD 5 / USB-C, ESD, SWD pads/
+***** Sheet /BOARD 5 / USB-C, D+/D- series pair, SWD pads/
 
 ***** Sheet /BOARD 2 / ICM-45686 six-axis IMU/
 

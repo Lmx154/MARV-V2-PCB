@@ -8,15 +8,16 @@ Every footprint the board uses that is not a plain passive now resolves inside
 the project: `MARV_Packages.pretty/` holds the footprints, and all of them
 point at a STEP file in `MARV_Packages.3dshapes/` via `${KIPRJMOD}`. Nine of those
 footprints are byte-for-byte copies of official KiCad footprints, vendored so
-the project carries its own 3D model (eight of them, including L2 and L3 —
-`L_Changjiang_FTC303020D` and `L_Changjiang_FTC404030S`, both taken from
-KiCad's own `Inductor_SMD.pretty`) or a courtyard/silkscreen trimmed for a
+the project carries its own 3D model (eight of them, including L2 —
+`L_Changjiang_FTC404030S`, taken from KiCad's own `Inductor_SMD.pretty`;
+`L_Changjiang_FTC303020D` is kept for the 3 x 3 x 2.0 mm option named in
+DESIGN_SPEC's U7 paragraph but no part uses it today) or a courtyard/silkscreen trimmed for a
 tight edge fit (the IO array); their pads are unchanged from the KiCad
 originals (only `descr`, the `(model ...)` node where repointed,
 courtyard/silkscreen where noted, and the per-item uuids differ). Two further
 footprints are project-authored solder-pad rows (`PadRow_1x03/08_P2.00mm`, for
-J3 and J10) and one is a mechanical hole (`MountingHole_4.0mm_Grommet`), which
-by design carry no 3D model at all — as does `TestPoint:TestPoint_Pad_1.0x1.0mm`
+J3 and J10) and one is the grounded grommet hole
+(`MountingHole_4.0mm_Grommet_Pad_Via`), which by design carry no 3D model at all — as does `TestPoint:TestPoint_Pad_1.0x1.0mm`
 (TP1-TP10), used directly from the KiCad official library rather than vendored.
 Model provenance, licences and SHA256 sums:
 [MARV_Packages.3dshapes/PROVENANCE.md](MARV_Packages.3dshapes/PROVENANCE.md).
@@ -28,12 +29,14 @@ Model provenance, licences and SHA256 sums:
 | ICM-45686 (U21) | `ICM-45686` in `MARV_Sensors` |
 | BMP581 (U22) | `BMP581` in `MARV_Sensors` |
 | ADXL375 (U23) | `ADXL375` in `MARV_Sensors` |
-| TPS2121 (U25) | `TPS2121RUX` in `MARV_Power` |
 | RP2354A / RP2354B | `RP2354A` / `RP2354B` in `MCU_RaspberryPi` (KiCad 10 official; 60-pin QFN 7x7 mm / 80-pin QFN 10x10 mm, both with 2 MB stacked flash) |
-| AP63205WU (U26) | `AP63205WU` in `Regulator_Switching` (KiCad 10 official, TSOT-23-6) |
+| AP63203WU-7 (U7) | `AP63203WU` in `Regulator_Switching` (KiCad 10 official, TSOT26 / `Package_TO_SOT_SMD:TSOT-23-6`). Pins 1 FB, 2 EN, 3 VIN, 4 GND, 5 SW, 6 BST. FB is a **sense** input on the fixed-output part — wire it to the output, not to a divider. LCSC **C780769**. |
+| AO3401A (Q1) | `AO3401A` in `Transistor_FET` (KiCad 10 official; SOT-23, pins 1 G, 2 S, 3 D, footprint already set). P-channel, -30 V / -4.0 A. LCSC **C15127** (JLC Basic). |
+| 1N5819WS (D1) | `D_Schottky` in `Device` with the Value set to `1N5819WS`, on `Diode_SMD:D_SOD-323` (pins 1 K, 2 A). 40 V / 1 A. LCSC **C191023** (JLC Basic). |
 | WS2812C-2020 (D20) | `WS2812B-2020` in `LED` — **use the `-2020` symbol, not plain `WS2812B`**: only the 2020 symbol has the WS2812C-2020 pin order (1 DO, 2 GND, 3 DI, 4 VDD). The 5050 `WS2812B` symbol is 1 VDD, 2 DOUT, 3 VSS, 4 DIN and would wire the part backwards. |
 | W25Q32JVSNIQ / APS6404L-SQN-SN (U24, DNP socket) | `W25Q32JVSS` in `Memory_Flash` — **substitute symbol**: KiCad 10 ships no W25Q64 symbol at all (`W25Q16JVSS`, `W25Q32JVSS`, `W25Q128JVE/JVP/JVS` only). The whole W25Q JV family shares one 8-pin pinout (1 CS#, 2 DO/IO1, 3 WP#/IO2, 4 GND, 5 DI/IO0, 6 CLK, 7 HOLD#/IO3, 8 VCC), which is also the APS6404L PSRAM pinout, so the symbol is electrically correct; the real MPN lives in the Value field. |
-| Mounting holes (H1-H4) | `MountingHole` in `Mechanical` (no pins) |
+| — | `MARV_Power.kicad_sym` is **empty** after the BEC revision: TPS2121RUX was its only symbol and U25 is gone. The library and its `sym-lib-table` entry are kept so the entry point exists for the next project-authored power symbol. |
+| Mounting holes (H1-H4) | `MountingHole_Pad` in `Mechanical` — **one pin, wired to GND** on the io_block sheet; the plain pin-less `MountingHole` is not used any more |
 
 Press `A` in the Schematic Editor and search these names. The project-local
 ICM-45686, BMP581 and ADXL375 symbols already carry their matching footprint
@@ -50,18 +53,18 @@ All rows below are `MARV_Packages:<name>`.
 | U22 | `Bosch_LGA-10_2x2mm_BMP581` | project-authored from BST-BMP581-DS004 rev 1.13 | `BMP581.step`, `rotate 0 0 90` | KiCad generic stand-in (`ST_HLGA-10_2x2mm_P0.5mm_LayoutBorder3x2y.step`), not Bosch's; model pads coincide with the copper |
 | U23 | `Analog_LGA-14_3x5mm_P0.8mm_ADXL375` | project-authored from ADI Rev. B Figure 38 | `ADXL375.step` | project copy of KiCad `LGA-14_3x5mm_P0.8mm_LayoutBorder1x6y.step` (dimensional stand-in) |
 | U20 | `QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm` | vendored KiCad official | `QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm.step` | FreeCAD-generated (`tools/3d/gen_qfn80_rp2354b.py`) from the RP2350 datasheet Fig. 145 table |
-| U7 | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm` | vendored KiCad official | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm.step` | FreeCAD-generated (`tools/3d/gen_rpu0010a_tps62913.py`) from TI drawing 4224937/A; **height 0.9 mm is the midpoint of the 0.8/1.0 min/max, no nominal published** |
-| U25 | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm` | vendored KiCad official | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm.step` | FreeCAD-generated (`tools/3d/gen_rux0012a_tps2121.py`) from TI drawing 4224010/A; **height 0.9 mm is assumed — the drawing gives only "1 MAX"** |
 | D20 | `LED_WS2812B-2020_PLCC4_2.0x2.0mm` | vendored KiCad official | `LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | FreeCAD-generated (`tools/3d/gen_ws2812c_2020.py`) from the WS2812C-2020 datasheet page 2; this KiCad install ships no 2020 body even though its own footprint references one |
-| J3 | `PadRow_1x08_P2.00mm` | project-authored on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`) | — (pads only) | none by design |
+| J3 | `PadRow_1x09_P2.00mm` | project-authored on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`). **No silkscreen outline**: the row sits hard against the left board edge between the H1/H4 grommet GND rings, and an outline round nine pads reaches both the "ESC" caption and the rings. Pad 1 is a silk dot only. | — (pads only) | none by design |
 | J10 | `PadRow_1x03_P2.00mm` | project-authored on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`) | — (pads only) | none by design |
 | J6/J7/J8 | `PinHeader_1x14_P2.54mm_Vertical_IORow` | vendored KiCad official (`Connector_PinHeader_2.54mm.pretty`), courtyard trimmed to the body across the row so the three abutting columns (GND \| POWER \| SIGNAL) land exactly on the 2.54 mm grid | `PinHeader_1x14_P2.54mm_Vertical_IORow.step` | project copy of KiCad `Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x14_P2.54mm_Vertical.step` |
 | TP1-TP10 | `TestPoint:TestPoint_Pad_1.0x1.0mm` | KiCad official, used directly (not vendored into `MARV_Packages.pretty`) on F.Cu, placed flipped to B.Cu at layout (`tools/setup_pcb.py`) | — (pads only) | none by design |
-| H1-H4 | `MountingHole_4.0mm_Grommet` | project-authored | — (mechanical) | none by design |
-| L3 | `L_Changjiang_FTC404030S` | vendored KiCad official (`Inductor_SMD.pretty`) | `L_Changjiang_FTC404030S.step`, no offset/rotate | KiCad-authored model for the CJIANG FTC404030S body (FTC404030S4R7MGCA is L3) |
+| H1-H4 | `MountingHole_4.0mm_Grommet_Pad_Via` | project-authored | — (mechanical) | none by design |
+| L2 | `L_Changjiang_FTC404030S` | vendored KiCad official (`Inductor_SMD.pretty`) | `L_Changjiang_FTC404030S.step`, no offset/rotate | KiCad-authored model for the CJIANG FTC404030S body (FTC404030S4R7MGCA is L2, the AP63203's inductor) |
+| — (spare) | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm` | vendored KiCad official | `Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm.step` | FreeCAD-generated (`tools/3d/gen_rpu0010a_tps62913.py`) from TI drawing 4224937/A; **height 0.9 mm is the midpoint of the 0.8/1.0 min/max, no nominal published**. **No part uses it today** — it was U7's TPS62913 land before the BEC revision; kept with its model rather than deleted so the stage can be restored without re-deriving either. |
+| — (spare) | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm` | vendored KiCad official | `Texas_VQFN-HR-12_2x2.5mm_P0.5mm.step` | FreeCAD-generated (`tools/3d/gen_rux0012a_tps2121.py`) from TI drawing 4224010/A; **height 0.9 mm is assumed — the drawing gives only "1 MAX"**. **No part uses it today** — it was U25's TPS2121 land before the BEC revision. |
 | J4 | `USB_C_Receptacle_HRO_TYPE-C-31-M-12` | vendored KiCad official | `USB_C_Receptacle_HRO_TYPE-C-31-M-12.step`, `offset 0 -1.05 0`, `rotate 0 0 180` | **EasyEDA/LCSC-contributed, not HRO's**; check against the HRO drawing before trusting it mechanically |
 | J11 | `microSD_HC_Molex_104031-0811` | vendored KiCad official | `microSD_HC_Molex_104031-0811.step`, `offset 0.092 -0.3 1.4456`, `rotate -90 0 180` | Molex manufacturer model, via TraceParts |
-| L2 | `L_Changjiang_FTC303020D` | vendored KiCad official (`Inductor_SMD.pretty`) | `L_Changjiang_FTC303020D.step`, no offset/rotate | KiCad-authored model for the CJIANG FTC303020D body (FTC303020D2R2MBCA is L2) |
+| — (spare) | `L_Changjiang_FTC303020D` | vendored KiCad official (`Inductor_SMD.pretty`) | `L_Changjiang_FTC303020D.step`, no offset/rotate | KiCad-authored model for the CJIANG FTC303020D body. **No part uses it today**; kept for the 3 x 3 x 2.0 mm shrink option in DESIGN_SPEC's U7 paragraph |
 
 ### Project-authored pad rows and the grommet hole
 
@@ -84,8 +87,8 @@ purpose**; `tools/audit_footprints.py --no-3d-ok` (default
 `^(PadRow_|MountingHole_|TestPoint_)`) reports them OK with "pads only".
 Per-pad function labels are *not* in the footprint — add them as silkscreen
 text at layout (mirrored, on B.SilkS, once flipped), and mark pad 1, because
-the same footprint serves J3 (ESC,
-1x08) and J10 (DBG, 1x03) — the only two ports left that mate with something
+the same family serves J3 (ESC,
+1x09) and J10 (DBG, 1x03) — the only two ports left that mate with something
 fixed and pad-shaped. The 1x04 member (`PadRow_1x04_P2.00mm`, formerly J6/J7/J9)
 and the 1x02 member (`PadRow_1x02_P2.00mm`, gone with the buzzer before it) are
 both retired; regenerate either from the same rules if a solder-pad row of that
@@ -97,14 +100,31 @@ IO block (`PinHeader_1x14_P2.54mm_Vertical_IORow`, below) instead of a solder pa
 M3, M2, M1, VBAT, GND, left to right) is authoritative — it is the ESC
 silkscreen. Confirm the pitch against the physical ESC before fab.
 
-`MountingHole_4.0mm_Grommet`: a 4.0 mm NPTH (`np_thru_hole`, `*.Cu` + `*.Mask`,
-no annular ring) for a 3 mm silicone grommet, a **5.0 mm diameter all-layer
-copper keepout zone** (tracks/vias/pads/copperpour all not allowed), a 2.5 mm
-radius F.Fab circle showing that keepout, a 2.0 mm radius Cmts.User circle for
-the hole itself and a **3.25 mm radius (6.5 mm diameter) F.CrtYd** for the grommet
-flange, which is the real top-side keep-clear — the flange itself, not the flange
-plus a hand-clearance margin; the 8.0 mm diameter courtyard this replaces was
-costing the board 68 mm2 of placeable area across the four holes. No 3D model.
+`MountingHole_4.0mm_Grommet_Pad_Via`: KiCad's own `MountingHole_*_Pad_Via`
+pattern, cut to this board's grommet. The hole is **plated** now: pad 1 is a
+`thru_hole` circle, **4.0 mm drill** (the finished hole is unchanged — it still
+takes the 3 mm silicone grommet) with a **6.4 mm diameter pad** on `*.Cu` +
+`*.Mask`, so the ring is bare exposed copper on all four layers with no paste;
+**eight more pads, all numbered 1**, 0.6 mm diameter on a 0.3 mm drill, sit on a
+**2.7 mm radius** circle inside that ring and stitch the four layers together.
+The numbers: the via drill edge is 2.55 mm out, i.e. **0.55 mm of laminate from
+the 4.0 mm hole wall** (JLC wants 0.5 mm hole to hole, the board rule is
+0.254 mm); the via pads reach 3.0 mm, **0.2 mm inside the 3.2 mm ring edge**;
+annular ring is 1.2 mm on the hole and 0.15 mm on the vias, against a 0.125 mm
+minimum. Every pad carries `zone_connect 2` — a **solid** zone connection, as
+KiCad's own footprints of this family do, which is also what spares the 0.6 mm
+stitching pads a thermal spoke they are too small to take. The **5.0 mm
+all-layer copper keepout zone the previous `MountingHole_4.0mm_Grommet` carried
+is gone**: the ring replaces it, so the three GND pours flood into the hole
+instead of being punched out around it and each frame screw bonds to the ground
+plane. Also a 3.2 mm radius F.Fab circle (the ring, where it used to show the
+keepout), a 2.0 mm radius Cmts.User circle for the hole itself and an unchanged
+**3.25 mm radius (6.5 mm diameter) F.CrtYd** for the grommet flange, which is
+the real top-side keep-clear — the flange itself, not the flange plus a
+hand-clearance margin; the 8.0 mm diameter courtyard it replaced was costing
+the board 68 mm2 of placeable area across the four holes. Through-hole,
+`exclude_from_bom` + `exclude_from_pos_files`, so it stays out of the JLC BOM
+and CPL. No 3D model.
 
 The ten `TestPoint:TestPoint_Pad_1.0x1.0mm` test points (TP1-TP10) are likewise
 authored front-side (F.Cu, no change from the KiCad official footprint) and
@@ -173,7 +193,7 @@ F.Fab outline, then **verified end-to-end** by exporting a one-footprint test
 board with `kicad-cli pcb export step --include-pads` and measuring where the
 model's solder features landed relative to the real copper:
 
-- **L2/L3 CJIANG inductors** need no entry here: both footprints and their
+- **The CJIANG inductor footprints** need no entry here: both footprints and their
   `(model ...)` nodes are unmodified copies of KiCad's own
   `Inductor_SMD.pretty` / `Inductor_SMD.3dshapes`, authored and aligned by
   KiCad's footprint generator with `offset 0 0 0` / `rotate 0 0 0`, so there is
@@ -290,15 +310,23 @@ settles in seconds:
   board draws the end ticks and the pin-1 mark at board level instead. Its
   3D model is a project copy in `MARV_Packages.3dshapes`, like every other
   vendored footprint on this page.
-- U26 AP63205WU (VBAT buck): keep the C73/C74 input loop and the SW node tight —
-  VIN, GND and the SW/L3 loop are the high-di/dt path, and the datasheet asks for
-  vias under the input/output capacitor grounds. FB (pin 1) is a *sense* input on
-  this fixed-output part and must be routed to the 5V_IN copper at the output
-  capacitors, not to the SW node.
-- **L2 and L3 are now CJIANG parts on KiCad-native footprints, not Coilcraft
-  parts on a project-authored one.** L2 is `L_Changjiang_FTC303020D`
-  (CJIANG FTC303020D2R2MBCA, 2.2 uH) and L3 is `L_Changjiang_FTC404030S`
-  (CJIANG FTC404030S4R7MGCA, 4.7 uH); both footprints and their 3D models are
+- U7 AP63203WU-7 (the 3.3 V buck): keep the C8/C9 input loop and the SW node
+  tight — VIN, GND and the SW/L2 loop are the high-di/dt path, and the datasheet
+  asks for vias under the input/output capacitor grounds. FB (pin 1) is a *sense*
+  input on this fixed-output part and must be routed to the V3V3_SYS copper at
+  the output capacitors (C10/C11), not to the SW node. C13, the bootstrap cap,
+  goes directly between BST (6) and SW (5).
+- Q1 AO3401A / D1 1N5819WS (the 5 V OR): Q1's drain pad is the 5V_IN node and
+  carries the whole 3.3 V rail's input current plus nothing else — the servo and
+  module rows are on 5V_IN *upstream* of it, so they do not load the FET. Keep
+  Q1's source, D1's cathode and the AP63203's VIN on one short piece of copper;
+  the gate is a DC node and can be routed anywhere. C19, the 100 uF polymer, is
+  on 5V_IN at the J3 pad row, not on V5_SYS.
+- **L2 is now a CJIANG part on a KiCad-native footprint, not Coilcraft
+  parts on a project-authored one.** L2 is `L_Changjiang_FTC404030S`
+  (CJIANG FTC404030S4R7MGCA, 4.7 uH); `L_Changjiang_FTC303020D`
+  (CJIANG FTC303020D2R2MBCA, 2.2 uH) is kept as the shrink option but is not
+  used by any part today. Both footprints and their 3D models are
   unmodified copies of KiCad's own `Inductor_SMD.pretty` /
   `Inductor_SMD.3dshapes` (see the footprint table above and
   `MARV_Packages.3dshapes/PROVENANCE.md` section 3), so — unlike the Coilcraft
@@ -308,9 +336,8 @@ settles in seconds:
   the Coilcraft XGL series), so there is no preferred pad for the SW node
   either way round; `tools/build_power.py` keeps U7_SW on pad 1 regardless, so
   layout is unchanged. Values, DCR/Isat/Irms ratings, the JLC stocking reason
-  for both substitutions and the full CJIANG datasheet citation (SZ CJIANG FTC
-  series datasheet Rev 7.0, 2025/11/05) are in DESIGN_SPEC.md's "Rails and load
-  budget" (L2/U7) and U26 (L3) paragraphs — this file only tracks footprints
+  for the substitution and the full CJIANG datasheet citation (SZ CJIANG FTC
+  series datasheet Rev 7.0, 2025/11/05) are in DESIGN_SPEC.md's U7 paragraph — this file only tracks footprints
   and 3D models, not electrical rationale.
 - D20 WS2812C-2020 land pattern: the KiCad `LED_WS2812B-2020_PLCC4_2.0x2.0mm`
   pads (0.7 x 0.7 at ±0.915, ±0.55) reproduce every dimension the WS2812C-2020

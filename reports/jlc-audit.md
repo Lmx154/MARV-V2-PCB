@@ -1,11 +1,24 @@
 # MARV V2 — JLCPCB parts audit and quote parameter sheet
 
-Generated 2026-09-16 against JLCPCB's live catalogue. **Nothing in this report
-has been applied to the schematics, the board, the generator or DESIGN_SPEC** —
-it is an audit plus two tools, and every substitution below is a proposal.
+Section 1 and section 3 below were **re-generated 2026-09-17 against JLCPCB's
+live catalogue** for the BEC revision (DESIGN_SPEC "Decisions"): the on-board
+AP63205 pack buck (U26/L3/C73-C77/C80/R52), the TPS2121 priority mux
+(U25/R42-R47/C70-C72), the TPS62913 second stage (FB1/C12/C17/C23/C24 and the
+0.1 % divider R7/R8 plus R9/R10) and the USBLC6 USB ESD array (U8) are gone;
+Q1 AO3401A (C15127, **Basic**), D1 1N5819WS (C191023, **Basic**) and
+U7 AP63203WU-7 (C780769, Extended) replace them. Net effect on sourcing:
+**unique fitted lines 51 → 36, unique LCSC parts 46 → 32, Extended 29 → 17,
+extended-part setup fee estimate $87 → $51, component cost per board at the
+10-piece tier $45.68 → $39.68, SMT placements 120 → 95, solder joints
+410 → 341.**
 
-Board state at audit time: 140 footprints placed, **0 tracks / 0 vias / 0
-zones** — the board is placed but unrouted, so Gerbers do not exist yet.
+Sections 2 and 4-6 are the **original 2026-09-16 audit** and are kept as the
+record of how the part set was chosen; where they discuss U25/U26/U7-as-TPS62913
+or L3, they describe parts the board no longer has.
+
+Board state: **116 footprints placed**, 0 tracks, **151 stitching vias**, 5
+zones (GND on In1/F/B, V3V3_SYS and the keyholed V3V3_ANA island on In2) — the
+board is placed and plane-stitched but **unrouted**, so Gerbers do not exist yet.
 
 ---
 
@@ -61,43 +74,28 @@ real and non-trivial on a 5-board order.
 
 ## 1. Audit — every unique BOM line
 
-54 unique purchased lines by (electrical spec, footprint); grouping key is the
+39 unique purchased lines by (electrical spec, footprint); grouping key is the
 `Value` string up to its first comma, which is the part that is electrically
 meaningful. 13 further lines (H1-H4, TP1-TP10, J3, J10) are board features with
-no part to buy. **51 lines are fitted and assembled**; J6/J7/J8 are THT and
-recommended unpopulated; U24 is DNP.
+no part to buy. **36 lines are fitted and assembled**; J6/J7/J8 are THT and
+recommended unpopulated; U24 is DNP. Regenerated 2026-09-17.
 
 | Refs | Unique line | LCSC | Class | Stock | $@10 | Qty | Joints | Note |
 |---|---|---|---|---|---|---|---|---|
-| U26 | AP63205WU-7 [TSOT-23-6] | C2071056 | Extended | 15,790 | 0.3319 | 1 | 6 |  |
-| C73 | 10u / 50 V X5R 0805 GRM21BR61H106KE43 [C_0805_2012Metric] | C440198 | Basic | 944,548 | 0.2496 | 1 | 2 | exact spec MPN, and it is Basic |
-| C74,C75 | 100n / 50 V X7R 0402 [C_0402_1005Metric] | C307331 | Basic | 14,445,187 | 0.0088 | 2 | 4 |  |
-| R27,R52 | 100k / 1% [R_0402_1005Metric] | C25741 | Basic | 11,172,803 | 0.0025 | 2 | 4 | Basic; same part as the 100k line |
-| L3 | 4.7u [L_Changjiang_FTC404030S] | C39676083 | Extended | 4,407 | 0.2571 | 1 | 0 | Isat 6.0 A worst case (30% drop), Irms 4.0 A (40 C), DCR 46 mOhm max; replaces XGL4030-472MEC (357 in stock at $7.82) |
-| C76,C77,C80 | 22u / 25 V X5R 0805 GRM21BR61E226ME44 [C_0805_2012Metric] | C45783 | Basic | 4,743,063 | 0.2431 | 3 | 6 | spec MPN C86816 has 12 in stock; this Basic part replaces it |
-| R42 | 32.4k / 1% [R_0402_1005Metric] | C22369333 | Extended | 54,928 | 0.0011 | 1 | 2 | no Basic 32.4k; cheapest in stock |
-| R28,R29,R43,R45,R47 | 10k / 1% [R_0402_1005Metric] | C25744 | Basic | 27,497,679 | 0.0031 | 5 | 10 | Basic; same part as the 10k line |
-| R44 | 45.3k / 1% [R_0402_1005Metric] | C137977 | Extended | 452,524 | 0.0016 | 1 | 2 | no Basic 45.3k; cheapest in stock |
-| U25 | TPS2121RUXR [Texas_VQFN-HR-12_2x2.5mm_P0.5mm] | C485916 | Extended | 3,106 | 1.0867 | 1 | 12 |  |
-| C30,C31,C32,C33,C34,C35,C36,C37,C38,C40,C42,C43,C44,C48,C49,C50,C52,C54,C56,C58,C60,C62,C64,C70,C71,C72,C78,C79 | 100n / 16 V X7R [C_0402_1005Metric] | C1525 | Basic | 30,932,149 | 0.0045 | 28 | 56 |  |
-| R46 | 80.6k / 1% [R_0402_1005Metric] | C2998147 | Extended | 163,505 | 0.0017 | 1 | 2 | no Basic 80.6k; cheapest in stock |
+| R7,R27,R52 | 100k / 1% [R_0402_1005Metric] | C25741 | Basic | 11,172,803 | 0.0025 | 3 | 6 | Basic; same part as the 100k line (Q1 gate pull-down, VBAT sense top, U7 EN) |
+| U7 | AP63203WU-7 [TSOT-23-6] | C780769 | Extended | 25,030 | 1.0546 | 1 | 6 | fixed 3.3 V / 2 A synchronous buck, TSOT26; JLC Extended (no Basic synchronous buck exists) |
+| Q1 | AO3401A [SOT-23] | C15127 | Basic | 445,757 | 0.0943 | 1 | 3 | JLC Basic; the 5V_IN side of the OR (drain 5V_IN, source V5_SYS, gate USB_VBUS) |
+| D1 | 1N5819WS [D_SOD-323] | C191023 | Basic | 5,466,933 | 0.0138 | 1 | 2 | JLC Basic; the USB side of the OR (anode USB_VBUS, cathode V5_SYS) |
+| L2 | 4.7u [L_Changjiang_FTC404030S] | C39676083 | Extended | 4,407 | 0.2571 | 1 | 0 | Isat 6.0 A worst case (30% drop), Irms 4.0 A (40 C), DCR 46 mOhm max; AP63203 Sec 10 licenses 2.2-10 uH, and this is the part the removed AP63205 stage already sourced |
+| R28,R29 | 10k / 1% [R_0402_1005Metric] | C25744 | Basic | 27,497,679 | 0.0031 | 2 | 4 | Basic; same part as the 10k line |
+| C9,C13,C30,C31,C32,C33,C34,C35,C36,C37,C38,C40,C42,C43,C44,C48,C49,C50,C52,C54,C56,C58,C60,C62,C64,C78,C79 | 100n / 16 V X7R [C_0402_1005Metric] | C1525 | Basic | 30,932,149 | 0.0045 | 27 | 54 |  |
 | J4 | USB_C_PROGRAM_POWER [USB_C_Receptacle_HRO_TYPE-C-31-M-12] | C165948 | Extended | 223,000 | 0.1858 | 1 | 20 |  |
 | R4,R5 | 5.1k / 1% [R_0402_1005Metric] | C25905 | Basic | 7,263,573 | 0.0025 | 2 | 4 | Basic |
 | C7,C25,C26,C51,C53,C55,C57,C59,C61,C63 | 1u / 10 V X7R 0402 [C_0402_1005Metric] | C52923 | Basic | 8,974,715 | 0.0099 | 10 | 20 | X5R not X7R; 25V rating improves DC-bias vs the 10V spec |
-| U7 | TPS62913RPUR [Texas_RPU0010A_VQFN-HR-10_2x2mm_P0.5mm] | C5189914 | Extended | 4,724 | 3.9301 | 1 | 10 |  |
-| L2 | 2.2u / Isat 5.5 A (30 %) [L_Changjiang_FTC303020D] | C7423318 | Extended | 20,102 | 0.2564 | 1 | 0 | Isat 5.5 A worst case (30% drop) clears the TPS62913 ~4.5 A limit; Irms 4.3 A (40 C), DCR 45 mOhm max; XGL3020 is not on JLC |
-| FB1 | 8.5 ohm @100MHz / 4 mOhm DCR / 5 A (MuRata BLE18PS080SN1 or equiv) [L_0603_1608Metric] | C3764407 | Extended | 18,891 | 0.1735 | 1 | 2 |  |
-| C8,C9 | 10u / 10 V X7S 0603 [C_0603_1608Metric] | C96446 | Basic | 4,484,275 | 0.0542 | 2 | 4 | X5R not X7S; no Basic X7S exists in 0603 |
-| C17 | 2.2n / 50 V X7R [C_0402_1005Metric] | C1531 | Preferred | 636,361 | 0.0028 | 1 | 2 |  |
 | C19 | 100u / 6.3 V polymer [CP_EIA-3528-21_Kemet-B] | C79109 | Extended | 44,908 | 0.6881 | 1 | 2 | exact spec MPN 6TPE100MAZB, ESR 35mR <= 40mR |
-| C10,C11,C12,C23,C24 | 22u / 10 V X5R 0603 GRM188R61A226ME15 [C_0603_1608Metric] | C86295 | Extended | 1,430,308 | 0.0430 | 5 | 10 | no Basic 22uF 0603 above 6.3V |
-| C13 | 470n / 16 V X7R 0402 [C_0402_1005Metric] | C471404 | Extended | 135,848 | 0.0319 | 1 | 2 | no Basic/Preferred 470nF in 0402 |
-| R7 | 10k / 0.1% [R_0402_1005Metric] | C190095 | Extended | 804,835 | 0.0272 | 1 | 2 | U7 FB divider top; Yageo RT0402BRD07 thin film, same series as R8 so the RATIO tracks |
-| R8 | 3.16k / 0.1% [R_0402_1005Metric] | C852759 | Extended | 31,580 | 0.0267 | 1 | 2 | U7 FB divider bottom; 0.8 x (1 + 10k/3.16k) = 3.3316 V |
-| R9 | 6.04k / 1% [R_0402_1005Metric] | C25913 | Extended | 15,837 | 0.0014 | 1 | 2 | no Basic 6.04k; cheapest in stock (C97819 has 26x the stock at +$0.0008) |
-| R10 | 100k [R_0402_1005Metric] | C25741 | Basic | 11,172,803 | 0.0025 | 1 | 2 | Basic |
+| C10,C11 | 22u / 10 V X5R 0603 GRM188R61A226ME15 [C_0603_1608Metric] | C86295 | Extended | 1,430,308 | 0.0430 | 2 | 4 | no Basic 22uF 0603 above 6.3V |
+| R10 | 100k [R_0402_1005Metric] | C25741 | Basic | 11,172,803 | 0.0025 | 1 | 2 | Basic; MCU_RUN pull-up |
 | U12 | TPS7A2033PDBVR [SOT-23-5] | C2862740 | Extended | 52,678 | 0.2197 | 1 | 5 |  |
-| U8 | USBLC6-2SC6 [SOT-23-6] | C2687116 | Extended | 57,848 | 0.0475 | 1 | 6 |  |
 | C20,C21,C22,C65 | 10u / 10 V X7R 0603 [C_0603_1608Metric] | C96446 | Basic | 4,484,275 | 0.0542 | 4 | 8 | X5R not X7R; 25V rating cuts DC-bias loss on the 5V rail |
 | J6 | IO array signal column (innermost) [PinHeader_1x14_P2.54mm_Vertical_IORow] | C2905490 | Extended | 3,933 | 0.1064 | 1 | 14 | THT; recommended UNPOPULATED, see audit |
 | J7 | IO array power column (5V / 3V3 per row) [PinHeader_1x14_P2.54mm_Vertical_IORow] | C2905490 | Extended | 3,933 | 0.1064 | 1 | 14 | THT; recommended UNPOPULATED, see audit |
@@ -125,34 +123,20 @@ recommended unpopulated; U24 is DNP.
 | J11 | microSD [microSD_HC_Molex_104031-0811] | C585350 | Extended | 11,587 | 0.6637 | 1 | 14 |  |
 | C66 | 47u / 6.3 V X5R 0805 [C_0805_2012Metric] | C16780 | Basic | 1,779,378 | 0.1388 | 1 | 2 |  |
 
-unique BOM lines (fitted)        : 51
-unique LCSC parts (fitted)       : 46  [+0 with no part found]
-  Basic                          : 16
-  Preferred extended             : 1
-  Extended                       : 29
-extended-part setup fee ESTIMATE : 29 x $3.00 = $87.00   (per-unique-part, Preferred assumed waived)
-  worst case if Preferred is not waived: $90.00
-component cost per board @10-tier: $45.6783
-total solder joints (fitted SMT) : 410
-SMT placements per board         : 120
-
+```
+unique BOM lines (fitted)        : 36
+unique LCSC parts (fitted)       : 32  [+0 with no part found]
+  Basic                          : 15
+  Preferred extended             : 0
+  Extended                       : 17
+extended-part setup fee ESTIMATE : 17 x $3.00 = $51.00   (per-unique-part, Preferred assumed waived)
+  worst case if Preferred is not waived: $51.00
+component cost per board @10-tier: $39.6753
+total solder joints (fitted SMT) : 341
+SMT placements per board         : 95
 excluded: DNP ['U24']; THT shipped unpopulated ['J6', 'J7', 'J8'] (42 joints if JLC solders them)
 Prices are the JLC catalogue tier containing qty 10 and exclude JLC's per-part minimum purchase / attrition.
-
-### Lines that are not simply available
-
-| Line | Finding |
-|---|---|
-| **L2 2.2 uH XGL3020-222MEC** | **Not on JLC at all.** No Coilcraft XGL3020 of any value is listed. Nearest stocked 3.0 x 3.0 mm parts: `C43389` SWPA3015S2R2MT (2.2 uH, Isat 2 A, ~78 mOhm, 80 792, $0.0628) and `C167747` FNR3015S2R2MT (2.2 uH, 2 A, 78 mOhm, 71 058, $0.0432). Both are **2.5x the XGL's 30.5 mOhm DCR** and their Isat is quoted at a different criterion, and the land pattern is a 3015 body, not the Coilcraft XGL3020 pattern `MARV_Packages:L_Coilcraft_XGL3020` was drawn from. **Not substituted — this is a power-path decision for the lead.** |
-| **L3 4.7 uH XGL4030-472MEC** | On JLC as `C7159276` but **357 in stock at $7.82 each** — it alone is 15 % of the per-board component cost. Alternative in the same 4 x 4 land family: `C167874` FNR4030S4R7MT, 4.7 uH, Isat 3.2 A, DCR 78 mOhm, **143 578 in stock, $0.0500**. DESIGN_SPEC requires Isat >= the AP63205's 3.1 A peak limit; 3.2 A clears it by 3 %, against the XGL's 4.4 A at 30 %. DCR rises 31.5 -> 78 mOhm, i.e. ~0.13 W -> ~0.31 W at 2 A. **Not substituted — lead decision.** |
-| **L20 3.3 uH AOTA-B201610S3R3** | Not on JLC. `C48783272` APS201610M3R3F is the same **0806 / 2016-metric** land: 3.3 uH +-20 %, 1.9 A rms / 3.2 A sat, **250 mOhm** DCR, 11 890 in stock, $0.0311. DCR is high but this is the RP2354 core regulator (~100 mA), so ~2.5 mW. Proposed. |
-| **Y1 ABM8-272-T3 12 MHz** | **Not on JLC.** Two routes: (a) `C9002` X322512MSB4SI, **Basic**, 89 192, $0.0949 — but **CL = 20 pF**, which needs C46/C47 at roughly 33 pF, not the 15 pF fitted; (b) `C133337` TAXM12M4RFBCCT2T, Extended, 53 533, $0.0763, **CL = 12 pF**, which the fitted 15 pF loads suit directly (2x(12-4) = 16 pF). **(b) is mapped** because it is a drop-in. (a) saves $3.00 of setup fee but is a schematic change to C46/C47 — **lead decision.** |
-| **R7 15.8k / 0.1% 0201** | **Cannot be built as specified.** JLC stocks **26** distinct 0.1 % values in 0201 and 15.8k is not one of them (the full list is 49.9R, 50R, 100R, 200R, 499R, 1k, 2k, 3.3k, 4.7k, 4.99k, 5k, 7.5k, 8.06k, 10k, 18.2k, 20k, 21k, 30k, 100k, 105k, 150k, 1M). No pair from that list gives the 3.1663 ratio the 3.33 V setpoint needs. R8 4.99k / 0.1 % **does** exist (`C852255`, 6 058, $0.0703). The map currently carries a **+-1 %** 15.8k (`C43523077`, 15 000) as a placeholder: that widens the divider error to +-2 % on the ratio, on top of the VFB term, against DESIGN_SPEC's stated 3.30-3.38 V envelope. **Lead decision** — see substitution S1. |
-| **U23 ADXL375** | `C579466` ADXL375BCCZ, **223 in stock at $21.14**. The -RL7/-RL reels are worse (104 / 80). Above the 50-piece IC threshold but this is the board's single largest cost and its thinnest supply line. |
-| **U24 (DNP) W25Q64JVSSIQ** | **DESIGN_SPEC is wrong about this part's package.** Winbond package code **`SS` = SOIC-8 208 mil**; JLC and LCSC both list `C179171 W25Q64JVSSIQ` as `SOIC-8-208mil`. The U24 land is `Package_SO:SOIC-8_3.9x4.9mm_P1.27mm`, i.e. **150 mil** — the specified part will not fit it. The 150 mil part number is the `SN` suffix, and **W25Q64JVSNIQ is not on JLC**; the 150 mil options that are: `C5355146` W25Q32JVSNIQ (32 Mbit, 19 618, $1.3388) and, for PSRAM, `C5360304` APS6404L-SQN-SN (SOP-8, 1 012, $1.7634) / `C5333729` APS6404L-3SQR-SN (145, $5.1811). U24 is DNP so this does not affect the order, but the compatible-parts list in DESIGN_SPEC "Back side" needs correcting. **Lead decision — no doc was edited.** |
-| **J6/J7/J8 1x14 2.54 mm** | THT. Closest stocked male 1x14 straight header: `C2905490` KH-2.54PH180-1X14P-L11.5, 3 933, $0.1064. **Recommendation: order them unpopulated** (see the quote sheet). |
-
----
+```
 
 ## 2. Recommended substitutions
 
@@ -180,6 +164,30 @@ Not recommended: the Basic 22 uF / **6.3 V** 0603 (`C59461`) in place of the 10 
 ### Before → after the substitutions
 
 The map changes have resolved all five unpriced/supply-risky parts and moved the resistor set to 0402 Basic. **Unique parts 45 → 46** (L2 now sourced from Changjiang); **Basic 9 → 16** (+7 resistors); **Preferred 1 → 1** (unchanged); **Extended 35 → 29** (−6 fewer high-volume reserves). Extended-part fee **$105 → $87** (−$18 savings); per-board cost **$52.97 (L2 unpriced) → $45.68** (all parts priced). Joints fitted **414 → 410** (L2 and L3 pad counts differ from Coilcraft specs). **What drove it**: resistors 0201 → 0402 (lands now hand-reworkable, 8 moved to Basic), R7/R8 divider re-paired to stocked 10k/3.16k 0.1 % thin film (tighter ratio), Y1 + 18 pF C46/C47 drop-in (CL 12 pF crystals are cheap), L2 sourced to Changjiang FTC303020D (5.5 A Isat, stocked), L3 substituted to Changjiang FTC404030S (6.0 A Isat, stocked, higher than XGL's 4.4 A but lower cost than spec MPN).
+
+**Re-run 2026-09-17 (BEC revision), the numbers that are current:**
+
+| Quantity | Value |
+|---|---|
+| BOM rows in `power_bom.csv` | **116** |
+| Unique lines by (spec, footprint) | **39 purchased** + 13 board features (H1-H4, TP1-TP10, J3, J10) + 1 DNP (U24) |
+| Unique lines **fitted and assembled** | **36** (39 minus J6/J7/J8, shipped unpopulated) |
+| Unique **LCSC parts** on the assembled board | **32** placed + **0 unresolved** |
+| &nbsp;&nbsp;Basic | **15** |
+| &nbsp;&nbsp;Preferred extended | **0** |
+| &nbsp;&nbsp;Extended | **17** |
+| Extended-part setup fee | **17 x $3.00 = $51.00** (estimate, as below) |
+| Component cost per board, 10-piece tier | **$39.68** |
+| SMT placements per board | **95** |
+| Total solder joints, fitted SMT | **341** (+42 more if JLC also solders J6/J7/J8) |
+
+The three parts the revision added: Q1 AO3401A `C15127` **Basic** (445 757 in
+stock, $0.0943), D1 1N5819WS `C191023` **Basic** (5 466 933, $0.0138) and
+U7 AP63203WU-7 `C780769` **Extended** (25 030, $1.0546). The AP63203 is the one
+Extended part the revision *adds*; it removes twelve. U23 ADXL375 at $21.14 is
+now **53 %** of the per-board component cost.
+
+**The original 2026-09-16 table, for the superseded part set:**
 
 | Quantity | Value |
 |---|---|
@@ -217,7 +225,7 @@ dominate the small passives — e.g. `C1525` carries `leastPatchNumber = 20`,
 
 | JLC order field | Value | Source |
 |---|---|---|
-| Board size | **46.6 x 41.2 mm** (Edge.Cuts bounding box 46.70 x 41.30 mm at 0.05 mm outline width) | `MARV-V2.kicad_pcb`, DESIGN_SPEC "Envelope and stack-up" |
+| Board size | **50.7 x 45.5 mm** (Edge.Cuts bounding box 50.80 x 45.60 mm at 0.05 mm outline width) | `MARV-V2.kicad_pcb`, DESIGN_SPEC "Envelope and stack-up" |
 | Layers | **4** | `GetCopperLayerCount() = 4` |
 | Thickness | **1.6 mm** | stack-up sums to 1.5862 mm |
 | Stack-up | **JLC04161H-7628.** The board file already carries it exactly: F.Cu 0.035 / PP-7628 0.2104 (Er 4.4) / In1.Cu 0.0152 / FR4 core 1.065 (Er 4.6) / In2.Cu 0.0152 / PP-7628 0.2104 / B.Cu 0.035 mm. **Select this stack-up explicitly at order time** — JLC's default 4-layer stack-up is not this one, and the inner-layer spacing is what the USB geometry was drawn against. | `(stackup …)` in the PCB |
@@ -236,7 +244,7 @@ dominate the small passives — e.g. `C1525` carries `leastPatchNumber = 20`,
 | Impedance control | **Not required.** USB D+/D- is a 90 ohm differential pair **designed by geometry against the JLC04161H-7628 dielectric**, not by a controlled-impedance order. Optional: adding impedance control is the way to make JLC guarantee it, at extra cost and a longer lead time; it would also constrain the stack-up to exactly the one already selected. Note the pair is only ~15 mm long here. | DESIGN_SPEC |
 | Panelization | **None — single board.** JLC panelizes 5-piece PCB orders itself; do not supply a panel or V-cut/mouse-bite data. | |
 | Gold fingers / countersinks / half holes | No | |
-| NPTH | 4 x Ø4.0 mm grommet holes (H1-H4). Copper-free Ø5.0 mm annulus all layers. | DESIGN_SPEC "Mounting and orientation" |
+| NPTH | **None.** The 4 x Ø4.0 mm grommet holes (H1-H4) are **plated** and on GND: Ø6.4 mm pad ring all layers, eight Ø0.3 mm stitching vias each. | DESIGN_SPEC "Mounting and orientation" |
 
 ### 4.2 Assembly
 
@@ -255,7 +263,7 @@ dominate the small passives — e.g. `C1525` carries `leastPatchNumber = 20`,
 
 | Deliverable | Status |
 |---|---|
-| **Gerbers + drill** | **Missing, and cannot be produced.** The board has **0 tracks, 0 vias and 0 zones** — it is placed but unrouted. Routing has to happen before any Gerber set exists. Export with `kicad-cli pcb export gerbers` + `… export drill`, using the **drill/place origin** so the CPL below lines up. |
+| **Gerbers + drill** | **Missing, and cannot be produced.** The board has **0 tracks and 0 vias** (the 5 generated plane zones are unaffected) — it is placed but unrouted. Routing has to happen before any Gerber set exists. Export with `kicad-cli pcb export gerbers` + `… export drill`, using the **drill/place origin** so the CPL below lines up. |
 | **BOM (Comment, Designator, Footprint, LCSC Part #)** | **Produced: `reports/jlc-bom.csv`, 50 lines / 119 placements.** |
 | **CPL (Designator, Mid X, Mid Y, Layer, Rotation)** | **Produced: `reports/jlc-cpl.csv`, 120 placements.** |
 

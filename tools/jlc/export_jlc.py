@@ -51,9 +51,9 @@ NO_PART_OK = {"J6", "J7", "J8", "U24"}
 
 # pseudo-footprints: board features, nothing is placed on them
 NO_PART_FP = {
-    "MARV_Packages:MountingHole_4.0mm_Grommet",
+    "MARV_Packages:MountingHole_4.0mm_Grommet_Pad_Via",
     "MARV_Packages:PadRow_1x03_P2.00mm",
-    "MARV_Packages:PadRow_1x08_P2.00mm",
+    "MARV_Packages:PadRow_1x09_P2.00mm",
     "TestPoint:TestPoint_Pad_1.0x1.0mm",
 }
 THT_FP = {"MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow"}

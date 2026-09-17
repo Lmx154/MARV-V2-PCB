@@ -45,7 +45,8 @@ DRC-clean, checked against a uniform-grid index of all board copper:
     two net classes' clearances (>= board min clearance);
   - via hole vs. other-net copper at min_hole_clearance, and hole-to-hole
     against every other hole on the board at min_hole_to_hole (+0.05 margin);
-  - rule areas that disallow vias (the mounting-hole grommet keepouts) - the
+  - rule areas that disallow vias, if the board carries any (the grommet
+    holes no longer do - they are grounded pad-and-via rings now) - the
     via disc must not intersect them - and rule areas that disallow tracks for
     the fanout track;
   - the board outline deflated by (radius + copper-to-edge clearance);

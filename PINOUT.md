@@ -51,7 +51,7 @@ two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10.
 | 34 | SD_CMD | PIO | SPI0 SCK, UART0 CTS, I2C1 SDA, PWM9 A, USB VBUS DET, UART0 TX (F11) | assigned |
 | 35 | SD_DET | GPIO in | SPI0 TX, UART0 RTS, I2C1 SCL, PWM9 B, USB VBUS EN, UART0 RX (F11) | assigned |
 | 36 | PWM4 | DShot via PIO | SPI0 RX, UART1 TX, I2C0 SDA, PWM10 A, USB OVCUR DET | assigned (ESC M4) |
-| 37 | PWR_SRC_ST | GPIO in (TPS2121 ST) | SPI0 CSn, UART1 RX, I2C0 SCL, PWM10 B, USB VBUS DET | assigned |
+| 37 | — (unexposed spare, no-connect) | GPIO | SPI0 CSn, UART1 RX, I2C0 SCL, PWM10 B, USB VBUS DET | spare, not exposed (no-connect). Was PWR_SRC_ST, the TPS2121 mux status input; the mux was replaced by the Q1/D1 OR, which has no status pin, and USB presence is already readable on VBUS_SENSE (GPIO40) |
 | 38 | PWM3 | DShot via PIO | SPI0 SCK, UART1 CTS, I2C1 SDA, PWM11 A, USB VBUS EN, UART1 TX (F11) | assigned (ESC M3) |
 | 39 | PWM2 | DShot via PIO | SPI0 TX, UART1 RTS, I2C1 SCL, PWM11 B, USB OVCUR DET, UART1 RX (F11) | assigned (ESC M2) |
 | 40 | VBUS_SENSE | ADC0 | SPI1 RX, UART1 TX, I2C0 SDA, PWM8 A, USB VBUS DET | assigned |
@@ -63,15 +63,17 @@ two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10.
 | 46 | IO_GPIO46 | GPIO / ADC6 | SPI1 SCK, UART0 CTS, I2C1 SDA, PWM11 A, USB VBUS DET, UART0 TX (F11) | spare, on IO block row 13 |
 | 47 | IO_GPIO47 | GPIO / ADC7 | SPI1 TX, UART0 RTS, I2C1 SCL, PWM11 B, QMI CS1n, USB VBUS EN, UART0 RX (F11) | spare, on IO block row 14 |
 
-## Table B — the ten spare GPIOs and what they can become
+## Table B — the eleven spare GPIOs and what they can become
 
 Instances already consumed: UART0 (16/17, ELRS), UART1 (24/25, GPS), I2C1 (22/23, MAG). SPI1 (8/10/11 + CS
 4/7/14) now carries the sensor bus — SPI0 is fully free after this revision (it carried the sensor bus before).
 Unused instances: **I2C0** and **SPI0**. UART alternates on spares can only be PIO UARTs.
 
-Four of the ten are exposed today (on the IO block signal column, J6); the other six carry a no-connect
-flag on U20 and reach no net at all (Rule 5). Using one of the six means wiring it to a connector first —
-a documented change to this file, `build_power.py` and `check_power_netlist.py` together.
+Four of the eleven are exposed today (on the IO block signal column, J6); the other **seven** carry a
+no-connect flag on U20 and reach no net at all (Rule 5). Using one of the seven means wiring it to a
+connector first — a documented change to this file, `build_power.py` and `check_power_netlist.py`
+together. **GPIO37 joined the unexposed set in the BEC revision** (see DESIGN_SPEC "Decisions"): it read
+the TPS2121 mux's open-drain status pin, and the mux is gone.
 
 | GPIO | Advertised role | Also | Exposed | Caveat |
 | --- | --- | --- | --- | --- |
@@ -85,6 +87,7 @@ a documented change to this file, `build_power.py` and `check_power_netlist.py` 
 | 21 | extra SPI0 CSn / I2C0 SCL alt | PWM2 B | no (no-connect) | PWM2 slice pairs with GPIO20 (servo S5, PWM2 A) — no longer the ESC M3/M4 slice |
 | 26 | extra SPI1 SCK alt (sensor bus already on GPIO10) | I2C1 SDA alt, PWM5 A (free slice) | no (no-connect) | pairs with 27 on PWM slice 5 — both free |
 | 27 | extra SPI1 TX alt (sensor bus already on GPIO11) | I2C1 SCL alt, PWM5 B (free slice) | no (no-connect) | pairs with 26 on PWM slice 5 — both free |
+| 37 | extra SPI0 CSn / I2C0 SCL alt | PWM10 B (slice pairs with GPIO44, an exposed spare) | no (no-connect) | freed by the BEC revision; the nearest pad row is J3 on the back |
 
 Complete extra buses that do not conflict with anything on the board (44/45/46/47 are already exposed; 9/12
 would need exposing first):
