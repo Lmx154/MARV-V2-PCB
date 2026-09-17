@@ -13,3 +13,6 @@ __pycache__/
 simulations/corners/*.log
 simulations/*.log
 backups/*.kicad_pcb.prev
+# Editor / tool state
+.history/
+.serena/

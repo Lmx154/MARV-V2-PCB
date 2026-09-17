@@ -1,19 +1,29 @@
-ERC report (2026-09-16T10:20:57, Encoding UTF8)
+ERC report (2026-09-16T19:44:20, Encoding UTF8)
 Report includes: Errors, Warnings, Exclusions
 
 ***** Sheet /
 
-***** Sheet /POWER 1 / ESC pad row, VBAT buck, USB, priority power mux/
+***** Sheet /POWER 1 / ESC pad row, VBAT and the 5 V buck/
 
-***** Sheet /POWER 2 / 3.3 V system buck and analog LDO/
+***** Sheet /POWER 2 / TPS2121 priority power mux/
 
-***** Sheet /POWER 3 / IO array/
+***** Sheet /POWER 3 / 3.3 V system buck and analog LDO/
 
 ***** Sheet /BOARD 1 / RP2354B/
 
-***** Sheet /BOARD 2 / IMU, barometer, high-g/
+***** Sheet /BOARD 5 / USB-C, ESD, SWD pads/
 
-***** Sheet /BOARD 3 / log flash and microSD/
+***** Sheet /BOARD 2 / ICM-45686 six-axis IMU/
+
+***** Sheet /BOARD 2 / BMP581 barometer/
+
+***** Sheet /BOARD 2 / ADXL375 high-g accelerometer/
+
+***** Sheet /BOARD 3 / microSD socket/
+
+***** Sheet /BOARD 3 / optional QSPI expansion socket (DNP)/
+
+***** Sheet /BOARD 4 / IO array, status LED, mounting holes/
 
  ** ERC messages: 0  Errors 0  Warnings 0
 

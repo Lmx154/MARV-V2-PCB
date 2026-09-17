@@ -23,14 +23,14 @@ def netof(pin):
 # (the six unexposed spares: the IO block is 14 rows and the ports above them
 # use the rest, so GPIO1/21/27/28/31/43 are left unconnected on purpose).
 PINOUT={
- 0:'FLASH_CS1', 1:None, 2:'PWM1', 3:'PWM2', 4:'PWM3', 5:'PWM4',
- 6:'MAG_SDA', 7:'MAG_SCL', 8:'ELRS_RX', 9:'ELRS_TX', 10:'PWM5', 11:'PWM6',
- 12:'GPS_RX', 13:'GPS_TX', 14:'PWM7', 15:'PWM8', 16:'SENS_MISO', 17:'HG_ACC_CS',
- 18:'SENS_SCK', 19:'SENS_MOSI', 20:'IMU_CS', 21:None, 22:'BARO_CS', 23:'IMU_INT1',
- 24:'IMU_INT2', 25:'BARO_INT', 26:'LED_DATA', 27:None, 28:None, 29:'HG_ACC_INT',
- 30:'ESC_TELEM_RX', 31:None, 32:'SD_CLK', 33:'SD_CMD', 34:'SD_D0', 35:'SD_D1',
- 36:'SD_D2', 37:'SD_D3', 38:'SD_DET', 39:'PWR_SRC_ST', 40:'VBAT_SENSE', 41:'VBUS_SENSE',
- 42:'CURR_SENSE', 43:None, 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
+ 0:'FLASH_CS1', 1:'HG_ACC_INT', 2:'IMU_INT2', 3:'LED_DATA', 4:'HG_ACC_CS', 5:'PWM8',
+ 6:'IMU_INT1', 7:'IMU_CS', 8:'SENS_MISO', 9:None, 10:'SENS_SCK', 11:'SENS_MOSI',
+ 12:None, 13:'BARO_INT', 14:'BARO_CS', 15:'PWM7', 16:'ELRS_RX', 17:'ELRS_TX',
+ 18:None, 19:'PWM6', 20:'PWM5', 21:None, 22:'MAG_SDA', 23:'MAG_SCL',
+ 24:'GPS_RX', 25:'GPS_TX', 26:None, 27:None, 28:'SD_D0', 29:'SD_D1',
+ 30:'SD_D2', 31:'SD_D3', 32:'ESC_TELEM_RX', 33:'SD_CLK', 34:'SD_CMD', 35:'SD_DET',
+ 36:'PWM4', 37:'PWR_SRC_ST', 38:'PWM3', 39:'PWM2', 40:'VBUS_SENSE', 41:'VBAT_SENSE',
+ 42:'CURR_SENSE', 43:'PWM1', 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
 }
 
 # PAD_OF_GPIO mapping GPIO number to U20 pad number. Extracted from MCU_GPIO tuples in build_power.py.
@@ -68,9 +68,9 @@ expected={
  # ESC analog current sense and one-wire KISS telemetry, both conditioned by a 1k series resistor
  ('R53','1'):'CURR_SENSE_RAW',('R53','2'):'CURR_SENSE',('C78','1'):'CURR_SENSE',('C78','2'):'GND',
  ('U20','53'):'CURR_SENSE',                                       # GPIO42 = ADC2
- ('R54','1'):'ESC_TELEM',('R54','2'):'ESC_TELEM_RX',('U20','38'):'ESC_TELEM_RX',   # GPIO30, PIO UART RX
+ ('R54','1'):'ESC_TELEM',('R54','2'):'ESC_TELEM_RX',('U20','40'):'ESC_TELEM_RX',   # GPIO32, PIO UART RX
  # WS2812C-2020 (LED:WS2812B-2020 symbol): 1 DOUT (no connect), 2 VSS, 3 DIN, 4 VDD
- ('R55','1'):'LED_DATA',('R55','2'):'LED_DIN',('U20','27'):'LED_DATA',
+ ('R55','1'):'LED_DATA',('R55','2'):'LED_DIN',('U20','80'):'LED_DATA',
  ('D20','2'):'GND',('D20','3'):'LED_DIN',('D20','4'):'V5_SYS',('C79','1'):'V5_SYS',('C79','2'):'GND',
  # SWD solder pads
  ('J10','1'):'SWCLK',('J10','2'):'SWDIO',('J10','3'):'GND',
@@ -88,13 +88,13 @@ expected={
  ('U20','10'):'DVDD',('U20','32'):'DVDD',('U20','51'):'DVDD',
  # telemetry dividers: VBAT_SENSE 100k/10k (full scale 36.3 V), VBUS_SENSE unchanged at 10k/15k
  ('R27','1'):'VBAT',('R27','2'):'VBAT_SENSE',('R28','1'):'VBAT_SENSE',('R28','2'):'GND',
- ('C48','1'):'VBAT_SENSE',('U20','49'):'VBAT_SENSE',
+ ('C48','1'):'VBAT_SENSE',('U20','52'):'VBAT_SENSE',
  ('R29','1'):'USB_VBUS',('R29','2'):'VBUS_SENSE',('R30','1'):'VBUS_SENSE',('R30','2'):'GND',
  # sensor chip-select pull-ups, biased to the rail the sensor VDDIO pins run from. R49 (the former
  # second IMU chip-select pull-up) is removed: the ICM-45686 (U21) has a single chip select.
  ('R48','1'):'V3V3_ANA',('R48','2'):'IMU_CS',
  ('R50','1'):'V3V3_ANA',('R50','2'):'BARO_CS',('R51','1'):'V3V3_ANA',('R51','2'):'HG_ACC_CS',
- ('U20','48'):'PWR_SRC_ST',                                       # GPIO39 reads the mux status pin
+ ('U20','46'):'PWR_SRC_ST',                                       # GPIO37 reads the mux status pin
  # sensor supplies on the analog rail. U21 is the ICM-45686 (LGA-14): VDDIO=5, VDD=8, GND=6.
  ('U21','5'):'V3V3_ANA',('U21','8'):'V3V3_ANA',('U22','1'):'V3V3_ANA',('U22','10'):'V3V3_ANA',
  ('U23','1'):'V3V3_ANA',('U23','6'):'V3V3_ANA',('U23','3'):'V3V3_ANA',('U23','11'):'GND',
@@ -105,8 +105,8 @@ expected={
  # logging supplies on the system rail
  ('U24','8'):'V3V3_SYS',('U24','4'):'GND',('J11','4'):'V3V3_SYS',('J11','6'):'GND',('J11','SH'):'GND',
  # port naming: the module TX lands on an MCU UART RX pin, the module RX on an MCU TX pin
- ('U20','12'):'GPS_TX',('U20','11'):'GPS_RX',('U20','7'):'ELRS_TX',('U20','6'):'ELRS_RX',
- ('U20','3'):'MAG_SDA',('U20','4'):'MAG_SCL',
+ ('U20','26'):'GPS_TX',('U20','25'):'GPS_RX',('U20','17'):'ELRS_TX',('U20','16'):'ELRS_RX',
+ ('U20','22'):'MAG_SDA',('U20','23'):'MAG_SCL',
 }
 # THE IO BLOCK, 3 columns x 14 rows, EVERY PIN. Row n is J6 pin n (signal, innermost column),
 # J7 pin n (power) and J8 pin n (GND, at the board edge). This is the single connector that carries
@@ -203,7 +203,7 @@ assert nets['U25_PR1']=={('U25','6'),('R42','2'),('R43','1')},nets['U25_PR1']
 assert nets['U25_OV1']=={('U25','5'),('R44','2'),('R45','1')},nets['U25_OV1']
 assert nets['U25_ILM']=={('U25','10'),('R46','1')},nets['U25_ILM']
 assert nets['U25_SS']=={('U25','11'),('C70','1')},nets['U25_SS']
-assert nets['PWR_SRC_ST']=={('U25','9'),('R47','2'),('U20','48')},nets['PWR_SRC_ST']
+assert nets['PWR_SRC_ST']=={('U25','9'),('R47','2'),('U20','46')},nets['PWR_SRC_ST']
 # POWER CHAIN BOUNDARY: VBAT -> U26 -> 5V_IN -> U25 -> V5_SYS.  Servo 5 V is no longer tapped at
 # 5V_IN: the IO block has ONE power column, so all eight 5 V rows (GPS/ELRS and S5-S8) are V5_SYS and
 # servo current crosses the mux -- see the DESIGN_SPEC note on the U25 ILM budget.
@@ -250,13 +250,13 @@ for mcu,flash in [('71','6'),('72','5'),('74','2'),('73','3'),('70','7')]:
     assert pin_net[('U20',mcu)]==pin_net[('U24',flash)],(mcu,flash)
 assert nets['FLASH_CS1']=={('U20','77'),('U24','1'),('R35','2')},nets['FLASH_CS1']
 # microSD 4-bit bus and card detect
-for mcu,sd in [('40','5'),('42','3'),('43','7'),('44','8'),('45','1'),('46','2'),('47','9')]:
+for mcu,sd in [('42','5'),('43','3'),('36','7'),('37','8'),('38','1'),('39','2'),('44','9')]:
     assert pin_net[('U20',mcu)]==pin_net[('J11',sd)],(mcu,sd)
 # shared sensor SPI: one MISO, one MOSI, one clock, three distinct chip selects (ICM-45686 has a
 # single chip select, unlike the two-CS BMI088 it replaced)
-assert {('U21','1'),('U22','5'),('U23','12'),('U20','16')} <= nets['SENS_MISO']
-assert {('U21','14'),('U22','4'),('U23','13'),('U20','19')} <= nets['SENS_MOSI']
-assert {('U21','13'),('U22','2'),('U23','14'),('U20','18')} <= nets['SENS_SCK']
+assert {('U21','1'),('U22','5'),('U23','12'),('U20','6')} <= nets['SENS_MISO']
+assert {('U21','14'),('U22','4'),('U23','13'),('U20','9')} <= nets['SENS_MOSI']
+assert {('U21','13'),('U22','2'),('U23','14'),('U20','8')} <= nets['SENS_SCK']
 assert len({pin_net[p] for p in [('U21','12'),('U22','6'),('U23','7')]})==3
 components={c.get('ref'):c for c in root.find('components')}
 # the temporary MCU-interface headers are gone
@@ -285,7 +285,7 @@ for gpio_num in range(48):
 # SIX are deliberately unexposed and must be unconnected.  Exposing one of the six means editing
 # PINOUT.md (Rule 5), build_power.py and this table together.
 EXPOSED_SPARES = {44, 45, 46, 47}
-UNEXPOSED_SPARES = {1, 21, 27, 28, 31, 43}
+UNEXPOSED_SPARES = {9, 12, 18, 21, 26, 27}
 assert not (EXPOSED_SPARES & UNEXPOSED_SPARES)
 spare_nets = {'IO_GPIO44', 'IO_GPIO45', 'IO_GPIO46', 'IO_GPIO47'}
 assert {PINOUT[g] for g in EXPOSED_SPARES} == spare_nets, \
@@ -299,7 +299,7 @@ for gpio_num in sorted(UNEXPOSED_SPARES):
  assert netof(('U20', PAD_OF_GPIO[gpio_num])) is None, \
   f"GPIO{gpio_num} (U20 pad {PAD_OF_GPIO[gpio_num]}) is unexposed but reaches {netof(('U20', PAD_OF_GPIO[gpio_num]))}"
 # ... and no IO_GPIO net survives for any of them
-assert not [n for n in nets if n in ('IO_GPIO1','IO_GPIO21','IO_GPIO27','IO_GPIO28','IO_GPIO31','IO_GPIO43')], \
+assert not [n for n in nets if n in ('IO_GPIO9','IO_GPIO12','IO_GPIO18','IO_GPIO21','IO_GPIO26','IO_GPIO27')], \
  sorted(n for n in nets if n.startswith('IO_GPIO'))
 
 print(f'PASS: 48-GPIO pin plan (4 exposed spares, 6 unconnected), {len(expected)} critical pin mappings, the FB divider,\n'

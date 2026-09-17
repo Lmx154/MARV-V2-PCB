@@ -21,7 +21,7 @@
 		(hatch full 0.508)
 		(connect_pads (clearance 0))
 		(min_thickness 0.254)
-		(keepout (tracks not_allowed) (vias not_allowed) (pads not_allowed) (copperpour not_allowed) (footprints allowed))
+		(keepout (tracks not_allowed) (vias not_allowed) (pads allowed) (copperpour not_allowed) (footprints allowed))
 		(placement (enabled no) (sheetname ""))
 		(fill (thermal_gap 0.508) (thermal_bridge_width 0.508) (island_removal_mode 0))
 		(polygon (pts (xy 2.5000 0.0000) (xy 2.4520 0.4877) (xy 2.3097 0.9567) (xy 2.0787 1.3889) (xy 1.7678 1.7678) (xy 1.3889 2.0787) (xy 0.9567 2.3097) (xy 0.4877 2.4520) (xy 0.0000 2.5000) (xy -0.4877 2.4520) (xy -0.9567 2.3097) (xy -1.3889 2.0787) (xy -1.7678 1.7678) (xy -2.0787 1.3889) (xy -2.3097 0.9567) (xy -2.4520 0.4877) (xy -2.5000 0.0000) (xy -2.4520 -0.4877) (xy -2.3097 -0.9567) (xy -2.0787 -1.3889) (xy -1.7678 -1.7678) (xy -1.3889 -2.0787) (xy -0.9567 -2.3097) (xy -0.4877 -2.4520) (xy -0.0000 -2.5000) (xy 0.4877 -2.4520) (xy 0.9567 -2.3097) (xy 1.3889 -2.0787) (xy 1.7678 -1.7678) (xy 2.0787 -1.3889) (xy 2.3097 -0.9567) (xy 2.4520 -0.4877)))

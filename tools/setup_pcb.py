@@ -208,6 +208,9 @@ RULES = dict(
     min_through_hole=0.2,
     min_text_height=0.6,
     min_text_thickness=0.12,
+    # outer GND pours: 0402 GND pads between dense copper can only fit one
+    # thermal spoke; one spoke plus the via to the In1 plane is enough
+    min_resolved_spokes=1,
     mask_min_web=0.10,
     # 0 expansion: the ICM-45686 LGA-14 has 0.15 mm pad gaps, any positive
     # expansion drops the mask web below the 0.10 mm minimum
@@ -226,8 +229,16 @@ RULES = dict(
 NETCLASSES = [
     # name        track clr   via_d via_dr dpw   dpg  prio patterns
     ("Default",   0.20, 0.15, 0.60, 0.30, 0.30, 0.20, None, []),
+    # Rail3V3: the two regulated 3.3 V rails, split out of Power so they can
+    # run a lighter track/via geometry than the switcher SW/VO/BST nodes.
+    # Priority 5 is lower than Power's 10 (lower number wins - see
+    # makeEffectiveNetclass in KiCad's NET_SETTINGS::GetEffectiveNetClass),
+    # so Rail3V3 would win a pattern conflict against Power; the two lists
+    # are disjoint today, but the priorities stay consistent with that rule.
+    ("Rail3V3",   0.30, 0.15, 0.60, 0.30, 0.30, 0.20, 5,
+     ["V3V3_SYS", "V3V3_ANA"]),
     ("Power",     0.50, 0.15, 0.80, 0.40, 0.50, 0.20, 10,
-     ["VBAT", "5V_IN", "V5_SYS", "USB_VBUS", "V3V3_SYS", "V3V3_ANA",
+     ["VBAT", "5V_IN", "V5_SYS", "USB_VBUS",
       "U7_SW", "U7_VO", "U26_SW", "U26_BST"]),
     # USB clearance is 0.18 mm, not the 0.20 mm of the pair gap: R22/R23 are
     # 0201 series resistors and the R_0201_0603Metric land has 0.18 mm between
@@ -247,7 +258,7 @@ NETCLASSES = [
     ("PWM_ESC",   0.25, 0.15, 0.60, 0.30, 0.25, 0.20, 30,
      ["PWM1", "PWM2", "PWM3", "PWM4", "PWM5", "PWM6", "PWM7", "PWM8",
       "ESC_TELEM", "ESC_TELEM_RX", "CURR_SENSE", "CURR_SENSE_RAW"]),
-    ("SensorSPI", 0.15, 0.15, 0.60, 0.30, 0.15, 0.15, 40,
+    ("SensorSPI", 0.20, 0.15, 0.60, 0.30, 0.15, 0.15, 40,
      ["SENS_*", "*_CS", "*_INT", "*_INT1", "*_INT2"]),
 ]
 
@@ -279,6 +290,244 @@ IND_SENSOR_MM = 8.0
 # land within this distance (body to body) of the nearest sensor.
 TEST_POINTS = re.compile(r"^TP\d+$")
 TP_NEAR_MM = 6.0
+
+# THE CORRIDOR BESIDE THE QFN (lead's decision).  U20 carries 39 satellites
+# and nearly all of them leave on its left and right edges, so the width of
+# the lane between the package and whatever is parked beside it is what
+# decides whether a 100 nF can reach its IOVDD pin at all.  At 1.07 mm to
+# U25 and 0.36 mm to the sensor island there was no lane: an 0402 courtyard
+# is 1.12 x 0.62 mm, so neither side could take one in any orientation and
+# fifteen rows were unsatisfiable on an EMPTY board.  2.6 mm takes an 0402
+# lengthwise (1.12) plus its 0.05 gaps with 1.3 mm of routing lane left
+# over.  Enforced in floorplan() against every IC and connector courtyard on
+# those two flanks, and the resulting gaps are printed.
+U20_CORRIDOR = 2.6
+
+# --------------------------------------------------------------------------
+# SATELLITES: the passive that belongs AT a pin (lead's decision)
+# --------------------------------------------------------------------------
+# Shelf-packing a region from one seed puts a decoupling capacitor somewhere
+# in the same neighbourhood as the IC; it does not put it at the pin, and a
+# decoupling cap that is not at the pin is just a lump of capacitance on the
+# plane.  Every passive whose whole job is to sit on one pin of one part is
+# listed here instead of in a region, and place_satellites() drops it against
+# that pad with its owner-net pad facing the pin.
+#
+#   ref -> (owner ref, owner pad, what it is, rank, order)
+#
+# The owner pad is either a pad NUMBER or ("net", NAME) - "the owner's pad
+# that carries NAME", resolved against the loaded netlist in
+# verify_satellites().  The second form is how a part that belongs at a
+# CONNECTOR pin is written: J11's SD_CMD pin is pad 3 only until the socket
+# is re-drawn, but it carries SD_CMD by definition.
+#
+# rank is how close it has to end up (SAT_NEAR_MM, checked in
+# check_satellites(), measured PAD TO PAD - the satellite's pad on the owner's
+# net to the owner's pad, which is the loop the part actually closes):
+#   0  on the pin      decoupling, loop caps, series terminators
+#   1  next to the pin  the second element of a chain, feedback dividers
+#   2  in the neighbourhood  pull-ups, enables, the far end of a divider
+#   3  on the rail       bulk reservoirs.  A 22 uF/100 uF bulk cap is not a
+#      pin part at all: it holds a RAIL up over microseconds, and where on
+#      that rail it sits changes nothing a millimetre of copper does not.
+#      Ranked with the pin parts it was taking their cells.
+# order breaks the tie inside a rank: the lower number is placed first and so
+# gets the nearer slot (C17 before C8/C9, C74 before C73, C41 before R20).
+#
+# Every row is verified against the loaded netlist at generation time
+# (verify_satellites()): the owner pad and the satellite have to share a net,
+# or the build fails - the table can never drift away from the schematic.
+SATELLITES = {
+    # ---- U20 RP2354B (QFN-80) ----------------------------------------
+    # the eight IOVDD 100 nF, one per supply pin, and the OTP supply
+    "C30": ("U20", "5",  "IOVDD 100n",     0, 0),
+    "C31": ("U20", "15", "IOVDD 100n",     0, 0),
+    "C32": ("U20", "24", "IOVDD 100n",     0, 0),
+    "C33": ("U20", "29", "IOVDD 100n",     0, 0),
+    "C34": ("U20", "41", "IOVDD 100n",     0, 0),
+    "C35": ("U20", "50", "IOVDD 100n",     0, 0),
+    "C36": ("U20", "60", "IOVDD 100n",     0, 0),
+    "C37": ("U20", "76", "IOVDD 100n",     0, 0),
+    "C38": ("U20", "68", "USB_OTP 100n",   0, 0),
+    # the core rail: 100 nF on each DVDD pin, the 4.7 uF reservoir beside the
+    # one that also carries the regulator's own output (pin 51)
+    "C42": ("U20", "10", "DVDD 100n",      0, 0),
+    "C43": ("U20", "32", "DVDD 100n",      0, 0),
+    "C44": ("U20", "51", "DVDD 100n",      0, 0),
+    "C45": ("U20", "51", "DVDD 4u7",       1, 0),
+    "C39": ("U20", "64", "VREG_VIN 4u7",   1, 0),
+    "C40": ("U20", "59", "ADC_AVDD 100n",  0, 0),
+    # the on-chip regulator: C41 on the AVDD pin, R20 (the 1 R feed) behind it
+    "C41": ("U20", "61", "VREG_AVDD 4u7", 0, 0),
+    "R20": ("U20", "61", "VREG_AVDD 33R", 1, 1),
+    "L20": ("U20", "63", "VREG_LX 3u3",    1, 0),
+    # USB: the 27 R series pair, one per data pin.  Owner pad resolved by net
+    # (not a hard pad number): a GPIO reassignment cannot move these pins,
+    # but they are wired the same way as the other signal-owned rows below.
+    "R22": ("U20", ("net", "USB_DP_RP"), "USB 27R",        0, 0),
+    "R23": ("U20", ("net", "USB_DM_RP"), "USB 27R",        0, 0),
+    # the three ADC front ends.  The cap is the one that has to be at the pin
+    # (it is what the SAR samples into); the resistors chain outward from it.
+    # Owner pads are resolved BY NET, not by pad number: VBAT_SENSE/VBUS_SENSE/
+    # CURR_SENSE/ESC_TELEM_RX/FLASH_CS1 sit on GPIOs whose QFN pad can move
+    # with a GPIO reassignment (PINOUT.md), so a hard pad number here would
+    # silently go stale the next time the pin plan changes.
+    "C78": ("U20", ("net", "CURR_SENSE"), "ADC2 100n",     0, 0),
+    "R53": ("U20", ("net", "CURR_SENSE"), "CURR_SENSE RC",  2, 0),
+    "C48": ("U20", ("net", "VBAT_SENSE"), "ADC0 100n",     0, 0),
+    "R28": ("U20", ("net", "VBAT_SENSE"), "VBAT div low",   1, 0),
+    # the TOP of a divider is on the rail being measured, not at the ADC:
+    # only the bottom leg and the sampling cap close the ADC's own loop
+    "R27": ("U20", ("net", "VBAT_SENSE"), "VBAT div high",  3, 0),
+    "C49": ("U20", ("net", "VBUS_SENSE"), "ADC1 100n",     0, 0),
+    "R30": ("U20", ("net", "VBUS_SENSE"), "VBUS div low",   1, 0),
+    "R29": ("U20", ("net", "VBUS_SENSE"), "VBUS div high",  3, 0),
+    # the ESC telemetry series terminator, at its driver
+    "R54": ("U20", ("net", "ESC_TELEM_RX"), "ESC_TELEM 100R", 1, 0),
+    "R35": ("U20", ("net", "FLASH_CS1"), "FLASH_CS1 pu",   2, 0),
+    # R25/R26 (I2C), R36-R41 (SD) and R55 are NOT the MCU's any more: see
+    # the J6 / J11 / D20 blocks below.
+
+    # ---- U7 TPS62913 (the 3.3 V buck) --------------------------------
+    # input loop first, smallest package nearest the pin: the 2.2 nF is the
+    # high-frequency bypass and owns the slot against pin 6.
+    "C17": ("U7", "6", "VIN 2n2",   0, 0),
+    "C8":  ("U7", "6", "VIN 10u",   0, 1),
+    "C9":  ("U7", "6", "VIN 10u",   0, 2),
+    # output loop: the three 22 uF on VO, then the bead, then the post-bead
+    # caps on the bead's own output pad
+    "C10": ("U7", "3", "VO 22u",    0, 0),
+    "C11": ("U7", "3", "VO 22u",    0, 1),
+    "C12": ("U7", "3", "VO 22u",    0, 2),
+    "FB1": ("U7", "3", "VO bead",   1, 0),
+    "C13": ("U7", "8", "NR/SS 470n", 0, 3),
+    "R7":  ("U7", "9", "FB div hi", 1, 1),
+    "R8":  ("U7", "9", "FB div lo", 1, 2),
+    "R9":  ("U7", "10", "S-CONF",   1, 3),
+    "R10": ("U7", "5", "PG pull-up", 2, 0),
+    # after the bead: the V3V3_SYS side of the rail
+    "C23": ("FB1", "2", "V3V3 22u",  1, 0),
+    "C24": ("FB1", "2", "V3V3 22u",  1, 1),
+    # rank 3 (bulk, on the rail): the microSD socket's own V3V3_SYS supply
+    # pad is as valid an anchor on that rail as the bead's output pad, and
+    # putting the bulk caps there instead frees FB1's own cells for C23/C24.
+    "C64": ("J11", ("net", "V3V3_SYS"), "V3V3 bulk",  3, 0),
+    "C65": ("J11", ("net", "V3V3_SYS"), "V3V3 bulk",  3, 1),
+    "C66": ("J11", ("net", "V3V3_SYS"), "V3V3 bulk",  3, 2),
+
+    # ---- U26 AP63205 (the 5 V buck) ----------------------------------
+    "C74": ("U26", "3", "VIN 100n", 0, 0),
+    "C73": ("U26", "3", "VIN 10u",  0, 1),
+    "C75": ("U26", "6", "BST 100n", 0, 0),
+    "C76": ("U26", "1", "VO 22u",   0, 0),
+    "C77": ("U26", "1", "VO 22u",   0, 1),
+    "C80": ("U26", "1", "VO 22u",   0, 2),
+    "R52": ("U26", "2", "EN",       2, 0),
+
+    # ---- U25 TPS2121 (the priority mux) ------------------------------
+    "C71": ("U25", "7",  "IN1 100n",   0, 0),
+    "C72": ("U25", "2",  "IN2 100n",   0, 0),
+    "C70": ("U25", "11", "SS 100n",    0, 0),
+    "R42": ("U25", "6",  "PR1 div hi", 1, 0),
+    "R43": ("U25", "6",  "PR1 div lo", 1, 1),
+    "R44": ("U25", "5",  "OV1 div hi", 1, 0),
+    "R45": ("U25", "5",  "OV1 div lo", 1, 1),
+    "R46": ("U25", "10", "ILIM",       2, 0),
+    "R47": ("U25", "9",  "ST pull-up", 2, 0),
+    # the V5_SYS bulk hangs off the mux's OUT pin, which is where the rail
+    # starts.  Rank 3: it holds the rail up, not the pin, and C19 (the
+    # 100 uF polymer, 8.9 x 4.9 mm) is the biggest passive on the board -
+    # ranked with the decoupling it simply ate the mux's pocket.
+    "C19": ("U25", "1",  "V5_SYS 100u", 3, 0),
+    "C20": ("U25", "1",  "V5_SYS 10u",  3, 1),
+    "C21": ("U25", "1",  "V5_SYS 10u",  3, 2),
+
+    # ---- U12 TPS7A2033 (the analog LDO) ------------------------------
+    "C25": ("U12", "1", "IN 1u",  0, 0),
+    "C26": ("U12", "5", "OUT 1u", 0, 0),
+
+    # ---- J4 USB-C ----------------------------------------------------
+    # The CC pull-downs are what the host measures, so they belong on the
+    # receptacle rather than at the MCU - but CC is a DC level, not an edge:
+    # rank 2 is near enough, and the receptacle's own shield pegs mean there
+    # is no 2 mm cell beside A5/B5 to want.
+    "R4": ("J4", ("net", "USB_CC1"), "CC1 5k1", 2, 0),
+    "R5": ("J4", ("net", "USB_CC2"), "CC2 5k1", 2, 0),
+
+    # ---- J11 microSD -------------------------------------------------
+    # A bus pull-up holds the line up while the card is tri-stated; it is a
+    # DC part and it belongs at the SOCKET, which is the far end of the
+    # stub, not at the MCU 12 mm away where it was pulling the QFN's own
+    # decoupling off the package.
+    "R36": ("J11", ("net", "SD_CMD"), "SD_CMD pu", 2, 0),
+    "R37": ("J11", ("net", "SD_D0"),  "SD_D0 pu",  2, 1),
+    "R38": ("J11", ("net", "SD_D1"),  "SD_D1 pu",  2, 2),
+    "R39": ("J11", ("net", "SD_D2"),  "SD_D2 pu",  2, 3),
+    "R40": ("J11", ("net", "SD_D3"),  "SD_D3 pu",  2, 4),
+    "R41": ("J11", ("net", "SD_DET"), "SD_DET pu", 2, 5),
+
+    # ---- J6 the IO block's signal row --------------------------------
+    # the magnetometer I2C pull-ups: the bus leaves the board on J6, so the
+    # termination sits at the connector, at the end of the line
+    "R25": ("J6", ("net", "MAG_SDA"), "I2C pull-up", 2, 0),
+    "R26": ("J6", ("net", "MAG_SCL"), "I2C pull-up", 2, 1),
+
+    # ---- D20 WS2812 RGB LED ------------------------------------------
+    # R55 is the series terminator.  It damps the edge at whichever end of
+    # the line is short: LED_DATA (MCU to R55) is 10 mm away across the
+    # board and LED_DIN (R55 to D20) is the half that must stay short, so
+    # the resistor sits at the LED.  C79 is the LED's own 5 V bypass and is
+    # a genuine pin part.
+    "C79": ("D20", ("net", "V5_SYS"),  "LED 5V 100n", 0, 0),
+    "R55": ("D20", ("net", "LED_DIN"), "LED_DATA 100R", 1, 0),
+    # U21/U22/U23: the twelve sensor supply caps are resolved from the
+    # schematic at generation time - see sensor_satellites().
+}
+
+# how far from its pin a satellite of each rank may end up, pad to pad
+SAT_NEAR_MM = {0: 3.0, 1: 4.0, 2: 6.0, 3: 10.0}
+# the part is placed this far clear of the owner's courtyard edge
+SAT_CLEAR = 0.35
+# A satellite blocks the grid this far OUTSIDE its own courtyard.  The
+# generic packer uses 0.1 mm; a satellite uses none, because the search
+# already leaves 0.05 mm of its own around every candidate and the courtyard
+# is the clearance.  At 0.1 mm each 0402 ate 3.4 mm2 of grid instead of 2.4
+# and the top band ran out before C23/C24 (CAP_NEAR) were placed.
+SAT_GROW = 0.0
+# search radius for the satellite's own slot: the second one is a fallback
+# and is reported
+SAT_RADIUS = (3.0, 6.0)
+# The passes place_satellites() makes over the whole satellite table, as
+# (search radius from the seed, only take a spot that meets the rank's
+# limit).  The two closed passes come first, so a part that cannot meet its
+# limit anywhere never takes the cell of one that can; the open passes then
+# place what is left, nearest first, and every spot they take is reported as
+# a wide search.
+SAT_PASSES = ((SAT_RADIUS[0], 1.0), (SAT_RADIUS[1], 1.0),
+              (SAT_RADIUS[0], None), (SAT_RADIUS[1], None), (None, None))
+# which region a *new* part on a satellite's net should be packed with, so
+# that taking the satellites out of the region lists does not change how an
+# unlisted part votes itself a home (see floorplan())
+SAT_GROUP = {"U20": "mcu_ring", "U7": "u7", "FB1": "u7", "U26": "buck5",
+             "U25": "mux", "U12": "reg3v3", "J4": "usb",
+             "U21": "sens", "U22": "sens", "U23": "sens",
+             "J11": "sd_pu", "J6": "i2c", "D20": "led"}
+# the order the owners are served in.  FB1 is itself a satellite of U7, so it
+# has to be placed before its own caps are.
+SAT_OWNERS = ("U20", "U7", "FB1", "U26", "U25", "U12",
+              "U21", "U22", "U23", "J4", "J11", "J6", "D20")
+# the order owners are served in WITHIN one rank (lead's decision, distinct
+# from SAT_OWNERS above, which only orders when each owner's satellites
+# become eligible at all).  place_satellites() competes satellites
+# nearest-first inside one (rank, owner) class at a time, in this order;
+# an owner missing from the list is served last.
+SAT_OWNER_PRIORITY = ["U20", "U7", "U26", "U25", "U12", "U21", "U22", "U23",
+                      "FB1", "J11", "J6", "J4", "D20"]
+# Already-placed parts whose pin distance is reported but never flagged: the
+# crystal group is anchored at XIN/XOUT by floorplan() and is not the
+# packer's to move.
+SAT_REPORT = {"Y1": ("U20", "30"), "C46": ("U20", "30"),
+              "R21": ("U20", "31"), "C47": ("Y1", "3")}
 
 SILK_TEXT = 0.8          # refdes height, mm
 SILK_THICK = 0.12
@@ -447,6 +696,66 @@ def read_netlist(path):
     return comps, nets
 
 
+def read_pinfunctions(path):
+    """(ref, pin) -> the pin's schematic name, from the same netlist.
+
+    kicad-cli writes <node ref pin pinfunction pintype/>, so the board can ask
+    "which pad of U21 is VDDIO?" instead of a table restating the symbol."""
+    root = ET.parse(path).getroot()
+    out = {}
+    for n in root.find("nets").findall("net"):
+        for nd in n.findall("node"):
+            fn = nd.get("pinfunction")
+            if fn:
+                out[(nd.get("ref"), nd.get("pin"))] = fn
+    return out
+
+
+def norm_pin(name):
+    """VDD_IO_1 / VDDIO_5 / VS_6 -> VDDIO / VDDIO / VS.  KiCad suffixes a
+    duplicated pin name with its number, and the schematic writes the same
+    supply as VDDIO on one part and VDD_IO on another."""
+    name = re.sub(r"_\d+$", "", name)
+    return name.replace("_", "").upper()
+
+
+def sensor_satellites(comps, pinfunc):
+    """C50-C61, the sensor supply caps, resolved from the schematic.
+
+    Their Value strings name the pin they belong to ("100n / 16 V X7R,
+    U21 VDDIO" - see imu/baro/highg.kicad_sch and tools/build_power.py), and the
+    netlist names every pad, so the owner pad is looked up rather than
+    written down twice.  A cap that cannot be attributed FAILS the build:
+    an unattributed bypass cap is one that would have been shelf-packed
+    somewhere on the island, which is the thing this table exists to stop.
+    """
+    out = {}
+    bad = []
+    for ref, c in comps.items():
+        v = c.get("value", "")
+        m = re.search(r"\b(U2[123])\s+([A-Z0-9_]+)\s*$", v.strip())
+        if not (ref.startswith("C") and re.search(r"\bU2[123]\b", v)):
+            continue
+        if not m:
+            bad.append("%s: cannot read an owner pin out of %r" % (ref, v))
+            continue
+        owner, pin = m.group(1), norm_pin(m.group(2))
+        pads = [p for (r, p), fn in pinfunc.items()
+                if r == owner and norm_pin(fn) == pin]
+        if len(pads) != 1:
+            bad.append("%s: %s has %d pins called %s"
+                       % (ref, owner, len(pads), pin))
+            continue
+        # 100 nF goes on the pin, the 1 uF reservoir behind it
+        small = v.lower().startswith("100n")
+        out[ref] = (owner, pads[0], "%s %s" % (pin, "100n" if small else "1u"),
+                    0 if small else 1, 0)
+    if bad:
+        raise SystemExit("sensor decoupling cannot be attributed:\n  "
+                         + "\n  ".join(bad))
+    return out
+
+
 # --------------------------------------------------------------------------
 # footprint libraries
 # --------------------------------------------------------------------------
@@ -552,6 +861,10 @@ class Builder:
         self.back_texts = []    # B.SilkS text; never nudged, nothing to hit
         self.problems = []
         self.notes = []
+        self.padoff = {}        # (ref, pad, rot) -> pad centre off the origin
+        self.pinfunc = {}       # (ref, pin) -> the schematic's pin name
+        self.sat = {}           # the verified SATELLITES table for this run
+        self.satpad = {}        # satellite ref -> its pad on the owner's net
 
     def is_back(self, ref):
         return ref in self.back
@@ -577,6 +890,7 @@ class Builder:
         ds.m_SolderMaskExpansion = mm(RULES["mask_expansion"])
         ds.m_MinSilkTextHeight = mm(RULES["min_text_height"])
         ds.m_MinSilkTextThickness = mm(RULES["min_text_thickness"])
+        ds.m_MinResolvedSpokes = RULES["min_resolved_spokes"]
         ds.m_HasStackup = True
         try:
             ds.SetAuxOrigin(to_kicad(0, 0))
@@ -721,13 +1035,27 @@ class Builder:
     CELL = 0.125
 
     def build_grid(self, reserved):
-        """occupancy grid of everything placed so far + reserved bands"""
+        """occupancy grid of everything placed so far + reserved bands.
+
+        THE GRID IS THE FRONT SIDE.  Nothing is ever packed onto the back -
+        back_side() solves every back position by hand and runs before this -
+        so one grid is enough, and it must hold the FRONT courtyards only.
+        A back-side courtyard is not an obstacle to a front-side part: two
+        courtyards on opposite sides cannot collide, which is exactly what
+        check() asserts.  Blocking the back here instead black-holed the
+        three places the front needs most - the island corridor under
+        TP1-TP10, the pocket under the MCU under the U24 land and the left
+        edge under the ESC row - and every satellite of every owner in or
+        beside them fell out to the whole-board search.
+        """
         self.gnx = int(round(2 * self.HX / self.CELL))
         self.gny = int(round(2 * self.HY / self.CELL))
         self.occ = np.zeros((self.gnx, self.gny), dtype=bool)
         for ref, rect in self.placed:
             if ref.startswith("H") and ref[1:].isdigit():
                 continue                       # circles, handled below
+            if self.is_back(ref):
+                continue                       # other side of the board
             self.block_rect(rect, 0.05)
         for ref in ("H1", "H2", "H3", "H4"):
             if ref in self.fps:
@@ -768,10 +1096,13 @@ class Builder:
         p = self.fps[ref].GetPosition()
         return tomm(p.x) - CX, CY - tomm(p.y)
 
-    def place_near(self, ref, seed, rots=(0, 90), step=0.25, gap=0.05,
-                   bounds=None):
-        """nearest free spot to seed (optionally inside `bounds`, a list of
-        rectangles); returns the distance from the seed, or None"""
+    def best_spot(self, ref, seed, rots=(0, 90), step=0.25, gap=0.05,
+                  bounds=None, maxrad=None):
+        """the nearest free spot to seed, WITHOUT taking it: returns
+        (distance from the seed, courtyard centre x, y, rotation, w, h) or
+        None.  `maxrad` caps the spiral, so a caller that only wants a slot
+        *at* something (place_satellites) gets None rather than a spot on the
+        far side of the board."""
         best = None
         for rot in rots:
             g = self.g(ref, rot)
@@ -781,8 +1112,10 @@ class Builder:
             ph = g.pad[3] - g.pad[1]
             lim_x = self.HX - EDGE_COPPER - pw / 2.0 - 0.05
             lim_y = self.HY - EDGE_COPPER - ph / 2.0 - 0.05
+            reach = (2.2 * max(self.HX, self.HY) if maxrad is None
+                     else maxrad + step / 2.0)
             # candidate courtyard centres, spiral out from the seed
-            for rad in np.arange(0.0, 2.2 * max(self.HX, self.HY), step):
+            for rad in np.arange(0.0, reach, step):
                 cands = self._ring(seed, rad, step)
                 hit = None
                 for (cx, cy) in cands:
@@ -803,15 +1136,27 @@ class Builder:
                     if best is None or hit[0] < best[0]:
                         best = hit
                     break
-        if best is None:
-            return None
-        d, cx, cy, rot, cw, ch = best
-        g = self.g(ref, rot)
-        x = cx - (g.cy[0] + g.cy[2]) / 2.0
-        y = cy - (g.cy[1] + g.cy[3]) / 2.0
-        rect = self.place(ref, x, y, rot)
-        self.block_rect(rect, 0.1)
-        return d
+        return best
+
+    def spot_origin(self, ref, spot):
+        """the footprint origin that puts `spot`'s courtyard where it is"""
+        g = self.g(ref, spot[3])
+        return (spot[1] - (g.cy[0] + g.cy[2]) / 2.0,
+                spot[2] - (g.cy[1] + g.cy[3]) / 2.0)
+
+    def commit_spot(self, ref, spot, grow=0.1):
+        """take the spot best_spot() found and block the grid under it"""
+        x, y = self.spot_origin(ref, spot)
+        rect = self.place(ref, x, y, spot[3])
+        self.block_rect(rect, grow)
+        return spot[0]
+
+    def place_near(self, ref, seed, rots=(0, 90), step=0.25, gap=0.05,
+                   bounds=None):
+        """nearest free spot to seed (optionally inside `bounds`, a list of
+        rectangles); returns the distance from the seed, or None"""
+        spot = self.best_spot(ref, seed, rots, step, gap, bounds)
+        return None if spot is None else self.commit_spot(ref, spot)
 
     @staticmethod
     def _ring(seed, rad, step):
@@ -836,6 +1181,400 @@ class Builder:
                 p = pad.GetPosition()
                 return tomm(p.x) - CX, CY - tomm(p.y)
         raise KeyError((ref, num))
+
+    def pad_offset(self, ref, num, rot):
+        """a pad's centre relative to the footprint ORIGIN at rotation `rot`,
+        in board coords.  Lets a candidate position be scored (where would
+        that pad land?) without placing the part."""
+        key = (ref, num, rot)
+        if key not in self.padoff:
+            fp = self.fps[ref]
+            fp.SetOrientationDegrees(rot)
+            org = fp.GetPosition()
+            for pad in fp.Pads():
+                if pad.GetNumber() == num:
+                    p = pad.GetPosition()
+                    self.padoff[key] = (tomm(p.x - org.x), tomm(org.y - p.y))
+                    break
+            else:
+                raise KeyError((ref, num))
+        return self.padoff[key]
+
+    def net_of(self, ref, num):
+        for pad in self.fps[ref].Pads():
+            if pad.GetNumber() == num:
+                n = pad.GetNetname()
+                return n or None
+        raise KeyError((ref, num))
+
+    # ---------------- satellites (the passive that sits ON a pin) ------
+    def verify_satellites(self, comps):
+        """Build the satellite table for THIS netlist and prove every row.
+
+        A row is only meaningful if the owner's pad and the satellite really
+        are on the same net, so that is asserted here rather than trusted:
+        a schematic change that moves a cap to another pin fails the build
+        instead of quietly placing it at the wrong pin.  The pad of the
+        satellite that carries the owner's net is resolved at the same time -
+        it is the one that has to face the pin, and the one the distance is
+        measured from."""
+        self.sat = dict(SATELLITES)
+        self.sat.update(sensor_satellites(comps, self.pinfunc))
+        self.satpad = {}
+        bad = []
+        for ref, (owner, pad, klass, rank, order) in sorted(self.sat.items()):
+            if ref not in self.fps:
+                bad.append("%s: no such part" % ref)
+                continue
+            if owner not in self.fps:
+                bad.append("%s: owner %s is not on the board" % (ref, owner))
+                continue
+            if isinstance(pad, tuple):
+                # ("net", NAME): the owner's pad carrying NAME, resolved from
+                # the netlist instead of being written down a second time.
+                # It has to be exactly one pad - a satellite of "the owner's
+                # ground" is not a satellite of anything.
+                hits = sorted(p.GetNumber() for p in self.fps[owner].Pads()
+                              if p.GetNetname() == pad[1])
+                if len(hits) != 1:
+                    bad.append("%s: %s has %d pads on %s (%s)"
+                               % (ref, owner, len(hits), pad[1],
+                                  ",".join(hits) or "none"))
+                    continue
+                pad = hits[0]
+                self.sat[ref] = (owner, pad, klass, rank, order)
+            try:
+                net = self.net_of(owner, pad)
+            except KeyError:
+                bad.append("%s: %s has no pad %s" % (ref, owner, pad))
+                continue
+            if not net:
+                bad.append("%s: %s pad %s has no net" % (ref, owner, pad))
+                continue
+            mine = [p.GetNumber() for p in self.fps[ref].Pads()
+                    if p.GetNetname() == net]
+            if not mine:
+                bad.append("%s is not on %s (%s pad %s); it is on %s"
+                           % (ref, net, owner, pad,
+                              ",".join(sorted({p.GetNetname() or "-"
+                                               for p in self.fps[ref].Pads()}))
+                              ))
+                continue
+            if self.is_back(ref) != self.is_back(owner):
+                bad.append("%s and its owner %s are on opposite sides"
+                           % (ref, owner))
+                continue
+            self.satpad[ref] = mine[0]
+        if bad:
+            raise SystemExit("SATELLITES does not match the netlist:\n  "
+                             + "\n  ".join(bad))
+        return self.sat
+
+    def sat_seed(self, ref, owner, pad, rot):
+        """where a satellite of `owner`'s `pad` wants to be at rotation
+        `rot`: straight out of the courtyard edge that pad is nearest to,
+        SAT_CLEAR clear of it, the part's own body centred on that.
+
+        Outward, not "towards the pad": a 0402 whose centre is put on the pad
+        overlaps the package, and the packer would then spiral it to whatever
+        side happens to be free.  Seeded outside the edge the pad belongs to,
+        the first free cell it finds is the one against that pin."""
+        px, py = self.pad_pos(owner, pad)
+        cy = dict(self.placed)[owner]
+        out = ((-1, 0, px - cy[0]), (1, 0, cy[2] - px),
+               (0, -1, py - cy[1]), (0, 1, cy[3] - py))
+        nx, ny, edge = min(out, key=lambda o: o[2])
+        g = self.g(ref, rot)
+        depth = (g.cy[2] - g.cy[0]) if nx else (g.cy[3] - g.cy[1])
+        step = max(edge, 0.0) + SAT_CLEAR + depth / 2.0
+        return (px + nx * step, py + ny * step), (nx, ny)
+
+    def sat_spot(self, ref, owner, pad, maxrad, step=0.25, gap=0.05):
+        """The free slot for `ref` that puts its OWNER-NET pad nearest the
+        owner's pad; returns (key, spot, distance) or None.
+
+        Scored on the pad-to-pin distance itself, not on the distance to the
+        seed.  The seed is only a direction - straight out of the courtyard
+        edge the pin is on - and the free cell nearest to it is not the cell
+        whose pad ends up nearest the pin: a 0402 one ring further out but
+        turned the other way round can be half a millimetre closer, and half
+        a millimetre is the whole margin of a rank 0 row.
+
+        Every rotation is tried.  Ties go to the rotation that leaves the
+        part radial (long axis pointing away from the package), which is what
+        leaves room for the next satellite along the same edge.
+
+        The spiral stops as soon as no further ring can win: a candidate
+        `rad` from the seed is at least `rad - d0` from the pin, where d0 is
+        what the part would measure sitting exactly on the seed, so once
+        rad > best + d0 the rest of the board cannot beat what we have.
+        """
+        px, py = self.pad_pos(owner, pad)
+        best = None
+        for rot in (0, 90, 180, 270):
+            seed, n = self.sat_seed(ref, owner, pad, rot)
+            g = self.g(ref, rot)
+            cw, ch = g.cy[2] - g.cy[0], g.cy[3] - g.cy[1]
+            pw, ph = g.pad[2] - g.pad[0], g.pad[3] - g.pad[1]
+            lim_x = self.HX - EDGE_COPPER - pw / 2.0 - 0.05
+            lim_y = self.HY - EDGE_COPPER - ph / 2.0 - 0.05
+            # courtyard centre -> the satellite's own owner-net pad
+            ox, oy = self.pad_offset(ref, self.satpad[ref], rot)
+            ox -= (g.cy[0] + g.cy[2]) / 2.0
+            oy -= (g.cy[1] + g.cy[3]) / 2.0
+            d0 = math.hypot(seed[0] + ox - px, seed[1] + oy - py)
+            long_x = cw >= ch
+            radial = long_x == bool(n[0])
+            reach = (2.2 * max(self.HX, self.HY) if maxrad is None
+                     else maxrad + step / 2.0)
+            hit = None
+            for rad in np.arange(0.0, reach, step):
+                if hit is not None and rad > hit[1] + d0 + step:
+                    break
+                for (cx, cy) in self._ring(seed, rad, step):
+                    if abs(cx) > lim_x or abs(cy) > lim_y:
+                        continue
+                    rect = (cx - cw / 2.0 - gap, cy - ch / 2.0 - gap,
+                            cx + cw / 2.0 + gap, cy + ch / 2.0 + gap)
+                    if not self.free(rect):
+                        continue
+                    d = math.hypot(cx + ox - px, cy + oy - py)
+                    if hit is None or d < hit[1]:
+                        hit = ((round(d / 0.05), 0 if radial else 1, rot),
+                               d, (d, cx, cy, rot, cw, ch))
+            if hit is not None and (best is None or hit[0] < best[0]):
+                best = (hit[0], hit[2], hit[1])
+        return best
+
+    def place_satellites(self, owners):
+        """Put every satellite of every listed owner against the pin it
+        serves.
+
+        Order is the whole algorithm here, and the first cut of it got it
+        wrong three different ways.
+
+        RANK BEFORE OWNER.  Served owner by owner, the first owner's rank 2
+        pull-ups are placed before the next owner's rank 0 decoupling, and
+        whichever of them cannot find a cell inside its own radius escalates
+        straight to the 6 mm and then to the whole-board search - squatting
+        on cells the *next* owner's rank 0 parts are the only legitimate
+        claimants of.  With U20's 39 parts served first that cost U25 its
+        entire pocket: all twelve of its satellites ended up on a board-wide
+        search, 10 to 22 mm from their pins.
+
+        THE LIMIT BEFORE THE RANK.  A rank 0 cap on the QFN's left edge has
+        a 1.07 mm corridor to sit in and cannot make its 2 mm whatever it is
+        given; a rank 2 pull-up on the same edge only has to be inside 6 mm
+        and can.  Letting the cap take the cell first misses both rows, so
+        the first two passes only TAKE a spot that actually meets the rank's
+        limit - a part that cannot meet it anywhere stands aside and is
+        placed in the cleanup passes, where it can no longer cost a row that
+        was winnable.  Inside a pass it is still rank order: what stands
+        aside is a part that cannot be satisfied, never one that can.
+
+        NEAREST FIRST.  Within one pass the part placed next is the one whose
+        best remaining slot is CLOSEST to its pin, re-scored against the grid
+        after every placement: a part that can hug its own pin uses the least
+        room doing it, and the room it does not use is what the part behind
+        it needs.
+
+        AN OWNER GOES BEFORE ANY RANK.  FB1 is a satellite of U7 and the
+        owner of five more; placed after U7's three 22 uF output caps it took
+        the one hole they had left it and there was no room beside it for its
+        own, which is how C23/C24 - which CAP_NEAR requires within 6 mm of
+        U7 - ended up on a board-wide search.  A part that is itself an owner
+        is placed first, whatever its rank.
+
+        OWNER PRIORITY WITHIN A RANK.  Rank alone still groups a pass (every
+        rank 0 part across every owner before any rank 1 part anywhere), but
+        SAT_OWNER_PRIORITY now also splits each rank into one class per
+        owner, served in that fixed order: nearest-first re-scoring, and the
+        escalation through SAT_PASSES, happen inside one (rank, owner) class
+        at a time, so one owner's near misses cannot spend the cells the
+        next owner's own rank-mates are the only legitimate claimants of.
+
+        Ordinary packing constraints all still apply: the spot comes out of
+        the same occupancy grid, so board edge, mounting-hole keepouts,
+        reserved silk bands and every courtyard already down are respected.
+        """
+        # class key: owners are forced into one shared (0, 0) class ahead of
+        # every rank; everything else classes by (rank, SAT_OWNER_PRIORITY
+        # index).  Then: rank (for SAT_NEAR_MM), owner priority again (a
+        # static tie-break, redundant with the class key but harmless),
+        # order in the owner, ref.
+        opri = {o: i for i, o in enumerate(SAT_OWNER_PRIORITY)}
+
+        def _opri(o):
+            return opri.get(o, len(SAT_OWNER_PRIORITY))
+        pool = sorted((0 if r in owners else v[3] + 1, v[3],
+                       _opri(v[0]), v[4], r)
+                      for r, v in self.sat.items()
+                      if v[0] in owners and v[0] in self.fps)
+        pris = sorted({it[0] for it in pool})
+        wide = {}
+        for pri in pris:
+            for phase, (rad, slack) in enumerate(SAT_PASSES):
+                while True:
+                    # FB1 is a satellite of U7 AND an owner itself: its own
+                    # caps cannot be seeded until it is down, so a part whose
+                    # owner is still parked waits for the next round.
+                    down = {r for r, _ in self.placed}
+                    pick = None
+                    for item in pool:
+                        if item[0] != pri:
+                            continue
+                        ref = item[4]
+                        owner, pad = self.sat[ref][0], self.sat[ref][1]
+                        if owner not in down:
+                            continue
+                        lim = (None if slack is None
+                               else slack * SAT_NEAR_MM[item[1]])
+                        spot = self.sat_spot(ref, owner, pad, rad)
+                        if spot is None or (lim is not None and
+                                            spot[2] > lim + 1e-6):
+                            continue
+                        if pick is None or spot[2] < pick[0]:
+                            pick = (spot[2], item, spot[1])
+                    if pick is None:
+                        break
+                    ref = pick[1][4]
+                    if phase:
+                        wide.setdefault(self.sat[ref][0], []).append(
+                            "%s@%s" % (ref, rad or "board"))
+                    self.commit_spot(ref, pick[2], SAT_GROW)
+                    pool.remove(pick[1])
+                if not any(it[0] == pri for it in pool):
+                    break
+        for _, _, _, _, ref in pool:
+            owner = self.sat[ref][0]
+            self.problems.append("%s: no room for %s at %s pad %s"
+                                 % (owner, ref, owner, self.sat[ref][1]))
+            self.place(ref, -self.HX + 4,
+                       -self.HY - 25 - 4 * len(self.problems), 0)
+        for owner in owners:
+            n = sum(1 for v in self.sat.values() if v[0] == owner)
+            if not n:
+                continue
+            print("  sat   %-4s %2d parts%s"
+                  % (owner, n, "  WIDE SEARCH: " + ",".join(wide[owner])
+                     if owner in wide else ""))
+
+    def sat_blocker(self, ref, owner, pad, lim):
+        """WHY `ref` could not get within `lim` of its pin: what is sitting
+        on the nearest position that would have met the limit.
+
+        Lead's decision C - a rank 0 row that misses its 2 mm has to name the
+        courtyard that took the cell, so "still over" can be read as a fact
+        about the floorplan rather than as a shrug.  The search is the same
+        one sat_spot() makes, with the occupancy grid ignored: the best
+        position the geometry allows at all, then whatever is on it."""
+        px, py = self.pad_pos(owner, pad)
+        own = dict(self.placed)[owner]
+        best = None
+        for rot in (0, 90, 180, 270):
+            seed, _ = self.sat_seed(ref, owner, pad, rot)
+            g = self.g(ref, rot)
+            cw, ch = g.cy[2] - g.cy[0], g.cy[3] - g.cy[1]
+            pw, ph = g.pad[2] - g.pad[0], g.pad[3] - g.pad[1]
+            lim_x = self.HX - EDGE_COPPER - pw / 2.0 - 0.05
+            lim_y = self.HY - EDGE_COPPER - ph / 2.0 - 0.05
+            ox, oy = self.pad_offset(ref, self.satpad[ref], rot)
+            ox -= (g.cy[0] + g.cy[2]) / 2.0
+            oy -= (g.cy[1] + g.cy[3]) / 2.0
+            # the SAME 0.25 mm lattice sat_spot() searches, so the spot named
+            # here is one the packer could really have taken
+            for rad in np.arange(0.0, 2.0 * (lim + cw + ch), 0.25):
+                for (cx, cy) in self._ring(seed, rad, 0.25):
+                    d = math.hypot(cx + ox - px, cy + oy - py)
+                    if best is not None and d >= best[0]:
+                        continue
+                    if abs(cx) > lim_x or abs(cy) > lim_y:
+                        continue
+                    r = (cx - cw / 2.0 - 0.05, cy - ch / 2.0 - 0.05,
+                         cx + cw / 2.0 + 0.05, cy + ch / 2.0 + 0.05)
+                    # reject exactly what the grid would: the owner's own
+                    # courtyard, blocked 0.05 mm proud and snapped out to
+                    # whole CELLs, is never a position for its satellite.
+                    # Anything that survives this is a cell the part could
+                    # have had on a board holding nothing but the package.
+                    if (self._ix(r[0]) < self._ix(own[2] + 0.05) + 1
+                            and self._ix(own[0] - 0.05) < self._ix(r[2]) + 1
+                            and self._iy(r[1]) < self._iy(own[3] + 0.05) + 1
+                            and self._iy(own[1] - 0.05) < self._iy(r[3]) + 1):
+                        continue
+                    best = (d, r)
+        if best is None:
+            return "no position clear of %s exists at that pin" % owner
+        if best[0] > lim + 1e-6:
+            return ("%s's own courtyard puts the nearest legal cell at "
+                    "%.2f mm - the part cannot make the limit at that pin "
+                    "on an empty board" % (owner, best[0]))
+        on, near = [], []
+        for r, rect in self.placed:
+            if r == ref or r == owner or self.is_back(r):
+                continue
+            if bbox_overlap(best[1], rect, 0.001):
+                on.append(r)
+            elif bbox_gap(best[1], rect) <= self.CELL + 0.05 + 1e-9:
+                # the occupancy grid is quantised to CELL and every courtyard
+                # is blocked 0.05 mm proud of itself, so a neighbour this
+                # close owns the cell even though the two boxes do not touch
+                near.append(r)
+        if on:
+            return "%s is on the %.2f mm spot" % (", ".join(sorted(set(on))),
+                                                  best[0])
+        if near:
+            return ("%s holds the cell of the %.2f mm spot (courtyard plus "
+                    "the 0.125 mm grid)"
+                    % (", ".join(sorted(set(near))), best[0]))
+        if self.free(best[1]):
+            return ("the %.2f mm spot is still FREE - the packer's search "
+                    "missed it" % best[0])
+        return ("the %.2f mm spot is clear of every courtyard - the board "
+                "edge, a grommet keepout or a reserved silk band holds it"
+                % best[0])
+
+    def check_satellites(self):
+        """every satellite's pad-to-pin distance, and the rows that miss the
+        rank's limit - those fail the run like any other placement rule"""
+        out = []
+        rows = []
+        for ref, (owner, pad, klass, rank, _) in self.sat.items():
+            d = math.hypot(*[a - b for a, b in
+                             zip(self.pad_pos(ref, self.satpad[ref]),
+                                 self.pad_pos(owner, pad))])
+            rows.append((owner, rank, d, ref, pad, klass,
+                         SAT_NEAR_MM[rank]))
+        for ref, (owner, pad) in SAT_REPORT.items():
+            if ref not in self.fps or owner not in self.fps:
+                continue
+            mine = [p.GetNumber() for p in self.fps[ref].Pads()
+                    if p.GetNetname() and
+                    p.GetNetname() == self.net_of(owner, pad)]
+            if not mine:
+                continue
+            d = math.hypot(*[a - b for a, b in
+                             zip(self.pad_pos(ref, mine[0]),
+                                 self.pad_pos(owner, pad))])
+            rows.append((owner, 9, d, ref, pad, "anchored", None))
+        print("  satellites (pad to pin, mm):")
+        for owner, rank, d, ref, pad, klass, lim in sorted(rows):
+            over = lim is not None and d > lim + 1e-6
+            print("    %-4s %-4s pin %-3s %-14s rank %s  %5.2f%s"
+                  % (ref, owner, pad, klass,
+                     "-" if lim is None else rank, d,
+                     "   OVER %.1f" % lim if over else ""))
+            if over:
+                why = ""
+                if rank == 0:
+                    # decision C: a rank 0 row that is still out has to say
+                    # what took the cell, never just be accepted
+                    why = "; " + self.sat_blocker(ref, owner, pad, lim)
+                    print("      ^ %s" % why[2:])
+                out.append("%s is %.2f mm from %s pin %s (rank %d limit "
+                           "%.1f mm)%s"
+                           % (ref, d, owner, pad, rank, lim, why))
+        return out
 
     def loop_seed(self, pairs, out=1.4):
         """seed for a loop component: the mean of the (part, pad) positions it
@@ -1003,6 +1742,237 @@ class Builder:
             s.SetLayer(pcbnew.Edge_Cuts)
             s.SetWidth(mm(0.1))
             self.board.Add(s)
+
+    # ---------------- copper zones (planes, for the autorouter) ----------
+    # lead's design: five filled zones, generated fresh every run so the
+    # board this script writes is always ready for Freerouting.  Every zone
+    # this script owns is named "gen:<net>:<layer short name>" so the
+    # tracks/zones guard in main() can tell "ours, safe to discard and
+    # rebuild" from "someone's hand-drawn zone, refuse".
+    ZONE_ANA_ICS = ("U12", "U21", "U22", "U23")   # LDO + the three MEMS ICs
+
+    def _board_rect_poly(self, inset=0.0):
+        """[(x_nm, y_nm), ...] of the board's rectangular envelope, inset by
+        `inset` mm on every side.  Deliberately the plain rectangle, not the
+        rounded Edge.Cuts shape: ZONE_FILLER always clips a zone's fill to
+        the real board outline, so the extra corner area a plain rectangle
+        claims outside the rounded corners is never actually filled.
+
+        Returns plain (x, y) int tuples in KiCad nm, not a SHAPE_POLY_SET:
+        the zone's own outline (zone.Outline()) is filled in-place by the
+        caller, so no Python-owned polygon object is ever handed to the
+        zone - a Python-owned SHAPE_POLY_SET gets garbage collected while
+        the multithreaded ZONE_FILLER still holds a pointer to it, which
+        segfaults."""
+        HX, HY = self.HX - inset, self.HY - inset
+        pts = []
+        for x, y in [(-HX, -HY), (HX, -HY), (HX, HY), (-HX, HY)]:
+            v = to_kicad(x, y)
+            pts.append((v.x, v.y))
+        return pts
+
+    def _keyhole_poly(self, outer_pts, hole_pts, gap=0.30):
+        """`outer_pts` with `hole_pts` (inflated by `gap` mm) cut out of it,
+        returned as one flat [(x_nm, y_nm), ...] ring.
+
+        Freerouting's power-plane validator rejects a dedicated power layer
+        whose conduction areas overlap ("Dedicated power layer 'PWR' has
+        overlapping conduction areas"), and KiCad exports one `(plane NET
+        (polygon ...))` per zone *outline* - priorities, which is how the
+        two In2 pours are actually kept apart when filled, are a KiCad-only
+        concept that does not survive into the DSN.  So the V3V3_SYS
+        outline has to be physically keyholed around the V3V3_ANA island
+        rather than relying on the higher-priority island to win.
+
+        The boolean is done on a local SHAPE_POLY_SET and only its
+        *vertices* are returned; the caller copies them into the zone's own
+        outline, so no Python-owned polygon is ever handed to a zone (see
+        _board_rect_poly for why that segfaults).  Fracture() turns the
+        outline-with-hole into a single self-touching contour (the hole is
+        reached through a zero-width bridge), which is exactly the shape
+        KiCad stores for a keyholed zone and exports as one polygon.
+        """
+        outer = pcbnew.SHAPE_POLY_SET()
+        outer.NewOutline()
+        for x, y in outer_pts:
+            outer.Append(int(x), int(y))
+        hole = pcbnew.SHAPE_POLY_SET()
+        hole.NewOutline()
+        for x, y in hole_pts:
+            hole.Append(int(x), int(y))
+        hole.Inflate(mm(gap), pcbnew.CORNER_STRATEGY_CHAMFER_ALL_CORNERS,
+                     mm(0.01))
+        outer.BooleanSubtract(hole)
+        outer.Fracture()
+        if outer.OutlineCount() != 1:
+            raise SystemExit("keyhole zone: Fracture() left %d outlines, "
+                             "expected 1" % outer.OutlineCount())
+        chain = outer.Outline(0)
+        return [(chain.CPoint(i).x, chain.CPoint(i).y)
+                for i in range(chain.PointCount())]
+
+    def _add_plane(self, layer, net_name, name, priority,
+                    clearance, min_thickness, pts):
+        net = self.board.FindNet(net_name)
+        if net is None:
+            raise SystemExit("zone %s: no such net %r" % (name, net_name))
+        z = pcbnew.ZONE(self.board)
+        z.SetLayer(layer)
+        z.SetNetCode(net.GetNetCode())
+        z.SetZoneName(name)
+        z.SetAssignedPriority(priority)
+        z.SetLocalClearance(mm(clearance))
+        z.SetMinThickness(mm(min_thickness))
+        z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
+        z.SetThermalReliefGap(mm(0.30))
+        z.SetThermalReliefSpokeWidth(mm(0.40))
+        z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
+        # build the outline inside the zone's own SHAPE_POLY_SET - never
+        # hand the zone a Python-created polygon (see _board_rect_poly).
+        ol = z.Outline()
+        ol.NewOutline()
+        for x, y in pts:
+            ol.Append(int(x), int(y))
+        self.board.Add(z)
+        return z
+
+    ZONE_ANA_CAP_RADIUS_MM = 3.0   # a V3V3_ANA cap this close to one of the
+                                   # four ICs' courtyards is "on the island"
+
+    @staticmethod
+    def _point_bbox_dist(px, py, box):
+        """distance from board point (px, py), KiCad nm, to the nearest
+        edge of `box` (0 if the point is inside it)."""
+        dx = max(box.GetLeft() - px, 0, px - box.GetRight())
+        dy = max(box.GetTop() - py, 0, py - box.GetBottom())
+        return math.hypot(dx, dy)
+
+    def _analog_zone_poly(self):
+        """bounding box of the V3V3_ANA island: the four analog ICs'
+        courtyards (U12/U21/U22/U23, ZONE_ANA_ICS) plus every V3V3_ANA
+        capacitor whose *centre* sits within ZONE_ANA_CAP_RADIUS_MM of one
+        of those four courtyards - padded 1.5 mm, clipped to the board
+        outline minus 0.5 mm.  A V3V3_ANA cap elsewhere on the board (e.g.
+        C40, the MCU's own decoupling cap) is excluded: it is on the net
+        but nowhere near the analog island, and including it would drag
+        the island bbox across the board.  Read off the placed footprints
+        (self.fps / self.nets) every run, never hard-coded."""
+        ic_refs = list(self.ZONE_ANA_ICS)
+        ic_boxes = []
+        for ref in ic_refs:
+            fp = self.fps.get(ref)
+            if fp is None:
+                raise SystemExit("V3V3_ANA zone: no footprint for %s" % ref)
+            layer = pcbnew.B_CrtYd if fp.IsFlipped() else pcbnew.F_CrtYd
+            ic_boxes.append(fp.GetCourtyard(layer).BBox())
+
+        cap_refs = set()
+        for n, nodes in self.nets:
+            if n == "V3V3_ANA":
+                cap_refs |= {r for r, _ in nodes if r.startswith("C")}
+
+        radius = mm(self.ZONE_ANA_CAP_RADIUS_MM)
+        included, excluded = [], []
+        for ref in sorted(cap_refs):
+            fp = self.fps.get(ref)
+            if fp is None:
+                raise SystemExit("V3V3_ANA zone: no footprint for %s" % ref)
+            p = fp.GetPosition()
+            d = min(self._point_bbox_dist(p.x, p.y, b) for b in ic_boxes)
+            (included if d <= radius else excluded).append(ref)
+
+        print("  V3V3_ANA island: ICs %s" % ",".join(ic_refs))
+        print("  V3V3_ANA island: caps included (<=%.1f mm) %s" %
+              (self.ZONE_ANA_CAP_RADIUS_MM,
+               ",".join(included) if included else "(none)"))
+        print("  V3V3_ANA island: caps excluded (>%.1f mm) %s" %
+              (self.ZONE_ANA_CAP_RADIUS_MM,
+               ",".join(excluded) if excluded else "(none)"))
+
+        boxes = list(ic_boxes)
+        for ref in included:
+            fp = self.fps[ref]
+            layer = pcbnew.B_CrtYd if fp.IsFlipped() else pcbnew.F_CrtYd
+            boxes.append(fp.GetCourtyard(layer).BBox())
+
+        pad = mm(1.5)
+        left = min(b.GetLeft() for b in boxes) - pad
+        right = max(b.GetRight() for b in boxes) + pad
+        top = min(b.GetTop() for b in boxes) - pad
+        bottom = max(b.GetBottom() for b in boxes) + pad
+
+        # the island may not creep past the middle of the U20_CORRIDOR
+        # (2.6 mm) MCU<->sensor lane: clip the left edge (min x, +X right)
+        # to no less than U20's courtyard right edge + half that corridor.
+        u20_fp = self.fps.get("U20")
+        if u20_fp is None:
+            raise SystemExit("V3V3_ANA zone: no footprint for U20")
+        u20_layer = pcbnew.B_CrtYd if u20_fp.IsFlipped() else pcbnew.F_CrtYd
+        u20_right = u20_fp.GetCourtyard(u20_layer).BBox().GetRight()
+        corridor_min_left = u20_right + mm(U20_CORRIDOR / 2.0)
+        if left < corridor_min_left:
+            print("  V3V3_ANA island: left edge clipped %.2f -> %.2f mm "
+                  "board coords (U20 courtyard right + %.2f mm; may not "
+                  "cross past the middle of the %.1f mm MCU<->sensor "
+                  "corridor)"
+                  % (tomm(left) - CX, tomm(corridor_min_left) - CX,
+                     U20_CORRIDOR / 2.0, U20_CORRIDOR))
+            left = corridor_min_left
+
+        c0 = to_kicad(-self.HX, -self.HY)
+        c1 = to_kicad(self.HX, self.HY)
+        inset = mm(0.5)
+        board_left = min(c0.x, c1.x) + inset
+        board_right = max(c0.x, c1.x) - inset
+        board_top = min(c0.y, c1.y) + inset
+        board_bottom = max(c0.y, c1.y) - inset
+
+        left = max(left, board_left)
+        right = min(right, board_right)
+        top = max(top, board_top)
+        bottom = min(bottom, board_bottom)
+
+        print("  V3V3_ANA island bbox: (%.2f, %.2f) to (%.2f, %.2f) mm "
+              "board coords, %.2f x %.2f mm"
+              % (tomm(left) - CX, CY - tomm(bottom),
+                 tomm(right) - CX, CY - tomm(top),
+                 tomm(right - left), tomm(bottom - top)))
+
+        return [(left, top), (right, top), (right, bottom), (left, bottom)]
+
+    def add_zones(self):
+        """the five planes: GND/In1, V3V3_SYS/In2, V3V3_ANA/In2 (analog
+        island, priority 2 so it wins over the V3V3_SYS pour on the same
+        layer), GND/F, GND/B.  Filled here so the saved .kicad_pcb already
+        carries filled copper for Freerouting to read as planes."""
+        ana = self._analog_zone_poly()
+        self._add_plane(pcbnew.In1_Cu, "GND", "gen:GND:In1", 0,
+                        0.20, 0.20, self._board_rect_poly())
+        # keyholed around the analog island: see _keyhole_poly.  Priority 0
+        # vs 2 is kept so KiCad's filler still resolves them the same way,
+        # but the outlines no longer overlap, so the DSN Freerouting reads
+        # has two disjoint (plane ...) polygons on PWR instead of two
+        # nested ones.
+        self._add_plane(pcbnew.In2_Cu, "V3V3_SYS", "gen:V3V3_SYS:In2", 0,
+                        0.20, 0.20,
+                        self._keyhole_poly(self._board_rect_poly(), ana))
+        self._add_plane(pcbnew.In2_Cu, "V3V3_ANA", "gen:V3V3_ANA:In2", 2,
+                        0.20, 0.20, ana)
+        self._add_plane(pcbnew.F_Cu, "GND", "gen:GND:F", 0,
+                        0.25, 0.25, self._board_rect_poly())
+        self._add_plane(pcbnew.B_Cu, "GND", "gen:GND:B", 0,
+                        0.25, 0.25, self._board_rect_poly())
+        # the filler's island-removal test needs the board's connectivity
+        # data built from the just-placed pads; without this, F.Cu/B.Cu
+        # (462/81 pads apiece) come back completely unfilled (0 mm^2)
+        # because the filler cannot see any pad as touching a fill region,
+        # while the sparser internal layers (52 THT pads only) happen to
+        # fill anyway.  A freshly-loaded board (pcbnew.LoadBoard) builds
+        # connectivity as part of loading, which is why refilling after a
+        # save-and-reload silently "fixes" it - the in-process board never
+        # gets that call otherwise.
+        self.board.BuildConnectivity()
+        pcbnew.ZONE_FILLER(self.board).Fill(self.board.Zones())
 
     def text(self, s, x, y, rot=0, size=LABEL_TEXT, thick=LABEL_THICK,
              layer=None, just=0, pin=False, back=False):
@@ -1334,6 +2304,7 @@ class Builder:
         out += self.check_back()
         out += self.check_silk()
         out += self.check_rules()
+        out += self.check_satellites()
         return out
 
     # ---------------- the back side ----------------
@@ -1612,8 +2583,10 @@ def floorplan(B, comps):
     B.anchor("SW1", 0, ("cyc", mcu_x0 - 10.8), ("cymin", j4[3] + 0.4))  # RST
     B.anchor("SW2", 0, ("cyc", mcu_x0 - 5.0), ("cymin", j4[3] + 0.4))  # BOOT
     B.place("D20", mcu_x0 - 0.8, -HY + 2.2, 0)              # RGB LED
-    B.place("C79", mcu_x0 - 0.8, -HY + 4.4, 0)  # WS2812 bypass, at the LED
-    B.place("R55", mcu_x0 + 1.3, -HY + 4.4, 0)  # 100 R LED_DATA series R
+    # C79 (the LED's 5 V bypass) and R55 (the data series terminator) are NOT
+    # anchored here any more: both are satellites of D20 itself (SATELLITES),
+    # C79 on its VDD pad and R55 on its DIN pad, so the packer puts them
+    # against the pins instead of merely in the same corner.
 
     # ---------------- TOP edge ----------------
     # microSD, card ejecting +Y (upward), left of centre and above the left
@@ -1647,17 +2620,39 @@ def floorplan(B, comps):
     # MCU's x is pinned to HX: move the edge and the island, not the island's
     # width.  ISLAND_W is what the three MEMS packages, their decoupling and a
     # corridor wide enough for a 2.18 mm test pad actually need.
-    mcu_x, mcu_y = mcu_x0, 0.0
+    mcu_x, mcu_y = mcu_x0, -1.0
     mcu = B.place("U20", mcu_x, mcu_y, 180)
     # the crystal group is offset right of the QFN centre: at the centre its
     # left load cap runs into the microSD socket, whose own left edge is
     # already hard against the H1 grommet keepout, so on a narrower board the
-    # socket is what sets it, not the QFN.
+    # socket is what sets it, not the QFN.  Its y is hard-coded rather than
+    # derived from mcu_y, so it is shifted by the same amount as the QFN to
+    # keep its 0.76 mm gap to XIN/XOUT.
     xtal_x = max(mcu_x + 1.8, j11[2] + 3.9)
-    B.place("Y1", xtal_x, 8.2, 0)               # crystal at XIN/XOUT
-    B.place("C46", xtal_x - 3.0, 8.2, 90)
-    B.place("C47", xtal_x + 3.0, 8.2, 90)
-    B.place("R21", xtal_x, 10.7, 0)
+    xtal_y = mcu_y + 8.2
+    B.place("Y1", xtal_x, xtal_y, 0)               # crystal at XIN/XOUT
+    B.place("C46", xtal_x - 3.0, xtal_y, 90)
+    B.place("C47", xtal_x + 3.0, xtal_y, 90)
+    B.place("R21", xtal_x, xtal_y + 2.5, 0)
+
+    # ---------------- the corridor beside the QFN (U20_CORRIDOR) --------
+    # THE SENSOR ISLAND MOVES AS ONE BLOCK.  U21/U22/U23 and the LDO that
+    # feeds them are the right flank of the MCU, and at their old x the
+    # widest gap any of them left the QFN was 0.36 mm - a corridor no 0402
+    # fits in, in any orientation, which is why a third of U20's decoupling
+    # was landing on the far side of the board.  The shift is the largest
+    # any ONE of the four needs and is applied to all four, so the layout
+    # inside the island - and with it every TP_NEAR_MM test point under it,
+    # which back_side() solves from isl_x - is unchanged.
+    isl_x0 = mcu_x + 6.0                    # island left edge, as drawn
+    u12_x0 = max(mcu_x + 8.4, xtal_x + 6.0)
+    ISLAND = (("U23", isl_x0 + 2.0, -8.5),  # ADXL375, the tallest package
+              ("U21", isl_x0 + 1.8, -3.0),  # ICM-45686
+              ("U22", isl_x0 + 1.25, 1.2),  # BMP581
+              ("U12", u12_x0, 6.6))         # the analog LDO
+    isl_dx = max([0.0] + [mcu[2] + U20_CORRIDOR - (x + B.g(r, 0).cy[0])
+                          for r, x, _ in ISLAND])
+    isl_x = isl_x0 + isl_dx
 
     # The two switchers are anchored rather than packed: their loop geometry is
     # a circuit requirement (CAP_NEAR), and the grommet keepouts break the
@@ -1681,8 +2676,24 @@ def floorplan(B, comps):
     # POCKET_L below is why these are 2.5 mm further left than they were:
     # the ESC row and its label band used to own the first 3.4 mm of the
     # left edge and now nothing does.
-    B.place("U26", -HX + POCKET_L + 5.95, buck_y, 0)
-    B.place("L3", -HX + POCKET_L + 10.95, buck_y, 0)
+    # The mux's x is solved first (U20_CORRIDOR: it has to stand clear of the
+    # QFN's LEFT flank), because the buck and its inductor only follow it
+    # left if it would otherwise land on them - which, at 0.4 mm of vertical
+    # clearance between the two rows, it does not.
+    u25_y = buck_y + 4.5
+    g25 = B.g("U25", 0)
+    u25_x = min(-HX + POCKET_L + 12.95, mcu[0] - U20_CORRIDOR - g25.cy[2])
+    u25_box = (u25_x + g25.cy[0], u25_y + g25.cy[1],
+               u25_x + g25.cy[2], u25_y + g25.cy[3])
+    pocket_dx = 0.0
+    for r, rx in (("U26", 5.95), ("L3", 10.95)):
+        g = B.g(r, 0)
+        box = (-HX + POCKET_L + rx + g.cy[0], buck_y + g.cy[1],
+               -HX + POCKET_L + rx + g.cy[2], buck_y + g.cy[3])
+        if bbox_overlap(u25_box, box, 0.001):
+            pocket_dx = min(pocket_dx, u25_box[0] - 0.25 - box[2])
+    B.place("U26", -HX + POCKET_L + 5.95 + pocket_dx, buck_y, 0)
+    B.place("L3", -HX + POCKET_L + 10.95 + pocket_dx, buck_y, 0)
     l2_x = max(mcu_x + 0.8, j11[2] + 2.6)
     B.place("L2", l2_x, HY - 3.6, 0)
     B.place("U7", l2_x + 4.5, HY - 3.6, 0)
@@ -1697,18 +2708,16 @@ def floorplan(B, comps):
     # band from y = 11.7 up and the microSD socket owns everything left of
     # L2.  The clearance above is C47's courtyard, the crystal's right load
     # capacitor, which is the one anchored part in the way.
-    B.place("U12", max(mcu_x + 8.4, xtal_x + 6.0), 6.6, 0)
-    # U25, the priority mux, and C19, its 220 uF output bulk: anchored side by
-    # side in the left-centre pocket, where VBAT and 5V_IN already are.
-    B.place("U25", min(-HX + POCKET_L + 12.95, mcu[0] - 1.8),
-            buck_y + 4.5, 0)
-    # C19 is the 220 uF polymer: 8.9 x 4.9 mm of courtyard, the biggest
-    # passive on the board.  Its ceiling is the microSD socket above it.  It
-    # used to be nudged clear of the ESC row's silk labels; with J3 on the
-    # back that band is gone and the cap sits hard against the left margin,
-    # clear of the H1 flange keepout on its own courtyard.
-    c19_y = j11[1] - 2.75
-    B.place("C19", -HX + 5.05, c19_y, 0)
+    # It moves right with the rest of the island (isl_dx, U20_CORRIDOR).
+    B.place("U12", u12_x0 + isl_dx, 6.6, 0)
+    # U25, the priority mux: anchored in the left-centre pocket, where VBAT
+    # and 5V_IN already are, U20_CORRIDOR clear of the QFN's left flank.
+    B.place("U25", u25_x, u25_y, 0)
+    # C19, the 100 uF polymer - 8.9 x 4.9 mm of courtyard, the biggest passive
+    # on the board - used to be anchored in the top left corner, three
+    # centimetres of rail away from the pin it holds up.  It is a satellite of
+    # the mux's OUT pad now (SATELLITES), placed before the two 10 uF beside
+    # it because it is the one that needs the room.
     # U8, the USB ESD array, sits beside the receptacle rather than being
     # packed: the two switches take the whole band above J4.
     B.place("U8", -HX + POCKET_L + 2.35, buck_y - 4.6, 0)
@@ -1725,10 +2734,42 @@ def floorplan(B, comps):
     # corridor down the block side for the pads and the gaps between them for
     # the decoupling.  Anchored BEFORE build_grid so the MCU decoupling, which
     # is packed first, packs around them.
-    isl_x = mcu_x + 6.0                 # island left edge, 0.3 mm off the QFN
-    B.place("U23", isl_x + 2.0, -8.5, 0)    # ADXL375, the tallest package
-    B.place("U21", isl_x + 1.8, -3.0, 0)    # ICM-45686
-    B.place("U22", isl_x + 1.25, 1.2, 0)    # BMP581
+    # isl_x / isl_dx and the ISLAND table are solved beside the crystal above
+    # (U20_CORRIDOR); U12 is the fourth member and is already down.
+    for r, x, y in ISLAND:
+        if r != "U12":
+            B.place(r, x + isl_dx, y, 0)
+
+    # ---- the corridors this opened (lead's decision A) ------------------
+    # Every IC, connector and inductor courtyard that overlaps the QFN's own
+    # y band, with its horizontal gap to the package: the narrowest of these
+    # is the lane U20's decoupling has to live in.
+    flank = {"left": [], "right": [], "above": [], "below": []}
+    for ref, rect in B.placed:
+        if ref == "U20" or B.is_back(ref) or \
+                not re.match(r"^(U|J|L|Y|SW|D)\d+$", ref):
+            continue
+        if rect[1] < mcu[3] and mcu[1] < rect[3]:       # beside the package
+            if rect[2] <= mcu[0]:
+                flank["left"].append((mcu[0] - rect[2], ref))
+            elif rect[0] >= mcu[2]:
+                flank["right"].append((rect[0] - mcu[2], ref))
+        if rect[0] < mcu[2] and mcu[0] < rect[2]:       # over or under it
+            if rect[1] >= mcu[3]:
+                flank["above"].append((rect[1] - mcu[3], ref))
+            elif rect[3] <= mcu[1]:
+                flank["below"].append((mcu[1] - rect[3], ref))
+    for side in ("left", "right", "above", "below"):
+        # U20_CORRIDOR is the lead's decision for the LEFT and RIGHT flanks
+        # only; above and below are reported, not enforced - the crystal
+        # group, the microSD socket, the USB receptacle, the buttons and the
+        # LED are all anchored parts this floorplan may not move.  An
+        # inductor is not an IC or a connector and does not bind either.
+        print("  corr  U20 %-5s %s" % (side, "  ".join(
+            "%s %.2f%s" % (r, d, " (inductor)" if r.startswith("L") else
+                           ("" if d >= U20_CORRIDOR - 1e-6 or
+                            side in ("above", "below") else " UNDER"))
+            for d, r in sorted(flank[side])[:5]) or "clear"))
 
     # ---------------- the back side ----------------
     # Bare pads only (see BACK_PAD_ROWS).  Nothing is packed here: the back is
@@ -1766,27 +2807,22 @@ def floorplan(B, comps):
                          lx + w / 2 + IO_LABEL_CLR, ly + h / 2 + 0.05))
     B.build_grid(reserved)
 
-    # ---------------- switcher loops ----------------
-    u7_loop = [("C8", [("U7", "1"), ("U7", "7")]),
-               ("C17", [("U7", "6"), ("U7", "7")]),
-               ("FB1", [("L2", "2"), ("U7", "3")]),
-               ("C10", [("L2", "2"), ("U7", "4")]),
-               ("C11", [("L2", "2"), ("U7", "4")]),
-               ("C12", [("L2", "2"), ("U7", "4")]),
-               ("C23", [("FB1", "2"), ("U7", "4")]),
-               ("C24", [("FB1", "2"), ("U7", "4")]),
-               ("C9", [("U7", "6"), ("U7", "7")]),
-               ("C13", [("U7", "8")]), ("R7", [("U7", "9")]),
-               ("R8", [("U7", "9")]), ("R9", [("U7", "10")])]
-    buck_loop = [("C74", [("U26", "3"), ("U26", "4")]),
-                 ("C73", [("U26", "3"), ("U26", "4")]),
-                 ("C76", [("L3", "2"), ("U26", "4")]),
-                 ("C77", [("L3", "2"), ("U26", "4")]),
-                 ("C80", [("L3", "2"), ("U26", "4")]),
-                 ("C75", [("U26", "6")]), ("R52", [("U26", "2")])]
-    B.power_loop("buck5", buck_loop, B.halo(["U26", "L3"], 5.4))
-    B.power_loop("u7", u7_loop, B.halo(["U7", "L2"], 6.0))
-    loop_done = {r for r, _ in u7_loop + buck_loop}
+    # ---------------- satellites: the passives that sit ON a pin ----------
+    # Every part in SATELLITES is placed here, against the pad it serves,
+    # before a single region is packed - so the decoupling, the dividers, the
+    # series terminators and the switcher loops take the cells next to their
+    # pins and the region packing gets what is left, rather than the other way
+    # round.  This includes both switcher loops: place_satellites() seeds on
+    # the IC pad and scores candidates by the PAD-TO-PIN distance, which is
+    # strictly tighter than power_loop()'s "somewhere inside the halo", so
+    # power_loop() is no longer used by this floorplan (CAP_NEAR still checks
+    # the result).
+    #
+    # It has to run after build_grid(): the grid is what holds the anchored
+    # parts, the mounting-hole keepouts and the reserved silk bands, and a
+    # satellite obeys all three like any other packed part.
+    B.verify_satellites(comps)
+    B.place_satellites([o for o in SAT_OWNERS if o in B.fps])
 
     # ---------------- clusters ----------------
     # (refs, seed, bounding boxes the cluster may use)
@@ -1862,11 +2898,19 @@ def floorplan(B, comps):
                      north + east + ring),
     }
     # anything the schematic gained since this table was written follows the
-    # cluster its net neighbours are in
+    # cluster its net neighbours are in.  `assigned` is taken BEFORE the
+    # satellites are struck out of the region lists below, so a new part still
+    # votes itself into the region its neighbours belong to even though those
+    # neighbours are no longer packed with it.
     assigned = {r: g for g, (refs, _, _) in groups.items() for r in refs}
-    assigned.update({r: "u7" for r, _ in u7_loop})
-    assigned.update({r: "buck5" for r, _ in buck_loop})
+    assigned.update({r: SAT_GROUP[v[0]] for r, v in B.sat.items()
+                     if v[0] in SAT_GROUP})
     groups["u7"] = ([], (6.1, 13.0), north)
+    # THE SATELLITES ARE ALREADY DOWN (see above): strike them out of the
+    # region lists so the regions hold what is actually left to pack.  They
+    # are in `fixed` as well, which is the belt to this braces.
+    for refs, _, _ in groups.values():
+        refs[:] = [r for r in refs if r not in B.sat]
     # everything anchored so far, including the whole back side, is off limits
     # to the cluster sweep below
     fixed = {r for r, _ in B.placed}
@@ -1909,8 +2953,8 @@ def floorplan(B, comps):
              "reg3v3", "i2c", "v5bulk", "adc_div", "buck5", "u7", "led"]
     for name in order:
         refs, seed, bounds = groups[name]
-        # the switcher loops and the anchored parts are already down
-        refs = [r for r in refs if r not in loop_done and r not in fixed]
+        # the satellites and the anchored parts are already down
+        refs = [r for r in refs if r not in fixed]
         if not refs:
             continue
         if name == "mcu_ring":
@@ -2231,6 +3275,21 @@ def inject_netclass_patterns(path):
     json.dump(d, open(path, "w"), indent=2)
 
 
+def board_has_foreign_copper(text):
+    """True if a saved .kicad_pcb `text` has manual work the rebuild would
+    discard: any top-level track/via/arc, or a top-level zone that is not
+    one of ours.  Every zone add_zones() writes is named "gen:...", so a
+    zone whose name is missing or does not start with "gen:" is someone's
+    hand-drawn zone and still blocks the rebuild; ours never do."""
+    if re.search(r"\n\t\((segment|via|arc)\b", text):
+        return True
+    for m in re.finditer(r"\n\t\(zone\b.*?\n\t\)\n", text, flags=re.S):
+        nm = re.search(r'\(name "([^"]*)"\)', m.group(0))
+        if not (nm and nm.group(1).startswith("gen:")):
+            return True
+    return False
+
+
 # --------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
@@ -2245,13 +3304,15 @@ def main():
     if not a.no_netlist:
         export_netlist(a.netlist)
     comps, nets = read_netlist(a.netlist)
+    pinfunc = read_pinfunctions(a.netlist)
     print("netlist: %d components, %d nets" % (len(comps), len(nets)))
 
     if os.path.exists(BOARD) and not a.dry_run:
         old = open(BOARD).read()
-        # top-level (board) tracks/zones only - footprints carry keepouts
-        if (re.search(r"\n\t\((segment|via|arc|zone)\b", old)
-                and not a.force):
+        # top-level (board) tracks/zones only - footprints carry keepouts.
+        # Our own "gen:*" zones (see add_zones()) do not count: every run
+        # regenerates them, so they must not block the next run.
+        if board_has_foreign_copper(old) and not a.force:
             raise SystemExit("%s already has tracks/zones; re-running would "
                              "discard them.  Use --force." % BOARD)
         bdir = os.path.join(PRJ, "backups")
@@ -2262,11 +3323,13 @@ def main():
     B.setup_layers()
     B.setup_netclasses()
     B.load_components(comps, nets)
+    B.pinfunc = pinfunc
     floorplan(B, comps)
     silkscreen(B)
     back_silk(B)
     B.silk_fix()
     B.draw_outline()
+    B.add_zones()
 
     seen = [r for r, _ in B.placed]
     dup = sorted({r for r in seen if seen.count(r) > 1})

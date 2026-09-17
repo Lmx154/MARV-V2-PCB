@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-16T10:22:56</date>
+    <date>2026-09-16T16:11:40</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -2017,7 +2017,7 @@
       </units>
     </comp>
     <comp ref="C48">
-      <value>100n / 16 V X7R, ADC0</value>
+      <value>100n / 16 V X7R, ADC1</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="LCSC">C1525</field>
@@ -2043,7 +2043,7 @@
       </units>
     </comp>
     <comp ref="C49">
-      <value>100n / 16 V X7R, ADC1</value>
+      <value>100n / 16 V X7R, ADC0</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <fields>
         <field name="LCSC">C1525</field>
@@ -4621,12 +4621,12 @@
     <net code="2" name="BARO_CS" class="SensorSPI">
       <node ref="R50" pin="2" pintype="passive"/>
       <node ref="TP5" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="22" pinfunction="GPIO22_22" pintype="bidirectional"/>
+      <node ref="U20" pin="13" pinfunction="GPIO14_13" pintype="bidirectional"/>
       <node ref="U22" pin="6" pinfunction="CSB_6" pintype="input"/>
     </net>
     <net code="3" name="BARO_INT" class="SensorSPI">
       <node ref="TP9" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="26" pinfunction="GPIO25_26" pintype="bidirectional"/>
+      <node ref="U20" pin="12" pinfunction="GPIO13_12" pintype="bidirectional"/>
       <node ref="U22" pin="7" pinfunction="INT_7" pintype="output"/>
     </net>
     <net code="4" name="BOOT_BTN" class="Default">
@@ -4655,11 +4655,11 @@
     </net>
     <net code="8" name="ELRS_RX" class="Default">
       <node ref="J6" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
-      <node ref="U20" pin="6" pinfunction="GPIO8_6" pintype="bidirectional"/>
+      <node ref="U20" pin="16" pinfunction="GPIO16_16" pintype="bidirectional"/>
     </net>
     <net code="9" name="ELRS_TX" class="Default">
       <node ref="J6" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
-      <node ref="U20" pin="7" pinfunction="GPIO9_7" pintype="bidirectional"/>
+      <node ref="U20" pin="17" pinfunction="GPIO17_17" pintype="bidirectional"/>
     </net>
     <net code="10" name="ESC_TELEM" class="PWM_ESC">
       <node ref="J3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
@@ -4667,7 +4667,7 @@
     </net>
     <net code="11" name="ESC_TELEM_RX" class="PWM_ESC">
       <node ref="R54" pin="2" pintype="passive"/>
-      <node ref="U20" pin="38" pinfunction="GPIO30_38" pintype="bidirectional"/>
+      <node ref="U20" pin="40" pinfunction="GPIO32_40" pintype="bidirectional"/>
     </net>
     <net code="12" name="FLASH_CS1" class="Default">
       <node ref="R35" pin="2" pintype="passive"/>
@@ -4798,37 +4798,37 @@
     </net>
     <net code="14" name="GPS_RX" class="Default">
       <node ref="J6" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
-      <node ref="U20" pin="11" pinfunction="GPIO12_11" pintype="bidirectional"/>
+      <node ref="U20" pin="25" pinfunction="GPIO24_25" pintype="bidirectional"/>
     </net>
     <net code="15" name="GPS_TX" class="Default">
       <node ref="J6" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="U20" pin="12" pinfunction="GPIO13_12" pintype="bidirectional"/>
+      <node ref="U20" pin="26" pinfunction="GPIO25_26" pintype="bidirectional"/>
     </net>
     <net code="16" name="HG_ACC_CS" class="SensorSPI">
       <node ref="R51" pin="2" pintype="passive"/>
       <node ref="TP6" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="17" pinfunction="GPIO17_17" pintype="bidirectional"/>
+      <node ref="U20" pin="1" pinfunction="GPIO4_1" pintype="bidirectional"/>
       <node ref="U23" pin="7" pinfunction="CS_7" pintype="input"/>
     </net>
     <net code="17" name="HG_ACC_INT" class="SensorSPI">
       <node ref="TP10" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="37" pinfunction="GPIO29_37" pintype="bidirectional"/>
+      <node ref="U20" pin="78" pinfunction="GPIO1_78" pintype="bidirectional"/>
       <node ref="U23" pin="8" pinfunction="INT1_8" pintype="output"/>
     </net>
     <net code="18" name="IMU_CS" class="SensorSPI">
       <node ref="R48" pin="2" pintype="passive"/>
       <node ref="TP4" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="20" pinfunction="GPIO20_20" pintype="bidirectional"/>
+      <node ref="U20" pin="4" pinfunction="GPIO7_4" pintype="bidirectional"/>
       <node ref="U21" pin="12" pinfunction="AP_CS_12" pintype="input"/>
     </net>
     <net code="19" name="IMU_INT1" class="SensorSPI">
       <node ref="TP7" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="23" pinfunction="GPIO23_23" pintype="bidirectional"/>
+      <node ref="U20" pin="3" pinfunction="GPIO6_3" pintype="bidirectional"/>
       <node ref="U21" pin="4" pinfunction="INT1_4" pintype="output"/>
     </net>
     <net code="20" name="IMU_INT2" class="SensorSPI">
       <node ref="TP8" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="25" pinfunction="GPIO24_25" pintype="bidirectional"/>
+      <node ref="U20" pin="79" pinfunction="GPIO2_79" pintype="bidirectional"/>
       <node ref="U21" pin="9" pinfunction="INT2/FSYNC/CLKIN_9" pintype="bidirectional"/>
     </net>
     <net code="21" name="IO_GPIO44" class="Default">
@@ -4849,7 +4849,7 @@
     </net>
     <net code="25" name="LED_DATA" class="Default">
       <node ref="R55" pin="1" pintype="passive"/>
-      <node ref="U20" pin="27" pinfunction="GPIO26_27" pintype="bidirectional"/>
+      <node ref="U20" pin="80" pinfunction="GPIO3_80" pintype="bidirectional"/>
     </net>
     <net code="26" name="LED_DIN" class="Default">
       <node ref="D20" pin="3" pinfunction="DIN_3" pintype="input"/>
@@ -4858,44 +4858,44 @@
     <net code="27" name="MAG_SCL" class="Default">
       <node ref="J6" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="R26" pin="2" pintype="passive"/>
-      <node ref="U20" pin="4" pinfunction="GPIO7_4" pintype="bidirectional"/>
+      <node ref="U20" pin="23" pinfunction="GPIO23_23" pintype="bidirectional"/>
     </net>
     <net code="28" name="MAG_SDA" class="Default">
       <node ref="J6" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="R25" pin="2" pintype="passive"/>
-      <node ref="U20" pin="3" pinfunction="GPIO6_3" pintype="bidirectional"/>
+      <node ref="U20" pin="22" pinfunction="GPIO22_22" pintype="bidirectional"/>
     </net>
     <net code="29" name="PWM1" class="PWM_ESC">
       <node ref="J3" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
-      <node ref="U20" pin="79" pinfunction="GPIO2_79" pintype="bidirectional"/>
+      <node ref="U20" pin="54" pinfunction="GPIO43/ADC3_54" pintype="bidirectional"/>
     </net>
     <net code="30" name="PWM2" class="PWM_ESC">
       <node ref="J3" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
-      <node ref="U20" pin="80" pinfunction="GPIO3_80" pintype="bidirectional"/>
+      <node ref="U20" pin="48" pinfunction="GPIO39_48" pintype="bidirectional"/>
     </net>
     <net code="31" name="PWM3" class="PWM_ESC">
       <node ref="J3" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
-      <node ref="U20" pin="1" pinfunction="GPIO4_1" pintype="bidirectional"/>
+      <node ref="U20" pin="47" pinfunction="GPIO38_47" pintype="bidirectional"/>
     </net>
     <net code="32" name="PWM4" class="PWM_ESC">
       <node ref="J3" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
-      <node ref="U20" pin="2" pinfunction="GPIO5_2" pintype="bidirectional"/>
+      <node ref="U20" pin="45" pinfunction="GPIO36_45" pintype="bidirectional"/>
     </net>
     <net code="33" name="PWM5" class="PWM_ESC">
       <node ref="J6" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
-      <node ref="U20" pin="8" pinfunction="GPIO10_8" pintype="bidirectional"/>
+      <node ref="U20" pin="20" pinfunction="GPIO20_20" pintype="bidirectional"/>
     </net>
     <net code="34" name="PWM6" class="PWM_ESC">
       <node ref="J6" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
-      <node ref="U20" pin="9" pinfunction="GPIO11_9" pintype="bidirectional"/>
+      <node ref="U20" pin="19" pinfunction="GPIO19_19" pintype="bidirectional"/>
     </net>
     <net code="35" name="PWM7" class="PWM_ESC">
       <node ref="J6" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
-      <node ref="U20" pin="13" pinfunction="GPIO14_13" pintype="bidirectional"/>
+      <node ref="U20" pin="14" pinfunction="GPIO15_14" pintype="bidirectional"/>
     </net>
     <net code="36" name="PWM8" class="PWM_ESC">
       <node ref="J6" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
-      <node ref="U20" pin="14" pinfunction="GPIO15_14" pintype="bidirectional"/>
+      <node ref="U20" pin="2" pinfunction="GPIO5_2" pintype="bidirectional"/>
     </net>
     <net code="37" name="PWR_GOOD" class="Default">
       <node ref="R10" pin="2" pintype="passive"/>
@@ -4906,7 +4906,7 @@
     </net>
     <net code="38" name="PWR_SRC_ST" class="Default">
       <node ref="R47" pin="2" pintype="passive"/>
-      <node ref="U20" pin="48" pinfunction="GPIO39_48" pintype="bidirectional"/>
+      <node ref="U20" pin="46" pinfunction="GPIO37_46" pintype="bidirectional"/>
       <node ref="U25" pin="9" pinfunction="ST_9" pintype="open_collector"/>
     </net>
     <net code="39" name="QSPI_SCLK" class="Default">
@@ -4935,55 +4935,55 @@
     </net>
     <net code="45" name="SD_CLK" class="Default">
       <node ref="J11" pin="5" pinfunction="CLK_5" pintype="input"/>
-      <node ref="U20" pin="40" pinfunction="GPIO32_40" pintype="bidirectional"/>
+      <node ref="U20" pin="42" pinfunction="GPIO33_42" pintype="bidirectional"/>
     </net>
     <net code="46" name="SD_CMD" class="Default">
       <node ref="J11" pin="3" pinfunction="CMD_3" pintype="input"/>
       <node ref="R36" pin="2" pintype="passive"/>
-      <node ref="U20" pin="42" pinfunction="GPIO33_42" pintype="bidirectional"/>
+      <node ref="U20" pin="43" pinfunction="GPIO34_43" pintype="bidirectional"/>
     </net>
     <net code="47" name="SD_D0" class="Default">
       <node ref="J11" pin="7" pinfunction="DAT0_7" pintype="bidirectional"/>
       <node ref="R37" pin="2" pintype="passive"/>
-      <node ref="U20" pin="43" pinfunction="GPIO34_43" pintype="bidirectional"/>
+      <node ref="U20" pin="36" pinfunction="GPIO28_36" pintype="bidirectional"/>
     </net>
     <net code="48" name="SD_D1" class="Default">
       <node ref="J11" pin="8" pinfunction="DAT1_8" pintype="bidirectional"/>
       <node ref="R38" pin="2" pintype="passive"/>
-      <node ref="U20" pin="44" pinfunction="GPIO35_44" pintype="bidirectional"/>
+      <node ref="U20" pin="37" pinfunction="GPIO29_37" pintype="bidirectional"/>
     </net>
     <net code="49" name="SD_D2" class="Default">
       <node ref="J11" pin="1" pinfunction="DAT2_1" pintype="bidirectional"/>
       <node ref="R39" pin="2" pintype="passive"/>
-      <node ref="U20" pin="45" pinfunction="GPIO36_45" pintype="bidirectional"/>
+      <node ref="U20" pin="38" pinfunction="GPIO30_38" pintype="bidirectional"/>
     </net>
     <net code="50" name="SD_D3" class="Default">
       <node ref="J11" pin="2" pinfunction="DAT3/CD_2" pintype="bidirectional"/>
       <node ref="R40" pin="2" pintype="passive"/>
-      <node ref="U20" pin="46" pinfunction="GPIO37_46" pintype="bidirectional"/>
+      <node ref="U20" pin="39" pinfunction="GPIO31_39" pintype="bidirectional"/>
     </net>
     <net code="51" name="SD_DET" class="Default">
       <node ref="J11" pin="9" pinfunction="DET_B_9" pintype="passive"/>
       <node ref="R41" pin="2" pintype="passive"/>
-      <node ref="U20" pin="47" pinfunction="GPIO38_47" pintype="bidirectional"/>
+      <node ref="U20" pin="44" pinfunction="GPIO35_44" pintype="bidirectional"/>
     </net>
     <net code="52" name="SENS_MISO" class="SensorSPI">
       <node ref="TP3" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="16" pinfunction="GPIO16_16" pintype="bidirectional"/>
+      <node ref="U20" pin="6" pinfunction="GPIO8_6" pintype="bidirectional"/>
       <node ref="U21" pin="1" pinfunction="AP_SDO_1" pintype="output"/>
       <node ref="U22" pin="5" pinfunction="SDO/ADDR_5" pintype="bidirectional"/>
       <node ref="U23" pin="12" pinfunction="SDO/ALT_ADDRESS_12" pintype="bidirectional"/>
     </net>
     <net code="53" name="SENS_MOSI" class="SensorSPI">
       <node ref="TP2" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="19" pinfunction="GPIO19_19" pintype="bidirectional"/>
+      <node ref="U20" pin="9" pinfunction="GPIO11_9" pintype="bidirectional"/>
       <node ref="U21" pin="14" pinfunction="AP_SDA/AP_SDIO/AP_SDI_14" pintype="input"/>
       <node ref="U22" pin="4" pinfunction="SDI/SDA_4" pintype="bidirectional"/>
       <node ref="U23" pin="13" pinfunction="SDA/SDI/SDIO_13" pintype="bidirectional"/>
     </net>
     <net code="54" name="SENS_SCK" class="SensorSPI">
       <node ref="TP1" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U20" pin="18" pinfunction="GPIO18_18" pintype="bidirectional"/>
+      <node ref="U20" pin="8" pinfunction="GPIO10_8" pintype="bidirectional"/>
       <node ref="U21" pin="13" pinfunction="AP_SCLK_13" pintype="input"/>
       <node ref="U22" pin="2" pinfunction="SCK_2" pintype="input"/>
       <node ref="U23" pin="14" pinfunction="SCL/SCLK_14" pintype="input"/>
@@ -5097,7 +5097,7 @@
       <node ref="U25" pin="2" pinfunction="IN2_2" pintype="power_in"/>
       <node ref="U8" pin="5" pinfunction="VBUS_5" pintype="passive"/>
     </net>
-    <net code="78" name="V3V3_ANA" class="Power">
+    <net code="78" name="V3V3_ANA" class="Rail3V3">
       <node ref="C26" pin="1" pintype="passive"/>
       <node ref="C40" pin="1" pintype="passive"/>
       <node ref="C50" pin="1" pintype="passive"/>
@@ -5125,7 +5125,7 @@
       <node ref="U23" pin="3" pinfunction="RESERVED_3" pintype="passive"/>
       <node ref="U23" pin="6" pinfunction="VS_6" pintype="power_in"/>
     </net>
-    <net code="79" name="V3V3_SYS" class="Power">
+    <net code="79" name="V3V3_SYS" class="Rail3V3">
       <node ref="C22" pin="1" pintype="passive"/>
       <node ref="C23" pin="1" pintype="passive"/>
       <node ref="C24" pin="1" pintype="passive"/>
@@ -5214,13 +5214,13 @@
       <node ref="C48" pin="1" pintype="passive"/>
       <node ref="R27" pin="2" pintype="passive"/>
       <node ref="R28" pin="1" pintype="passive"/>
-      <node ref="U20" pin="49" pinfunction="GPIO40/ADC0_49" pintype="bidirectional"/>
+      <node ref="U20" pin="52" pinfunction="GPIO41/ADC1_52" pintype="bidirectional"/>
     </net>
     <net code="83" name="VBUS_SENSE" class="Default">
       <node ref="C49" pin="1" pintype="passive"/>
       <node ref="R29" pin="2" pintype="passive"/>
       <node ref="R30" pin="1" pintype="passive"/>
-      <node ref="U20" pin="52" pinfunction="GPIO41/ADC1_52" pintype="bidirectional"/>
+      <node ref="U20" pin="49" pinfunction="GPIO40/ADC0_49" pintype="bidirectional"/>
     </net>
     <net code="84" name="VREG_AVDD" class="Default">
       <node ref="C41" pin="1" pintype="passive"/>
@@ -5257,23 +5257,23 @@
     <net code="92" name="unconnected-(U12-NC-Pad4)" class="Default">
       <node ref="U12" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
-    <net code="93" name="unconnected-(U20-GPIO1-Pad78)" class="Default">
-      <node ref="U20" pin="78" pinfunction="GPIO1_78" pintype="bidirectional+no_connect"/>
+    <net code="93" name="unconnected-(U20-GPIO9-Pad7)" class="Default">
+      <node ref="U20" pin="7" pinfunction="GPIO9_7" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="94" name="unconnected-(U20-GPIO21-Pad21)" class="Default">
+    <net code="94" name="unconnected-(U20-GPIO12-Pad11)" class="Default">
+      <node ref="U20" pin="11" pinfunction="GPIO12_11" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="95" name="unconnected-(U20-GPIO18-Pad18)" class="Default">
+      <node ref="U20" pin="18" pinfunction="GPIO18_18" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="96" name="unconnected-(U20-GPIO21-Pad21)" class="Default">
       <node ref="U20" pin="21" pinfunction="GPIO21_21" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="95" name="unconnected-(U20-GPIO27-Pad28)" class="Default">
+    <net code="97" name="unconnected-(U20-GPIO26-Pad27)" class="Default">
+      <node ref="U20" pin="27" pinfunction="GPIO26_27" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="98" name="unconnected-(U20-GPIO27-Pad28)" class="Default">
       <node ref="U20" pin="28" pinfunction="GPIO27_28" pintype="bidirectional+no_connect"/>
-    </net>
-    <net code="96" name="unconnected-(U20-GPIO28-Pad36)" class="Default">
-      <node ref="U20" pin="36" pinfunction="GPIO28_36" pintype="bidirectional+no_connect"/>
-    </net>
-    <net code="97" name="unconnected-(U20-GPIO31-Pad39)" class="Default">
-      <node ref="U20" pin="39" pinfunction="GPIO31_39" pintype="bidirectional+no_connect"/>
-    </net>
-    <net code="98" name="unconnected-(U20-GPIO43/ADC3-Pad54)" class="Default">
-      <node ref="U20" pin="54" pinfunction="GPIO43/ADC3_54" pintype="bidirectional+no_connect"/>
     </net>
     <net code="99" name="unconnected-(U21-RESV-Pad2)" class="Default">
       <node ref="U21" pin="2" pinfunction="RESV_2" pintype="passive+no_connect"/>
