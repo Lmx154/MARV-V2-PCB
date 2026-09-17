@@ -1,7 +1,37 @@
-# MARV V2 power simulation results
+# Input-power simulation results
 
-RETIRED: 3 decks modeled the superseded pack-buck/mux/TPS62913 power tree and have been moved to `simulations/superseded/` (with their generated `corners/`); no active power-stage decks remain.
+Generated from the saved schematic by `python3 tools/simulate_power_input.py`.
 
-The 2026-09-17 BEC revision ([DESIGN_SPEC.md "Decisions"](../DESIGN_SPEC.md#decisions)) replaced the on-board AP63205 pack buck, the U25 TPS2121 priority mux and the U7 TPS62913 second-stage buck with an external BEC feeding a Q1 AO3401A / D1 1N5819WS P-FET+Schottky OR into a fixed AP63203WU-7 3.3 V buck. Nothing in the retired decks models that architecture, so `run_power_checks.py` no longer runs them rather than reporting a stale `Status: PASS`. Re-deriving decks for the current tree is separate, undecided work -- see DESIGN_SPEC.md "Open items".
+External source 5 V / assumed 0.05 ohm; USB 5 V / assumed 0.35 ohm. Combined V5_SYS load 0.5 A; extra external 5 V load 0 A.
 
-Run `python3 tools/run_power_checks.py` to regenerate this file.
+The external source represents either the 2S–6S buck or the 1S boost **at its 5 V output**. The source converter itself is not simulated. Loads start at 2 ms; source events at 8 ms.
+
+| Case | Before (V) | Event min–max (V) | Final (V) | External / USB final (A) |
+| --- | ---: | ---: | ---: | ---: |
+| External 5 V only | 4.952 | 4.952–4.952 | 4.952 | 0.500 / 0.000 |
+| USB only | 4.315 | 4.315–4.315 | 4.315 | 0.000 / 0.502 |
+| Both connected | 4.352 | 4.352–4.352 | 4.352 | 0.065 / 0.437 |
+| USB plugged in; external stays | 4.952 | 4.352–4.952 | 4.352 | 0.065 / 0.437 |
+| USB unplugged; external stays | 4.352 | 4.269–4.940 | 4.946 | 0.500 / 0.000 |
+| External unplugged; USB stays | 4.352 | 4.315–4.352 | 4.315 | 0.000 / 0.502 |
+| External only; 0.1 A to chosen load | 4.990 | 4.952–4.990 | 4.952 | 0.500 / 0.000 |
+
+Lowest measured voltage in the event windows: **4.269 V**. AP63203 specified input minimum: **3.8 V**; margin **0.469 V**. This checks input availability, not the actual 3.3 V outputs.
+
+| Case | External 5V_IN min / final (V) | Peak reverse into USB node (mA) | Peak reverse toward external input (mA) | Q1 / D1 final loss (W) |
+| --- | ---: | ---: | ---: | ---: |
+| External 5 V only | 4.974 / 4.974 | 0.0053 | 0.0000 | 0.0112 / 0.0000 |
+| USB only | 0.000 / 0.000 | 0.0000 | 0.0000 | 0.0000 / 0.2544 |
+| Both connected | 4.997 / 4.997 | 0.0000 | 0.0000 | 0.0421 / 0.2151 |
+| USB plugged in; external stays | 4.974 / 4.997 | 0.0053 | 0.0000 | 0.0421 / 0.2151 |
+| USB unplugged; external stays | 4.973 / 4.974 | 0.0057 | 0.0000 | 0.0141 / 0.0000 |
+| External unplugged; USB stays | 4.841 / 4.813 | 0.0000 | 0.0000 | 0.0001 / 0.2542 |
+| External only; 0.1 A to chosen load | 4.974 / 4.974 | 0.0053 | 0.0000 | 0.0112 / 0.0000 |
+
+Reverse-current peaks include connection transients; they are not USB compliance limits. Losses are electrical model estimates, not temperatures.
+
+USB drives Q1’s gate. With USB present, do not assume the low-resistance BEC path wins: D1 and Q1’s body diode can share the load. Unplugging USB lets the Q1 channel turn on.
+
+**Limits:** vendor Q1 model; fitted D1 forward curve; approximate white LED; nominal capacitors. No regulator control loops, source current limits, battery chemistry, charging, converter cutoff, USB negotiation, PCB parasitics, noise or thermal simulation. D1 leakage at temperature is not bounded. The default 0.5 A is an explicit input-load assumption, not a measured board budget.
+
+Exact decks, waveforms, logs and exported netlist: `/tmp/marv-input-power-afuv4tx5`.

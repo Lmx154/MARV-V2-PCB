@@ -6,13 +6,12 @@ pcbnew links a footprint to its schematic symbol by the hierarchical path
     (path "/<sheet-uuid>/<symbol-uuid>")
 
 so MOVING A SYMBOL TO A DIFFERENT SHEET orphans its footprint: the symbol uuid
-is unchanged (tools/build_power.py derives it from the reference designator) but
+can remain unchanged, but
 the sheet half now names a sheet the symbol is no longer on.  A stale path is
 not a loud failure - pcbnew simply treats the footprint as "not in the
 schematic" on the next update, and offers to delete it.
 
-This script reads the REGENERATED sheets (not the generator's internals, so it
-is an independent check of them), builds reference -> "/sheet/symbol", and
+This script reads the saved sheets, builds reference -> "/sheet/symbol", and
 rewrites ONLY the path string of each footprint whose Reference matches.  A byte
 diff of the board therefore shows nothing but path lines.
 

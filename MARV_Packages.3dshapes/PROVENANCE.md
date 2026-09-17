@@ -46,8 +46,10 @@ Caveats:
 
 ## 2. FreeCAD-generated simplified models
 
-Written by the scripts in `tools/3d/` (see `tools/3d/README.md` for how to
-re-run them and for the full dimension tables in each script's docstring).
+Created with one-time FreeCAD scripts, since removed during code cleanup.
+The generator names below record provenance; they are not available commands.
+The STEP assets and dimension sources are retained. `tools/3d/bbox.py` remains
+available for model inspection.
 They exist because no public STEP is downloadable for these packages. They are
 dimensionally-correct *simplified* bodies: flat rectangular leads instead of the
 real lead-frame profile, a flat exposed pad, a pin-1 corner chamfer plus a top

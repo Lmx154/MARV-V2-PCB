@@ -5,15 +5,15 @@ AO3401A,Package_TO_SOT_SMD:SOT-23,C15127,AO3401A P-MOSFET -30V -4A,,1,Q1,,"JLC B
 1N5819WS,Diode_SMD:D_SOD-323,C191023,1N5819WS Schottky 40V 1A,,1,D1,,"JLC Basic; the USB side of the OR (anode USB_VBUS, cathode V5_SYS)"
 4.7u,MARV_Packages:L_Changjiang_FTC404030S,C39676083,4.7uH FTC404030S4R7MGCA,,1,L2,L2,"Isat 6.0 A worst case (30% drop), Irms 4.0 A (40 C), DCR 46 mOhm max; AP63203 Sec 10 licenses 2.2-10 uH, and this is the part the removed AP63205 stage already sourced"
 10k / 1%,Resistor_SMD:R_0402_1005Metric,C25744,10k 1% 0402,,2,"R28,R29",,Basic; same part as the 10k line
-100n / 16 V X7R,Capacitor_SMD:C_0402_1005Metric,C1525,100nF 16V X7R 10%,,27,"C9,C13,C30,C31,C32,C33,C34,C35,C36,C37,C38,C40,C42,C43,C44,C48,C49,C50,C52,C54,C56,C58,C60,C62,C64,C78,C79",,
+100n / 16 V X7R,Capacitor_SMD:C_0402_1005Metric,C1525,100nF 16V X7R 10%,,24,"C13,C30,C31,C32,C33,C34,C35,C36,C37,C38,C40,C42,C43,C44,C48,C49,C50,C52,C54,C56,C60,C64,C78,C79",,
 USB_C_PROGRAM_POWER,MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12,C165948,USB-C TYPE-C-31-M-12,,1,J4,,
 5.1k / 1%,Resistor_SMD:R_0402_1005Metric,C25905,5.1k 1% 0402,,2,"R4,R5",,Basic
-1u / 10 V X7R 0402,Capacitor_SMD:C_0402_1005Metric,C52923,1uF 25V X5R 10%,,10,"C7,C25,C26,C51,C53,C55,C57,C59,C61,C63",,X5R not X7R; 25V rating improves DC-bias vs the 10V spec
+1u / 10 V X7R 0402,Capacitor_SMD:C_0402_1005Metric,C52923,1uF 25V X5R 10%,,4,"C7,C25,C59,C62",,"X5R not X7R; 25V rating improves DC-bias vs the 10V spec (C62 is the U24 socket bypass: 1 uF is the APS6404L PSRAM requirement, Sec 16.4)"
 100u / 6.3 V polymer,Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B,C79109,100uF 6.3V polymer 35mR,,1,C19,,"exact spec MPN 6TPE100MAZB, ESR 35mR <= 40mR"
 22u / 10 V X5R 0603 GRM188R61A226ME15,Capacitor_SMD:C_0603_1608Metric,C86295,22uF 10V X5R 20%,,2,"C10,C11",,no Basic 22uF 0603 above 6.3V
 100k,Resistor_SMD:R_0402_1005Metric,C25741,100k 1% 0402,,1,R10,,Basic; MCU_RUN pull-up
 TPS7A2033PDBVR,Package_TO_SOT_SMD:SOT-23-5,C2862740,TPS7A2033PDBVR,,1,U12,,
-10u / 10 V X7R 0603,Capacitor_SMD:C_0603_1608Metric,C96446,10uF 25V X5R 20%,,4,"C20,C21,C22,C65",,X5R not X7R; 25V rating cuts DC-bias loss on the 5V rail
+10u / 10 V X7R 0603,Capacitor_SMD:C_0603_1608Metric,C96446,10uF 25V X5R 20%,,2,"C8,C65",,X5R not X7R; 25V rating cuts DC-bias loss on the 5V rail
 IO array signal column (innermost),MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow,C2905490,1x14 2.54mm header,,1,J6,,"THT; recommended UNPOPULATED, see audit"
 IO array power column (5V / 3V3 per row),MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow,C2905490,1x14 2.54mm header,,1,J7,,"THT; recommended UNPOPULATED, see audit"
 IO array GND column (board edge),MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow,C2905490,1x14 2.54mm header,,1,J8,,"THT; recommended UNPOPULATED, see audit"
@@ -22,7 +22,7 @@ RP2354B,MARV_Packages:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm,C39843328,RP2354B,,1
 33 / 1%,Resistor_SMD:R_0402_1005Metric,C25105,33R 1% 0402,,1,R20,,Basic
 3.3u,Inductor_SMD:L_Murata_DFE201610P,C48783272,3.3uH 0806 1.9A 250mR,,1,L20,,AOTA-B201610S3R3 not on JLC; APS201610M3R3F is the same 2016 land
 27 / 1%,Resistor_SMD:R_0402_1005Metric,C2909343,27R 1% 0402,,2,"R22,R23",,no Basic 27R; cheapest in stock
-1k / 1%,Resistor_SMD:R_0402_1005Metric,C11702,1k 1% 0402,,2,"R21,R53",,Basic; same part as the 1k line
+1k / 1%,Resistor_SMD:R_0402_1005Metric,C11702,1k 1% 0402,,3,"R21,R53,R56",,Basic; same part as the 1k line
 18p / 50 V C0G,Capacitor_SMD:C_0402_1005Metric,C541431,18pF 50V C0G 1%,,2,"C46,C47",,"no Basic 18pF in 0402; this is the cheapest qualifying part and is +-1%, tighter than the +-5% it replaces"
 12 MHz TAXM12M4RFBCCT2T,Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm,C133337,12MHz 12pF SMD3225-4P,,1,Y1,,ABM8-272-T3 not on JLC; CL 12 pF is matched by the 18 pF C46/C47
 1k,Resistor_SMD:R_0402_1005Metric,C11702,1k 1% 0402,,2,"R24,R54",,Basic
@@ -38,4 +38,5 @@ ADXL375 high-g accelerometer,MARV_Packages:Analog_LGA-14_3x5mm_P0.8mm_ADXL375,C5
 10k,Resistor_SMD:R_0402_1005Metric,C25744,10k 1% 0402,,10,"R35,R36,R37,R38,R39,R40,R41,R48,R50,R51",,Basic
 DNP: W25Q32JVSNIQ,Package_SO:SOIC-8_3.9x4.9mm_P1.27mm,,W25Q32JVSNIQ (150 mil),,1,U24,,"DNP, not assembled and deliberately has no LCSC number. If it is ever fitted: W25Q32JVSNIQ C5355146 (SOIC-8 150 mil) or APS6404L-SQN-SN C5360304 (SOP-8 150 mil). FIT ONE PART ONLY."
 microSD,MARV_Packages:microSD_HC_Molex_104031-0811,C585350,microSD Molex 104031-0811,,1,J11,,
-47u / 6.3 V X5R 0805,Capacitor_SMD:C_0805_2012Metric,C16780,47uF 6.3V X5R 20%,,1,C66,,
+2.2u / 16 V X5R 0603,Capacitor_SMD:C_0603_1608Metric,C23630,2.2uF 16V X5R 10%,,1,C26,,TPS7A2033 needs >=1 uF effective; 0402 1 uF derates below that at 3.3 V bias (SBVS338H Sec 7.1.1)
+LED white 0603,LED_SMD:LED_0603_1608Metric,C2290,White LED 0603 KT-0603W,,1,D21,,"USB VBUS-present indicator; no Basic/Preferred blue LED exists at JLC (checked 2026-09-17), white chosen"

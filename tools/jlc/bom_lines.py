@@ -23,6 +23,7 @@ JOINTS = {
     "Inductor_SMD:L_Changjiang_FTC303020D": 2,
     "Inductor_SMD:L_Changjiang_FTC404030S": 2,
     "Inductor_SMD:L_Murata_DFE201610P": 2,
+    "LED_SMD:LED_0603_1608Metric": 2,
     "MARV_Packages:Analog_LGA-14_3x5mm_P0.8mm_ADXL375": 14,
     "MARV_Packages:Bosch_LGA-10_2x2mm_BMP581": 10,
     "MARV_Packages:InvenSense_LGA-14_2.5x3mm_P0.5mm_ICM45686": 14,

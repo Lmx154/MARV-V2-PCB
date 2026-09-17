@@ -1,7 +1,8 @@
-# MARV V2 pin plan (set in stone)
+# MARV V2 GPIO reference
 
-Changing any GPIO assignment requires editing **this file, `tools/build_power.py` (MCU_GPIO table) and the
-asserts in `tools/check_power_netlist.py` together**; the checker fails otherwise.
+The schematic records the wiring. Keep this reference and `tools/check_power_netlist.py` aligned
+when changing GPIOs. Power assignments
+for the IO block are in [DESIGN_SPEC.md](DESIGN_SPEC.md).
 
 Source: RP2350 Datasheet, Section 1.2.3, Table 3 "General Purpose Input/Output (GPIO) Bank 0 Functions"
 (F1 SPI, F2 UART, F3 I2C, F4 PWM, F5 SIO, F6-F8 PIO0/1/2, F9 clock/QMI/trace, F10 USB, F11 UART aux).
@@ -15,40 +16,40 @@ two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10.
 | GPIO | Net | Used as | Datasheet alternates (F1 SPI / F2 UART / F3 I2C / F4 PWM / F9-F11) | Status |
 | --- | --- | --- | --- | --- |
 | 0 | FLASH_CS1 | QMI CS1n (F9) | SPI0 RX, UART0 TX, I2C0 SDA, PWM0 A, USB OVCUR DET | assigned (flash/PSRAM socket U24) |
-| 1 | HG_ACC_INT | GPIO in | SPI0 CSn, UART0 RX, I2C0 SCL, PWM0 B, USB VBUS DET | assigned |
-| 2 | IMU_INT2 | GPIO in | PWM1 A, SPI0 SCK, UART0 CTS, I2C1 SDA, USB VBUS EN, UART0 TX (F11) | assigned |
-| 3 | LED_DATA | PIO (WS2812C) | PWM1 B, SPI0 TX, UART0 RTS, I2C1 SCL, USB OVCUR DET, UART0 RX (F11) | assigned |
-| 4 | HG_ACC_CS | GPIO (ADXL375 CS) | PWM2 A, SPI0 RX, UART1 TX, I2C0 SDA, USB VBUS DET | assigned |
+| 1 | ADXL_INT1 | GPIO input (ADXL INT1) | SPI0 CSn, UART0 RX, I2C0 SCL, PWM0 B, USB VBUS DET | assigned |
+| 2 | ADXL_SCK | SPI0 SCK (F1) | PWM1 A, SPI0 SCK, UART0 CTS, I2C1 SDA, USB VBUS EN, UART0 TX (F11) | assigned |
+| 3 | ADXL_MOSI | SPI0 TX (F1) | PWM1 B, SPI0 TX, UART0 RTS, I2C1 SCL, USB OVCUR DET, UART0 RX (F11) | assigned |
+| 4 | ADXL_MISO | SPI0 RX (F1) | PWM2 A, SPI0 RX, UART1 TX, I2C0 SDA, USB VBUS DET | assigned |
 | 5 | PWM8 | PWM2 B (F4) | SPI0 CSn, UART1 RX, I2C0 SCL, USB VBUS EN | assigned (servo S8) |
-| 6 | IMU_INT1 | GPIO in | I2C1 SDA, SPI0 SCK, UART1 CTS, PWM3 A, USB OVCUR DET, UART1 TX (F11) | assigned |
-| 7 | IMU_CS | GPIO (ICM-45686 AP_CS) | I2C1 SCL, SPI0 TX, UART1 RTS, PWM3 B, USB VBUS DET, UART1 RX (F11) | assigned |
-| 8 | SENS_MISO | SPI1 RX (F1) | UART1 TX, I2C0 SDA, PWM4 A, QMI CS1n, USB VBUS EN | assigned (sensors) |
-| 9 | — (unexposed spare, no-connect) | GPIO | UART1 RX, SPI1 CSn, I2C0 SCL, PWM4 B, USB OVCUR DET | spare, not exposed (no-connect) |
-| 10 | SENS_SCK | SPI1 SCK (F1) | PWM5 A, UART1 CTS, I2C1 SDA, USB VBUS DET, UART1 TX (F11) | assigned |
-| 11 | SENS_MOSI | SPI1 TX (F1) | PWM5 B, UART1 RTS, I2C1 SCL, USB VBUS EN, UART1 RX (F11) | assigned |
-| 12 | — (unexposed spare, no-connect) | GPIO | UART0 TX, SPI1 RX, I2C0 SDA, PWM6 A, CLOCK GPIN0, USB OVCUR DET | spare, not exposed (no-connect) |
+| 6 | ICM_INT1 | GPIO input (ICM INT1) | I2C1 SDA, SPI0 SCK, UART1 CTS, PWM3 A, USB OVCUR DET, UART1 TX (F11) | assigned |
+| 7 | ICM_CS | GPIO (ICM CS) | I2C1 SCL, SPI0 TX, UART1 RTS, PWM3 B, USB VBUS DET, UART1 RX (F11) | assigned |
+| 8 | ICM_MISO | SPI1 RX (F1) | UART1 TX, I2C0 SDA, PWM4 A, QMI CS1n, USB VBUS EN | assigned |
+| 9 | BARO_SCL | I2C0 SCL (F3) | UART1 RX, SPI1 CSn, I2C0 SCL, PWM4 B, USB OVCUR DET | assigned |
+| 10 | ICM_SCK | SPI1 SCK (F1) | PWM5 A, UART1 CTS, I2C1 SDA, USB VBUS DET, UART1 TX (F11) | assigned |
+| 11 | ICM_MOSI | SPI1 TX (F1) | PWM5 B, UART1 RTS, I2C1 SCL, USB VBUS EN, UART1 RX (F11) | assigned |
+| 12 | BARO_SDA | I2C0 SDA (F3) | UART0 TX, SPI1 RX, I2C0 SDA, PWM6 A, CLOCK GPIN0, USB OVCUR DET | assigned |
 | 13 | BARO_INT | GPIO in | UART0 RX, SPI1 CSn, I2C0 SCL, PWM6 B, CLOCK GPOUT0, USB VBUS DET | assigned |
-| 14 | BARO_CS | GPIO (BMP581 CSB) | PWM7 A, SPI1 SCK, UART0 CTS, I2C1 SDA, CLOCK GPIN1, USB VBUS EN, UART0 TX (F11) | assigned |
+| 14 | ADXL_CS | GPIO (ADXL CS) | PWM7 A, SPI1 SCK, UART0 CTS, I2C1 SDA, CLOCK GPIN1, USB VBUS EN, UART0 TX (F11) | assigned |
 | 15 | PWM7 | PWM7 B (F4) | SPI1 TX, UART0 RTS, I2C1 SCL, CLOCK GPOUT1, USB OVCUR DET, UART0 RX (F11) | assigned (servo S7) |
 | 16 | ELRS_RX | UART0 TX (F2) | SPI0 RX, I2C0 SDA, PWM0 A, USB VBUS DET | assigned (J6 R1) |
 | 17 | ELRS_TX | UART0 RX (F2) | SPI0 CSn, I2C0 SCL, PWM0 B, USB VBUS EN | assigned (J6 T1) |
-| 18 | — (unexposed spare, no-connect) | GPIO | SPI0 SCK, UART0 CTS, I2C1 SDA, PWM1 A, USB OVCUR DET, UART0 TX (F11) | spare, not exposed (no-connect) |
+| 18 | ICM_INT2 | GPIO input (ICM INT2) | SPI0 SCK, UART0 CTS, I2C1 SDA, PWM1 A, USB OVCUR DET, UART0 TX (F11) | assigned |
 | 19 | PWM6 | PWM1 B (F4) | SPI0 TX, UART0 RTS, I2C1 SCL, QMI CS1n, USB VBUS DET, UART0 RX (F11) | assigned (servo S6) |
 | 20 | PWM5 | PWM2 A (F4) | SPI0 RX, UART1 TX, I2C0 SDA, CLOCK GPIN0, USB VBUS EN | assigned (servo S5) |
-| 21 | — (unexposed spare, no-connect) | GPIO | SPI0 CSn, UART1 RX, I2C0 SCL, PWM2 B, CLOCK GPOUT0, USB OVCUR DET | spare, not exposed (no-connect) |
+| 21 | ADXL_INT2 | GPIO input (ADXL INT2) | SPI0 CSn, UART1 RX, I2C0 SCL, PWM2 B, CLOCK GPOUT0, USB OVCUR DET | assigned |
 | 22 | MAG_SDA | I2C1 SDA (F3) | SPI0 SCK, UART1 CTS, PWM3 A, CLOCK GPIN1, USB VBUS DET, UART1 TX (F11) | assigned (J6 SDA) |
 | 23 | MAG_SCL | I2C1 SCL (F3) | SPI0 TX, UART1 RTS, PWM3 B, CLOCK GPOUT1, USB VBUS EN, UART1 RX (F11) | assigned (J6 SCL) |
 | 24 | GPS_RX | UART1 TX (F2) | SPI1 RX, I2C0 SDA, PWM4 A, CLOCK GPOUT2, USB OVCUR DET | assigned (J6 R0) |
 | 25 | GPS_TX | UART1 RX (F2) | SPI1 CSn, I2C0 SCL, PWM4 B, CLOCK GPOUT3, USB VBUS DET | assigned (J6 T0) |
-| 26 | — (unexposed spare, no-connect) | GPIO | SPI1 SCK, UART1 CTS, I2C1 SDA, PWM5 A, USB VBUS EN, UART1 TX (F11) | spare, not exposed (no-connect) |
-| 27 | — (unexposed spare, no-connect) | GPIO | SPI1 TX, UART1 RTS, I2C1 SCL, PWM5 B, USB OVCUR DET, UART1 RX (F11) | spare, not exposed (no-connect) |
-| 28 | SD_D0 | PIO | SPI1 RX, UART0 TX, I2C0 SDA, PWM6 A, USB VBUS DET | assigned |
-| 29 | SD_D1 | PIO | SPI1 CSn, UART0 RX, I2C0 SCL, PWM6 B, USB VBUS EN | assigned |
-| 30 | SD_D2 | PIO | SPI1 SCK, UART0 CTS, I2C1 SDA, PWM7 A, USB OVCUR DET, UART0 TX (F11) | assigned |
-| 31 | SD_D3 | PIO | SPI1 TX, UART0 RTS, I2C1 SCL, PWM7 B, USB VBUS DET, UART0 RX (F11) | assigned |
+| 26 | SD_CLK_MCU | PIO native SD clock, through R58 to SD_CLK | SPI1 SCK, UART1 CTS, I2C1 SDA, PWM5 A, USB VBUS EN, UART1 TX (F11) | assigned |
+| 27 | SD_CMD | PIO native SD command | SPI1 TX, UART1 RTS, I2C1 SCL, PWM5 B, USB OVCUR DET, UART1 RX (F11) | assigned |
+| 28 | SD_DAT0 | PIO native SD DAT0 | SPI1 RX, UART0 TX, I2C0 SDA, PWM6 A, USB VBUS DET | assigned |
+| 29 | SD_DAT1 | PIO native SD DAT1 | SPI1 CSn, UART0 RX, I2C0 SCL, PWM6 B, USB VBUS EN | assigned |
+| 30 | SD_DAT2 | PIO native SD DAT2 | SPI1 SCK, UART0 CTS, I2C1 SDA, PWM7 A, USB OVCUR DET, UART0 TX (F11) | assigned |
+| 31 | SD_DAT3 | PIO native SD DAT3 | SPI1 TX, UART0 RTS, I2C1 SCL, PWM7 B, USB VBUS DET, UART0 RX (F11) | assigned |
 | 32 | ESC_TELEM_RX | PIO UART RX | SPI0 RX, UART0 TX, I2C0 SDA, PWM8 A, USB VBUS EN | assigned (ESC TX pad) |
-| 33 | SD_CLK | PIO (SDIO 4-bit) | SPI0 CSn, UART0 RX, I2C0 SCL, PWM8 B, USB OVCUR DET | assigned |
-| 34 | SD_CMD | PIO | SPI0 SCK, UART0 CTS, I2C1 SDA, PWM9 A, USB VBUS DET, UART0 TX (F11) | assigned |
+| 33 | LED_DATA | PIO (WS2812C, window 16–47) | SPI0 CSn, UART0 RX, I2C0 SCL, PWM8 B, USB OVCUR DET | assigned |
+| 34 | — (unexposed spare, no-connect) | GPIO | SPI0 SCK, UART0 CTS, I2C1 SDA, PWM9 A, USB VBUS DET, UART0 TX (F11) | spare, not exposed (no-connect) |
 | 35 | SD_DET | GPIO in | SPI0 TX, UART0 RTS, I2C1 SCL, PWM9 B, USB VBUS EN, UART0 RX (F11) | assigned |
 | 36 | PWM4 | DShot via PIO | SPI0 RX, UART1 TX, I2C0 SDA, PWM10 A, USB OVCUR DET | assigned (ESC M4) |
 | 37 | — (unexposed spare, no-connect) | GPIO | SPI0 CSn, UART1 RX, I2C0 SCL, PWM10 B, USB VBUS DET | spare, not exposed (no-connect). Was PWR_SRC_ST, the TPS2121 mux status input; the mux was replaced by the Q1/D1 OR, which has no status pin, and USB presence is already readable on VBUS_SENSE (GPIO40) |
@@ -63,77 +64,73 @@ two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10.
 | 46 | IO_GPIO46 | GPIO / ADC6 | SPI1 SCK, UART0 CTS, I2C1 SDA, PWM11 A, USB VBUS DET, UART0 TX (F11) | spare, on IO block row 13 |
 | 47 | IO_GPIO47 | GPIO / ADC7 | SPI1 TX, UART0 RTS, I2C1 SCL, PWM11 B, QMI CS1n, USB VBUS EN, UART0 RX (F11) | spare, on IO block row 14 |
 
-## Table B — the eleven spare GPIOs and what they can become
 
-Instances already consumed: UART0 (16/17, ELRS), UART1 (24/25, GPS), I2C1 (22/23, MAG). SPI1 (8/10/11 + CS
-4/7/14) now carries the sensor bus — SPI0 is fully free after this revision (it carried the sensor bus before).
-Unused instances: **I2C0** and **SPI0**. UART alternates on spares can only be PIO UARTs.
+## Table B — spare GPIOs
 
-Four of the eleven are exposed today (on the IO block signal column, J6); the other **seven** carry a
-no-connect flag on U20 and reach no net at all (Rule 5). Using one of the seven means wiring it to a
-connector first — a documented change to this file, `build_power.py` and `check_power_netlist.py`
-together. **GPIO37 joined the unexposed set in the BEC revision** (see DESIGN_SPEC "Decisions"): it read
-the TPS2121 mux's open-drain status pin, and the mux is gone.
+Four exposed GPIOs remain on J6 rows 11–14: GPIO44–47. GPIO34 and GPIO37 are
+unexposed and have no-connect flags. All other GPIOs have assigned functions.
 
-| GPIO | Advertised role | Also | Exposed | Caveat |
-| --- | --- | --- | --- | --- |
-| 44 | **I2C0 SDA** | ADC4, SPI1 RX, PWM10 A | yes, IO block row 11 | pairs with 45 |
-| 45 | **I2C0 SCL** | ADC5, SPI1 CSn, PWM10 B | yes, IO block row 12 | pairs with 44 |
-| 46 | **SPI1 SCK** | ADC6, PWM11 A | yes, IO block row 13 | |
-| 47 | **SPI1 TX (MOSI)** | ADC7, PWM11 B, QMI CS1n alt | yes, IO block row 14 | |
-| 9 | **I2C0 SCL** | SPI1 CSn alt (extra sensor CS), PWM4 B (free slice) | no (no-connect) | pairs with 12 |
-| 12 | **I2C0 SDA** | SPI1 RX alt (extra sensor-bus route), PWM6 A, CLOCK GPIN0 | no (no-connect) | pairs with 9 |
-| 18 | SPI0 SCK (bus is free) | PWM1 A, UART0 TX alt (F11) | no (no-connect) | no SPI0 RX/TX/CS on any spare, so this alone cannot build a new bus |
-| 21 | extra SPI0 CSn / I2C0 SCL alt | PWM2 B | no (no-connect) | PWM2 slice pairs with GPIO20 (servo S5, PWM2 A) — no longer the ESC M3/M4 slice |
-| 26 | extra SPI1 SCK alt (sensor bus already on GPIO10) | I2C1 SDA alt, PWM5 A (free slice) | no (no-connect) | pairs with 27 on PWM slice 5 — both free |
-| 27 | extra SPI1 TX alt (sensor bus already on GPIO11) | I2C1 SCL alt, PWM5 B (free slice) | no (no-connect) | pairs with 26 on PWM slice 5 — both free |
-| 37 | extra SPI0 CSn / I2C0 SCL alt | PWM10 B (slice pairs with GPIO44, an exposed spare) | no (no-connect) | freed by the BEC revision; the nearest pad row is J3 on the back |
+| GPIO | Exposed | Useful alternates | Constraint |
+| --- | --- | --- | --- |
+| 44 | J6 row 11 | ADC4, PWM10 A, UART0 TX | SPI1 and I2C0 already serve onboard sensors |
+| 45 | J6 row 12 | ADC5, PWM10 B, UART0 RX | Hardware UART0 already serves ELRS |
+| 46 | J6 row 13 | ADC6, PWM11 A | PWM11 A is shared with GPIO38 |
+| 47 | J6 row 14 | ADC7, PWM11 B | PWM11 B is shared with GPIO39 |
+| 34 | No | PWM9 A, PIO, GPIO | Needs a schematic connection before use |
+| 37 | No | PWM10 B, PIO, GPIO | Needs a schematic connection before use |
 
-Complete extra buses that do not conflict with anything on the board (44/45/46/47 are already exposed; 9/12
-would need exposing first):
-- **I2C0** on 44 (SDA) / 45 (SCL) — needs external pull-ups (none on the board) — or on 9 (SCL) / 12 (SDA)
-  once exposed.
-- **SPI1** extras (46 SCK / 47 TX) are already covered by the sensor bus at 8/10/11; a genuinely new SPI0 bus
-  cannot be built from spares alone (only SCK on 18 and CSn on 21 are available; RX/TX are not).
-- **ADC3-7** on 43-47 whenever those pins are not used digitally (43 is no longer a spare in this revision —
-  see Table A).
+SPI0 and SPI1 are dedicated to ADXL375 and ICM-45686 respectively. I2C0 serves
+BMP581; I2C1 serves the external magnetometer. No unused hardware SPI, I2C or UART
+controller remains. Pin alternate functions do not create extra controllers.
 
 ## Table C — peripheral ledger
 
-| Peripheral | Pins | Status |
+| Peripheral | GPIOs | Device / hardware requirement |
 | --- | --- | --- |
-| SPI0 | — | free (Table B); carried the sensor bus before this revision |
-| SPI1 | SCK 10, TX 11, RX 8; CS 7 (ICM-45686), 14 (BMP581), 4 (ADXL375); INT 6, 2, 13, 1 | used (sensors, V3V3_ANA, 10k CS pull-ups) |
-| I2C0 | — | free (Table B) |
-| I2C1 | SDA 22, SCL 23 (4.7k pull-ups R25/R26) | used (MAG on J6) |
-| UART0 | TX 16, RX 17 | used (ELRS on J6) |
-| UART1 | TX 24, RX 25 | used (GPS on J6) |
-| PWM slices | 2 (20 A servo S5 / 5 B servo S8) and 11 (38 A ESC M3 / 39 B ESC M2) fully used, both channels shared across different connector rows now; 1 (19 B servo S6), 7 (15 B servo S7), 9 (43 B ESC M1), 10 (36 A ESC M4) half-used, partner channel idle; 0, 3, 4, 5, 6, 8 fully free | motor outputs normally run DShot on PIO, PWM slices are only the hardware-PWM fallback |
-| ADC | 0 VBUS_SENSE (40), 1 VBAT_SENSE (41), 2 CURR_SENSE (42); 3 no longer a spare — GPIO43 is digital PWM1 now; 4-7 on the IO block spare rows (11-14) | |
-| PIO | microSD 4-bit SDIO 28-31/33-34 (GPIOBASE 16 window; DET 35 stays plain GPIO), ESC telemetry RX 32, WS2812 3, ESC DShot on 36/38/39/43 | three PIO blocks available |
-| QMI CS1 | GPIO0 | flash/PSRAM socket U24 (alternates 8, 19, 47 unused) |
-| USB, SWD | dedicated pins | J4, J10 |
+| SPI0 | SCK 2, MOSI/TX 3, MISO/RX 4; CS 14 | ADXL375 only, four-wire SPI; R51 10k CS pull-up to V3V3_ANA |
+| SPI1 | SCK 10, MOSI/TX 11, MISO/RX 8; CS 7 | ICM-45686 only; R48 10k CS pull-up to V3V3_ANA |
+| I2C0 | SCL 9, SDA 12 | BMP581 only; R50/R57 4.7k to V3V3_ANA; address 0x46 |
+| I2C1 | SDA 22, SCL 23 | MAG on J6, existing R25/R26 4.7k to V3V3_SYS |
+| Native four-bit SD, PIO + DMA | CLK 26, CMD 27, DAT0–DAT3 28–31 | J11 only; R58 22 ohm between SD_CLK_MCU and SD_CLK; R36–R40 10k CMD/data pull-ups to V3V3_SYS |
+| Sensor interrupts | ADXL INT1 1 / INT2 21; ICM INT1 6 / INT2 18; BARO INT 13 | Five separate nets and GPIOs; no combining |
+| Card detect | 35 | SD_DET, R41 10k pull-up, active low |
+| UART0 | TX 16, RX 17 | ELRS on J6 |
+| UART1 | TX 24, RX 25 | GPS on J6 |
+| Servo PWM | 20, 19, 15, 5 | PWM5–8, unchanged external connections |
+| ESC outputs | 43, 39, 38, 36 | PWM1–4; intended PIO DShot, unchanged external connections |
+| ADC | 40, 41, 42 | VBUS, battery voltage, ESC current |
+| Other PIO | ESC telemetry RX 32; RGB LED 33 | GPIO16–47 window |
+| QMI CS1 | 0 | Optional U24 expansion, unchanged |
+| USB, SWD | Dedicated pins | J4, J10, unchanged |
 
-## Rules
+## Hardware constraints
 
-1. ADC only on GPIO40-47. PIO can drive any GPIO.
-2. The sensor bus is SPI1 and stays on 1/2/4/6/7/8/10/11/13/14; changing it means re-routing the analog island.
-3. PWM frequency is per slice: a spare that shares a slice with a motor/servo output (21) cannot run PWM at
-   another rate. Slice 2 (servo S5/S8) and slice 11 (ESC M2/M3) are now fully claimed across two channels
-   each — a change from the previous revision, where slice-sharing only ever paired signals on the same
-   connector row (M1/M2, M3/M4, S5/S6, S7/S8).
-4. I2C pins need pull-ups; I2C1 has R25/R26, I2C0 on 44/45 (or 9/12 once exposed) would need external ones.
-5. The six unexposed spares (GPIO9, 12, 18, 21, 26, 27) carry a no-connect flag on U20 and reach no net at
-   all — left unconnected on purpose, safe under the RP2350's default pulls. Exposing one is a documented
-   change to this file, `build_power.py` and `check_power_netlist.py` together.
-6. Nothing on the board is 5 V logic: the J6 power column carries 5 V only as a supply for GPS/ELRS modules, their signal pins are 3.3 V.
+- SD DAT0–DAT3 are consecutive in ascending GPIO order. All six SD signals use
+  GPIO26–31, inside the GPIO16–31 overlap of both PIO windows (0–31 or 16–47).
+  The LED and ESC PIO signals require the 16–47 window. These are hardware
+  allocation constraints; this change supplies no PIO or DMA firmware.
+- BMP581 CSB is hard-wired to V3V3_ANA (its VDDIO), and SDO/ADDR to GND for
+  7-bit address 0x46. The BMP581_I2C symbol models pin 5 as an address input.
+- Sensor pulls use the sensor supply, V3V3_ANA. SD pulls use V3V3_SYS.
+  No pulls are fitted on either sensor SPI clock/data bus or on SD_CLK.
+- Place R58 next to U20 GPIO26 during the owner's PCB update. Its nominal value
+  is 22 ohm; the intended tuning range is 0–33 ohm. Keep the MCU-to-resistor stub short.
+- Routing priority: ICM SPI, ADXL SPI, SD clock/native bus, then BMP581 I2C.
+  Keep signals short over continuous GND. Avoid split references, switching-node
+  copper, long parallel runs beside servo/pyro power, unnecessary vias and long stubs.
+- PWM frequency is shared per slice. Servo S5/S8 share slice 2; the ESC hardware-PWM
+  fallback for M3/M2 shares slice 11. PIO DShot does not use those PWM slices.
+- GPIO34 and GPIO37 remain unconnected; update this document and the netlist
+  checker together if either is assigned. External connector pin assignments are retained.
 
-## Conflicts found
+## Revision boundary
 
-None: every assigned pin offers the function it is used for in Table 3 (UART0 TX/RX on 16/17, UART1 TX/RX on
-24/25, I2C1 SDA/SCL on 22/23, SPI1 RX/SCK/TX on 8/10/11, PWM on 5/15/19/20 (servos, hardware) and
-36/38/39/43 (ESC, PIO DShot primary), QMI CS1n on 0, ADC on 40-42).
-NOTED (not a violation): PWM hardware slice 2 is now shared between servo outputs S5 (GPIO20) and S8 (GPIO5),
-and slice 11 between ESC outputs M3 (GPIO38) and M2 (GPIO39) — see Rule 3. Both pairs normally run DShot via
-PIO, which is not affected by hardware-PWM slice frequency sharing; the constraint only bites if either pair
-ever falls back to plain hardware PWM.
+This communication update changes the schematic only. The PCB retains its previous
+nets and placement until the owner updates it from the schematic. R57 and R58 are
+new parts; R50 changes from 10k on BARO_CS to 4.7k on BARO_SCL. TP5 now probes BARO_SDA.
+To free GPIO2/3/4 for SPI0, ICM_INT2 moves from GPIO2 to GPIO18, LED_DATA from GPIO3
+to GPIO33, and ADXL_CS from GPIO4 to GPIO14. The SD clock and command move from
+GPIO33/34 to GPIO26/27. ADXL_INT2 is newly connected to GPIO21.
+
+References: [RP2350 datasheet, GPIO function table and PIO GPIOBASE](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf),
+[BMP581 datasheet, protocol selection and I2C wiring](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf).

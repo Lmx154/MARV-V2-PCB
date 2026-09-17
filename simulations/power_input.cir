@@ -1,0 +1,73 @@
+MARV input power: external regulated 5 V and USB, through the actual Q1/D1 OR
+* Only the input network is simulated. Downstream regulators are a lumped load.
+* External 5 V can come from a 2S-6S buck or a 1S boost: same board interface.
+* Sources have assumed resistance, but no converter loop or current limit.
+* @...@ fields are filled by tools/simulate_power_input.py.
+.include "@MODELS@/AO3401A.mod"
+.include "@MODELS@/diodes.lib"
+.param VEXT=@VEXT@ VUSB=@VUSB@ REXT=@REXT@ RUSB=@RUSB@
+.model CONNECT SW(Ron=0.001 Roff=1e12 Vt=0.5 Vh=0.1)
+
+* Opening a source switch means unplugging it, not shorting the input to 0 V.
+Vext ext0 0 PWL(0 0 0.1m 0 1.1m {VEXT} 20m {VEXT})
+Rext ext0 ext1 {REXT}
+Sext ext1 n5vin extctl 0 CONNECT
+Vextctl extctl 0 @EXT_CONTROL@
+Vusb usb0 0 PWL(0 0 0.1m 0 1.1m {VUSB} 20m {VUSB})
+Rusb usb0 usb1 {RUSB}
+Susb usb1 usbvbus usbctl 0 CONNECT
+Vusbctl usbctl 0 @USB_CONTROL@
+
+* Current schematic: Q1 drain=5V_IN, gate=USB_VBUS, source=V5_SYS.
+XQ1 n5vin usbvbus q1source AO3401A
+Vq1 q1source v5sys 0
+D1 usbvbus d1cathode D1N5819WS_MAX
+Vd1 d1cathode v5sys 0
+C19 n5vin c19esr 100u
+Resr19 c19esr 0 0.04
+Rbleed n5vin 0 10meg
+C7 usbvbus 0 1u
+R7 usbvbus 0 100k
+R29 usbvbus vbus_sense 10k
+R30 vbus_sense 0 15k
+C49 vbus_sense 0 100n
+R56 usbvbus led_anode 1k
+D21 led_anode 0 DLEDWHITE
+* C8 10u + C25 1u + C79 100n, nominal; no layout parasitics.
+Csys v5sys 0 11.1u
+Rsys v5sys 0 1meg
+
+* Demand is current at V5_SYS, NOT 3.3 V output current or the source rating.
+* Voltage taper prevents an unpowered ideal current sink pulling a rail negative.
+Vdemand demand 0 @LOAD@
+Bload v5sys 0 I=v(demand)*max(v(v5sys),0)/max(v(v5sys),1)
+* Optional external 5 V module/servo demand, bypassing the OR.
+Bexternal n5vin 0 I=@EXTERNAL_LOAD@*min(time/2m,1)*max(v(n5vin),0)/max(v(n5vin),1)
+
+Bextdraw extdraw 0 V=-i(Vext)
+Busbdraw usbdraw 0 V=-i(Vusb)
+Bbackusb backusb 0 V=max(-i(Vd1),0)
+Bbackext backext 0 V=max(-i(Vq1),0)
+Bpq1 pq1 0 V=(v(n5vin)-v(v5sys))*i(Vq1)
+Bpd1 pd1 0 V=(v(usbvbus)-v(v5sys))*i(Vd1)
+.options method=gear reltol=0.001
+.tran 0.5u 20m uic
+.meas tran before AVG v(v5sys) FROM=7m TO=7.9m
+.meas tran event_min MIN v(v5sys) FROM=8m TO=12m
+.meas tran event_max MAX v(v5sys) FROM=8m TO=12m
+.meas tran final AVG v(v5sys) FROM=19m TO=20m
+.meas tran external_min MIN v(n5vin) FROM=8m TO=12m
+.meas tran external_final AVG v(n5vin) FROM=19m TO=20m
+.meas tran ext_final AVG v(extdraw) FROM=19m TO=20m
+.meas tran usb_final AVG v(usbdraw) FROM=19m TO=20m
+.meas tran usb_reverse MAX v(backusb) FROM=2.2m TO=20m
+.meas tran ext_reverse MAX v(backext) FROM=2.2m TO=20m
+.meas tran q1_w AVG v(pq1) FROM=19m TO=20m
+.meas tran d1_w AVG v(pd1) FROM=19m TO=20m
+.control
+run
+set wr_singlescale
+set wr_vecnames
+wrdata "@WAVEFORM@" v(v5sys) v(n5vin) v(usbvbus) v(extdraw) v(usbdraw)
+.endc
+.end

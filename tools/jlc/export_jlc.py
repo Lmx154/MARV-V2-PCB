@@ -6,14 +6,13 @@
 
 BOM comes from power_bom.csv grouped by (electrical spec, footprint) -- the same
 grouping tools/jlc/bom_lines.py uses -- and the LCSC part number comes from the
-SCHEMATIC: tools/build_power.py stamps a hidden "LCSC" property on every symbol
-from tools/jlc/lcsc_map.csv, kicad-cli exports it into reports/power-netlist.xml,
-and this tool reads it there.  The map is only a fallback for when the netlist is
+SCHEMATIC: each selected part has an "LCSC" symbol property. KiCad CLI exports
+it into reports/power-netlist.xml, and this tool reads it there.  The map is only a fallback for when the netlist is
 missing or predates the property, so the numbers that get ordered are the numbers
 that are in the schematic, not a second opinion derived from a value string.
 
-THIS TOOL REFUSES TO WRITE A BOM WITH A HOLE IN IT.  Any fitted line with no LCSC
-part is a hard error (exit 1); the only permitted exceptions are the three THT
+Any fitted line with no LCSC part is a hard error (exit 1), reported after
+writing the export files; the only permitted exceptions are the three THT
 headers J6/J7/J8, which the audit ships unpopulated, and U24, which is DNP.
 
 CPL comes from MARV-V2.kicad_pcb via pcbnew: footprint centre, orientation and
@@ -201,8 +200,9 @@ def main():
     print("\nROTATION UNVERIFIED: check every angle in JLC's assembly preview.")
     if fatal:
         sys.exit(f"FAILED: {len(fatal)} fitted part(s) have no LCSC number: "
-                 f"{sorted(set(fatal))}. Add them to tools/jlc/lcsc_map.csv and "
-                 f"re-run tools/build_power.py, or pass lcsc= at the call site.")
+                 f"{sorted(set(fatal))}. Update the schematic LCSC properties and "
+                 f"tools/jlc/lcsc_map.csv, export a fresh schematic XML netlist, "
+                 f"then rerun this exporter.")
 
 
 if __name__ == "__main__":
