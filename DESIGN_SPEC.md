@@ -108,7 +108,8 @@ microSD uses PIO + DMA native four-bit SD: CLK GPIO26, CMD GPIO27, DAT0–DAT3
 GPIO28–31. All six signals fit in either PIO window's GPIO16–31 overlap. CMD
 and all four data lines have 10k external pull-ups to V3V3_SYS. GPIO26 drives
 SD_CLK through R58, 22 ohm nominal (0–33 ohm tuning range), to be placed next
-to the MCU pin. There is no clock pull resistor. Card detect stays on GPIO35.
+to the MCU pin. There is no clock pull resistor. J11 is the Molex 47219-2001 / C164170 locking hinged-lid connector. It has no
+card-detect switch; R41 is removed and GPIO35 is unconnected.
 LED_DATA moves to GPIO33 to free GPIO3 for SPI0. External connector assignments
 are retained. See [PINOUT.md](PINOUT.md) for every GPIO and routing priorities.
 

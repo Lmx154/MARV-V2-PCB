@@ -29,7 +29,7 @@ PCB edits. Open [the schematic PDF](communication-schematic.pdf) or the saved
 | | SD_DAT1 | 29 | 37 | J11.8 DAT1 |
 | | SD_DAT2 | 30 | 38 | J11.1 DAT2 |
 | | SD_DAT3 | 31 | 39 | J11.2 DAT3 |
-| Card detect | SD_DET | 35 | 44 | J11.9 DET_B |
+| Card detect | None on Molex 47219-2001 | 35 unconnected | 44 | No detect pins |
 
 The SD data GPIOs are consecutive and all six bus signals fit in GPIO26–31,
 inside the GPIO16–31 overlap of both PIO windows. SPI0 serves ADXL375 only;
@@ -52,7 +52,8 @@ pull-downs. All five sensor interrupt signals terminate at distinct MCU GPIOs.
 
 R50 is repurposed from the former 10k barometer CS pull-up to a 4.7k SCL pull-up.
 R57 and R58 are new 0402 parts. TP5 now probes BARO_SDA. Sensor decoupling,
-sensor/system power separation, card decoupling and card-detect pull-up are retained.
+sensor/system power separation and card decoupling are retained. The subsequent
+locking-connector update removes the old card-detect circuit.
 
 ## Validation
 
@@ -65,10 +66,10 @@ sensor/system power separation, card decoupling and card-detect pull-up are reta
 - Fault injection into temporary netlists confirmed that the checker rejects
   a clock pull resistor, shared SPI data, a missing SD pull-up, a wrong I2C
   pull-up value, and combined sensor interrupt lines.
-- `tools/audit_footprints.py`: **108 components OK, 0 needing action**.
+- `tools/audit_footprints.py`: **107 components OK**, including the new J11 model.
 - Compared every pre-existing pin against the starting netlist: each connection
-  is unchanged or matches an explicitly intended bus/GPIO reassignment. All
-  existing component UUID paths and footprints are retained; only R57/R58 are added.
+  is unchanged or matches an explicitly intended bus/GPIO reassignment. Existing component UUID paths are retained. The bus revision added R57/R58;
+  the locking-connector revision changes the J11 footprint and removes R41.
 - Power, external IO, USB/debug and root schematic files remain byte-identical
   to the starting workspace. QSPI sheet changes are annotation-only, removing
   its obsolete description of the microSD interface.
@@ -90,7 +91,7 @@ patterns now cover ADXL_* and ICM_*.
 
 LED_DATA moved GPIO3 → GPIO33; ICM_INT2 moved GPIO2 → GPIO18; ADXL_CS moved
 GPIO4 → GPIO14. SD clock/command moved GPIO33/34 → GPIO26/27. ADXL_INT2 now
-uses GPIO21. GPIO34 and GPIO37 remain unconnected; GPIO44–47 remain exposed
+uses GPIO21. GPIO34, GPIO35 and GPIO37 remain unconnected; GPIO44–47 remain exposed
 spares. External connector assignments are unchanged.
 
 Manufacturing exports and earlier PCB reports remain tied to the old PCB and
@@ -104,3 +105,27 @@ component inventory is `power_bom.csv`.
 - [BMP581 datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf):
   Sections 5.1, 5.6 and 6.2.3, I2C protocol selection, address strap and wiring.
 - Offline sensor datasheets and source index: [datasheets/README.md](../datasheets/README.md).
+
+## Locking microSD connector update
+
+J11 is now Molex 47219-2001 / LCSC C164170, a hinged socket with a lid that
+slides to lock. The manufacturer datasheet is saved at
+[datasheets/472192001.pdf](../datasheets/472192001.pdf), with its
+[mechanical drawing](../datasheets/472192001-drawing.pdf).
+The connector has no detect switch: R41 and SD_DET are removed and GPIO35
+becomes an unconnected spare. Native SD CLK/CMD/DAT0–DAT3, power, shield
+ground and the required pulls/damping are unchanged.
+
+Latest checks: ERC zero violations; all 48 GPIO and exact bus-net checks pass;
+107 components have matching footprint pads. An exact-part LCSC/EasyEDA 3D model is now stored locally and attached to
+the new footprint. All 107 components pass the footprint/model audit.
+
+The PCB is unchanged. Replace its J11 footprint and remove R41 when updating
+from the schematic; the locking connector is not footprint-compatible with
+the old socket. Provide lid-opening access and verify the lid is slid fully
+into the locked position. This replacement does not establish a measured
+rocket-flight shock/vibration qualification.
+
+Subsequent 3D update: J11 now displays the locking-socket model on the PCB.
+Only its model reference/transform changed; PCB pads, nets and placement
+remain as before. See [the rendered preview](pcb-3d-locking-sd.png).

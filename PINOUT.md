@@ -50,7 +50,7 @@ two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10.
 | 32 | ESC_TELEM_RX | PIO UART RX | SPI0 RX, UART0 TX, I2C0 SDA, PWM8 A, USB VBUS EN | assigned (ESC TX pad) |
 | 33 | LED_DATA | PIO (WS2812C, window 16–47) | SPI0 CSn, UART0 RX, I2C0 SCL, PWM8 B, USB OVCUR DET | assigned |
 | 34 | — (unexposed spare, no-connect) | GPIO | SPI0 SCK, UART0 CTS, I2C1 SDA, PWM9 A, USB VBUS DET, UART0 TX (F11) | spare, not exposed (no-connect) |
-| 35 | SD_DET | GPIO in | SPI0 TX, UART0 RTS, I2C1 SCL, PWM9 B, USB VBUS EN, UART0 RX (F11) | assigned |
+| 35 | — (unexposed spare, no-connect) | GPIO | SPI0 TX, UART0 RTS, I2C1 SCL, PWM9 B, USB VBUS EN, UART0 RX (F11) | spare, not exposed (no-connect) |
 | 36 | PWM4 | DShot via PIO | SPI0 RX, UART1 TX, I2C0 SDA, PWM10 A, USB OVCUR DET | assigned (ESC M4) |
 | 37 | — (unexposed spare, no-connect) | GPIO | SPI0 CSn, UART1 RX, I2C0 SCL, PWM10 B, USB VBUS DET | spare, not exposed (no-connect). Was PWR_SRC_ST, the TPS2121 mux status input; the mux was replaced by the Q1/D1 OR, which has no status pin, and USB presence is already readable on VBUS_SENSE (GPIO40) |
 | 38 | PWM3 | DShot via PIO | SPI0 SCK, UART1 CTS, I2C1 SDA, PWM11 A, USB VBUS EN, UART1 TX (F11) | assigned (ESC M3) |
@@ -67,7 +67,7 @@ two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10.
 
 ## Table B — spare GPIOs
 
-Four exposed GPIOs remain on J6 rows 11–14: GPIO44–47. GPIO34 and GPIO37 are
+Four exposed GPIOs remain on J6 rows 11–14: GPIO44–47. GPIO34, GPIO35 and GPIO37 are
 unexposed and have no-connect flags. All other GPIOs have assigned functions.
 
 | GPIO | Exposed | Useful alternates | Constraint |
@@ -77,6 +77,7 @@ unexposed and have no-connect flags. All other GPIOs have assigned functions.
 | 46 | J6 row 13 | ADC6, PWM11 A | PWM11 A is shared with GPIO38 |
 | 47 | J6 row 14 | ADC7, PWM11 B | PWM11 B is shared with GPIO39 |
 | 34 | No | PWM9 A, PIO, GPIO | Needs a schematic connection before use |
+| 35 | No | PWM9 B, PIO, GPIO | Freed by the locking SD connector; no-connect |
 | 37 | No | PWM10 B, PIO, GPIO | Needs a schematic connection before use |
 
 SPI0 and SPI1 are dedicated to ADXL375 and ICM-45686 respectively. I2C0 serves
@@ -93,7 +94,7 @@ controller remains. Pin alternate functions do not create extra controllers.
 | I2C1 | SDA 22, SCL 23 | MAG on J6, existing R25/R26 4.7k to V3V3_SYS |
 | Native four-bit SD, PIO + DMA | CLK 26, CMD 27, DAT0–DAT3 28–31 | J11 only; R58 22 ohm between SD_CLK_MCU and SD_CLK; R36–R40 10k CMD/data pull-ups to V3V3_SYS |
 | Sensor interrupts | ADXL INT1 1 / INT2 21; ICM INT1 6 / INT2 18; BARO INT 13 | Five separate nets and GPIOs; no combining |
-| Card detect | 35 | SD_DET, R41 10k pull-up, active low |
+| Card detect | — | Molex 47219-2001 has no detect switch; GPIO35 is unconnected |
 | UART0 | TX 16, RX 17 | ELRS on J6 |
 | UART1 | TX 24, RX 25 | GPS on J6 |
 | Servo PWM | 20, 19, 15, 5 | PWM5–8, unchanged external connections |
@@ -120,7 +121,7 @@ controller remains. Pin alternate functions do not create extra controllers.
   copper, long parallel runs beside servo/pyro power, unnecessary vias and long stubs.
 - PWM frequency is shared per slice. Servo S5/S8 share slice 2; the ESC hardware-PWM
   fallback for M3/M2 shares slice 11. PIO DShot does not use those PWM slices.
-- GPIO34 and GPIO37 remain unconnected; update this document and the netlist
+- GPIO34, GPIO35 and GPIO37 remain unconnected; update this document and the netlist
   checker together if either is assigned. External connector pin assignments are retained.
 
 ## Revision boundary
@@ -134,3 +135,7 @@ GPIO33/34 to GPIO26/27. ADXL_INT2 is newly connected to GPIO21.
 
 References: [RP2350 datasheet, GPIO function table and PIO GPIOBASE](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf),
 [BMP581 datasheet, protocol selection and I2C wiring](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf).
+
+The locking-connector revision selects Molex 47219-2001 / LCSC C164170 for J11.
+R41 and SD_DET are removed because this connector has no detect switch.
+The eight card contacts and native SD GPIO26–31 connections are unchanged.

@@ -27,7 +27,11 @@ The schematic and [DESIGN_SPEC.md](DESIGN_SPEC.md) define the current circuit.
 - J10: local 1x3 SWD solder-pad row.
 - J6/J7/J8: three local 1x14, 2.54 mm headers with trimmed courtyard/silkscreen.
 - J4: local USB-C footprint/model; verify the manufacturer drawing for mechanical fit.
-- J11: local Molex 104031-0811 microSD footprint/model.
+- J11: local Molex 47219-2001 (LCSC C164170) locking hinged-lid microSD footprint.
+  Copied from KiCad 10 `Connector_Card:microSD_HC_Molex_47219-2001`; pads 1–8
+  and four grounded SH tabs. No card-detect contacts. The exact-part LCSC/EasyEDA STEP model is stored locally and aligned with
+  the replacement footprint. See `MARV_Packages.3dshapes/PROVENANCE.md`.
+  All 107 schematic components now pass the footprint/model audit.
 - H1–H4 and TP1–TP10: board features; no 3D body required.
 - U24: unpopulated backside SOIC-8, **150 mil** expansion land. Documented fit options
   are W25Q32JVSNIQ flash or APS6404L-SQN-SN PSRAM; verify the exact package suffix

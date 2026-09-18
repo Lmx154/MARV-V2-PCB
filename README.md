@@ -17,7 +17,7 @@ architecture and [PINOUT.md](PINOUT.md) records the GPIO assignments.
 | Sensor power | TPS7A2033 LDO takes V5_SYS and supplies V3V3_ANA for onboard sensors and MCU analog supply. Its enable comes from V3V3_SYS. |
 | Processing | RP2354B MCU, clock, reset and boot circuitry. |
 | Sensors | ADXL375 on dedicated SPI0; ICM-45686 on dedicated SPI1; BMP581 on I2C0. All five sensor interrupts have independent GPIOs. |
-| Storage | PIO + DMA native four-bit microSD on GPIO26–31, with 10k CMD/data pull-ups and 22 ohm clock damping; optional, normally unpopulated QSPI expansion land. |
+| Storage | Molex 47219-2001 (C164170) locking hinged-lid microSD socket, PIO + DMA native four-bit SD on GPIO26–31, with 10k CMD/data pull-ups and 22 ohm clock damping; optional, normally unpopulated QSPI expansion land. |
 | External IO | GPS and ELRS UARTs, magnetometer I2C, four ESC outputs, four servo outputs and four exposed spare GPIOs. |
 | Measurements | Battery voltage, USB presence and external ESC current-sense input; ESC telemetry input. |
 | Debug and indicators | USB-C, SWD pads, sensor test points, addressable RGB status LED and USB power indicator. |
@@ -29,7 +29,8 @@ is sense-only on this PCB.
 
 The four-layer PCB retains its component and pad placement. Existing tracks,
 vias and generated copper zones were cleared for manual routing. The communication schematic revision has not been transferred to the PCB; the owner
-must update its nets and add R57/R58 before routing. See the
+must update its nets, add R57/R58, replace J11 with the locking connector footprint,
+and remove R41 before routing. See the
 [communication validation report](reports/communication-architecture.md). Peripheral
 roles in the pinout describe hardware connections and intended use, not
 implemented firmware.

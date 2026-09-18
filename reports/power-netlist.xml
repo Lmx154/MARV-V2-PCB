@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/luis/Documents/kicad/MARV-V2/MARV-V2.kicad_sch</source>
-    <date>2026-09-17T14:57:42</date>
+    <date>2026-09-17T22:45:08</date>
     <tool>Eeschema 10.0.6-10.0.6~ubuntu24.04.1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -2625,17 +2625,17 @@
       </units>
     </comp>
     <comp ref="J11">
-      <value>microSD, Molex 104031-0811 push-push</value>
-      <footprint>MARV_Packages:microSD_HC_Molex_104031-0811</footprint>
-      <datasheet>https://www.hirose.com/en/product/document?clcode=&amp;productname=&amp;series=DM3&amp;documenttype=Catalog&amp;lang=en&amp;documentid=D49662_en</datasheet>
+      <value>microSD, Molex 47219-2001 locking hinge</value>
+      <footprint>MARV_Packages:microSD_HC_Molex_47219-2001</footprint>
+      <datasheet>https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/salesdrawingpdf/472/47219/472192001_sd.pdf</datasheet>
       <fields>
-        <field name="LCSC">C585350</field>
-        <field name="Footprint">MARV_Packages:microSD_HC_Molex_104031-0811</field>
-        <field name="Datasheet">https://www.hirose.com/en/product/document?clcode=&amp;productname=&amp;series=DM3&amp;documenttype=Catalog&amp;lang=en&amp;documentid=D49662_en</field>
+        <field name="LCSC">C164170</field>
+        <field name="Footprint">MARV_Packages:microSD_HC_Molex_47219-2001</field>
+        <field name="Datasheet">https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/salesdrawingpdf/472/47219/472192001_sd.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="Connector" part="Micro_SD_Card_Det2" description="Micro SD Card Socket with two card detection pins"/>
-      <property name="LCSC" value="C585350"/>
+      <libsource lib="Connector" part="Micro_SD_Card" description="Micro SD Card Socket"/>
+      <property name="LCSC" value="C164170"/>
       <property name="Sheetname" value="BOARD 3 / microSD socket"/>
       <property name="Sheetfile" value="sd.kicad_sch"/>
       <property name="ki_keywords" value="connector SD microsd"/>
@@ -2653,8 +2653,6 @@
             <pin num="6"/>
             <pin num="7"/>
             <pin num="8"/>
-            <pin num="10"/>
-            <pin num="9"/>
             <pin num="SH"/>
           </pins>
         </unit>
@@ -2781,32 +2779,6 @@
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/BOARD 3 / microSD socket/" tstamps="/032d42a2-de69-5884-b9bb-fb27f1e3b2a7/"/>
       <tstamps>2ca15b74-81cd-5dd5-b626-391c6096d0fc</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R41">
-      <value>10k, SD_DET pull-up</value>
-      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
-      <fields>
-        <field name="LCSC">C25744</field>
-        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="Device" part="R" description="Resistor"/>
-      <property name="LCSC" value="C25744"/>
-      <property name="Sheetname" value="BOARD 3 / microSD socket"/>
-      <property name="Sheetfile" value="sd.kicad_sch"/>
-      <property name="ki_keywords" value="R res resistor"/>
-      <property name="ki_fp_filters" value="R_*"/>
-      <sheetpath names="/BOARD 3 / microSD socket/" tstamps="/032d42a2-de69-5884-b9bb-fb27f1e3b2a7/"/>
-      <tstamps>6daf8ac4-c1d5-57dd-bac6-c692777715cb</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -3190,18 +3162,18 @@
     </comp>
   </components>
   <libparts>
-    <libpart lib="Connector" part="Micro_SD_Card_Det2">
-      <description>Micro SD Card Socket with two card detection pins</description>
-      <docs>https://www.hirose.com/en/product/document?clcode=&amp;productname=&amp;series=DM3&amp;documenttype=Catalog&amp;lang=en&amp;documentid=D49662_en</docs>
+    <libpart lib="Connector" part="Micro_SD_Card">
+      <description>Micro SD Card Socket</description>
+      <docs>https://www.we-online.com/components/products/datasheet/693072010801.pdf</docs>
       <footprints>
         <fp>microSD*</fp>
       </footprints>
       <fields>
         <field name="Reference">J</field>
-        <field name="Value">Micro_SD_Card_Det2</field>
+        <field name="Value">Micro_SD_Card</field>
         <field name="Footprint"/>
-        <field name="Datasheet">https://www.hirose.com/en/product/document?clcode=&amp;productname=&amp;series=DM3&amp;documenttype=Catalog&amp;lang=en&amp;documentid=D49662_en</field>
-        <field name="Description">Micro SD Card Socket with two card detection pins</field>
+        <field name="Datasheet">https://www.we-online.com/components/products/datasheet/693072010801.pdf</field>
+        <field name="Description">Micro SD Card Socket</field>
       </fields>
       <pins>
         <pin num="1" name="DAT2" type="bidirectional"/>
@@ -3212,8 +3184,6 @@
         <pin num="6" name="VSS" type="power_in"/>
         <pin num="7" name="DAT0" type="bidirectional"/>
         <pin num="8" name="DAT1" type="bidirectional"/>
-        <pin num="9" name="DET_B" type="passive"/>
-        <pin num="10" name="DET_A" type="passive"/>
         <pin num="SH" name="SHIELD" type="passive"/>
       </pins>
     </libpart>
@@ -3957,7 +3927,6 @@
       <node ref="H3" pin="1" pinfunction="1_1" pintype="input"/>
       <node ref="H4" pin="1" pinfunction="1_1" pintype="input"/>
       <node ref="J10" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
-      <node ref="J11" pin="10" pinfunction="DET_A_10" pintype="passive"/>
       <node ref="J11" pin="6" pinfunction="VSS_6" pintype="power_in"/>
       <node ref="J11" pin="SH" pinfunction="SHIELD_SH" pintype="passive"/>
       <node ref="J3" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
@@ -4171,63 +4140,58 @@
       <node ref="R40" pin="2" pintype="passive"/>
       <node ref="U20" pin="39" pinfunction="GPIO31_39" pintype="bidirectional"/>
     </net>
-    <net code="59" name="SD_DET" class="Default">
-      <node ref="J11" pin="9" pinfunction="DET_B_9" pintype="passive"/>
-      <node ref="R41" pin="2" pintype="passive"/>
-      <node ref="U20" pin="44" pinfunction="GPIO35_44" pintype="bidirectional"/>
-    </net>
-    <net code="60" name="SWCLK" class="Default">
+    <net code="59" name="SWCLK" class="Default">
       <node ref="J10" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U20" pin="33" pinfunction="SWCLK_33" pintype="input"/>
     </net>
-    <net code="61" name="SWDIO" class="Default">
+    <net code="60" name="SWDIO" class="Default">
       <node ref="J10" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U20" pin="34" pinfunction="SWDIO_34" pintype="bidirectional"/>
     </net>
-    <net code="62" name="U7_BST" class="Power">
+    <net code="61" name="U7_BST" class="Power">
       <node ref="C13" pin="1" pintype="passive"/>
       <node ref="U7" pin="6" pinfunction="BST_6" pintype="passive"/>
     </net>
-    <net code="63" name="U7_EN" class="Default">
+    <net code="62" name="U7_EN" class="Default">
       <node ref="R52" pin="2" pintype="passive"/>
       <node ref="U7" pin="2" pinfunction="EN_2" pintype="input"/>
     </net>
-    <net code="64" name="U7_SW" class="Power">
+    <net code="63" name="U7_SW" class="Power">
       <node ref="C13" pin="2" pintype="passive"/>
       <node ref="L2" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U7" pin="5" pinfunction="SW_5" pintype="output"/>
     </net>
-    <net code="65" name="USB_CC1" class="Default">
+    <net code="64" name="USB_CC1" class="Default">
       <node ref="J4" pin="A5" pinfunction="CC1_A5" pintype="bidirectional"/>
       <node ref="R4" pin="1" pintype="passive"/>
     </net>
-    <net code="66" name="USB_CC2" class="Default">
+    <net code="65" name="USB_CC2" class="Default">
       <node ref="J4" pin="B5" pinfunction="CC2_B5" pintype="bidirectional"/>
       <node ref="R5" pin="1" pintype="passive"/>
     </net>
-    <net code="67" name="USB_DM" class="USB">
+    <net code="66" name="USB_DM" class="USB">
       <node ref="J4" pin="A7" pinfunction="D-_A7" pintype="bidirectional"/>
       <node ref="J4" pin="B7" pinfunction="D-_B7" pintype="bidirectional"/>
       <node ref="R23" pin="1" pintype="passive"/>
     </net>
-    <net code="68" name="USB_DM_RP" class="USB">
+    <net code="67" name="USB_DM_RP" class="USB">
       <node ref="R23" pin="2" pintype="passive"/>
       <node ref="U20" pin="66" pinfunction="USB_DM_66" pintype="bidirectional"/>
     </net>
-    <net code="69" name="USB_DP" class="USB">
+    <net code="68" name="USB_DP" class="USB">
       <node ref="J4" pin="A6" pinfunction="D+_A6" pintype="bidirectional"/>
       <node ref="J4" pin="B6" pinfunction="D+_B6" pintype="bidirectional"/>
       <node ref="R22" pin="1" pintype="passive"/>
     </net>
-    <net code="70" name="USB_DP_RP" class="USB">
+    <net code="69" name="USB_DP_RP" class="USB">
       <node ref="R22" pin="2" pintype="passive"/>
       <node ref="U20" pin="67" pinfunction="USB_DP_67" pintype="bidirectional"/>
     </net>
-    <net code="71" name="USB_LED_A" class="Default">
+    <net code="70" name="USB_LED_A" class="Default">
       <node ref="D21" pin="2" pinfunction="A_2" pintype="passive"/>
       <node ref="R56" pin="2" pintype="passive"/>
     </net>
-    <net code="72" name="USB_VBUS" class="Power">
+    <net code="71" name="USB_VBUS" class="Power">
       <node ref="C7" pin="1" pintype="passive"/>
       <node ref="D1" pin="2" pinfunction="A_2" pintype="passive"/>
       <node ref="J4" pin="A4" pinfunction="VBUS_A4" pintype="passive"/>
@@ -4239,7 +4203,7 @@
       <node ref="R56" pin="1" pintype="passive"/>
       <node ref="R7" pin="1" pintype="passive"/>
     </net>
-    <net code="73" name="V3V3_ANA" class="Rail3V3">
+    <net code="72" name="V3V3_ANA" class="Rail3V3">
       <node ref="C26" pin="1" pintype="passive"/>
       <node ref="C40" pin="1" pintype="passive"/>
       <node ref="C50" pin="1" pintype="passive"/>
@@ -4263,7 +4227,7 @@
       <node ref="U23" pin="3" pinfunction="RESERVED_3" pintype="passive"/>
       <node ref="U23" pin="6" pinfunction="VS_6" pintype="power_in"/>
     </net>
-    <net code="74" name="V3V3_SYS" class="Rail3V3">
+    <net code="73" name="V3V3_SYS" class="Rail3V3">
       <node ref="C10" pin="1" pintype="passive"/>
       <node ref="C11" pin="1" pintype="passive"/>
       <node ref="C30" pin="1" pintype="passive"/>
@@ -4301,7 +4265,6 @@
       <node ref="R38" pin="1" pintype="passive"/>
       <node ref="R39" pin="1" pintype="passive"/>
       <node ref="R40" pin="1" pintype="passive"/>
-      <node ref="R41" pin="1" pintype="passive"/>
       <node ref="U12" pin="3" pinfunction="EN_3" pintype="input"/>
       <node ref="U20" pin="15" pinfunction="IOVDD_15" pintype="passive"/>
       <node ref="U20" pin="24" pinfunction="IOVDD_24" pintype="passive"/>
@@ -4317,7 +4280,7 @@
       <node ref="U24" pin="8" pinfunction="VCC_8" pintype="power_in"/>
       <node ref="U7" pin="1" pinfunction="FB_1" pintype="input"/>
     </net>
-    <net code="75" name="V5_SYS" class="Power">
+    <net code="74" name="V5_SYS" class="Power">
       <node ref="C25" pin="1" pintype="passive"/>
       <node ref="C79" pin="1" pintype="passive"/>
       <node ref="C8" pin="1" pintype="passive"/>
@@ -4328,59 +4291,62 @@
       <node ref="U12" pin="1" pinfunction="IN_1" pintype="power_in"/>
       <node ref="U7" pin="3" pinfunction="IN_3" pintype="power_in"/>
     </net>
-    <net code="76" name="VBAT" class="Default">
+    <net code="75" name="VBAT" class="Default">
       <node ref="J3" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="R27" pin="1" pintype="passive"/>
     </net>
-    <net code="77" name="VBAT_SENSE" class="Default">
+    <net code="76" name="VBAT_SENSE" class="Default">
       <node ref="C48" pin="1" pintype="passive"/>
       <node ref="R27" pin="2" pintype="passive"/>
       <node ref="R28" pin="1" pintype="passive"/>
       <node ref="U20" pin="52" pinfunction="GPIO41/ADC1_52" pintype="bidirectional"/>
     </net>
-    <net code="78" name="VBUS_SENSE" class="Default">
+    <net code="77" name="VBUS_SENSE" class="Default">
       <node ref="C49" pin="1" pintype="passive"/>
       <node ref="R29" pin="2" pintype="passive"/>
       <node ref="R30" pin="1" pintype="passive"/>
       <node ref="U20" pin="49" pinfunction="GPIO40/ADC0_49" pintype="bidirectional"/>
     </net>
-    <net code="79" name="VREG_AVDD" class="Default">
+    <net code="78" name="VREG_AVDD" class="Default">
       <node ref="C41" pin="1" pintype="passive"/>
       <node ref="R20" pin="2" pintype="passive"/>
       <node ref="U20" pin="61" pinfunction="VREG_AVDD_61" pintype="power_in"/>
     </net>
-    <net code="80" name="VREG_LX" class="Default">
+    <net code="79" name="VREG_LX" class="Default">
       <node ref="L20" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U20" pin="63" pinfunction="VREG_LX_63" pintype="power_out"/>
     </net>
-    <net code="81" name="XIN" class="Default">
+    <net code="80" name="XIN" class="Default">
       <node ref="C46" pin="1" pintype="passive"/>
       <node ref="U20" pin="30" pinfunction="XIN_30" pintype="input"/>
       <node ref="Y1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="82" name="XOUT" class="Default">
+    <net code="81" name="XOUT" class="Default">
       <node ref="R21" pin="1" pintype="passive"/>
       <node ref="U20" pin="31" pinfunction="XOUT_31" pintype="output"/>
     </net>
-    <net code="83" name="XTAL_DRV" class="Default">
+    <net code="82" name="XTAL_DRV" class="Default">
       <node ref="C47" pin="1" pintype="passive"/>
       <node ref="R21" pin="2" pintype="passive"/>
       <node ref="Y1" pin="3" pinfunction="3_3" pintype="passive"/>
     </net>
-    <net code="84" name="unconnected-(D20-DOUT-Pad1)" class="Default">
+    <net code="83" name="unconnected-(D20-DOUT-Pad1)" class="Default">
       <node ref="D20" pin="1" pinfunction="DOUT_1" pintype="output+no_connect"/>
     </net>
-    <net code="85" name="unconnected-(J4-SBU1-PadA8)" class="Default">
+    <net code="84" name="unconnected-(J4-SBU1-PadA8)" class="Default">
       <node ref="J4" pin="A8" pinfunction="SBU1_A8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="86" name="unconnected-(J4-SBU2-PadB8)" class="Default">
+    <net code="85" name="unconnected-(J4-SBU2-PadB8)" class="Default">
       <node ref="J4" pin="B8" pinfunction="SBU2_B8" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="87" name="unconnected-(U12-NC-Pad4)" class="Default">
+    <net code="86" name="unconnected-(U12-NC-Pad4)" class="Default">
       <node ref="U12" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
-    <net code="88" name="unconnected-(U20-GPIO34-Pad43)" class="Default">
+    <net code="87" name="unconnected-(U20-GPIO34-Pad43)" class="Default">
       <node ref="U20" pin="43" pinfunction="GPIO34_43" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="88" name="unconnected-(U20-GPIO35-Pad44)" class="Default">
+      <node ref="U20" pin="44" pinfunction="GPIO35_44" pintype="bidirectional+no_connect"/>
     </net>
     <net code="89" name="unconnected-(U20-GPIO37-Pad46)" class="Default">
       <node ref="U20" pin="46" pinfunction="GPIO37_46" pintype="bidirectional+no_connect"/>

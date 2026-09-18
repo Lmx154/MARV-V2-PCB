@@ -13,20 +13,20 @@ def netof(pin):
     """The net a pin is really on, or None if it is unconnected.  KiCad names
     the single-node net of a pin carrying a no-connect flag
     'unconnected-(U20-GPIO1-Pad78)'; that is not a net, it is the absence of
-    one, and the two unexposed spare GPIOs are checked against None."""
+    one, and the three unexposed spare GPIOs are checked against None."""
     n = pin_net.get(pin)
     return None if n is None or n.startswith('unconnected-') else n
 
 # Expected GPIO connections, maintained alongside the saved schematic and PINOUT.md.
 # None = the pin carries a KiCad no-connect flag and must reach no net at all
-# (GPIO34 and GPIO37 are the two unexposed spares).
+# (GPIO34, GPIO35 and GPIO37 are the three unexposed spares).
 PINOUT={
  0:'FLASH_CS1', 1:'ADXL_INT1', 2:'ADXL_SCK', 3:'ADXL_MOSI', 4:'ADXL_MISO', 5:'PWM8',
  6:'ICM_INT1', 7:'ICM_CS', 8:'ICM_MISO', 9:'BARO_SCL', 10:'ICM_SCK', 11:'ICM_MOSI',
  12:'BARO_SDA', 13:'BARO_INT', 14:'ADXL_CS', 15:'PWM7', 16:'ELRS_RX', 17:'ELRS_TX',
  18:'ICM_INT2', 19:'PWM6', 20:'PWM5', 21:'ADXL_INT2', 22:'MAG_SDA', 23:'MAG_SCL',
  24:'GPS_RX', 25:'GPS_TX', 26:'SD_CLK_MCU', 27:'SD_CMD', 28:'SD_DAT0', 29:'SD_DAT1',
- 30:'SD_DAT2', 31:'SD_DAT3', 32:'ESC_TELEM_RX', 33:'LED_DATA', 34:None, 35:'SD_DET',
+ 30:'SD_DAT2', 31:'SD_DAT3', 32:'ESC_TELEM_RX', 33:'LED_DATA', 34:None, 35:None,
  36:'PWM4', 37:None, 38:'PWM3', 39:'PWM2', 40:'VBUS_SENSE', 41:'VBAT_SENSE',
  42:'CURR_SENSE', 43:'PWM1', 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
 }
@@ -282,7 +282,6 @@ BUS_NODES = {
  'SD_DAT1': {('U20','37'),('J11','8'),('R38','2')},
  'SD_DAT2': {('U20','38'),('J11','1'),('R39','2')},
  'SD_DAT3': {('U20','39'),('J11','2'),('R40','2')},
- 'SD_DET': {('U20','44'),('J11','9'),('R41','2')},
 }
 for name, nodes in BUS_NODES.items():
     assert nets.get(name) == nodes, (name, nodes, nets.get(name))
@@ -307,6 +306,13 @@ for ref, value, rail in [('R48','10k','V3V3_ANA'),('R51','10k','V3V3_ANA'),
     assert components[ref].findtext('value').split(',')[0].strip() == value, (ref, value)
     assert pin_net[(ref,'1')] == rail, (ref, rail)
 assert components['R58'].findtext('value') == '22', 'SD source damping must be 22 ohm'
+# Locking Molex 47219-2001 has eight card contacts and a shield, no detect switch.
+assert 'R41' not in components and 'SD_DET' not in nets
+assert {pin for ref,pin in pin_net if ref == 'J11'} == set(map(str, range(1,9))) | {'SH'}
+assert pin_net[('J11','SH')] == 'GND'
+assert components['J11'].findtext('footprint') == 'MARV_Packages:microSD_HC_Molex_47219-2001'
+assert any(f.get('name') == 'LCSC' and f.text == 'C164170'
+           for f in components['J11'].findall('./fields/field'))
 # the temporary MCU-interface headers are gone
 assert 'J5' not in components,'J5 (temporary MCU-interface header) still present'
 FPLIBS=[Path('/usr/share/kicad/footprints'),Path(__file__).resolve().parents[1]]
@@ -331,10 +337,10 @@ for gpio_num in range(48):
   f"PINOUT.md violated: GPIO{gpio_num} (U20 pad {pad}) is on {actual_net}, plan says {expected_net}; update PINOUT.md and this table together"
 
 # Validate the spare GPIO split: FOUR spares are exposed on the IO block signal column (rows 11-14),
-# TWO are deliberately unexposed and must be unconnected.  Exposing one of them means editing
+# THREE are deliberately unexposed and must be unconnected.  Exposing one of them means editing
 # PINOUT.md (Rule 5) and this table together.
 EXPOSED_SPARES = {44, 45, 46, 47}
-UNEXPOSED_SPARES = {34, 37}
+UNEXPOSED_SPARES = {34, 35, 37}
 assert not (EXPOSED_SPARES & UNEXPOSED_SPARES)
 spare_nets = {'IO_GPIO44', 'IO_GPIO45', 'IO_GPIO46', 'IO_GPIO47'}
 assert {PINOUT[g] for g in EXPOSED_SPARES} == spare_nets, \
@@ -351,7 +357,7 @@ for gpio_num in sorted(UNEXPOSED_SPARES):
 assert not [n for n in nets if n in ('IO_GPIO9','IO_GPIO12','IO_GPIO18','IO_GPIO21','IO_GPIO26','IO_GPIO27')], \
  sorted(n for n in nets if n.startswith('IO_GPIO'))
 
-print(f'PASS: 48-GPIO pin plan (4 exposed spares, 2 unconnected), {len(expected)} critical pin mappings,\n'
+print(f'PASS: 48-GPIO pin plan (4 exposed spares, 3 unconnected), {len(expected)} critical pin mappings,\n'
       f'      USB supply pins, the BEC -> 5V_IN -> Q1/D1 -> V5_SYS -> U7 -> V3V3_SYS boundary and the\n'
       f'      VBAT sense-only rule, the ESC pad-row order, the\n'
       f'      J6/J7/J8 IO-block row map, the ten sensor test points, the PWM1-4 / PWM5-8 split, the {len(_DNP)} DNP\n'

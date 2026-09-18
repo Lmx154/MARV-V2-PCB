@@ -154,3 +154,29 @@ during this work from
 `https://d17t6iyxenbwp1.cloudfront.net/s3fs-public/2026-04/ds-000577-icm-45686-datasheet.pdf`
 (reached from the public product page). It is **not** committed — vendor
 datasheets are not redistributable here.
+
+## Locking microSD model — 2026-09-17
+
+`microSD_HC_Molex_47219-2001.step` is the exact-part TF-SMD_472192001 model
+associated with LCSC C164170. Source: EasyEDA/LCSC footprint UUID
+`50b30080ce4040cbbaedd52d360e553c`, contributor `lcsc`; model UUID
+`317a26d631154cd7bdb03c9d93c02471`. The public metadata was retrieved using
+a fresh headless browser; no login or CAPTCHA bypass was used.
+
+- Metadata: https://easyeda.com/api/components/50b30080ce4040cbbaedd52d360e553c
+- STEP: https://modules.easyeda.com/qAxj6KHrDKw4blvCG8QJPs7Y/317a26d631154cd7bdb03c9d93c02471
+- Library-provided CAD, not a verified manufacturer original; EasyEDA library
+  terms apply and no explicit per-model license was attached.
+- STEP AP214, SolidWorks 2020 export dated 2022-07-12; 3,660,632 bytes.
+- SHA-256: `c81deec7ad2ee32f7e731ea6a5fc0360e8ee69885939044473dffdf77bf6c69d`.
+- FreeCAD bounds: X ±7.30, Y ±7.25, Z 0–1.971 mm, including tabs/forming;
+  25 solids. The drawing specifies a 13.60 × 14.50 mm body, 1.90 mm nominal height.
+- Eight contacts on 1.10 mm pitch and four mounting tabs agree with the
+  replacement footprint. KiCad rotation `(0,0,180)` and offset `(-0.005,0,0)`
+  align pin 1 and the contact row; scale is 1:1. The 0.005 mm X correction
+  reconciles the library model's rounded contact positions with the footprint.
+
+Attached both to the replacement footprint library and to J11's PCB model
+node. Only that model node changed in the PCB: old pads, nets, placement,
+routing and schematic association are preserved for the owner's later
+footprint/netlist update. The render is not evidence of PCB pad compatibility.

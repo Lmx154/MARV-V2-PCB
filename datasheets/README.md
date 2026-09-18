@@ -25,7 +25,7 @@ either part (DNP by default; see `qspi_expansion.kicad_sch`).
 | D1 | 1N5819WS | Guangdong Hottech | `1N5819WS.pdf` | https://www.lcsc.com/datasheet/lcsc_datasheet_Guangdong-Hottech-1N5819WS_C191023.pdf (LCSC-hosted) | 2026-09-17 | Electrical characteristics (VF, IR), p.1-2 |
 | Y1 | 12 MHz TAXM12M4RFBCCT2T | Shenzhen Yajingxin Electronics | `TAXM12M4RFBCCT2T.pdf` | https://www.lcsc.com/product-detail/C133337.html (manufacturer spec sheet, LCSC-hosted) | 2026-09-17 | Specification table (12.000 MHz, CL = 12 pF), p.1 |
 | J4 | USB-C receptacle TYPE-C-31-M-12 | Korean Hroparts Elec (HRO Electronics) | `TYPE-C-31-M-12.pdf` | https://www.lcsc.com/product-detail/C165948.html (manufacturer drawing, LCSC-hosted) | 2026-09-17 | Pinout table (A1-A12/B1-B12) and PCB land pattern, p.1 |
-| J11 | microSD socket, Molex 104031-0811 | Molex | `104031-0811.pdf` | https://docs.rs-online.com/cb53/0900766b815e9ebe.pdf (RS Components mirror of the Molex Series 104031 datasheet; molex.com links redirect to a part-search page) | 2026-09-17 | Ordering/part table listing `104031-0811`, p.2 |
+| J11 | Molex 47219-2001 / 472192001, C164170, locking hinged microSD | Molex | `472192001.pdf`; `472192001-drawing.pdf` | https://www.es.co.th/Schemetic/PDF/472192001.PDF (Molex part datasheet, generated 2025-04-07); https://cdn.promelec.ru/upload/items/2020/09/01/472192001_sd.pdf (Molex drawing mirror) | 2026-09-17 | Datasheet pp.1–3: hinge type, 8 contacts, no detect switch; drawing p.1: pad layout and pin numbering |
 | SW1, SW2 | B3U-1000P tactile switch | Omron | `B3U-1000P.pdf` | https://omronfs.omron.com/en_US/ecb/products/pdf/en-b3u.pdf | 2026-09-17 | Ratings and characteristics table, p.1-2 |
 
 ## UNKNOWN
@@ -40,3 +40,15 @@ mechanical connector drawings, `TYPE-C-31-M-12.pdf` at ~116 kB and `104031-0811.
 contain the exact part number on an early page via `pdftotext`/`pdfinfo` (and, for `TYPE-C-31-M-12.pdf`,
 a rendered-page visual check since that drawing is almost all vector graphics with little extractable
 text).
+
+## Locking microSD replacement
+
+J11 now uses Molex 47219-2001 / LCSC C164170. Its manufacturer datasheet and
+one-page mechanical drawing are stored above. Both files were verified as PDFs.
+The official drawing endpoint timed out during download, so manufacturer content
+was retrieved from distributor mirrors. Official drawing URL:
+https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/salesdrawingpdf/472/47219/472192001_sd.pdf
+
+Molex describes the hinged lid and slide-to-lock sequence in its card-socket
+brochure: https://www.content.molex.com/dxdam/literature/987651-8263.pdf
+The old `104031-0811.pdf` is retained as a historical reference only.
