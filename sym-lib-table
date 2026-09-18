@@ -1,6 +1,4 @@
 (sym_lib_table
 	(version 7)
 	(lib (name "MARV_Sensors")(type "KiCad")(uri "${KIPRJMOD}/MARV_Sensors.kicad_sym")(options "")(descr "Project-local sensors used by MARV V2"))
-
-  (lib (name "MARV_Power") (type "KiCad") (uri "${KIPRJMOD}/MARV_Power.kicad_sym") (options "") (descr "Power symbols; OR output electrically passive"))
 )

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Produce the two files JLCPCB's assembly order form asks for:
 
-  reports/jlc-bom.csv   Comment, Designator, Footprint, LCSC Part #
-  reports/jlc-cpl.csv   Designator, Mid X, Mid Y, Layer, Rotation
+  build/assembly/jlc-bom.csv   Comment, Designator, Footprint, LCSC Part #
+  build/assembly/jlc-cpl.csv   Designator, Mid X, Mid Y, Layer, Rotation
 
 BOM comes from power_bom.csv grouped by (electrical spec, footprint) -- the same
 grouping tools/jlc/bom_lines.py uses -- and the LCSC part number comes from the
 SCHEMATIC: each selected part has an "LCSC" symbol property. KiCad CLI exports
-it into reports/power-netlist.xml, and this tool reads it there.  The map is only a fallback for when the netlist is
+it into build/checks/netlist.xml, and this tool reads it there.  The map is only a fallback for when the netlist is
 missing or predates the property, so the numbers that get ordered are the numbers
 that are in the schematic, not a second opinion derived from a value string.
 
@@ -25,11 +25,11 @@ TP1-TP10), the mounting holes H1-H4, and -- unless --with-tht is given -- the
 2.54 mm THT headers J6/J7/J8, which the audit recommends shipping unpopulated.
 
   python3 tools/jlc/export_jlc.py
-  python3 tools/jlc/export_jlc.py --with-tht --outdir reports
+  python3 tools/jlc/export_jlc.py --with-tht --outdir build/assembly
 
 ROTATION IS NOT VERIFIED. JLC's zero-degree reference for a given package is not
 always KiCad's; every rotation this writes must be checked against JLC's own
-preview before the order is placed. See reports/jlc-audit.md.
+preview before the order is placed. See README.md (component sourcing section).
 """
 import argparse, csv, os, sys
 import xml.etree.ElementTree as ET
@@ -41,7 +41,7 @@ from bom_lines import load, group, spec_of          # noqa: E402
 
 PCB = os.path.join(ROOT, "MARV-V2.kicad_pcb")
 LCSC_MAP = os.path.join(HERE, "lcsc_map.csv")
-NETLIST = os.path.join(ROOT, "reports", "power-netlist.xml")
+NETLIST = os.path.join(ROOT, "build", "checks", "netlist.xml")
 
 # Fitted lines that are allowed to ship without an LCSC part number.  J6/J7/J8
 # are through-hole and the audit recommends ordering them unpopulated; U24 is
@@ -60,7 +60,7 @@ THT_FP = {"MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow"}
 
 def read_map():
     if not os.path.exists(LCSC_MAP):
-        sys.exit(f"missing {LCSC_MAP} -- see reports/jlc-audit.md")
+        sys.exit(f"missing {LCSC_MAP} -- see README.md (component sourcing section)")
     m = {}
     with open(LCSC_MAP, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
@@ -164,7 +164,7 @@ def write_cpl(path, with_tht):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--outdir", default=os.path.join(ROOT, "reports"))
+    ap.add_argument("--outdir", default=os.path.join(ROOT, "build", "assembly"))
     ap.add_argument("--with-tht", action="store_true",
                     help="include J6/J7/J8 (only if JLC is to solder them)")
     ap.add_argument("--netlist", default=NETLIST,

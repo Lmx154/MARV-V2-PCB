@@ -9,12 +9,13 @@ fp-info-cache
 # Python
 __pycache__/
 *.pyc
+# Generated checks/exports and DFM recovery copies
+build/
+.dfm-backups/
+# Preserve pre-existing local recovery files without tracking them
+/backups/
 # ngspice scratch
-simulations/corners/*.log
 simulations/*.log
-simulations/superseded/*.log
-simulations/superseded/corners/*.log
-backups/*.kicad_pcb.prev
 # Editor / tool state
 .history/
 .serena/

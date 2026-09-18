@@ -3,7 +3,7 @@
 
 Prints one sorted line per (ref, pin, net) and per (ref, value, footprint, LCSC, Fit)
 so two netlists can be diffed to prove a schematic re-organisation changed nothing
-electrical.  Usage: netlist_fingerprint.py reports/power-netlist.xml > a.txt
+electrical.  Usage: netlist_fingerprint.py build/checks/netlist.xml > a.txt
 """
 import sys, xml.etree.ElementTree as ET
 root = ET.parse(sys.argv[1]).getroot()

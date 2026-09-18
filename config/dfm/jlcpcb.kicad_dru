@@ -1,6 +1,5 @@
 (version 1)
 
-# BEGIN MANAGED MARV JLCPCB DFM
 # MARV V2: four-layer, 1 oz outer / 0.5 oz inner, green mask, through vias.
 # Verified 2026-09-18. See reports/jlc-dfm-routing.md for sources and limitations.
 # Global copper spacing/track floor: 0.15 mm. Netclass widths are routing defaults,
@@ -81,4 +80,3 @@
   (condition "A.Type == 'Graphic' && A.Line_Width > 0mm && (A.Layer == 'F.Silkscreen' || A.Layer == 'B.Silkscreen')")
   (constraint assertion "A.Line_Width >= 0.15mm")
   (severity warning))
-# END MANAGED MARV JLCPCB DFM

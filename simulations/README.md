@@ -21,7 +21,7 @@ python3 tools/simulate_power_input.py --load 0.5 --external-load 1.0
 python3 tools/simulate_power_input.py --usb-voltage 4.75
 ```
 
-`--external-load` is additional servo demand on 5V_IN, before the OR.
+`--external-load` is additional electronics demand on 5V_IN, before the OR.
 The external source's 3 A rating is its capacity, not the board's assumed draw.
 Source resistances are explicitly assumed: external 0.05 ohm, USB 0.35 ohm.
 The external boost's output rating and both converters' transient behavior need
@@ -39,6 +39,5 @@ white LED curve is approximate. Source current limiting, charging, cell cutoff,
 USB negotiation, regulator outputs, noise, layout and thermal behavior are outside scope.
 In particular, this simulation cannot decide whether sensor supplies need an LDO.
 
-Previous simulation documentation and result summaries remain in
-`backups/pre-input-power-refresh/simulations/` as historical records. Obsolete
-runners, decks, model copies and generated logs have been removed.
+Historical simulation revisions are available in Git history. Only the current
+input-network deck and its required models are maintained here.

@@ -38,5 +38,5 @@ PCB handoff: update J11 to the new footprint and remove R41. It is not a
 land-pattern-compatible substitution. Provide clearance and access to lift
 and slide the lid. The owner retains control of placement and routing.
 
-3D preview: [PCB with locking socket](pcb-3d-locking-sd.png). The PCB
+Inspect the current model in KiCad's 3D viewer. The PCB
 footprint pads still require the owner's update from the schematic.

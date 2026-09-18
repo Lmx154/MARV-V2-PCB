@@ -7,7 +7,7 @@
 * Terminals, in the order the .SUBCKT line declares them:  D  G  S
 *   so an instance is:  XQ1 <drain> <gate> <source> AO3401A
 * On the MARV board Q1 has drain = 5V_IN (pad 3), gate = USB_VBUS (pad 1),
-* source = V5_SYS (pad 2) -- see reports/power-netlist.xml.
+* source = V5_SYS (pad 2) -- see build/checks/netlist.xml.
 * NOT MODIFIED below this line.
 .SUBCKT AO3401A 4 1 2
 M1  3 1 2 2 PMOS W=998956u  L=1.0u 

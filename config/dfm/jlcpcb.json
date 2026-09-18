@@ -1,0 +1,220 @@
+{
+  "name": "MARV V2 JLCPCB standard four-layer",
+  "verified": "2026-09-18",
+  "project": {
+    "board": {
+      "design_settings": {
+        "rules": {
+          "min_clearance": 0.15,
+          "min_track_width": 0.15,
+          "min_copper_edge_clearance": 0.3,
+          "min_hole_clearance": 0.25,
+          "min_hole_to_hole": 0.25,
+          "min_through_hole_diameter": 0.3,
+          "min_via_diameter": 0.6,
+          "min_via_annular_width": 0.15,
+          "min_silk_clearance": 0.15,
+          "min_text_height": 1.0,
+          "min_text_thickness": 0.15,
+          "solder_mask_to_copper_clearance": 0.09
+        },
+        "defaults": {
+          "silk_line_width": 0.15,
+          "silk_text_thickness": 0.15,
+          "zones": {
+            "min_clearance": 0.2,
+            "min_thickness": 0.2,
+            "thermal_relief_gap": 0.25,
+            "thermal_relief_spoke_width": 0.3
+          }
+        },
+        "rule_severities": {
+          "hole_to_hole": "error",
+          "missing_courtyard": "warning",
+          "silk_over_copper": "error",
+          "text_height": "error",
+          "text_thickness": "error",
+          "annular_width": "error",
+          "clearance": "error",
+          "copper_edge_clearance": "error",
+          "courtyards_overlap": "error",
+          "drill_out_of_range": "error",
+          "hole_clearance": "error",
+          "invalid_outline": "error",
+          "items_not_allowed": "error",
+          "malformed_courtyard": "error",
+          "shorting_items": "error",
+          "solder_mask_bridge": "error",
+          "track_width": "error",
+          "unconnected_items": "error"
+        },
+        "track_widths": [
+          0.0,
+          0.2,
+          0.5,
+          1.0
+        ],
+        "via_dimensions": [
+          {
+            "diameter": 0.0,
+            "drill": 0.0
+          },
+          {
+            "diameter": 0.6,
+            "drill": 0.3
+          }
+        ],
+        "diff_pair_dimensions": [
+          {
+            "width": 0.0,
+            "gap": 0.0,
+            "via_gap": 0.0
+          },
+          {
+            "width": 0.3,
+            "gap": 0.2,
+            "via_gap": 0.25
+          }
+        ]
+      }
+    },
+    "net_settings": {
+      "classes": [
+        {
+          "name": "Default",
+          "priority": 2147483647,
+          "clearance": 0.15,
+          "track_width": 0.2,
+          "via_diameter": 0.6,
+          "via_drill": 0.3,
+          "diff_pair_width": 0.3,
+          "diff_pair_gap": 0.2,
+          "diff_pair_via_gap": 0.25
+        },
+        {
+          "name": "LocalPower",
+          "priority": 20,
+          "clearance": 0.15,
+          "track_width": 0.5,
+          "via_diameter": 0.6,
+          "via_drill": 0.3,
+          "diff_pair_width": 0.3,
+          "diff_pair_gap": 0.2,
+          "diff_pair_via_gap": 0.25
+        },
+        {
+          "name": "Power",
+          "priority": 10,
+          "clearance": 0.15,
+          "track_width": 1.0,
+          "via_diameter": 0.6,
+          "via_drill": 0.3,
+          "diff_pair_width": 0.3,
+          "diff_pair_gap": 0.2,
+          "diff_pair_via_gap": 0.25
+        },
+        {
+          "name": "USB",
+          "priority": 5,
+          "clearance": 0.15,
+          "track_width": 0.3,
+          "via_diameter": 0.6,
+          "via_drill": 0.3,
+          "diff_pair_width": 0.3,
+          "diff_pair_gap": 0.2,
+          "diff_pair_via_gap": 0.25
+        }
+      ],
+      "netclass_patterns": [
+        {
+          "netclass": "Power",
+          "pattern": "5V_IN"
+        },
+        {
+          "netclass": "Power",
+          "pattern": "V5_SYS"
+        },
+        {
+          "netclass": "Power",
+          "pattern": "V3V3_SYS"
+        },
+        {
+          "netclass": "Power",
+          "pattern": "U7_SW"
+        },
+        {
+          "netclass": "LocalPower",
+          "pattern": "USB_VBUS"
+        },
+        {
+          "netclass": "LocalPower",
+          "pattern": "V3V3_ANA"
+        },
+        {
+          "netclass": "LocalPower",
+          "pattern": "DVDD"
+        },
+        {
+          "netclass": "LocalPower",
+          "pattern": "VREG_LX"
+        },
+        {
+          "netclass": "LocalPower",
+          "pattern": "VREG_AVDD"
+        },
+        {
+          "netclass": "LocalPower",
+          "pattern": "GND"
+        },
+        {
+          "netclass": "USB",
+          "pattern": "USB_DP"
+        },
+        {
+          "netclass": "USB",
+          "pattern": "USB_DM"
+        },
+        {
+          "netclass": "USB",
+          "pattern": "USB_DP_RP"
+        },
+        {
+          "netclass": "USB",
+          "pattern": "USB_DM_RP"
+        },
+        {
+          "netclass": "USB",
+          "pattern": "USB_DP_MCU"
+        },
+        {
+          "netclass": "USB",
+          "pattern": "USB_DM_MCU"
+        }
+      ]
+    }
+  },
+  "retired_classes": [
+    "PWM_ESC",
+    "Rail3V3",
+    "SensorSPI"
+  ],
+  "setup": {
+    "pad_to_mask_clearance": "(pad_to_mask_clearance 0)",
+    "solder_mask_min_width": "(solder_mask_min_width 0.1)",
+    "allow_soldermask_bridges_in_footprints": "(allow_soldermask_bridges_in_footprints no)",
+    "tenting": "(tenting (front yes) (back yes))",
+    "covering": "(covering (front no) (back no))",
+    "plugging": "(plugging (front no) (back no))",
+    "capping": "(capping no)",
+    "filling": "(filling no)"
+  },
+  "copper_mm": {
+    "F.Cu": 0.035,
+    "In1.Cu": 0.0152,
+    "In2.Cu": 0.0152,
+    "B.Cu": 0.035
+  },
+  "board_thickness_mm": 1.6,
+  "mask_color": "Green",
+  "finish": "ENIG"
+}

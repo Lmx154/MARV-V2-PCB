@@ -1,8 +1,8 @@
 # Sensor and native SD schematic update
 
 Validated 2026-09-17 using KiCad 10.0.6. Hardware/schematic only; no firmware or
-PCB edits. Open [the schematic PDF](communication-schematic.pdf) or the saved
-`MARV-V2.kicad_sch` project hierarchy. The full GPIO reference is [PINOUT.md](../PINOUT.md).
+PCB edits. Open the saved `MARV-V2.kicad_sch` project hierarchy; generated PDF/netlist
+snapshots have been removed and can be re-exported from KiCad. The full GPIO reference is [PINOUT.md](../PINOUT.md).
 
 ## Electrical allocation
 
@@ -57,8 +57,8 @@ locking-connector update removes the old card-detect circuit.
 
 ## Validation
 
-- KiCad ERC: **0 errors, 0 warnings**. [Report](power-erc.rpt).
-- [Exported netlist](power-netlist.xml): all 48 GPIO assignments and every bus's
+- KiCad ERC: **0 errors, 0 warnings**. Re-run the README check commands for current results.
+- Freshly exported netlist: all 48 GPIO assignments and every bus's
   exact endpoint set pass `tools/check_power_netlist.py`. The checks include
   chip-select pull-ups, I2C pull-up values and rail, I2C mode/address straps,
   consecutive SD data GPIOs, PIO window, independent interrupts, and the clock
@@ -85,9 +85,8 @@ physically next to U20 GPIO26 with a short source stub.
 
 Routing priority: ICM SPI, ADXL SPI, SD clock/native bus, BMP581 I2C. Keep these
 signals short and direct over continuous ground, away from switching-node
-copper and long parallel runs beside servo/pyro power. Avoid unnecessary vias
-and long stubs. Existing SensorSPI rule dimensions are preserved; its net-name
-patterns now cover ADXL_* and ICM_*.
+copper and external power wiring. Avoid unnecessary vias
+and long stubs. The current DFM profile uses the common 0.20 mm signal class for these buses.
 
 LED_DATA moved GPIO3 → GPIO33; ICM_INT2 moved GPIO2 → GPIO18; ADXL_CS moved
 GPIO4 → GPIO14. SD clock/command moved GPIO33/34 → GPIO26/27. ADXL_INT2 now
@@ -128,4 +127,4 @@ rocket-flight shock/vibration qualification.
 
 Subsequent 3D update: J11 now displays the locking-socket model on the PCB.
 Only its model reference/transform changed; PCB pads, nets and placement
-remain as before. See [the rendered preview](pcb-3d-locking-sd.png).
+remain as before. Use KiCad's 3D viewer for a current preview; model appearance does not validate pad compatibility.

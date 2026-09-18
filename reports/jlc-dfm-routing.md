@@ -2,6 +2,10 @@
 
 Verified against published JLCPCB information on **2026-09-18**, using KiCad **10.0.6**.
 Settings live in `MARV-V2.kicad_pro`, `MARV-V2.kicad_dru`, and the board setup.
+The reusable source profile is `config/dfm/jlcpcb.json`, with custom rules in
+`config/dfm/jlcpcb.kicad_dru`. Run `python3 tools/dfm.py --check` to detect drift
+or `--apply` to restore those managed settings with backups. Keep owner rules
+outside the marked block; rules after it may override the profile and need review.
 
 **The constraints are installed; the existing board is not ready for fabrication.**
 The saved PCB is behind the schematic and needs the owner's schematic-to-PCB
@@ -243,7 +247,9 @@ whole 2 A rail. No thermal vias or plane stitching were added.
 
 ## Validation and next routing steps
 
-`reports/jlc-dfm-drc.json` records the final read-only check. The original board
+Run `python3 tools/dfm.py --drc` for a fresh read-only check in
+`build/dfm/drc.json`. The counts below are the 2026-09-18 baseline; the full
+snapshot is recoverable from commit `01a357c`. The original board
 had 5 reported layout violations, 302 unconnected items and 185 schematic-parity
 issues. With the installed checks it has:
 

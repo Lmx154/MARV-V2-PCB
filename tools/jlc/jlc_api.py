@@ -5,7 +5,7 @@ Why not the jlcparts sqlite dump: as of 2026-09-16 the published
 https://yaqwsx.github.io/jlcparts/data/cache.zip is a partially bootstrapped
 database (148 000 rows, all library_type='expand', all preferred=0, stock>0 on
 only 2 907 rows, LCSC ids 6 374 508 and up -- no classic low-numbered Basic
-parts). See reports/jlc-audit.md "Method".
+parts). See README.md (component sourcing section).
 
 Endpoint (the one jlcpcb.com/parts itself calls):
   POST https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList

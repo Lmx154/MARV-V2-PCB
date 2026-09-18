@@ -1,208 +1,150 @@
 # MARV V2 flight controller
 
-This repository contains the KiCad hardware design, component libraries, design
-checks, sourcing and assembly helpers, and input-power simulation for MARV V2.
-It contains no flight-control firmware.
+Open [MARV-V2.kicad_pro](MARV-V2.kicad_pro) in **KiCad 10**. This repository
+contains the hardware design, local libraries, offline datasheets, checking and
+sourcing tools, and the input-power simulation. It contains no firmware.
 
-Open [MARV-V2.kicad_pro](MARV-V2.kicad_pro) in KiCad. The saved schematic and PCB
-are the working design; [DESIGN_SPEC.md](DESIGN_SPEC.md) records the intended
-architecture and [PINOUT.md](PINOUT.md) records the GPIO assignments.
+[Design specification](DESIGN_SPEC.md) · [Pinout](PINOUT.md) ·
+[JLCPCB DFM and routing guide](reports/jlc-dfm-routing.md) ·
+[Component libraries](LIBRARIES.md) · [Datasheets](datasheets/README.md)
 
-## Hardware functionality
+## Hardware and current status
 
-| Area | Included in the design |
-| --- | --- |
-| Power input | External regulated 5 V and USB power, combined through the Q1/D1 OR into V5_SYS. External battery conversion and charging happen off-board. |
-| System power | AP63203 buck supplies V3V3_SYS for the MCU, storage and external 3.3 V IO. |
-| Sensor power | TPS7A2033 LDO takes V5_SYS and supplies V3V3_ANA for onboard sensors and MCU analog supply. Its enable comes from V3V3_SYS. |
-| Processing | RP2354B MCU, clock, reset and boot circuitry. |
-| Sensors | ADXL375 on dedicated SPI0; ICM-45686 on dedicated SPI1; BMP581 on I2C0. All five sensor interrupts have independent GPIOs. |
-| Storage | Molex 47219-2001 (C164170) locking hinged-lid microSD socket, PIO + DMA native four-bit SD on GPIO26–31, with 10k CMD/data pull-ups and 22 ohm clock damping; optional, normally unpopulated QSPI expansion land. |
-| External IO | GPS and ELRS UARTs, magnetometer I2C, four ESC outputs, four servo outputs and four exposed spare GPIOs. |
-| Measurements | Battery voltage, USB presence and external ESC current-sense input; ESC telemetry input. |
-| Debug and indicators | USB-C, SWD pads, sensor test points, addressable RGB status LED and USB power indicator. |
+External regulated 5 V and USB feed the Q1/D1 OR. An AP63203 buck powers digital
+and external IO at 3.3 V; a separate TPS7A2033 LDO powers onboard sensors.
+The RP2354B connects to ICM-45686 and ADXL375 on independent SPI buses, BMP581
+on I2C, and a locking Molex 47219-2001 microSD socket on native four-bit SD.
+GPS, ELRS, magnetometer and spare IO connect through the external headers.
 
-GPS, ELRS, magnetometer and spare IO power comes from V3V3_SYS. Servo power is
-external 5V_IN, upstream of the OR. USB powers the board's 3.3 V electronics and
-modules, but does not intentionally power the servo rail. Raw battery voltage
-is sense-only on this PCB.
+**No motors, servos or actuators draw power through the FC.** PWM/control signals
+are provided; possible powered electronics include ToF/lidar sensors, GPS and
+ELRS. Check their voltage requirements and combined peak demand against the
+shared system supply. Raw battery voltage is sense-only.
 
-The four-layer PCB retains its component and pad placement. Existing tracks,
-vias and generated copper zones were cleared for manual routing. The communication schematic revision has not been transferred to the PCB; the owner
-must update its nets, add R57/R58, replace J11 with the locking connector footprint,
-and remove R41 before routing. See the
-[communication validation report](reports/communication-architecture.md). Peripheral
-roles in the pinout describe hardware connections and intended use, not
-implemented firmware.
+**The PCB is not ready to manufacture.** The saved schematic is ahead of the
+board: update nets, add R57/R58, replace J11's footprint and remove R41 before
+routing. The locking-socket 3D model is already visible, but the old PCB lands
+remain. Existing DRC findings include silkscreen, conservative component-spacing
+checks and package-specific mask/land-pattern reviews.
 
-**The owner handles PCB routing.** Agents must preserve manual design work and
-must not route, autoroute, stitch planes or rebuild placement. See
-[AGENTS.md](AGENTS.md).
+The owner performs PCB placement and routing. Preserve manual edits; do not
+route, autoroute, stitch planes or regenerate the design. [Working rules](AGENTS.md)
 
-## Repository map
+## Apply or check the JLCPCB settings
 
-| Path | Purpose |
-| --- | --- |
-| `MARV-V2.kicad_pro` | KiCad project, design rules and net classes. |
-| `MARV-V2.kicad_sch`, subsystem `*.kicad_sch` files | Root schematic plus power, MCU, sensors, storage, USB/debug and IO sheets. |
-| `MARV-V2.kicad_pcb` | Working PCB with the current component and pad placement. |
-| `MARV_Packages.pretty/` | Project footprints. |
-| `MARV_Sensors.kicad_sym` | Project sensor symbols. Standard KiCad libraries supply other active symbols. |
-| `fp-lib-table`, `sym-lib-table` | Project library registration. |
-| `MARV_Packages.3dshapes/` | Local STEP models and [provenance](MARV_Packages.3dshapes/PROVENANCE.md). |
-| `datasheets/` | Offline component PDFs with a [source and page index](datasheets/README.md). |
-| `power_bom.csv` | Component inventory used by BOM grouping and assembly export. |
-| `tools/` | Eleven reusable checking, sourcing, export and maintenance tools, listed below. |
-| `simulations/` | Active input-power deck, device models, instructions and results. |
-| `reports/` | ERC/DRC reports, netlists, schematic PDF, PCB views, assembly CSVs, sourcing audit and historical sheet map. |
-| `backups/` | Historical hardware, documents, BOMs and simulation summaries. Archived code has been removed. |
-
-Reference documents:
-
-- [DESIGN_SPEC.md](DESIGN_SPEC.md): architecture, power connections and remaining hardware work.
-- [PINOUT.md](PINOUT.md): GPIO assignments, peripheral allocation and spare-pin constraints.
-- [LIBRARIES.md](LIBRARIES.md): component, footprint, model and sourcing details.
-- [PROJECT_AUDIT.md](PROJECT_AUDIT.md): simplification history and known tool limitations.
-
-## Requirements
-
-- KiCad 10 and its standard symbol/footprint libraries; `kicad-cli` for checks and exports.
-- Python 3. Most scripts use only the standard library.
-- KiCad's `pcbnew` Python module for `tools/jlc/export_jlc.py`. Use the Python
-  interpreter that has that module installed; on this workstation it is `/usr/bin/python3`.
-- ngspice for the input-power simulation.
-- FreeCAD for STEP inspection with `tools/3d/bbox.py`.
-- Network access for uncached JLC catalogue queries. Cached queries reuse local responses.
-- Optional `pdftotext` and `pdfinfo` for inspecting local datasheets.
-
-Run the commands below from the repository root.
-
-## Electrical and footprint checks
-
-| Tool | Function | Output / effect |
-| --- | --- | --- |
-| [check_power_netlist.py](tools/check_power_netlist.py) | Checks critical pin connections, power boundaries, all 48 GPIO assignments, IO rows, sensor/storage buses, test points, DNP status and footprint pad coverage. | Reads an exported XML netlist; prints pass/failure. |
-| [audit_footprints.py](tools/audit_footprints.py) | Checks footprint resolution, files, referenced 3D assets and symbol-pin versus footprint-pad counts. | Prints a report; optional `--json PATH` writes structured results. |
-| [netlist_fingerprint.py](tools/netlist_fingerprint.py) | Produces sorted connectivity and component records for comparing schematic revisions independently of drawing layout. | Prints records including values, footprints, LCSC numbers and fit status. |
-
-Export a fresh netlist before running checks that read it:
+The profile targets this four-layer, 1.6 mm board with standard copper
+(1 oz outer / 0.5 oz inner), green mask and ENIG for its fine-pitch packages.
+It is MARV-specific: its rail assignments and package rules are not a universal
+profile for unrelated boards. Source values and remaining limitations are in the
+[DFM guide](reports/jlc-dfm-routing.md).
 
 ```sh
-kicad-cli sch erc --severity-all --exit-code-violations -o reports/power-erc.rpt MARV-V2.kicad_sch
-kicad-cli sch export netlist --format kicadxml -o reports/power-netlist.xml MARV-V2.kicad_sch
-python3 tools/check_power_netlist.py reports/power-netlist.xml
-python3 tools/audit_footprints.py reports/power-netlist.xml
-kicad-cli pcb drc --severity-all --exit-code-violations -o reports/pcb-drc.rpt MARV-V2.kicad_pcb
+python3 tools/dfm.py --check         # read-only; exits 1 if managed settings differ
+python3 tools/dfm.py --apply         # apply settings, backing up files that change
+python3 tools/dfm.py --drc           # check settings and run KiCad DRC/parity
+python3 -m unittest discover -s tests -v
 ```
 
-KiCad ERC checks electrical rules; DRC checks PCB geometry and connectivity
-against the project's rules. The project retains net classes for power, 3.3 V
-rails, USB, sensor SPI and motor/servo signals. An unrouted board will report
-unconnected items.
+Close the PCB editor before applying; reopen it afterward. The tool edits only
+managed project settings, the managed custom-rule block and board setup metadata.
+It preserves schematic files, placements, pads, nets, copper geometry and unrelated
+settings. Reapplying an unchanged profile does nothing. Backups go to
+`.dfm-backups/`; generated DRC output goes to `build/dfm/`, both ignored by Git.
+Use `--project PATH.kicad_pro` for a copied MARV project and `--diff` to inspect
+pending changes. Keep additional custom rules outside the marked managed block.
 
-These are manufacturing aids, not a dedicated manufacturer DFM approval tool.
-Footprint file availability does not establish package fit or assembly rotation.
-See [LIBRARIES.md](LIBRARIES.md) for the physical checks still required.
+The router picks widths automatically from the netclass:
 
-## Component sourcing and assembly exports
+| Use | Width |
+|---|---:|
+| Signals: SPI, I2C, UART, SD, PWM, SWD, ADC | 0.20 mm |
+| Local power branches | 0.50 mm |
+| Shared power trunks | 1.00 mm |
+| USB pair, provisional until impedance verification | 0.30 mm / 0.20 mm gap |
 
-| Tool / data | Function | Output / effect |
-| --- | --- | --- |
-| [jlc_api.py](tools/jlc/jlc_api.py) | Searches JLC's public catalogue by keyword or LCSC number; retrieves attributes, package, library class, stock and price tiers. | Prints results or raw JSON; writes a response cache. `--refresh` bypasses the cache. |
-| [find_part.py](tools/jlc/find_part.py) | Filters candidates by package, attributes, voltage, tolerance, description and stock; ranks Basic, Preferred, then Extended. | Prints candidates; does not replace components. |
-| [bom_lines.py](tools/jlc/bom_lines.py) | Groups `power_bom.csv` by specification and footprint; separates purchased, DNP and board-feature entries. | Prints quantities and solder-joint totals; optional `--json PATH`. |
-| [audit.py](tools/jlc/audit.py) | Checks mapped LCSC parts against catalogue data and totals component costs, library classes, placements and estimated setup fees. | Prints text or `--md` output. Supports `--refresh`. |
-| [export_jlc.py](tools/jlc/export_jlc.py) | Generates assembly BOM and CPL/position files from BOM data, schematic LCSC fields and existing PCB placement. | Writes `reports/jlc-bom.csv` and `reports/jlc-cpl.csv`; does not place or move components. |
-| [lcsc_map.csv](tools/jlc/lcsc_map.csv) | Records selected LCSC parts by specification and footprint. | Selection data used by the sourcing tools and as an export fallback. |
+One via preset: **0.60 mm diameter / 0.30 mm drill**. Minimum track/clearance:
+**0.15 mm**. Short pad escapes may be narrower than the power trunk; inspect the
+whole current path. These checks do not certify thermal performance or replace
+JLC's final CAM/assembly review. DRC currently returns failure for known unfinished
+board work; a clean tooling check is not a clean PCB DRC.
 
-Example commands:
+## Check the saved design
+
+Requirements: Python 3 and KiCad 10 with standard libraries; ngspice for power
+simulation. Assembly placement export also needs KiCad's `pcbnew` Python module
+(`/usr/bin/python3` on this workstation). FreeCAD is optional for STEP inspection.
+
+Run from the repository root:
 
 ```sh
-python3 tools/jlc/jlc_api.py C1525 --raw
+mkdir -p build/checks
+kicad-cli sch erc --severity-all --exit-code-violations -o build/checks/erc.rpt MARV-V2.kicad_sch
+kicad-cli sch export netlist --format kicadxml -o build/checks/netlist.xml MARV-V2.kicad_sch
+python3 tools/check_power_netlist.py build/checks/netlist.xml
+python3 tools/audit_footprints.py build/checks/netlist.xml
+python3 tools/dfm.py --drc
+```
+
+The netlist checker verifies power boundaries, all 48 GPIO assignments, exact
+sensor/SD bus endpoints, pull-ups and footprint pad coverage. The footprint audit
+checks library/model availability and pin counts, not physical fit.
+`tools/netlist_fingerprint.py` compares connectivity independently of sheet layout.
+See the [communication handoff](reports/communication-architecture.md) and
+[locking-socket handoff](reports/sd-connector-replacement.md) for pending PCB work.
+
+## Source parts and export assembly files
+
+```sh
 python3 tools/jlc/find_part.py --q "100nF 0402" --pkg 0402 --attr Capacitance=100nF --min-volt 16 --min-stock 1000
 python3 tools/jlc/bom_lines.py
 python3 tools/jlc/audit.py --md
-/usr/bin/python3 tools/jlc/export_jlc.py --netlist reports/power-netlist.xml
+/usr/bin/python3 tools/jlc/export_jlc.py --netlist build/checks/netlist.xml --outdir build/assembly
 ```
 
-The API cache defaults to `~/.cache/jlcparts/api`; `JLC_CACHE` overrides its
-location. Cached responses do not expire automatically. Prices, solder-joint
-counts and setup fees are estimates: joint counts use a footprint table and
-fees are coded assumptions, not a complete manufacturing quote.
+Generate assembly files only after synchronizing schematic and PCB. The exporter
+reads existing placement; it does not place components. Review every rotation in
+JLC's preview. DNP parts, board features and normally J6–J8 headers are excluded;
+`--with-tht` includes the headers. The exporter can write files before reporting
+missing LCSC numbers and only warns about BOM/CPL mismatches, so do not treat
+file creation as validation.
 
-Assembly export excludes DNP parts, bare pads, holes and normally the J6–J8
-through-hole headers. `--with-tht` includes those headers; `--outdir PATH`
-changes the output location. The current CPL workflow is for front-side assembly.
-Verify every rotation in JLC's assembly preview. Missing fitted LCSC numbers
-cause failure after files have been written; BOM/CPL designator mismatches
-print warnings.
+Maintain `power_bom.csv`, schematic `LCSC` fields and `tools/jlc/lcsc_map.csv`
+together when changing components. Catalogue queries use `tools/jlc/jlc_api.py`;
+`--refresh` bypasses the cache at `~/.cache/jlcparts/api` (`JLC_CACHE` overrides).
+Cached prices and hardcoded joint/setup estimates are not a current assembly quote.
+Stale BOM/CPL and price-report snapshots have been removed.
 
-When changing components, keep the saved schematic, `power_bom.csv`, schematic
-`LCSC` properties and `tools/jlc/lcsc_map.csv` aligned. Export a fresh schematic
-netlist before generating assembly files. No schematic generator maintains
-these records automatically.
-
-## Input-power simulation
-
-[simulate_power_input.py](tools/simulate_power_input.py) runs the single active
-[SPICE deck](simulations/power_input.cir). It first exports the saved schematic
-and checks the key input-network connections and component assumptions.
-
-The seven cases are external power only, USB only, both connected, USB
-insertion, USB removal, external removal and an external-powered load step.
-Measurements include V5_SYS dips and final voltage, source sharing, reverse
-current and estimated Q1/D1 electrical losses.
+## Input-power simulation and maintenance
 
 ```sh
 python3 tools/simulate_power_input.py
-python3 tools/simulate_power_input.py --load 0.5 --external-load 1.0
-```
-
-Options are `--load`, `--external-load`, `--external-voltage` and
-`--usb-voltage`. Default demand is an assumed 0.5 A at V5_SYS.
-`--external-load` adds demand on 5V_IN upstream of the OR.
-
-The runner overwrites [simulations/RESULTS.md](simulations/RESULTS.md) and keeps
-exact decks, logs, waveforms and the exported netlist in a printed temporary
-directory. It fails if the measured event-window voltage falls below its
-3.8 V input threshold, or if wiring checks or the solver fail.
-
-This models power arriving at V5_SYS. It does not simulate external converters,
-regulator control loops or outputs, charging, USB negotiation, PCB parasitics,
-sensor noise or temperatures. Read [simulation scope and assumptions](simulations/README.md)
-before interpreting results.
-
-## Design maintenance and mechanical inspection
-
-| Tool | Function | Output / effect |
-| --- | --- | --- |
-| [relink_pcb_paths.py](tools/relink_pcb_paths.py) | Repairs footprint-to-schematic identity paths after sheet reorganization; checks for unmatched references. | Default rewrites PCB identity paths. `--dry-run` inspects without writing. |
-| [bbox.py](tools/3d/bbox.py) | Reads STEP geometry and reports bounding coordinates, dimensions, centers, solids and faces to assist model alignment. | Prints measurements; does not change the STEP or footprint files. |
-
-```sh
 python3 tools/relink_pcb_paths.py --dry-run
-/snap/bin/freecad.cmd -c tools/3d/bbox.py </dev/null
-pdftotext datasheets/AP63203.pdf -
 ```
 
-The STEP helper accepts individual files after `--`; without them it inspects
-the local model directories. See [tools/3d/README.md](tools/3d/README.md).
-Existing STEP assets and their provenance remain available; one-time model
-generators have been removed.
+The [input-power simulation](simulations/README.md) checks seven source/load
+cases at V5_SYS and writes `simulations/RESULTS.md`. Its default 0.5 A load is an
+assumption, not the external-module budget. It does not simulate downstream
+regulators, USB negotiation, sensor noise or temperature.
 
-## KiCad exports and project status
+The relinking helper repairs schematic identity paths after sheet moves; its
+`--dry-run` is read-only and it refuses mismatched reference sets. It is not a
+substitute for updating the PCB from the schematic. [STEP inspection](tools/3d/README.md)
+uses FreeCAD for model dimensions.
 
-Installed KiCad CLI commands also provide Gerber and drill output, position
-files, IPC-2581, ODB++, IPC-D-356 netlists, board statistics, PDF/SVG drawings,
-STEP and other 3D formats, and PCB rendering. These are standard KiCad tools;
-this repository does not contain an automated fabrication-release pipeline.
+## Repository contents
 
-Reports and renders are derived snapshots. Regenerate the relevant outputs
-after changes; older PNG renders and archived documents may describe previous
-board states. A passing schematic check or input simulation does not mean the
-board is ready to manufacture.
+| Location | Maintained content |
+|---|---|
+| Root `*.kicad_*`, library tables | Saved design and project settings |
+| `config/dfm/` | Reviewed DFM profile and custom-rule template |
+| `tools/`, `tests/` | Reusable design tools and DFM preservation tests |
+| `MARV_Packages.pretty/`, `MARV_Packages.3dshapes/` | Referenced footprints/models and provenance |
+| `datasheets/` | Manufacturer documents and source index |
+| `reports/` | Human-readable design/routing handoffs |
+| `simulations/` | Active input deck, models and results |
+| `build/`, `.dfm-backups/` | Local generated output and recovery copies; untracked |
 
-Legacy schematic generators, routing and placement utilities, one-time STEP
-generators, obsolete simulation code and archived Python scripts have been
-removed. Historical documents under `backups/` can mention deleted commands;
-they are not instructions for the current workflow.
+Git history retains obsolete design revisions and deleted assets. The cleanup
+baseline is commit `eafe903`; use `git show eafe903:path/to/file` to inspect a
+removed file. Historical generators, placement/routing automation and duplicate
+backup trees do not belong in the active workflow.

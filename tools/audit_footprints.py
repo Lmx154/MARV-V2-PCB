@@ -24,7 +24,7 @@ Usage:
     python3 tools/audit_footprints.py [NETLIST_XML] [--json OUT.json] [--no-fail]
                                       [--no-3d-ok REGEX]
 
-    NETLIST_XML defaults to reports/power-netlist.xml (relative to the
+    NETLIST_XML defaults to build/checks/netlist.xml (relative to the
     current directory). Regenerate it first, e.g. into a scratch location
     while the schematic is in flux:
 
@@ -370,8 +370,8 @@ def resolve_component(comp, fp_table, env, pin_nums, no_3d_ok=None):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('netlist', nargs='?', default='reports/power-netlist.xml',
-                     help='kicadxml netlist export (default: reports/power-netlist.xml)')
+    ap.add_argument('netlist', nargs='?', default='build/checks/netlist.xml',
+                     help='kicadxml netlist export (default: build/checks/netlist.xml)')
     ap.add_argument('--json', metavar='PATH', help='also write machine-readable results to PATH')
     ap.add_argument('--no-fail', action='store_true', help='exit 0 even if issues are found')
     ap.add_argument('--no-3d-ok', metavar='REGEX', default=DEFAULT_NO_3D_OK,

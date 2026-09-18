@@ -34,4 +34,4 @@ USB drives Q1’s gate. With USB present, do not assume the low-resistance BEC p
 
 **Limits:** vendor Q1 model; fitted D1 forward curve; approximate white LED; nominal capacitors. No regulator control loops, source current limits, battery chemistry, charging, converter cutoff, USB negotiation, PCB parasitics, noise or thermal simulation. D1 leakage at temperature is not bounded. The default 0.5 A is an explicit input-load assumption, not a measured board budget.
 
-Exact decks, waveforms, logs and exported netlist: `/tmp/marv-input-power-afuv4tx5`.
+Exact decks, waveforms, logs and exported netlist: `/tmp/marv-input-power-qkgsqbbq`.

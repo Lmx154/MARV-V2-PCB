@@ -37,14 +37,14 @@ The schematic and [DESIGN_SPEC.md](DESIGN_SPEC.md) define the current circuit.
   are W25Q32JVSNIQ flash or APS6404L-SQN-SN PSRAM; verify the exact package suffix
   before populating. C62 and R35 remain fitted on the front.
 
-`MARV_Power.kicad_sym` is empty. The TPS2121/TPS62913 footprints and STEP models,
-and the smaller FTC303020D inductor footprint, remain unused reference assets.
-Their presence does not imply those components belong on this board.
+The retired power-symbol library and unused TPS2121/TPS62913/FTC303020D assets
+were removed. The old 104031 SD footprint and model remain because the saved PCB
+still uses that footprint; remove them after the owner transfers J11 to 47219.
 
 ## Checks and unresolved sourcing detail
 
 ```sh
-python3 tools/audit_footprints.py reports/power-netlist.xml
+python3 tools/audit_footprints.py build/checks/netlist.xml
 ```
 
 This checks resolved files and pin/pad coverage, not package geometry or assembly
@@ -56,8 +56,7 @@ map, but the labels were not reconciled. No part was substituted during this
 cleanup; the input simulation uses nominal capacitance and does not validate
 that dielectric's bias/temperature behavior.
 
-The previous detailed library/placement history is preserved in
-`backups/pre-input-power-refresh/LIBRARIES.md`.
+Previous library and placement revisions are available in Git history.
 
 ## BMP581 I2C schematic variant
 

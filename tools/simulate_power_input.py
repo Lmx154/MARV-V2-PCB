@@ -83,7 +83,7 @@ def run_case(work, case, args):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--load', type=float, default=0.5, help='combined V5_SYS input demand in A')
-    ap.add_argument('--external-load', type=float, default=0, help='additional servo demand on 5V_IN in A')
+    ap.add_argument('--external-load', type=float, default=0, help='additional external electronics demand on 5V_IN in A')
     ap.add_argument('--external-voltage', type=float, default=5.0)
     ap.add_argument('--usb-voltage', type=float, default=5.0)
     args = ap.parse_args()
