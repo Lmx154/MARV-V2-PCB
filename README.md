@@ -1,5 +1,9 @@
 # MARV V2 flight controller
 
+**License:** Original hardware/docs: CC0; code: 0BSD. No attribution required.
+Provided as-is, with warranty and liability disclaimers to the extent permitted
+by law. See [LICENSE.md](LICENSE.md) for full terms and third-party exceptions.
+
 Open [MARV-V2.kicad_pro](MARV-V2.kicad_pro) in **KiCad 10**. This repository
 contains the hardware design, local libraries, offline datasheets, checking and
 sourcing tools, and the input-power simulation. It contains no firmware.
