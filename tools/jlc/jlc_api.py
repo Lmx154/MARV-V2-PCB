@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Cached read-only client for JLCPCB's public SMT-parts search API.
 
 Why not the jlcparts sqlite dump: as of 2026-09-16 the published

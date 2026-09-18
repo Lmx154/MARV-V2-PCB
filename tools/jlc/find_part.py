@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Parametric candidate finder on top of jlc_api.py.
 
 JLC's keyword search is a loose full-text match over a whole series, so the

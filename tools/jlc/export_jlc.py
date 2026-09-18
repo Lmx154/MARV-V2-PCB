@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Produce the two files JLCPCB's assembly order form asks for:
 
   build/assembly/jlc-bom.csv   Comment, Designator, Footprint, LCSC Part #

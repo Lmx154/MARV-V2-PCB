@@ -1,3 +1,5 @@
+* SPDX-License-Identifier: 0BSD
+* See ../../LICENSES/0BSD.txt; provided AS IS.
 * Input OR diode models. Neither card is a vendor macromodel.
 * D1 forward curve fitted to the local 1N5819WS datasheet maximum points:
 * 0.60 V at 1 A and 0.90 V at 3 A (25 C). Intermediate-current behavior is

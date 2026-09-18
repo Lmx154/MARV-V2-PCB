@@ -40,3 +40,7 @@ and slide the lid. The owner retains control of placement and routing.
 
 Inspect the current model in KiCad's 3D viewer. The PCB
 footprint pads still require the owner's update from the schematic.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../LICENSE.md).

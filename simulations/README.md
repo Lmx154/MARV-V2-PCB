@@ -41,3 +41,7 @@ In particular, this simulation cannot decide whether sensor supplies need an LDO
 
 Historical simulation revisions are available in Git history. Only the current
 input-network deck and its required models are maintained here.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../LICENSE.md).

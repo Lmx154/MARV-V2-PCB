@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Re-point every footprint in MARV-V2.kicad_pcb at the symbol it now belongs to.
 
 pcbnew links a footprint to its schematic symbol by the hierarchical path

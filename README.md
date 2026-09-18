@@ -1,5 +1,12 @@
 # MARV V2 flight controller
 
+**Hardware & docs: [CC0](LICENSES/CC0-1.0.txt) · Code: [0BSD](LICENSES/0BSD.txt)**
+
+Use, modify, build, sell, and share our original work. No credit or publication
+of changes required. Provided as-is, without warranty; liability is disclaimed
+to the extent permitted by law. See [licensing and disclaimers](LICENSE.md) and
+[third-party exceptions](THIRD_PARTY.md).
+
 Open [MARV-V2.kicad_pro](MARV-V2.kicad_pro) in **KiCad 10**. This repository
 contains the hardware design, local libraries, offline datasheets, checking and
 sourcing tools, and the input-power simulation. It contains no firmware.
@@ -148,3 +155,7 @@ Git history retains obsolete design revisions and deleted assets. The cleanup
 baseline is commit `eafe903`; use `git show eafe903:path/to/file` to inspect a
 removed file. Historical generators, placement/routing automation and duplicate
 backup trees do not belong in the active workflow.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](LICENSE.md).

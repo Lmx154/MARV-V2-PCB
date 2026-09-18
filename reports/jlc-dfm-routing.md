@@ -287,3 +287,7 @@ reported footprint/spacing/mask issues, route, fill zones, and run DRC again.
 Inspect final Gerber copper/mask/paste/drills and JLC's assembly/CAM preview before
 ordering. Installed rules substantially improve coverage, but do not certify an
 unfinished PCB or replace JLC's final review.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../LICENSE.md).

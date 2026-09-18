@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Connectivity fingerprint of a kicadxml netlist, independent of sheet layout.
 
 Prints one sorted line per (ref, pin, net) and per (ref, value, footprint, LCSC, Fit)

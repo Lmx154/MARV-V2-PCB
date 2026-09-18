@@ -134,3 +134,7 @@ select the external converters and compatible 3.3 V modules; then measure source
 transitions, supply noise during module/SD activity, and temperatures on hardware.
 JLC assembly rotations also need the ordering preview. These checks do not
 mandate additional circuit features unless they reveal an actual problem.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](LICENSE.md).

@@ -1,4 +1,6 @@
 MARV input power: external regulated 5 V and USB, through the actual Q1/D1 OR
+* SPDX-License-Identifier: 0BSD
+* See ../LICENSES/0BSD.txt; provided AS IS.
 * Only the input network is simulated. Downstream regulators are a lumped load.
 * External 5 V can come from a 2S-6S buck or a 1S boost: same board interface.
 * Sources have assumed resistance, but no converter loop or current limit.

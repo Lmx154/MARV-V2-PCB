@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Preservation and failure-path tests for settings-only edits; no KiCad required."""
 import copy
 import importlib.util

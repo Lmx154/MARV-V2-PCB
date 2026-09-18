@@ -65,3 +65,7 @@ with the same package and pad numbering. It names pins 2/4 as SCL/SDA and types
 pin 5 (ADDR/SDO) as an input, matching its I2C address-strap role. The generic
 BMP581 symbol remains available. CSB is tied to VDDIO and ADDR to GND in the
 active schematic. This preserves ERC checking without waiving the address strap.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](LICENSE.md).

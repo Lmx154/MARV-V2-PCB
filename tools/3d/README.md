@@ -17,3 +17,7 @@ notes when interpreting offsets.
 
 The four one-time package generators have been removed. Their STEP assets and
 [provenance](../../MARV_Packages.3dshapes/PROVENANCE.md) remain available.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](../../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../../LICENSE.md).

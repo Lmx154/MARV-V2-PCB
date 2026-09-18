@@ -1,5 +1,9 @@
 # Component datasheets
 
+The PDFs here retain their manufacturers' or publishers' rights and terms;
+they are **not** relicensed under CC0 or 0BSD. Only this project-authored index
+is CC0. See [third-party notices](../THIRD_PARTY.md).
+
 Local copies of the manufacturer datasheet for every non-passive part on the board (ICs, discrete
 semiconductors, the crystal, connectors/sockets with a specific vendor part, and modules). Purpose:
 give any worker a fast, offline reference — `pdftotext <file>.pdf - | less` (or `pdfinfo`) instead of
@@ -53,3 +57,7 @@ Molex describes the hinged lid and slide-to-lock sequence in its card-socket
 brochure: https://www.content.molex.com/dxdam/literature/987651-8263.pdf
 The old `104031-0811.pdf` is retained while the saved PCB still uses that socket's
 land pattern. Remove it with the old footprint after the owner updates J11.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../LICENSE.md).

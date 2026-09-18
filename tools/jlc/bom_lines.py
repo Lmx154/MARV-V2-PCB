@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Group power_bom.csv into unique purchase lines keyed by (spec, footprint).
 
 The Value column carries "<electrical spec>, <positional comment>"; only the part

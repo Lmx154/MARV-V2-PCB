@@ -128,3 +128,7 @@ rocket-flight shock/vibration qualification.
 Subsequent 3D update: J11 now displays the locking-socket model on the PCB.
 Only its model reference/transform changed; PCB pads, nets and placement
 remain as before. Use KiCad's 3D viewer for a current preview; model appearance does not validate pad compatibility.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../LICENSE.md).

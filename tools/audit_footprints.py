@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Audit every component in the KiCad XML netlist for PCB-layout readiness.
 
 For each <comp> in a `kicad-cli sch export netlist --format kicadxml` export,

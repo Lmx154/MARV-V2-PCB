@@ -159,3 +159,7 @@ Attached both to the replacement footprint library and to J11's PCB model
 node. Only that model node changed in the PCB: old pads, nets, placement,
 routing and schematic association are preserved for the owner's later
 footprint/netlist update. The render is not evidence of PCB pad compatibility.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../LICENSE.md).

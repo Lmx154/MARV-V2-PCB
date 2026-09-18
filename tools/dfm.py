@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Check/apply the MARV DFM profile without regenerating board geometry."""
 import argparse
 import copy

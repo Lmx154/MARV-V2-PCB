@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Check critical power connections and footprint pad coverage in a KiCad XML export."""
 import sys
 import xml.etree.ElementTree as ET

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Simulate only power arrival at the Q1/D1 OR. See simulations/README.md."""
 import argparse
 import math
@@ -124,6 +126,7 @@ def main():
               'USB negotiation, PCB parasitics, noise or thermal simulation. D1 leakage at temperature is not bounded. '
               'The default 0.5 A is an explicit input-load assumption, not a measured board budget.', '',
               f'Exact decks, waveforms, logs and exported netlist: `{work}`.', '']
+    lines += ['---', '', 'Original MARV V2 documentation: [CC0 1.0](../LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](../LICENSE.md).', '']
     (SIM / 'RESULTS.md').write_text('\n'.join(lines))
     print('\n'.join(lines[:17]))
     print(f'\nWrote simulations/RESULTS.md; raw waveforms and logs: {work}')

@@ -139,3 +139,7 @@ References: [RP2350 datasheet, GPIO function table and PIO GPIOBASE](https://dat
 The locking-connector revision selects Molex 47219-2001 / LCSC C164170 for J11.
 R41 and SD_DET are removed because this connector has no detect switch.
 The eight card contacts and native SD GPIO26–31 connections are unchanged.
+
+---
+
+Original MARV V2 documentation: [CC0 1.0](LICENSES/CC0-1.0.txt). No attribution required; provided as-is. [Licensing and third-party exceptions](LICENSE.md).

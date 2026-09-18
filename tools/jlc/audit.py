@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: 0BSD
+# See LICENSES/0BSD.txt at the repository root; provided AS IS.
 """Verify tools/jlc/lcsc_map.csv against JLC's live catalogue and total the board.
 
 For every unique BOM line it re-queries the chosen LCSC number and prints the
