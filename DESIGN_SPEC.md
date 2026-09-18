@@ -43,7 +43,7 @@ protection/cutoff belong to the external system.
 | USB | VBUS supplies the FC through D1. USB current availability must cover the attached electronics; the simulation does not implement negotiation or a host current limit. |
 | System 3.3 V | MCU, storage and external module/IO power. The AP63203 is a 2 A regulator; that rating is not a measured board load budget. |
 | Sensor 3.3 V | ICM-45686, BMP581, ADXL375 and MCU ADC_AVDD, supplied by U12. |
-| Servos | External 5 V, upstream of the OR. Their current counts against the external converter and wiring. |
+| Actuators | Owner clarified 2026-09-18: no servos, motors or actuators are powered from FC pads. Only their PWM/control signals use the FC. Existing 5V_IN pad connections remain, but no actuator current is included in the FC trace budget. |
 
 The new simulation uses an explicit **0.5 A combined demand at V5_SYS** as a
 starting assumption. This is neither 0.5 A on each downstream rail nor a demand
@@ -51,6 +51,11 @@ for the external converter to deliver its full 3 A rating. Choose actual module
 loads before assigning a final system/USB budget. A daughterboard having its own
 LDO does not by itself establish that its power input accepts 3.3 V; that input
 range remains a module-selection requirement.
+
+Expected external electronics may include four ToF sensors, several lidar modules,
+GPS and an ELRS radio. Their exact voltage requirements and simultaneous peak
+current remain to be established. The routing defaults and fabrication constraints
+are documented in [JLCPCB DFM and routing](reports/jlc-dfm-routing.md).
 
 ## OR behavior
 
