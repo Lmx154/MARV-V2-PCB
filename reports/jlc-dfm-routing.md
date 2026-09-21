@@ -49,8 +49,8 @@ absolute process limit.
 | Track width minimum | 0.15 |
 | Different-net copper clearance, including track/pad | 0.15 |
 | Copper to routed outline | 0.30 |
-| Via diameter / finished drill | 0.60 / 0.30 |
-| Via and plated-pad annular ring | 0.15 radial |
+| Via diameter / finished drill | 0.45 / 0.20 minimum; presets 0.45/0.20, 0.50/0.25, 0.60/0.30 |
+| Via annular ring / plated-pad annular ring | 0.125 / 0.15 radial |
 | Drill to unrelated copper | 0.25; PTH pads 0.35 |
 | Via hole to hole | 0.25 |
 | Hole spacing involving drilled pads | 0.45 |
@@ -62,8 +62,8 @@ absolute process limit.
 | Silkscreen clearance / stroke / text height | 0.15 / 0.15 / 1.00 |
 
 JLC's published multilayer trace/space floor is 0.09/0.09; SMD pad spacing is
-0.15. The chosen 0.15 rules provide margin. The drill preset avoids its small-via
-surcharge combinations. No universal maximum trace width is imposed: wide copper
+0.15. The chosen 0.15 rules provide margin. The via presets are the smallest JLC sells
+without surcharge (0.15 mm holes, and 0.2/0.25 mm holes with pads under 0.45 mm, cost extra). No universal maximum trace width is imposed: wide copper
 is allowed when other clearances hold. [JLC fabrication capabilities](https://jlcpcb.com/capabilities/pcb-capabilities)
 
 Solder-mask openings expose solderable copper; **zero expansion does not put mask
@@ -94,10 +94,15 @@ body measurements, this project uses explicit conservative targets:
 | Pair includes | Required courtyard gap |
 |---|---:|
 | Ordinary packages | 0.18 |
-| C19 or an inductor | 0.35 |
+| C19 | 0.35 |
 | Q1, U7 or U12 (SOT) | 0.40 |
 | U24 (SOIC) | 0.50 |
-| U20–U23 (QFN / LGA) | 1.00 |
+| U20–U23 (QFN / LGA) against another IC (U*, Q*) | 1.00 |
+
+Chip passives and inductors next to U20–U23 use the ordinary 0.18 row: with the
+0402 and QFN courtyard margins that is already ~1.0 mm body-to-body, the top of
+JLC's 0.4–1.0 chip-to-QFN range, and the RP2350 core-regulator parts must sit
+against the MCU.
 
 The last applicable row takes precedence. LGA uses the QFN value as an engineering
 proxy; JLC's table does not separately specify these exact sensors. Since a proper
@@ -121,7 +126,7 @@ load transients, impedance, or solder-joint yield.
 
 Use **netclass width** in the router. Nets select their default automatically.
 The width menu contains only **0.20, 0.50 and 1.00**; the differential-pair menu has
-one **0.30 width / 0.20 gap** entry. All use **0.60 / 0.30 vias**. The zero entries
+one **0.30 width / 0.20 gap** entry. Vias are **0.45 / 0.20**, **0.50 / 0.25** or **0.60 / 0.30**; netclasses default to 0.60 / 0.30. The zero entries
 in the project preset arrays are KiCad's netclass/default selectors, not zero-width
 copper. A deliberate 0.15 custom width remains legal for difficult short escapes.
 

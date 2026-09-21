@@ -71,14 +71,14 @@
       },
       "diff_pair_dimensions": [
         {
-          "width": 0.0,
           "gap": 0.0,
-          "via_gap": 0.0
+          "via_gap": 0.0,
+          "width": 0.0
         },
         {
-          "width": 0.3,
           "gap": 0.2,
-          "via_gap": 0.25
+          "via_gap": 0.25,
+          "width": 0.3
         }
       ],
       "drc_exclusions": [],
@@ -163,10 +163,10 @@
         "min_silk_clearance": 0.15,
         "min_text_height": 1.0,
         "min_text_thickness": 0.15,
-        "min_through_hole_diameter": 0.3,
+        "min_through_hole_diameter": 0.2,
         "min_track_width": 0.15,
-        "min_via_annular_width": 0.15,
-        "min_via_diameter": 0.6,
+        "min_via_annular_width": 0.125,
+        "min_via_diameter": 0.45,
         "solder_mask_to_copper_clearance": 0.09,
         "use_height_for_length_calcs": true
       },
@@ -252,6 +252,14 @@
           "drill": 0.0
         },
         {
+          "diameter": 0.45,
+          "drill": 0.2
+        },
+        {
+          "diameter": 0.5,
+          "drill": 0.25
+        },
+        {
           "diameter": 0.6,
           "drill": 0.3
         }
@@ -265,7 +273,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": ""
+      "sch_revision": "P0 - NOT FOR FAB"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -805,13 +813,62 @@
       {
         "filename": "MARV-V2.kicad_sch",
         "name": "MARV-V2",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "uuid": "951d7307-88ce-5bfb-b9e0-55612ee5a02b"
       }
     ],
     "used_designators": "",
     "variants": []
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "951d7307-88ce-5bfb-b9e0-55612ee5a02b",
+      "MARV-V2"
+    ],
+    [
+      "5c128c25-f927-5807-991c-342d825c718d",
+      "POWER 1 / ESC pad row, 5 V input and analog sense"
+    ],
+    [
+      "ecf40969-24e3-5e85-99a8-3e96bac04fa0",
+      "POWER 2 / 5 V OR - BEC P-FET and USB Schottky"
+    ],
+    [
+      "71dd56b0-7ee3-5497-a829-40473ce11218",
+      "POWER 3 / 3.3 V system buck and analog LDO"
+    ],
+    [
+      "203e2964-cb5c-592c-ba13-6544f885ad75",
+      "BOARD 1 / RP2354B"
+    ],
+    [
+      "f1ee2ac3-8917-5806-b8b6-7649c5db9bb1",
+      "BOARD 5 / USB-C, D+/D- series pair, SWD pads"
+    ],
+    [
+      "6fbc65b6-3a90-5aa5-bc5f-addd93145cc4",
+      "BOARD 2 / ICM-45686 six-axis IMU"
+    ],
+    [
+      "9c9b0aa1-3e91-5092-9038-cfba96d9b7e5",
+      "BOARD 2 / BMP581 barometer"
+    ],
+    [
+      "5e9a58e2-7f7f-5d84-98d7-f055f1f5b4fe",
+      "BOARD 2 / ADXL375 high-g accelerometer"
+    ],
+    [
+      "032d42a2-de69-5884-b9bb-fb27f1e3b2a7",
+      "BOARD 3 / microSD socket"
+    ],
+    [
+      "211300b9-1883-5808-bf2c-eaad1403fcf5",
+      "BOARD 3 / optional QSPI expansion socket (DNP)"
+    ],
+    [
+      "79bfd019-5d08-50ec-a33f-09e1b61dc7f0",
+      "BOARD 4 / IO array, status LED, mounting holes"
+    ]
+  ],
   "text_variables": {},
   "tuning_profiles": {
     "meta": {

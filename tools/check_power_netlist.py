@@ -19,16 +19,16 @@ def netof(pin):
 
 # Expected GPIO connections, maintained alongside the saved schematic and PINOUT.md.
 # None = the pin carries a KiCad no-connect flag and must reach no net at all
-# (GPIO34, GPIO35 and GPIO37 are the three unexposed spares).
+# (GPIO26, GPIO27 and GPIO35 are the three unexposed spares).
 PINOUT={
  0:'FLASH_CS1', 1:'ADXL_INT1', 2:'ADXL_SCK', 3:'ADXL_MOSI', 4:'ADXL_MISO', 5:'PWM8',
  6:'ICM_INT1', 7:'ICM_CS', 8:'ICM_MISO', 9:'BARO_SCL', 10:'ICM_SCK', 11:'ICM_MOSI',
  12:'BARO_SDA', 13:'BARO_INT', 14:'ADXL_CS', 15:'PWM7', 16:'ELRS_RX', 17:'ELRS_TX',
  18:'ICM_INT2', 19:'PWM6', 20:'PWM5', 21:'ADXL_INT2', 22:'MAG_SDA', 23:'MAG_SCL',
- 24:'GPS_RX', 25:'GPS_TX', 26:'SD_CLK_MCU', 27:'SD_CMD', 28:'SD_DAT0', 29:'SD_DAT1',
- 30:'SD_DAT2', 31:'SD_DAT3', 32:'ESC_TELEM_RX', 33:'LED_DATA', 34:None, 35:None,
- 36:'PWM4', 37:None, 38:'PWM3', 39:'PWM2', 40:'VBUS_SENSE', 41:'VBAT_SENSE',
- 42:'CURR_SENSE', 43:'PWM1', 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
+ 24:'GPS_RX', 25:'GPS_TX', 26:None, 27:None, 28:'SD_DAT0', 29:'SD_DAT1',
+ 30:'SD_DAT2', 31:'SD_DAT3', 32:'SD_CLK_MCU', 33:'SD_CMD', 34:'ESC_TELEM_RX', 35:None,
+ 36:'PWM4', 37:'PWM3', 38:'PWM2', 39:'PWM1', 40:'VBUS_SENSE', 41:'CURR_SENSE',
+ 42:'VBAT_SENSE', 43:'LED_DATA', 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
 }
 
 # RP2354B GPIO-to-package-pad mapping.
@@ -75,10 +75,10 @@ expected={
  ('R10','1'):'V3V3_SYS',('R10','2'):'MCU_RUN',('SW1','1'):'MCU_RUN',('SW1','2'):'GND',
  # ESC analog current sense and one-wire KISS telemetry, both conditioned by a 1k series resistor
  ('R53','1'):'CURR_SENSE_RAW',('R53','2'):'CURR_SENSE',('C78','1'):'CURR_SENSE',('C78','2'):'GND',
- ('U20','53'):'CURR_SENSE',                                       # GPIO42 = ADC2
- ('R54','1'):'ESC_TELEM',('R54','2'):'ESC_TELEM_RX',('U20','40'):'ESC_TELEM_RX',   # GPIO32, PIO UART RX
+ ('U20','52'):'CURR_SENSE',                                       # GPIO41 = ADC1
+ ('R54','1'):'ESC_TELEM',('R54','2'):'ESC_TELEM_RX',('U20','43'):'ESC_TELEM_RX',   # GPIO34, PIO UART RX
  # WS2812C-2020 (LED:WS2812B-2020 symbol): 1 DOUT (no connect), 2 VSS, 3 DIN, 4 VDD
- ('R55','1'):'LED_DATA',('R55','2'):'LED_DIN',('U20','42'):'LED_DATA',
+ ('R55','1'):'LED_DATA',('R55','2'):'LED_DIN',('U20','54'):'LED_DATA',
  ('D20','2'):'GND',('D20','3'):'LED_DIN',('D20','4'):'V5_SYS',('C79','1'):'V5_SYS',('C79','2'):'GND',
  # SWD solder pads
  ('J10','1'):'SWCLK',('J10','2'):'SWDIO',('J10','3'):'GND',
@@ -95,7 +95,7 @@ expected={
  ('U20','10'):'DVDD',('U20','32'):'DVDD',('U20','51'):'DVDD',
  # telemetry dividers: VBAT_SENSE 100k/10k (full scale 36.3 V), VBUS_SENSE unchanged at 10k/15k
  ('R27','1'):'VBAT',('R27','2'):'VBAT_SENSE',('R28','1'):'VBAT_SENSE',('R28','2'):'GND',
- ('C48','1'):'VBAT_SENSE',('U20','52'):'VBAT_SENSE',
+ ('C48','1'):'VBAT_SENSE',('U20','53'):'VBAT_SENSE',
  ('R29','1'):'USB_VBUS',('R29','2'):'VBUS_SENSE',('R30','1'):'VBUS_SENSE',('R30','2'):'GND',
  # sensor chip-select pull-ups, biased to the rail the sensor VDDIO pins run from. R49 (the former
  # second IMU chip-select pull-up) is removed: the ICM-45686 (U21) has a single chip select.
@@ -275,9 +275,9 @@ BUS_NODES = {
  'BARO_SCL': {('U20','7'),('U22','2'),('R50','2')},
  'BARO_SDA': {('U20','11'),('U22','4'),('R57','2'),('TP5','1')},
  'BARO_INT': {('U20','12'),('U22','7'),('TP9','1')},
- 'SD_CLK_MCU': {('U20','27'),('R58','1')},
+ 'SD_CLK_MCU': {('U20','40'),('R58','1')},
  'SD_CLK': {('R58','2'),('J11','5')},
- 'SD_CMD': {('U20','28'),('J11','3'),('R36','2')},
+ 'SD_CMD': {('U20','42'),('J11','3'),('R36','2')},
  'SD_DAT0': {('U20','36'),('J11','7'),('R37','2')},
  'SD_DAT1': {('U20','37'),('J11','8'),('R38','2')},
  'SD_DAT2': {('U20','38'),('J11','1'),('R39','2')},
@@ -289,7 +289,8 @@ assert pin_net[('U22','6')] == 'V3V3_ANA', 'BMP581 CSB must select I2C'
 assert pin_net[('U22','5')] == 'GND', 'BMP581 address must be 0x46'
 assert not any(n.startswith(('SENS_', 'HG_ACC_', 'IMU_')) or n == 'BARO_CS' for n in nets)
 # RP2354B Table 3: SPI0 RX4/SCK2/TX3, SPI1 RX8/SCK10/TX11,
-# I2C0 SDA12/SCL9. SD DAT pins increase consecutively within either PIO window.
+# I2C0 SDA12/SCL9. SD DAT pins increase consecutively; all six SD signals, the LED
+# and the ESC PIO signals sit in the GPIO16-47 PIO window (GPIOBASE = 16).
 assert [PINOUT[g] for g in (4,2,3)] == ['ADXL_MISO','ADXL_SCK','ADXL_MOSI']
 assert [PINOUT[g] for g in (8,10,11)] == ['ICM_MISO','ICM_SCK','ICM_MOSI']
 assert [PINOUT[g] for g in (12,9)] == ['BARO_SDA','BARO_SCL']
@@ -297,7 +298,10 @@ sd_data_gpio = [next(g for g,n in PINOUT.items() if n == f'SD_DAT{i}') for i in 
 assert sd_data_gpio == list(range(sd_data_gpio[0], sd_data_gpio[0]+4))
 sd_gpio = sd_data_gpio + [next(g for g,n in PINOUT.items() if n == s)
                          for s in ('SD_CMD','SD_CLK_MCU')]
-assert all(16 <= g <= 31 for g in sd_gpio), sd_gpio
+assert all(16 <= g <= 47 for g in sd_gpio), sd_gpio
+pio_gpio = sd_gpio + [next(g for g,n in PINOUT.items() if n == s)
+                      for s in ('LED_DATA','ESC_TELEM_RX','PWM1','PWM2','PWM3','PWM4')]
+assert all(16 <= g <= 47 for g in pio_gpio), pio_gpio
 components={c.get('ref'):c for c in root.find('components')}
 # External pull-up resistance and rail, independent of any MCU internal pulls.
 for ref, value, rail in [('R48','10k','V3V3_ANA'),('R51','10k','V3V3_ANA'),
@@ -340,7 +344,7 @@ for gpio_num in range(48):
 # THREE are deliberately unexposed and must be unconnected.  Exposing one of them means editing
 # PINOUT.md (Rule 5) and this table together.
 EXPOSED_SPARES = {44, 45, 46, 47}
-UNEXPOSED_SPARES = {34, 35, 37}
+UNEXPOSED_SPARES = {26, 27, 35}
 assert not (EXPOSED_SPARES & UNEXPOSED_SPARES)
 spare_nets = {'IO_GPIO44', 'IO_GPIO45', 'IO_GPIO46', 'IO_GPIO47'}
 assert {PINOUT[g] for g in EXPOSED_SPARES} == spare_nets, \

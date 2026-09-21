@@ -104,14 +104,18 @@ BMP581 uses I2C0 (SCL GPIO9, SDA GPIO12), each with a 4.7k pull-up to V3V3_ANA.
 CSB is tied to VDDIO and SDO/ADDR to GND, selecting I2C address 0x46. BARO_INT
 uses GPIO13. Existing sensor decoupling and power circuitry are retained.
 
-microSD uses PIO + DMA native four-bit SD: CLK GPIO26, CMD GPIO27, DAT0–DAT3
-GPIO28–31. All six signals fit in either PIO window's GPIO16–31 overlap. CMD
-and all four data lines have 10k external pull-ups to V3V3_SYS. GPIO26 drives
+microSD uses PIO + DMA native four-bit SD: DAT0–DAT3 GPIO28–31, CLK GPIO32,
+CMD GPIO33, on the MCU's top-left corner facing J11. All six signals need the
+PIO GPIO16–47 window, which the LED and ESC PIO signals already require. CMD
+and all four data lines have 10k external pull-ups to V3V3_SYS. GPIO32 drives
 SD_CLK through R58, 22 ohm nominal (0–33 ohm tuning range), to be placed next
 to the MCU pin. There is no clock pull resistor. J11 is the Molex 47219-2001 / C164170 locking hinged-lid connector. It has no
-card-detect switch; R41 is removed and GPIO35 is unconnected.
-LED_DATA moves to GPIO33 to free GPIO3 for SPI0. External connector assignments
-are retained. See [PINOUT.md](PINOUT.md) for every GPIO and routing priorities.
+card-detect switch; R41 is removed.
+LED_DATA is on GPIO43. The ESC signals are ordered on the MCU's left edge to
+match J3 top to bottom: ESC_TELEM_RX GPIO34, PWM4–PWM1 GPIO36–39, then
+CURR_SENSE on ADC1 (GPIO41) and VBAT_SENSE on ADC2 (GPIO42); VBUS_SENSE stays
+on ADC0. GPIO26, GPIO27 and GPIO35 are the unexposed spares. External connector
+assignments are retained. See [PINOUT.md](PINOUT.md) for every GPIO and routing priorities.
 
 This is a schematic hardware allocation; no firmware is implemented. The owner
 must transfer these net changes and new R57/R58 footprints to the PCB. No PCB
