@@ -23,7 +23,7 @@ modeling, so match its calculator to the actual order stackup. These are purchas
 choices as well as KiCad metadata: a Gerber upload does not place the order with
 these settings automatically. [JLC stackup information](https://jlcpcb.com/help/article/multi-layer-pcb-standard-laminated-structures)
 
-**ENIG is retained intentionally.** HASL has a lower bare-board price, but the
+**Surface finish is HASL (with lead) by owner choice (2026-09-21) for cost; ENIG was the earlier default.** HASL has a lower bare-board price, but the
 0.4 mm-pitch MCU and LGA sensors make planarity and bridging relevant. ENIG is the
 recommended practical compromise for this already-selected component set, not a
 claim that it is JLC's absolute cheapest finish. No heavy copper, microvias,
@@ -49,9 +49,9 @@ absolute process limit.
 | Track width minimum | 0.15 |
 | Different-net copper clearance, including track/pad | 0.15 |
 | Copper to routed outline | 0.30 |
-| Via diameter / finished drill | 0.45 / 0.20 minimum; presets 0.45/0.20, 0.50/0.25, 0.60/0.30 |
-| Via annular ring / plated-pad annular ring | 0.125 / 0.15 radial |
-| Drill to unrelated copper | 0.25; PTH pads 0.35 |
+| Via diameter / finished drill | 0.45 / 0.30 minimum; presets 0.45/0.30, 0.60/0.30 (JLC free tier "0.3mm/(0.4/0.45mm)") |
+| Via annular ring / plated-pad annular ring | 0.075 / 0.15 radial |
+| Drill to unrelated copper | 0.20 (JLC via hole to copper); PTH pads 0.35 |
 | Via hole to hole | 0.25 |
 | Hole spacing involving drilled pads | 0.45 |
 | NPTH round hole / NPTH slot minimum | 0.50 / 1.00 |
@@ -62,8 +62,9 @@ absolute process limit.
 | Silkscreen clearance / stroke / text height | 0.15 / 0.15 / 1.00 |
 
 JLC's published multilayer trace/space floor is 0.09/0.09; SMD pad spacing is
-0.15. The chosen 0.15 rules provide margin. The via presets are the smallest JLC sells
-without surcharge (0.15 mm holes, and 0.2/0.25 mm holes with pads under 0.45 mm, cost extra). No universal maximum trace width is imposed: wide copper
+0.15. The chosen 0.15 rules provide margin. The via presets use JLC's free via tier: the order form prices by the
+smallest hole, and selecting 0.2 mm added ~$38 of high-precision extras on the
+2026-09-21 quote regardless of pad size, so 0.3 mm holes are the floor here. No universal maximum trace width is imposed: wide copper
 is allowed when other clearances hold. [JLC fabrication capabilities](https://jlcpcb.com/capabilities/pcb-capabilities)
 
 Silkscreen on the board is normalised for JLC rather than in the source libraries:

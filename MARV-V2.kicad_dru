@@ -9,13 +9,15 @@
 (rule "JLC - ordinary through vias only"
   (constraint disallow micro_via blind_via buried_via))
 
-# No-surcharge JLC vias: 0.2 or 0.25 mm hole needs a >= 0.45 mm pad; 0.3 mm hole is
-# unrestricted. Presets are 0.45/0.20, 0.50/0.25 and 0.60/0.30. PTH pads keep 0.15 ring.
+# JLC's order form prices by the smallest via hole: the 0.2 mm option added
+# ~$38 (high-precision via, 4-wire Kelvin test, TG155) on the 2026-09-21 quote.
+# The 0.3 mm/(0.45 mm) option is the free tier: 0.3 mm hole, >= 0.45 mm pad
+# (0.075 mm ring, JLC's own figure for that option). Presets 0.45/0.30, 0.60/0.30.
 (rule "JLC - ordinary via dimensions"
   (condition "A.Type == 'Via'")
-  (constraint hole_size (min 0.2mm))
+  (constraint hole_size (min 0.3mm))
   (constraint via_diameter (min 0.45mm))
-  (constraint annular_width (min 0.125mm)))
+  (constraint annular_width (min 0.075mm)))
 
 (rule "JLC - drilled pad spacing"
   (condition "A.Type == 'Pad' || B.Type == 'Pad'")
@@ -38,13 +40,15 @@
   (condition "A.Type == 'Pad' && A.Pad_Type == 'NPTH, mechanical' && A.Hole_Size_X != A.Hole_Size_Y")
   (constraint hole_size (min 1mm)))
 
-# Includes same-net vias: ordinary tenting does not prevent solder wicking.
+# Includes same-net vias. Vias are ordered "Plugged" (JLC's free 4-layer
+# default: tented and mask-filled), so wicking into a via beside a pad is not
+# a concern; the 0.15 mm floor only keeps holes out of the paste aperture.
 # Avoid via-in-pad so epoxy fill / copper cap is not needed. The back-side
 # hand-solder pad rows J3 (ESC) and J10 (SWD) are exempt: JLC assembles the
-# front only, and a tented via inside a wire pad is the owner's choice there.
+# front only, and a via inside a wire pad is the owner's choice there.
 (rule "JLC - holes outside SMD lands"
   (condition "B.Type == 'Pad' && B.Pad_Type == 'SMD' && !B.memberOfFootprint('J3') && !B.memberOfFootprint('J10')")
-  (constraint physical_hole_clearance (min 0.2mm)))
+  (constraint physical_hole_clearance (min 0.15mm)))
 
 # These are courtyard-to-courtyard targets, not exact body-edge measurements.
 # Courtyards already contain ~0.25 mm margin per side, so the ordinary 0.18 mm gap

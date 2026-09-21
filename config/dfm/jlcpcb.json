@@ -8,11 +8,11 @@
           "min_clearance": 0.15,
           "min_track_width": 0.15,
           "min_copper_edge_clearance": 0.3,
-          "min_hole_clearance": 0.25,
+          "min_hole_clearance": 0.2,
           "min_hole_to_hole": 0.25,
-          "min_through_hole_diameter": 0.2,
+          "min_through_hole_diameter": 0.3,
           "min_via_diameter": 0.45,
-          "min_via_annular_width": 0.125,
+          "min_via_annular_width": 0.075,
           "min_silk_clearance": 0.15,
           "min_text_height": 1.0,
           "min_text_thickness": 0.15,
@@ -62,11 +62,7 @@
           },
           {
             "diameter": 0.45,
-            "drill": 0.2
-          },
-          {
-            "diameter": 0.5,
-            "drill": 0.25
+            "drill": 0.3
           },
           {
             "diameter": 0.6,
@@ -225,5 +221,5 @@
   },
   "board_thickness_mm": 1.6,
   "mask_color": "Green",
-  "finish": "ENIG"
+  "finish": "HAL SnPb"
 }
