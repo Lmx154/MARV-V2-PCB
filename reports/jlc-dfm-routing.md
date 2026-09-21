@@ -66,6 +66,11 @@ JLC's published multilayer trace/space floor is 0.09/0.09; SMD pad spacing is
 without surcharge (0.15 mm holes, and 0.2/0.25 mm holes with pads under 0.45 mm, cost extra). No universal maximum trace width is imposed: wide copper
 is allowed when other clearances hold. [JLC fabrication capabilities](https://jlcpcb.com/capabilities/pcb-capabilities)
 
+Silkscreen on the board is normalised for JLC rather than in the source libraries:
+every silk stroke is 0.15 mm, silk text is 1.0 mm / 0.15 mm, 0402 passives and L2
+carry no silk outline, and test points use the project's compact footprint. The
+resulting library-mismatch warnings are therefore set to ignore in the profile.
+
 Solder-mask openings expose solderable copper; **zero expansion does not put mask
 on the pads**. Zero expansion and the 0.10 mm web were already present and are
 retained. Pads keep their existing paste apertures; there is no blanket paste

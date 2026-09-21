@@ -39,9 +39,11 @@
   (constraint hole_size (min 1mm)))
 
 # Includes same-net vias: ordinary tenting does not prevent solder wicking.
-# Avoid via-in-pad so epoxy fill / copper cap is not needed.
+# Avoid via-in-pad so epoxy fill / copper cap is not needed. The back-side
+# hand-solder pad rows J3 (ESC) and J10 (SWD) are exempt: JLC assembles the
+# front only, and a tented via inside a wire pad is the owner's choice there.
 (rule "JLC - holes outside SMD lands"
-  (condition "B.Type == 'Pad' && B.Pad_Type == 'SMD'")
+  (condition "B.Type == 'Pad' && B.Pad_Type == 'SMD' && !B.memberOfFootprint('J3') && !B.memberOfFootprint('J10')")
   (constraint physical_hole_clearance (min 0.2mm)))
 
 # These are courtyard-to-courtyard targets, not exact body-edge measurements.

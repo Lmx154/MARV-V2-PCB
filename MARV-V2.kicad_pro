@@ -71,14 +71,14 @@
       },
       "diff_pair_dimensions": [
         {
+          "width": 0.0,
           "gap": 0.0,
-          "via_gap": 0.0,
-          "width": 0.0
+          "via_gap": 0.0
         },
         {
+          "width": 0.3,
           "gap": 0.2,
-          "via_gap": 0.25,
-          "width": 0.3
+          "via_gap": 0.25
         }
       ],
       "drc_exclusions": [],
@@ -112,7 +112,7 @@
         "items_not_allowed": "error",
         "length_out_of_range": "error",
         "lib_footprint_issues": "warning",
-        "lib_footprint_mismatch": "warning",
+        "lib_footprint_mismatch": "ignore",
         "malformed_courtyard": "error",
         "microvia_drill_out_of_range": "error",
         "mirrored_text_on_front_layer": "warning",

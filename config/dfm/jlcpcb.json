@@ -41,6 +41,7 @@
           "drill_out_of_range": "error",
           "hole_clearance": "error",
           "invalid_outline": "error",
+          "lib_footprint_mismatch": "ignore",
           "items_not_allowed": "error",
           "malformed_courtyard": "error",
           "shorting_items": "error",

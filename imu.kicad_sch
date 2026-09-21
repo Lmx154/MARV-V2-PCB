@@ -1789,7 +1789,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_1.0x1.0mm"
+		(property "Footprint" "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 			(at 83.82 125.73 0)
 			(hide yes)
 			(show_name no)
@@ -1962,7 +1962,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_1.0x1.0mm"
+		(property "Footprint" "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 			(at 134.62 125.73 0)
 			(hide yes)
 			(show_name no)
@@ -2216,7 +2216,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_1.0x1.0mm"
+		(property "Footprint" "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 			(at 160.02 125.73 0)
 			(hide yes)
 			(show_name no)
@@ -2295,7 +2295,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_1.0x1.0mm"
+		(property "Footprint" "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 			(at 109.22 125.73 0)
 			(hide yes)
 			(show_name no)
@@ -2504,7 +2504,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_1.0x1.0mm"
+		(property "Footprint" "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 			(at 58.42 125.73 0)
 			(hide yes)
 			(show_name no)
@@ -2664,7 +2664,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_1.0x1.0mm"
+		(property "Footprint" "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 			(at 33.02 125.73 0)
 			(hide yes)
 			(show_name no)
