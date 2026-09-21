@@ -1387,7 +1387,7 @@
 		)
 		(uuid "bdde170e-b853-5f33-b812-b996486bb532")
 	)
-	(text "RAILS ON THE ARRAY: rows 1-6 (GPS, ELRS, magnetometer) and rows 11-14 take V3V3_SYS; rows 7-10 (servos S5-S8) take 5V_IN. Every row has its own GND pin in the J8 column, so a\nsignal return is never more than 2.54 mm away and no row can be mis-plugged into a neighbour's ground.\nTHE FOUR 5 V SERVO ROWS ARE ON 5V_IN, AHEAD OF THE OR-ING FET (DESIGN_SPEC \"Decisions\", 2026-09-17). 5V_IN is the\nexternal BEC on J3 pin 7, so servo and module current goes from the BEC straight to the rows and never crosses\nQ1: the FET carries only the two 3.3 V regulators and the status LED, and a USB host never sees the servo rows\nat all. The rows are therefore NOT powered from USB - plugging in USB alone leaves every module and servo dead,\nwhich is the intended bench behaviour and the reverse of the previous revision.\nCURRENT: rows 7-10 count against the external BEC; rows 1-6 and 11-14 count in the V3V3_SYS budget.\nNo fuse and no per-row current limit: the array is a system-integration connector, not a protected port.\nNO LOCAL BULK AT THE ARRAY ANY MORE: C20/C21 (10 uF on 5V_IN) and C22 (10 uF on V3V3_SYS) are removed. The 5 V\nrows are fed by the external BEC through C19 100 uF at the J3 pad row, and the 3.3 V rows by the AP63203 and\nits 44 uF nominal of COUT; three 0603 at the connector added nothing either rail did not already have, and a\nmodule's own inrush is its own problem - this block is a connector, not a supply."
+	(text "RAILS ON THE ARRAY: rows 1-6 (GPS, ELRS, magnetometer) and rows 11-14 take V3V3_SYS; rows 7-10 (S5-S8 signal rows) take V3V3_SYS as well. Every row has its own GND pin in the J8 column, so a\nsignal return is never more than 2.54 mm away and no row can be mis-plugged into a neighbour's ground.\nROWS 7-10 ARE NOW ON V3V3_SYS TOO: the owner runs no servo or actuator from FC pads, so the power column is one 3.3 V rail end to end and 5V_IN stays an input only (J3 pad 7 -> Q1/C19)."
 		(exclude_from_sim no)
 		(at 10 206.807 0)
 		(effects
@@ -1398,7 +1398,7 @@
 		)
 		(uuid "d23ea42e-c2fc-5d03-bcec-61875d6b24d9")
 	)
-	(text "IO ARRAY ROW MAP (row n = J6 pin n signal | J7 pin n power | J8 pin n GND)\n 1  T0   GPS_RX      | V3V3_SYS  | GND  UART1 TX -> GPS RX (GPIO24)\n 2  R0   GPS_TX      | V3V3_SYS  | GND  UART1 RX <- GPS TX (GPIO25)\n 3  T1   ELRS_RX     | V3V3_SYS  | GND  UART0 TX -> ELRS RX (GPIO16)\n 4  R1   ELRS_TX     | V3V3_SYS  | GND  UART0 RX <- ELRS TX (GPIO17)\n 5  SDA  MAG_SDA     | V3V3_SYS  | GND  I2C1 SDA (GPIO22), 4.7k pull-up on the MCU sheet\n 6  SCL  MAG_SCL     | V3V3_SYS  | GND  I2C1 SCL (GPIO23), 4.7k pull-up on the MCU sheet\n 7  S5   PWM5        | 5V_IN     | GND  PWM2 A (GPIO20), servo 5\n 8  S6   PWM6        | 5V_IN     | GND  PWM1 B (GPIO19), servo 6\n 9  S7   PWM7        | 5V_IN     | GND  PWM7 B (GPIO15), servo 7\n10  S8   PWM8        | 5V_IN     | GND  PWM2 B (GPIO5), servo 8\n11  A44  IO_GPIO44   | V3V3_SYS  | GND  GPIO44 = ADC4, spare\n12  A45  IO_GPIO45   | V3V3_SYS  | GND  GPIO45 = ADC5, spare\n13  A46  IO_GPIO46   | V3V3_SYS  | GND  GPIO46 = ADC6, spare\n14  A47  IO_GPIO47   | V3V3_SYS  | GND  GPIO47 = ADC7, spare"
+	(text "IO ARRAY ROW MAP (row n = J6 pin n signal | J7 pin n power | J8 pin n GND)\n 1  T0   GPS_RX      | V3V3_SYS  | GND  UART1 TX -> GPS RX (GPIO24)\n 2  R0   GPS_TX      | V3V3_SYS  | GND  UART1 RX <- GPS TX (GPIO25)\n 3  T1   ELRS_RX     | V3V3_SYS  | GND  UART0 TX -> ELRS RX (GPIO16)\n 4  R1   ELRS_TX     | V3V3_SYS  | GND  UART0 RX <- ELRS TX (GPIO17)\n 5  SDA  MAG_SDA     | V3V3_SYS  | GND  I2C1 SDA (GPIO22), 4.7k pull-up on the MCU sheet\n 6  SCL  MAG_SCL     | V3V3_SYS  | GND  I2C1 SCL (GPIO23), 4.7k pull-up on the MCU sheet\n 7  S5   PWM5        | V3V3_SYS  | GND  PWM2 A (GPIO20), servo 5\n 8  S6   PWM6        | V3V3_SYS  | GND  PWM1 B (GPIO19), servo 6\n 9  S7   PWM7        | V3V3_SYS  | GND  PWM7 B (GPIO15), servo 7\n10  S8   PWM8        | V3V3_SYS  | GND  PWM2 B (GPIO5), servo 8\n11  A44  IO_GPIO44   | V3V3_SYS  | GND  GPIO44 = ADC4, spare\n12  A45  IO_GPIO45   | V3V3_SYS  | GND  GPIO45 = ADC5, spare\n13  A46  IO_GPIO46   | V3V3_SYS  | GND  GPIO46 = ADC6, spare\n14  A47  IO_GPIO47   | V3V3_SYS  | GND  GPIO47 = ADC7, spare"
 		(exclude_from_sim no)
 		(at 10 248.639 0)
 		(effects
@@ -2423,7 +2423,7 @@
 			)
 		)
 	)
-	(global_label "5V_IN"
+	(global_label "V3V3_SYS"
 		(shape passive)
 		(at 175.26 86.36 180)
 		(effects
@@ -2489,7 +2489,7 @@
 			)
 		)
 	)
-	(global_label "5V_IN"
+	(global_label "V3V3_SYS"
 		(shape passive)
 		(at 175.26 81.28 180)
 		(effects
@@ -2753,7 +2753,7 @@
 			)
 		)
 	)
-	(global_label "5V_IN"
+	(global_label "V3V3_SYS"
 		(shape passive)
 		(at 175.26 83.82 180)
 		(effects
@@ -2863,7 +2863,7 @@
 			)
 		)
 	)
-	(global_label "5V_IN"
+	(global_label "V3V3_SYS"
 		(shape passive)
 		(at 175.26 78.74 180)
 		(effects

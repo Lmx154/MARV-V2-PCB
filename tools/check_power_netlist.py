@@ -130,8 +130,8 @@ expected={
 # GPS, ELRS, the magnetometer bus, the four servo outputs and the four exposed spares, so it is the
 # one table that catches a mis-wired port, a signal on the wrong rail, or a 5 V pin on a 3.3 V row.
 IO_ROWS=[('GPS_RX','V3V3_SYS'),('GPS_TX','V3V3_SYS'),('ELRS_RX','V3V3_SYS'),('ELRS_TX','V3V3_SYS'),
-         ('MAG_SDA','V3V3_SYS'),('MAG_SCL','V3V3_SYS'),('PWM5','5V_IN'),('PWM6','5V_IN'),
-         ('PWM7','5V_IN'),('PWM8','5V_IN'),('IO_GPIO44','V3V3_SYS'),('IO_GPIO45','V3V3_SYS'),
+         ('MAG_SDA','V3V3_SYS'),('MAG_SCL','V3V3_SYS'),('PWM5','V3V3_SYS'),('PWM6','V3V3_SYS'),
+         ('PWM7','V3V3_SYS'),('PWM8','V3V3_SYS'),('IO_GPIO44','V3V3_SYS'),('IO_GPIO45','V3V3_SYS'),
          ('IO_GPIO46','V3V3_SYS'),('IO_GPIO47','V3V3_SYS')]
 for _i,(_sig,_pwr) in enumerate(IO_ROWS):
     expected[('J6',str(_i+1))]=_sig
@@ -202,17 +202,15 @@ assert 'dnp' not in _props.get('R35', set()), 'R35 (FLASH_CS1 pull-up) must stay
 assert {ref for ref,pin in nets['VBAT'] if ref.startswith('J')}=={'J3'},nets['VBAT']
 assert not {(ref,pin) for ref,pin in nets['VBAT'] if ref.startswith('U')},nets['VBAT']
 assert nets['VBAT']=={('J3','9'),('R27','1')},nets['VBAT']
-# 2. 5V_IN is an INPUT now, not a buck output: it arrives on J3 pin 7 from an off-board BEC, feeds the
-#    four 5 V servo rows of the IO block power column (rows 7-10 servo S5-S8), carries the
-#    C19 hold-up (and nothing else - the C20/C21 array bulk is retired), and reaches exactly one
-#    semiconductor - Q1's DRAIN.
-assert {(ref,pin) for ref,pin in nets['5V_IN'] if ref.startswith('J')}=={
-    ('J3','7'),('J7','7'),('J7','8'),('J7','9'),('J7','10')},nets['5V_IN']
+# 2. 5V_IN is an INPUT now, not a buck output: it arrives on J3 pin 7 from an off-board BEC, carries
+#    the C19 hold-up and reaches exactly one semiconductor - Q1's DRAIN. It feeds no header row: the
+#    IO block power column (J7) is V3V3_SYS on all 14 rows (owner, 2026-09-21: no servo/actuator
+#    power from FC pads).
+assert {(ref,pin) for ref,pin in nets['5V_IN'] if ref.startswith('J')}=={('J3','7')},nets['5V_IN']
 assert {(ref,pin) for ref,pin in nets['5V_IN'] if ref[0] in 'UQD'}=={('Q1','3')},nets['5V_IN']
-assert nets['5V_IN']=={('J3','7'),('Q1','3'),('C19','1')} | {
-    ('J7',str(p)) for p in (7,8,9,10)},nets['5V_IN']
-# 3. V5_SYS is the OR output. It reaches no connector directly. Servo rows
-#    remain on external 5V_IN; GPS/ELRS are now powered through the system buck. Its only loads are the two 3.3 V regulators and the WS2812 status LED (D20/C79,
+assert nets['5V_IN']=={('J3','7'),('Q1','3'),('C19','1')},nets['5V_IN']
+# 3. V5_SYS is the OR output. It reaches no connector directly. Every IO block
+#    row, GPS/ELRS included, is powered through the system buck. Its only loads are the two 3.3 V regulators and the WS2812 status LED (D20/C79,
 #    <=60 mA, kept here deliberately so the LED works on USB-only bench power).
 assert not {(ref,pin) for ref,pin in nets['V5_SYS'] if ref.startswith('J')},nets['V5_SYS']
 assert nets['V5_SYS']=={('Q1','2'),('D1','1'),('U7','3'),('U12','1'),('R52','1'),
@@ -230,12 +228,10 @@ assert nets['MCU_RUN']=={('U20','35'),('SW1','1'),('R10','2')},nets['MCU_RUN']
 assert not [n for n in nets if n in ('PWR_GOOD','PWR_SRC_ST','U7_VO','U7_FB','U7_SS','U7_SCONF',
                                      'U26_SW','U26_BST','U26_EN','U25_PR1','U25_OV1','U25_ILM',
                                      'U25_SS','USB_DP_MCU','USB_DM_MCU')],sorted(nets)
-# 3a. V3V3_SYS supplies ten IO power pins (rows 1-6 and 11-14) and the
+# 3a. V3V3_SYS supplies all fourteen IO power pins (J7 rows 1-14) and the
 #     microSD socket; no other connector may carry the system rail.
 assert {(ref,pin) for ref,pin in nets['V3V3_SYS'] if ref.startswith('J')}=={
-    ('J7','1'),('J7','2'),('J7','3'),('J7','4'),
-    ('J7','5'),('J7','6'),('J7','11'),('J7','12'),('J7','13'),('J7','14'),
-    ('J11','4')},nets['V3V3_SYS']
+    ('J7',str(p)) for p in range(1,15)} | {('J11','4')},nets['V3V3_SYS']
 # 3b. The GND column is all ground, every pin of it, so every row has its own return.
 assert {(ref,pin) for ref,pin in nets['GND'] if ref=='J8'}=={
     ('J8',str(_p)) for _p in range(1,15)},sorted(p for p in nets['GND'] if p[0]=='J8')

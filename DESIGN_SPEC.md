@@ -11,7 +11,7 @@ component. Owner-confirmed decisions in this document supersede older design not
 2S–6S pack → external 5 V / 3 A buck ─┐  alternative external sources
 1S 18650 → external 5 V boost ────────┘
                                     ↓
-                              J3.7 / 5V_IN ───→ servo power, J7 rows 7–10
+                              J3.7 / 5V_IN (BEC input only; no header row)
                                     ↓ Q1
 USB VBUS ──────────────────── D1 ──→ V5_SYS
                                       ├─ AP63203 buck → V3V3_SYS
@@ -69,8 +69,9 @@ body diode. **There is no guaranteed BEC priority or lossless switchover.**
 A lower V5_SYS when USB is connected is consistent with this circuit; the old
 expectation that the BEC always wins through Q1's low-resistance channel was wrong.
 
-The USB-only path does not intentionally feed external 5V_IN. Thus servos stay
-off on USB alone, while all system-3.3 V modules can operate. Model leakage is
+The USB-only path does not intentionally feed external 5V_IN. 5V_IN reaches no
+header row: all fourteen J7 power pins are V3V3_SYS, so every IO block module can
+operate on USB alone. Model leakage is
 not a guarantee of zero reverse current under every temperature and source condition.
 
 ## Connectors
@@ -86,7 +87,7 @@ For the IO block, each row has J6 = signal, J7 = power, J8 = ground:
 | 1–2 | GPS UART | V3V3_SYS |
 | 3–4 | ELRS UART | V3V3_SYS |
 | 5–6 | Magnetometer I2C | V3V3_SYS |
-| 7–10 | PWM5–8, servos | External 5V_IN |
+| 7–10 | PWM5–8, servo signals only | V3V3_SYS |
 | 11–14 | GPIO44–47, spare IO | V3V3_SYS |
 
 All signal IO is 3.3 V logic. J3 carries PWM1–4 to the ESC.
