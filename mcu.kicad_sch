@@ -10905,6 +10905,18 @@
 				(justify left)
 			)
 		)
+		(property "LCSC" "C25092"
+			(at 347.98 189.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify left)
+			)
+		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 345.44 187.96 0)
 			(hide yes)

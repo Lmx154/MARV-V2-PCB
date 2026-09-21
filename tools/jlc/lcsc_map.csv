@@ -40,3 +40,4 @@ DNP: W25Q32JVSNIQ,Package_SO:SOIC-8_3.9x4.9mm_P1.27mm,,W25Q32JVSNIQ (150 mil),,1
 microSD,MARV_Packages:microSD_HC_Molex_47219-2001,C164170,microSD Molex 47219-2001 locking hinge,,1,J11,,No card-detect switch
 2.2u / 16 V X5R 0603,Capacitor_SMD:C_0603_1608Metric,C23630,2.2uF 16V X5R 10%,,1,C26,,TPS7A2033 needs >=1 uF effective; 0402 1 uF derates below that at 3.3 V bias (SBVS338H Sec 7.1.1)
 LED white 0603,LED_SMD:LED_0603_1608Metric,C2290,White LED 0603 KT-0603W,,1,D21,,"USB VBUS-present indicator; no Basic/Preferred blue LED exists at JLC (checked 2026-09-17), white chosen"
+22,Resistor_SMD:R_0402_1005Metric,C25092,22R 1% 0402,,1,R58,,"Basic; SD_CLK source-series damping, 22 ohm nominal (0-33 ohm tuning range)"
