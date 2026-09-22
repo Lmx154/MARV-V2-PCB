@@ -24,6 +24,22 @@ saved design (see [Ordering](#ordering)).
 
 ## The board
 
+| Front | Back |
+| :---: | :---: |
+| [![MARV V2 PCB front view](images/pcb/marv-v2-front.png)](images/pcb/marv-v2-front.png) | [![MARV V2 PCB back view](images/pcb/marv-v2-back.png)](images/pcb/marv-v2-back.png) |
+
+3D renders of the saved PCB. Click either image for the full-resolution view.
+
+To refresh both images after saving PCB changes, run:
+
+```sh
+python3 tools/render_pcb.py
+```
+
+Requires Python 3 and KiCad 10 with its 3D model libraries. The script renders
+high-resolution PNGs into `images/pcb/` without modifying the design. Commit the
+updated images alongside PCB changes to keep this gallery current.
+
 | | |
 |---|---|
 | MCU | RP2354B (QFN-80, 2 MB in-package flash), 12 MHz crystal, USB-C device port, WS2812C status LED, RESET and BOOTSEL buttons, SWD header |
