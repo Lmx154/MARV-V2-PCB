@@ -99,7 +99,7 @@ spares. External connector assignments are unchanged.
 
 Manufacturing exports and earlier PCB reports remain tied to the old PCB and
 must be regenerated after the owner's layout update. The current schematic
-component inventory is `power_bom.csv`.
+component inventory is in the saved schematic; Fabrication Toolkit exports `production/bom.csv`.
 
 ## Manufacturer references
 

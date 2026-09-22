@@ -19,3 +19,6 @@ simulations/*.log
 # Editor / tool state
 .history/
 .serena/
+
+# Fabrication Toolkit generated order files
+/production/

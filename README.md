@@ -11,7 +11,7 @@ as-is; see [LICENSE.md](LICENSE.md).
 
 Open [MARV-V2.kicad_pro](MARV-V2.kicad_pro) in **KiCad 10**. The repository holds
 the schematic and routed board, local footprints and 3D models, offline
-datasheets, the checking/sourcing tools, and the input-power simulation. There
+datasheets, the design checks, and the input-power simulation. There
 is no firmware here.
 
 **Status (2026-09-22): order-ready.** ERC 0, DRC 0 errors / 0 unconnected /
@@ -177,8 +177,7 @@ beyond the OR is validated on hardware, not in SPICE.
 
 ## Verifying the design
 
-Requirements: Python 3, KiCad 10 with its standard libraries, ngspice. The
-assembly exporter needs KiCad's `pcbnew` module (`/usr/bin/python3` here).
+Requirements: Python 3, KiCad 10 with its standard libraries, ngspice. Ordering exports use the installed Fabrication Toolkit plugin.
 
 ```sh
 mkdir -p build/checks
@@ -199,23 +198,51 @@ Default 0.20 mm, LocalPower 0.50 mm, Power 1.0 mm, USB 0.30 mm / 0.20 mm gap.
 
 ## Ordering
 
-```sh
-kicad-cli pcb export gerbers --no-x2 --subtract-soldermask \
-  --layers F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts \
-  -o build/fab/ MARV-V2.kicad_pcb
-kicad-cli pcb export drill --format excellon --excellon-units mm --excellon-zeros-format decimal \
-  --drill-origin absolute --generate-map --map-format gerberx2 -o build/fab/ MARV-V2.kicad_pcb
-(cd build/fab && zip ../MARV-V2-gerbers.zip MARV-V2-*.g* MARV-V2.drl MARV-V2-job.gbrjob)
-/usr/bin/python3 tools/jlc/export_jlc.py --netlist build/checks/netlist.xml --outdir build/assembly
-python3 tools/jlc/audit.py            # live stock / price / extended-part count per line
-```
+Use the installed [Fabrication Toolkit](https://github.com/bennymeg/Fabrication-Toolkit)
+from KiCad's PCB Editor. Project settings are saved in
+[fabrication-toolkit-options.json](fabrication-toolkit-options.json); no custom
+Gerber, BOM or placement exporter is needed.
 
-Upload `build/MARV-V2-gerbers.zip` for the PCB and `build/assembly/jlc-bom.csv` +
-`jlc-cpl.csv` for front-side assembly. Review every rotation in JLC's preview
-and add the remark **"L20: orientation dot toward pad 2 / DVDD"**. Headers are
-excluded unless `--with-tht`. `power_bom.csv`, the schematic `LCSC` fields and
-`tools/jlc/lcsc_map.csv` are maintained together; the exporter takes part
-numbers from the schematic. `build/` is generated and untracked.
+1. Open the current saved project (reload if it was open during external edits).
+   After schematic changes, update the PCB from the schematic and review the
+   changes. Save the board and run ERC/DRC before exporting.
+2. Click **Fabrication Toolkit → Generate**. The saved options enable automatic
+   component translations and exclude DNP parts. Automatic zone refill, V-cuts,
+   alternate outlines and plotting all active layers are **off**. Refill zones
+   yourself in KiCad when copper changes require it, before the final DRC.
+3. Upload the generated files:
+
+   | JLCPCB step | File |
+   | --- | --- |
+   | PCB fabrication | `production/MARV-V2.zip` (Gerbers and drills) |
+   | Assembly parts | `production/bom.csv` |
+   | Assembly placement | `production/positions.csv` |
+
+The initial order is **5 PCBs manufactured, 2 assembled on the top side** and
+3 bare. Select **1 design, Single PCB, 4 layers, 1.6 mm, green mask, white silk,
+HASL (with lead), standard copper and 0.30 mm minimum via holes**. Choose
+Economic assembly if the final quote permits it. This project does not supply
+a panel or V-cut drawing; use JLC's panel assistance if its chosen assembly
+service requires one.
+
+The schematic's `LCSC` fields and native BOM/position exclusions define the
+assembly selection. J6–J8 and J10 are owner-soldered headers; J3, H1–H4,
+TP1–TP10 and the graphic footprints are board features; U24 is DNP. All are
+omitted from assembly exports. This leaves **88 front-side placements using
+34 distinct LCSC parts**. The plugin currently generates 84 BOM rows because
+many component values include different descriptive notes; the part selections
+are unchanged. JLC's parts-selection page provides current stock and pricing.
+
+Automatic translations apply the plugin's package rotation corrections; they
+are export corrections, not changes to the PCB layout. Review every placement
+in JLC's preview, especially the custom sensor footprints and **L20: orientation
+dot toward pad 2 / DVDD**. The first plugin export was checked against the
+previous order files: all 88 part numbers and XY locations matched.
+
+`production/` is generated and ignored by Git. The older `build/fab/`,
+`build/assembly/` and `build/MARV-V2-gerbers.zip` outputs are superseded; use the
+three plugin files above together. The former `tools/jlc/` scripts and duplicate
+CSV inventories were retired; Git history retains them.
 
 ## Repository map
 
@@ -224,14 +251,14 @@ numbers from the schematic. `build/` is generated and untracked.
 | `MARV-V2.kicad_*`, `*.kicad_sch` | Project, routed board, custom rules, and the schematic sheets (power OR / 3V3 / VBAT, MCU, IMU, high-g, baro, SD, USB & debug, IO block, QSPI expansion) |
 | `DESIGN_SPEC.md`, `PINOUT.md` | Intended circuit and boundaries; every GPIO with its alternates |
 | `config/dfm/` | Reviewed JLCPCB profile and custom-rule template |
-| `tools/` | Netlist checker, footprint audit, DFM tool, input-power simulation, sheet relinker, netlist fingerprint |
-| `tools/jlc/` | Part search, BOM grouping, live catalogue audit, BOM/CPL export |
+| `tools/` | Netlist checker, footprint audit, DFM tool, input-power simulation, sheet relinker, netlist fingerprint, PCB image renderer |
+| `fabrication-toolkit-options.json` | Native Fabrication Toolkit settings for JLCPCB order exports |
 | `tests/` | Unit tests for the DFM tool's preservation guarantees |
 | `simulations/` | The input-power SPICE deck, its README and the generated results |
 | `MARV_Packages.pretty/`, `MARV_Packages.3dshapes/` | Local footprints and STEP models with provenance |
 | `datasheets/` | Manufacturer PDFs and a source index |
 | `reports/` | Decision and review records — see below |
-| `build/`, `.dfm-backups/`, `backups/` | Generated output and recovery copies; untracked |
+| `production/`, `build/`, `.dfm-backups/`, `backups/` | Generated output and recovery copies; untracked |
 
 Reports, newest first:
 

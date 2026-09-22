@@ -12,7 +12,7 @@ The schematic and [DESIGN_SPEC.md](DESIGN_SPEC.md) define the current circuit.
 | Local STEP models | `MARV_Packages.3dshapes/` |
 | Model provenance and licenses | [PROVENANCE.md](MARV_Packages.3dshapes/PROVENANCE.md) |
 | Manufacturer PDFs | [datasheet index](datasheets/README.md) |
-| Selected assembly parts | `tools/jlc/lcsc_map.csv`, hidden schematic `LCSC` fields |
+| Selected assembly parts | Schematic `LCSC` fields, exported by Fabrication Toolkit to `production/bom.csv` |
 
 ## Footprints that need project-specific attention
 
@@ -50,11 +50,18 @@ python3 tools/audit_footprints.py build/checks/netlist.xml
 This checks resolved files and pin/pad coverage, not package geometry or assembly
 rotation. Inspect sensor pin 1, connector fit and JLC placement rotations before fabrication.
 
-C8/C65 currently say **10 uF / 10 V X7R** in schematic/BOM text, while their chosen
-LCSC map entry C96446 says **10 uF / 25 V X5R**. The substitution is recorded in the
-map, but the labels were not reconciled. No part was substituted during this
-cleanup; the input simulation uses nominal capacitance and does not validate
-that dielectric's bias/temperature behavior.
+Existing sourcing choices retained when the duplicate CSV map was retired:
+
+- C8/C65: C96446, 10 uF / 25 V X5R, while descriptive values still say
+  10 uF / 10 V X7R.
+- C7/C25/C59/C62: C52923, 1 uF / 25 V X5R, while descriptive values still say
+  1 uF / 10 V X7R.
+- Optional U24 fit choices remain W25Q32JVSNIQ C5355146 or APS6404L-SQN-SN
+  C5360304 (150 mil SOIC/SOP-8); fit only one. U24 is currently DNP.
+- Owner-soldered header sources: J6–J8 C2905490; J10 C49257.
+
+No component was substituted during the plugin migration. Use schematic LCSC
+fields for current selections, and JLC's ordering page for current stock/prices.
 
 Previous library and placement revisions are available in Git history.
 

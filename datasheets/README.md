@@ -5,7 +5,7 @@ semiconductors, the crystal, connectors/sockets with a specific vendor part, and
 give any worker a fast, offline reference — `pdftotext <file>.pdf - | less` (or `pdfinfo`) instead of
 re-fetching from the web on every question about pinout, decoupling or the application circuit.
 Plain passives (R/L/C, ferrite beads), test points and mounting hardware are excluded; see
-`power_bom.csv` / freshly generated `build/assembly/jlc-bom.csv` for those.
+the schematic values / freshly generated `production/bom.csv` for those.
 
 Two datasheets (`W25Q32JV.pdf`, `APS6404L.pdf`) both cover U24: it is one SOIC-8 socket that takes
 either part (DNP by default; see `qspi_expansion.kicad_sch`).

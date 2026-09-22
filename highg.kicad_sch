@@ -1713,9 +1713,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "133a9b54-2e7e-51b3-b709-53701df44f24")
 		(property "Reference" "TP6"
@@ -2035,9 +2035,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "6378035e-31e5-5653-bf09-7b0d8992b286")
 		(property "Reference" "TP10"

@@ -1435,7 +1435,7 @@
 				(pins "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
 			(start -1.2 -1.78)
@@ -2090,7 +2090,7 @@
 				(pins "1")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -5567,7 +5567,7 @@
 				(pins "1")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -6410,7 +6410,7 @@
 				(pins "1")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -8231,7 +8231,7 @@
 				(pins "1")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -18689,7 +18689,7 @@
 				(pins "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
 			(start -1.2 -1.78)
@@ -22044,7 +22044,7 @@
 				(pins "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
 			(start -1.2 -1.78)
@@ -24714,6 +24714,7 @@
 			(uuid "973033aa-710a-4ef6-9701-b5fcdd4c998e")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 		(layer "B.Cu")
@@ -24859,6 +24860,7 @@
 			(uuid "7e43b12a-0ffb-4363-a7f4-f41a18deb11b")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 		(layer "B.Cu")
@@ -25004,6 +25006,7 @@
 			(uuid "8b172383-4f70-4fac-a119-974c9d7c1aa6")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 		(layer "B.Cu")
@@ -25149,6 +25152,7 @@
 			(uuid "e6531cb9-cd85-4cd8-b2a8-e6468f33a953")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 		(layer "B.Cu")
@@ -25294,6 +25298,7 @@
 			(uuid "746cbb4a-1ded-43b6-97d1-408637a66c53")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 		(layer "B.Cu")
@@ -25439,6 +25444,7 @@
 			(uuid "8781cff6-e3e4-4952-a38c-6c657af663d1")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 		(layer "B.Cu")
@@ -25584,6 +25590,7 @@
 			(uuid "8637c0ca-cceb-4017-ab21-52edfb109ccb")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:PadRow_1x09_P2.00mm"
 		(layer "B.Cu")
@@ -25650,7 +25657,7 @@
 				(pins "1" "2" "3" "4" "5" "6" "7" "8" "9")
 			)
 		)
-		(attr smd)
+		(attr smd exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center -9.4 0)
@@ -26312,6 +26319,7 @@
 			(uuid "d4bb27d8-f411-442d-acb2-ce126dcceced")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "B.Cu")
@@ -26390,7 +26398,7 @@
 				(pins "1" "2" "3")
 			)
 		)
-		(attr through_hole)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -1.38 1.38)
@@ -26715,6 +26723,7 @@
 			(uuid "b32c5249-84c8-4e59-9588-2aecd11c7eb5")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(footprint "MARV_Packages:TestPoint_Pad_1.0x1.0mm_Compact"
 		(layer "B.Cu")
@@ -26860,6 +26869,7 @@
 			(uuid "80b631ba-c44e-4ba3-8a4d-7d62242e7e55")
 		)
 		(embedded_fonts no)
+		(attr exclude_from_pos_files exclude_from_bom)
 	)
 	(gr_line
 		(start 117.919999 82.39)

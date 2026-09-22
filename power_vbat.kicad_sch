@@ -2214,9 +2214,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "460dbbf0-bd2d-58ef-9380-3290ab571490")
 		(property "Reference" "J3"
