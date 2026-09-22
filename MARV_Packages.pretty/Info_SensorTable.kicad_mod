@@ -1,0 +1,265 @@
+(footprint "Info_SensorTable"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Back-side silkscreen sensor table: MARV V2 and sensor list")
+	(tags "silkscreen table info")
+	(property "Reference" "G**"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "2adb234d-34d2-4bec-88a5-1047470bac1e")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Value" "Info_SensorTable"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "fa7afae1-5f21-46da-86a1-ba66fbc7de4e")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b9011c37-69eb-46ab-8699-4631d4a82289")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d4b92f62-2a51-4202-bb0c-32ae33d64fb8")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr board_only exclude_from_pos_files exclude_from_bom)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -10.374999 -3.55)
+		(end -10.374999 3.55)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "0875e0b3-5d2b-4ca8-a2ee-d1788ea10a8f")
+	)
+	(fp_line
+		(start -10.374999 -3.55)
+		(end 10.374999 -3.55)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "28add42d-cabb-4ad2-8e39-8be8548e91f5")
+	)
+	(fp_line
+		(start -10.374999 -1.549999)
+		(end 10.374999 -1.549999)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "9e84b9ff-addb-4b2e-85b5-dd1db7ed4342")
+	)
+	(fp_line
+		(start -10.374999 0.15)
+		(end 10.374999 0.15)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "efa4075a-9607-4e4f-a8d6-e202ee48516b")
+	)
+	(fp_line
+		(start -10.374999 1.85)
+		(end 10.374999 1.85)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "f353f571-2d7c-4c1a-8c72-2f764939d5fa")
+	)
+	(fp_line
+		(start -10.374999 3.55)
+		(end 10.374999 3.55)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "255b195b-d332-4357-b5c2-78b9b004436f")
+	)
+	(fp_line
+		(start -10.374999 3.55)
+		(end 10.374999 3.55)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "33bba9dc-fb7c-4f24-8d42-1f6a933dd32d")
+	)
+	(fp_line
+		(start -0.505952 -1.549999)
+		(end -0.505952 3.55)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "9489adb5-7f7b-4d61-9adb-4f502dbc2d9c")
+	)
+	(fp_line
+		(start 5.744047 -1.549999)
+		(end 5.744047 3.55)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "0c6e071d-8f7d-4503-a949-a343e0f91bbd")
+	)
+	(fp_line
+		(start 10.374999 -3.55)
+		(end 10.374999 3.55)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "ed314d83-128c-4d23-b826-502fd1441439")
+	)
+	(fp_text user "ICM-45686"
+		(at -5.440476 -0.699999 0)
+		(layer "F.SilkS")
+		(uuid "9d4ba0a1-8274-4b58-8e72-5b223ba70aee")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "ADXL375"
+		(at -5.440476 1 0)
+		(layer "F.SilkS")
+		(uuid "ca58837e-af3d-49d0-a46d-16d7aba5e3ce")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "BMP581"
+		(at -5.440476 2.7 0)
+		(layer "F.SilkS")
+		(uuid "76755f79-03d9-40e6-8338-0e3ab37b7f24")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "MARV V2"
+		(at 0 -2.55 0)
+		(layer "F.SilkS")
+		(uuid "3a4b92c1-1547-4ec8-9edd-3b4f13b79a38")
+		(effects
+			(font
+				(size 1.2 1.2)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "IMU"
+		(at 2.619047 -0.699999 0)
+		(layer "F.SilkS")
+		(uuid "15af0c95-83f1-48ed-8360-11284513f121")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "±200g"
+		(at 2.619047 1 0)
+		(layer "F.SilkS")
+		(uuid "206ee1c2-b3f0-46c5-944d-6a321ea20fd1")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "BARO"
+		(at 2.619047 2.7 0)
+		(layer "F.SilkS")
+		(uuid "ed9bd585-eb37-4acd-96d2-45025e511392")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "SPI1"
+		(at 8.059523 -0.699999 0)
+		(layer "F.SilkS")
+		(uuid "1196d44c-d6a1-4609-b0b5-718a9389aa1c")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "SPI0"
+		(at 8.059523 1 0)
+		(layer "F.SilkS")
+		(uuid "d00eedc2-eeb6-4f7f-8eb4-e562e292c95b")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "I2C0"
+		(at 8.059523 2.7 0)
+		(layer "F.SilkS")
+		(uuid "51083d4c-7865-43df-af87-1c9f8ff374ba")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
