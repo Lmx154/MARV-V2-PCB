@@ -7716,7 +7716,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3.3u, 0806 AOTA-B201610S3R3"
+		(property "Value" "3.3u, 0806 AOTA-B201610S3R3-101-T"
 			(at 296.33 44.45 270)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7761,7 +7761,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C48783272"
+		(property "LCSC" "C42411119"
 			(at 307.34 55.88 270)
 			(hide yes)
 			(show_name no)

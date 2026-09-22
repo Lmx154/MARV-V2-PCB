@@ -124,6 +124,15 @@ placement or routing is changed by this revision.
 
 ## Board and validation scope
 
+Owner cost requirement (2026-09-21): keep ordinary four-layer fabrication and
+spend the budget on components. Retain 0.15 mm minimum traces/clearance,
+0.60/0.30 mm through vias, standard 1.6 mm FR-4 and copper weights, green mask,
+and the selected HASL finish. Do not introduce precision drills, HDI vias,
+resin-filled/capped vias or other paid fabrication upgrades to resolve routing
+congestion. See [signal widths](reports/signal-trace-widths.md) and the
+[fabrication cost audit](reports/fabrication-cost-audit.md). Final CAM acceptance
+and the actual quote remain required; project settings alone cannot guarantee price.
+
 RP2354B MCU; ICM-45686 IMU; BMP581 barometer; ADXL375 high-g sensor;
 microSD; optional unpopulated backside QSPI expansion. Four copper layers,
 front-side SMT assembly, with backside solder pads/test points and the DNP

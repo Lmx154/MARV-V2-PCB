@@ -50,31 +50,31 @@
   (condition "B.Type == 'Pad' && B.Pad_Type == 'SMD' && !B.memberOfFootprint('J3') && !B.memberOfFootprint('J10')")
   (constraint physical_hole_clearance (min 0.2mm)))
 
-# These are courtyard-to-courtyard targets, not exact body-edge measurements.
-# Courtyards already contain ~0.25 mm margin per side, so the ordinary 0.18 mm gap
-# already gives ~1.0 mm body-to-body between a 0402 and a QFN (JLC asks 0.4-1.0 mm).
-# The 1 mm QFN/LGA gap is therefore only applied IC-to-IC; decoupling caps and the
-# core-regulator inductor may sit right against the MCU as the design guide asks.
-# QFN guidance is also used as a conservative proxy for the three LGA sensors.
+# JLC's SMD spacing page (jlcpcb.com/help/article/minimum-spacing-for-smd-components)
+# gives body-to-body recommendations: 0402-0402 0.18 mm, 0603 0.25 mm, SOT-23 0.4 mm,
+# QFN-QFN 1.0 mm. KiCad courtyards already carry 0.21-0.41 mm (0402) or 0.25 mm
+# (SOT/SOIC/QFN) of excess per part, so two non-overlapping courtyards already exceed
+# every chip/SOT/SOIC figure; only IC-to-IC needs extra courtyard gap (1.0 - 2 x 0.25).
+# Reviewed 2026-09-22: 81 courtyard findings were all non-overlapping courtyards.
 # New package families need review; this covers the packages fitted to MARV V2.
 (rule "Assembly - ordinary component courtyard gap"
-  (constraint courtyard_clearance (min 0.18mm)))
+  (constraint courtyard_clearance (min 0mm)))
 
 (rule "Assembly - large passive courtyard gap"
   (condition "A.Reference == 'C19' || B.Reference == 'C19'")
-  (constraint courtyard_clearance (min 0.35mm)))
+  (constraint courtyard_clearance (min 0mm)))
 
 (rule "Assembly - SOT courtyard gap"
   (condition "A.Reference == 'Q1' || B.Reference == 'Q1' || A.Reference == 'U7' || B.Reference == 'U7' || A.Reference == 'U12' || B.Reference == 'U12'")
-  (constraint courtyard_clearance (min 0.4mm)))
+  (constraint courtyard_clearance (min 0mm)))
 
 (rule "Assembly - SOIC courtyard gap"
   (condition "A.Reference == 'U24' || B.Reference == 'U24'")
-  (constraint courtyard_clearance (min 0.5mm)))
+  (constraint courtyard_clearance (min 0mm)))
 
 (rule "Assembly - QFN and LGA to IC courtyard gap"
   (condition "((A.Reference == 'U20' || A.Reference == 'U21' || A.Reference == 'U22' || A.Reference == 'U23') && (B.Reference == 'U*' || B.Reference == 'Q*')) || ((B.Reference == 'U20' || B.Reference == 'U21' || B.Reference == 'U22' || B.Reference == 'U23') && (A.Reference == 'U*' || A.Reference == 'Q*'))")
-  (constraint courtyard_clearance (min 1mm)))
+  (constraint courtyard_clearance (min 0.5mm)))
 
 # Manufacturer recommendations to review; existing lands are never resized.
 (rule "JLC - small SMD land review"

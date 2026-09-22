@@ -51,6 +51,7 @@
         },
         "track_widths": [
           0.0,
+          0.15,
           0.2,
           0.5,
           1.0
@@ -108,6 +109,17 @@
           "priority": 10,
           "clearance": 0.15,
           "track_width": 1.0,
+          "via_diameter": 0.6,
+          "via_drill": 0.3,
+          "diff_pair_width": 0.3,
+          "diff_pair_gap": 0.2,
+          "diff_pair_via_gap": 0.25
+        },
+        {
+          "name": "Signal",
+          "priority": 30,
+          "clearance": 0.15,
+          "track_width": 0.15,
           "via_diameter": 0.6,
           "via_drill": 0.3,
           "diff_pair_width": 0.3,
@@ -190,6 +202,226 @@
         {
           "netclass": "USB",
           "pattern": "USB_DM_MCU"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ADXL_CS"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ADXL_INT1"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ADXL_INT2"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ADXL_MISO"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ADXL_MOSI"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ADXL_SCK"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "BARO_INT"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "BARO_SCL"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "BARO_SDA"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "BOOT_BTN"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ELRS_RX"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ELRS_TX"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ESC_TELEM"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ESC_TELEM_RX"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "FLASH_CS1"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "GPS_RX"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "GPS_TX"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ICM_CS"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ICM_INT1"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ICM_INT2"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ICM_MISO"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ICM_MOSI"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "ICM_SCK"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "IO_GPIO44"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "IO_GPIO45"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "IO_GPIO46"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "IO_GPIO47"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "LED_DATA"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "LED_DIN"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "MAG_SCL"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "MAG_SDA"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "MCU_RUN"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM1"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM2"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM3"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM4"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM5"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM6"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM7"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "PWM8"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "QSPI_SCLK"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "QSPI_SD0"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "QSPI_SD1"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "QSPI_SD2"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "QSPI_SD3"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "QSPI_SS"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SD_CLK"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SD_CLK_MCU"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SD_CMD"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SD_DAT0"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SD_DAT1"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SD_DAT2"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SD_DAT3"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SWCLK"
+        },
+        {
+          "netclass": "Signal",
+          "pattern": "SWDIO"
         }
       ]
     }

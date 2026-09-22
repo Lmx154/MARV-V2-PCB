@@ -1,6 +1,10 @@
 # MARV V2 — JLCPCB DFM and routing setup
 
 Verified against published JLCPCB information on **2026-09-18**, using KiCad **10.0.6**.
+Signal defaults were updated on **2026-09-21**: see the
+[exact 55-net list](signal-trace-widths.md) and the current
+[fabrication cost audit](fabrication-cost-audit.md). The board/parity counts and
+unfinished schematic-transfer notes below describe the older September 18 audit.
 Settings live in `MARV-V2.kicad_pro`, `MARV-V2.kicad_dru`, and the board setup.
 The reusable source profile is `config/dfm/jlcpcb.json`, with custom rules in
 `config/dfm/jlcpcb.kicad_dru`. Run `python3 tools/dfm.py --check` to detect drift
@@ -128,17 +132,19 @@ connections must remain possible. The board is configured for routed edges;
 V-scored panel edges need separate review. DRC also cannot establish temperature,
 load transients, impedance, or solder-joint yield.
 
-## Three ordinary widths, one USB pair
+## Signal and power widths, one USB pair
 
 Use **netclass width** in the router. Nets select their default automatically.
-The width menu contains only **0.20, 0.50 and 1.00**; the differential-pair menu has
-one **0.30 width / 0.20 gap** entry. Vias are **0.45 / 0.20**, **0.50 / 0.25** or **0.60 / 0.30**; netclasses default to 0.60 / 0.30. The zero entries
+The width menu contains **0.15, 0.20, 0.50 and 1.00**; the differential-pair menu has
+one **0.30 width / 0.20 gap** entry. The only via preset is **0.60 / 0.30**;
+all netclasses use it. The zero entries
 in the project preset arrays are KiCad's netclass/default selectors, not zero-width
-copper. A deliberate 0.15 custom width remains legal for difficult short escapes.
+copper. The 0.15 signal width is the existing fabrication floor, not a relaxed rule.
 
 | Netclass | Width | Nets / use |
 |---|---:|---|
-| Default | 0.20 | SPI, I2C, UART, SD, QSPI, PWM, SWD, crystal, ADC sense, enables, boot, U7_BST |
+| Signal | 0.15 | 55 exact digital/control nets: SPI, I2C, UART, SD, QSPI, PWM, SWD, LED data, MCU_RUN and BOOT_BTN; see [net list](signal-trace-widths.md) |
+| Default | 0.20 | Crystal, ADC sense, regulator control/bootstrap, USB CC, indicator current and unclassified nets |
 | LocalPower | 0.50 | USB_VBUS, V3V3_ANA, DVDD, VREG_LX, VREG_AVDD, GND |
 | Power | 1.00 | 5V_IN, V5_SYS, V3V3_SYS, U7_SW |
 | USB | 0.30, gap 0.20 | USB_DP/DM and their RP/MCU-side names |
@@ -166,8 +172,10 @@ Measured minimum pad dimensions from the saved board:
 | D1 | 0.45 | 0.20 neck or carefully oriented 0.50 entry |
 | L20 | 0.55 | 0.50 |
 
-The chosen signal width fits the tightest lands and avoids extra bus-specific
-presets. It is not a datasheet-mandated or universally impedance-optimal width.
+The 0.20 entries in the pad table describe the previous pad-entry choice; the
+listed Signal nets now use 0.15 mm, including entries at those pads. Power pad
+entries are unchanged. Neither width is datasheet-mandated or universally
+impedance-optimal.
 J11 in the saved board is still the old 104031 socket; these settings do not
 substitute for transferring the new 47219 footprint from the schematic.
 
@@ -232,7 +240,7 @@ whole 2 A rail. No thermal vias or plane stitching were added.
   area for heat spreading. The 0.50 default is ample for its intended local
   branches; thermal dissipation still depends on voltage drop and actual load.
   [TPS7A20 section 7.4](../datasheets/TPS7A2033.pdf)
-- **ICM-45686 / ADXL375 / BMP581:** ordinary 0.20 mm signal traces suffice for
+- **ICM-45686 / ADXL375 / BMP581:** ordinary 0.15 mm signal traces are the default for
   routing geometry. ICM SPI supports up to 24 MHz and ADXL SPI up to 5 MHz; short
   paths, decoupling and quiet returns matter more than making signal copper wide.
   Keep the separate SPI buses and interrupt nets from the current schematic.
@@ -244,7 +252,7 @@ whole 2 A rail. No thermal vias or plane stitching were added.
   still needs a footprint review**. Do not apply global mask shrinking as a fix.
   This can affect sensor performance even when generic fab DRC passes.
   [BMP581 section 8.2](../datasheets/BMP581.pdf)
-- **SD / optional QSPI:** 0.20 mm is a common pad-compatible starting point, not a
+- **SD / optional QSPI:** 0.15 mm is the chosen signal starting point, not a
   speed guarantee. Keep clock/data over a continuous reference and avoid stubs.
   Place SD clock R58 as required by the current schematic. Socket mechanics do
   not define the card's timing budget; select clock rates after the actual path
@@ -252,7 +260,9 @@ whole 2 A rail. No thermal vias or plane stitching were added.
   loads; populating U24 later requires timing review.
   [Winbond](../datasheets/W25Q32JV.pdf), [AP Memory](../datasheets/APS6404L.pdf),
   [new Molex socket](../datasheets/472192001-drawing.pdf)
-- **Crystal / GPIO / LED / switches / sense dividers:** use the same 0.20 width.
+- **Crystal / GPIO / LED / switches / sense dividers:** the explicit logic and
+  MCU-button nets use 0.15 mm; crystal, analog sense and LED supply/current nets
+  retain their previous defaults. See the exact net list before changing copper.
   Keep crystal and high-impedance analog paths short and away from switch nodes;
   width does not replace capacitance/noise review.
 
