@@ -33,6 +33,7 @@ JOINTS = {
     "MARV_Packages:PadRow_1x03_P2.00mm": 0,
     "MARV_Packages:PadRow_1x09_P2.00mm": 0,
     "MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow": 14,
+    "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical": 3,
     "MARV_Packages:QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm": 81,
     "MARV_Packages:USB_C_Receptacle_HRO_TYPE-C-31-M-12": 20,
     "MARV_Packages:microSD_HC_Molex_104031-0811": 14,

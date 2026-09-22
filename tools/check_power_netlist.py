@@ -80,8 +80,8 @@ expected={
  # WS2812C-2020 (LED:WS2812B-2020 symbol): 1 DOUT (no connect), 2 VSS, 3 DIN, 4 VDD
  ('R55','1'):'LED_DATA',('R55','2'):'LED_DIN',('U20','54'):'LED_DATA',
  ('D20','2'):'GND',('D20','3'):'LED_DIN',('D20','4'):'V5_SYS',('C79','1'):'V5_SYS',('C79','2'):'GND',
- # SWD solder pads
- ('J10','1'):'SWCLK',('J10','2'):'SWDIO',('J10','3'):'GND',
+ # SWD header, Raspberry Pi Debug Probe order (SWCLK, GND, SWDIO)
+ ('J10','1'):'SWCLK',('J10','2'):'GND',('J10','3'):'SWDIO',
  # the RP2354B end of the four spare GPIOs that leave on the IO block (rows 11-14)
  ('U20','55'):'IO_GPIO44',('U20','56'):'IO_GPIO45',('U20','57'):'IO_GPIO46',
  ('U20','58'):'IO_GPIO47',

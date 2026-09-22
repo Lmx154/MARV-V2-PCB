@@ -20,9 +20,9 @@ layer, in millimetres relative to the board's drill/place (aux) origin with Y
 pointing up, which is the convention KiCad's own position-file export uses and
 the one JLC expects.
 
-Excluded from both: the DNP socket U24, the bare-pad pseudo-footprints (J3, J10,
+Excluded from both: the DNP socket U24, the bare-pad pseudo-footprints (J3,
 TP1-TP10), the mounting holes H1-H4, and -- unless --with-tht is given -- the
-2.54 mm THT headers J6/J7/J8, which the audit recommends shipping unpopulated.
+2.54 mm THT headers J6/J7/J8 and the SWD header J10, which the audit recommends shipping unpopulated.
 
   python3 tools/jlc/export_jlc.py
   python3 tools/jlc/export_jlc.py --with-tht --outdir build/assembly
@@ -55,7 +55,8 @@ NO_PART_FP = {
     "MARV_Packages:PadRow_1x09_P2.00mm",
     "TestPoint:TestPoint_Pad_1.0x1.0mm",
 }
-THT_FP = {"MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow"}
+THT_FP = {"MARV_Packages:PinHeader_1x14_P2.54mm_Vertical_IORow",
+          "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"}
 
 
 def read_map():

@@ -78,7 +78,7 @@ not a guarantee of zero reverse current under every temperature and source condi
 
 J3 pads 1–9: **CURR, TX, M4, M3, M2, M1, 5V_IN, GND, VBAT**.
 VBAT is sense-only. ESC current is read from its analog output; the FC has no
-propulsion-current pass-through or shunt. J10 is the SWD pad row.
+propulsion-current pass-through or shunt. J10 is the SWD 1x03 2.54 mm header (SWCLK, GND, SWDIO — Debug Probe order).
 
 For the IO block, each row has J6 = signal, J7 = power, J8 = ground:
 
@@ -118,9 +118,8 @@ CURR_SENSE on ADC1 (GPIO41) and VBAT_SENSE on ADC2 (GPIO42); VBUS_SENSE stays
 on ADC0. GPIO26, GPIO27 and GPIO35 are the unexposed spares. External connector
 assignments are retained. See [PINOUT.md](PINOUT.md) for every GPIO and routing priorities.
 
-This is a schematic hardware allocation; no firmware is implemented. The owner
-must transfer these net changes and new R57/R58 footprints to the PCB. No PCB
-placement or routing is changed by this revision.
+This is a hardware allocation; no firmware is implemented. The board carries
+these nets and parts as routed (2026-09-22).
 
 ## Board and validation scope
 
@@ -143,8 +142,9 @@ The active simulation checks **power arriving at V5_SYS only**. It does not
 predict sensor noise, regulator-loop stability, enclosure temperature or flight
 performance. See [simulation results](simulations/RESULTS.md).
 
-Remaining concrete work: finish routing and DRC; confirm physical ESC pad pitch;
-select the external converters and compatible 3.3 V modules; then measure source
-transitions, supply noise during module/SD activity, and temperatures on hardware.
-JLC assembly rotations also need the ordering preview. These checks do not
-mandate additional circuit features unless they reveal an actual problem.
+Routing and DRC are complete (2026-09-22: 0 errors, 0 unconnected, 0 parity).
+Remaining work is off the board: confirm physical ESC pad pitch; select the
+external converters and compatible 3.3 V modules; review JLC assembly rotations
+in the ordering preview; then measure source transitions, supply noise during
+module/SD activity, and temperatures on hardware. These checks do not mandate
+additional circuit features unless they reveal an actual problem.

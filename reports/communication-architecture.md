@@ -1,5 +1,9 @@
 # Sensor and native SD schematic update
 
+> **Historical (2026-09-17).** The bus allocation below is as first made; the GPIO
+> numbers predate the later MCU pin reorder (SD is now GPIO28–33, spares GPIO26/27/35).
+> [PINOUT.md](../PINOUT.md) and [DESIGN_SPEC.md](../DESIGN_SPEC.md) are authoritative.
+
 Validated 2026-09-17 using KiCad 10.0.6. Hardware/schematic only; no firmware or
 PCB edits. Open the saved `MARV-V2.kicad_sch` project hierarchy; generated PDF/netlist
 snapshots have been removed and can be re-exported from KiCad. The full GPIO reference is [PINOUT.md](../PINOUT.md).

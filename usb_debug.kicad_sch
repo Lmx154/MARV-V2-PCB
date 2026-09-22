@@ -2663,7 +2663,7 @@
 	)
 	(global_label "SWDIO"
 		(shape passive)
-		(at 222.25 130.81 0)
+		(at 222.25 133.35 0)
 		(effects
 			(font
 				(size 1 1)
@@ -2800,7 +2800,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "DBG pads (SWCLK SWDIO GND)"
+		(property "Value" "SWD header 1x03 2.54 mm (SWCLK GND SWDIO)"
 			(at 201.93 122.85 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2811,7 +2811,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "MARV_Packages:PadRow_1x03_P2.00mm"
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 			(at 209.55 130.81 0)
 			(hide yes)
 			(show_name no)
@@ -4148,7 +4148,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 222.25 133.35 90)
+		(at 222.25 130.81 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4158,7 +4158,7 @@
 		(dnp no)
 		(uuid "c7a788fa-af34-5b83-9d7b-1a46e68dffe3")
 		(property "Reference" "#PWR041"
-			(at 222.25 127.68 270)
+			(at 222.25 125.14 270)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4170,7 +4170,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 222.25 129.88 270)
+			(at 222.25 127.34 270)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4182,7 +4182,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 222.25 133.35 270)
+			(at 222.25 130.81 270)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4194,7 +4194,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 222.25 133.35 270)
+			(at 222.25 130.81 270)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4206,7 +4206,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 222.25 133.35 0)
+			(at 222.25 130.81 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
