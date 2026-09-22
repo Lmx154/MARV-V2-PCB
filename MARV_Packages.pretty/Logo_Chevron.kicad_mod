@@ -1,0 +1,79 @@
+(footprint "Logo_Chevron"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Chevron from images/chevron.svg (trace straightened and mirrored symmetric), 16 mm wide, F.SilkS only")
+	(tags "logo silkscreen marker")
+	(property "Reference" "G**"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "b99e53f6-7dde-4606-a080-d6f706905037")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Value" "Logo_Chevron"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a6a96108-cf0a-46a9-8f02-f354d9f3b711")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d67bbf3e-7d95-4978-ae68-b6a369bbfca6")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b7dd83d4-d04d-4e5e-86d8-bb6cc9f6ec71")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr board_only exclude_from_pos_files exclude_from_bom)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_poly
+		(pts
+			(xy -7.980179 -2.70806) (xy -6.151607 -2.06806) (xy -6.147995 -2.066663) (xy -0.124941 0.488571)
+			(xy 0.124941 0.488571) (xy 6.147995 -2.066663) (xy 6.151607 -2.06806) (xy 7.980179 -2.70806) (xy 8.026029 -2.705488)
+			(xy 8.056632 -2.671249) (xy 8.05406 -2.625399) (xy 8.033548 -2.601684) (xy 0.17069 2.701172) (xy 0.137142 2.711428)
+			(xy -0.137142 2.711428) (xy -0.17069 2.701172) (xy -4.011073 0.111147) (xy -3.089152 0.111147) (xy -3.007584 0.518991)
+			(xy -2.84195 0.684625) (xy -0.224546 2.399476) (xy -0.105714 2.340059) (xy -0.105714 1.670566) (xy 0.105714 1.670566)
+			(xy 0.105714 2.340059) (xy 0.224546 2.399476) (xy 2.84195 0.684625) (xy 3.007584 0.518991) (xy 3.089152 0.111147)
+			(xy 3.051425 0.07342) (xy 0.264389 1.51189) (xy 0.105714 1.670566) (xy -0.105714 1.670566) (xy -0.264389 1.51189)
+			(xy -3.051425 0.07342) (xy -3.089152 0.111147) (xy -4.011073 0.111147) (xy -5.849276 -1.128571) (xy -4.725706 -1.128571)
+			(xy -4.309356 -0.781612) (xy -2.395542 0.220859) (xy -0.22857 1.304345) (xy -0.105714 1.242917) (xy -0.105714 0.75628)
+			(xy 0.105714 0.75628) (xy 0.105714 1.242917) (xy 0.22857 1.304345) (xy 2.395542 0.220859) (xy 4.309356 -0.781612)
+			(xy 4.725706 -1.128571) (xy 4.44619 -1.128571) (xy 0.262534 0.599459) (xy 0.105714 0.75628) (xy -0.105714 0.75628)
+			(xy -0.262534 0.599459) (xy -4.44619 -1.128571) (xy -4.725706 -1.128571) (xy -5.849276 -1.128571)
+			(xy -8.033548 -2.601684) (xy -8.058897 -2.639976) (xy -8.049744 -2.684976) (xy -8.011452 -2.710325)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "e9e132d6-c5e0-4b72-ac17-65276bb1b7b7")
+	)
+	(embedded_fonts no)
+)
