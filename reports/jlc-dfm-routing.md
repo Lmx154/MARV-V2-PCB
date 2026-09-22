@@ -49,9 +49,9 @@ absolute process limit.
 | Track width minimum | 0.15 |
 | Different-net copper clearance, including track/pad | 0.15 |
 | Copper to routed outline | 0.30 |
-| Via diameter / finished drill | 0.45 / 0.30 minimum; presets 0.45/0.30, 0.60/0.30 (JLC free tier "0.3mm/(0.4/0.45mm)") |
-| Via annular ring / plated-pad annular ring | 0.075 / 0.15 radial |
-| Drill to unrelated copper | 0.20 (JLC via hole to copper); PTH pads 0.35 |
+| Via diameter / finished drill | 0.60 / 0.30 (JLC free tier "0.3mm/(0.4/0.45mm)", recommended 0.15 mm ring) |
+| Via annular ring / plated-pad annular ring | 0.15 / 0.15 radial |
+| Drill to unrelated copper | 0.25 (JLC via minimum 0.20 plus margin); PTH pads 0.35 |
 | Via hole to hole | 0.25 |
 | Hole spacing involving drilled pads | 0.45 |
 | NPTH round hole / NPTH slot minimum | 0.50 / 1.00 |
