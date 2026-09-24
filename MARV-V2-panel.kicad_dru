@@ -1,0 +1,105 @@
+(version 1)
+
+# BEGIN MANAGED MARV JLCPCB DFM
+# MARV V2: four-layer, 1 oz outer / 0.5 oz inner, green mask, through vias.
+# Verified 2026-09-18. See reports/jlc-dfm-routing.md for sources and limitations.
+# Global copper spacing/track floor: 0.15 mm. Netclass widths are routing defaults,
+# not a current-capacity certification. Do not set a universal maximum width.
+
+(rule "JLC - ordinary through vias only"
+  (constraint disallow micro_via blind_via buried_via))
+
+# JLC's order form prices by the smallest via hole: the 0.2 mm option added
+# ~$38 (high-precision via, 4-wire Kelvin test, TG155) on the 2026-09-21 quote.
+# The 0.3 mm/(0.4/0.45 mm) option is the free tier. Owner's choice (2026-09-22):
+# every via is 0.60/0.30 with JLC's recommended 0.15 mm ring; tight areas are
+# re-routed rather than given a thinner ring. Single preset 0.60/0.30.
+(rule "JLC - ordinary via dimensions"
+  (condition "A.Type == 'Via'")
+  (constraint hole_size (min 0.3mm))
+  (constraint via_diameter (min 0.6mm))
+  (constraint annular_width (min 0.15mm)))
+
+(rule "JLC - drilled pad spacing"
+  (condition "A.Type == 'Pad' || B.Type == 'Pad'")
+  (constraint hole_to_hole (min 0.45mm)))
+
+(rule "JLC - PTH hole to other copper"
+  (condition "(A.Type == 'Pad' && A.Pad_Type == 'Through-hole') || (B.Type == 'Pad' && B.Pad_Type == 'Through-hole')")
+  (constraint hole_clearance (min 0.35mm))
+  (constraint annular_width (min 0.15mm)))
+
+(rule "JLC - plated slots"
+  (condition "A.Type == 'Pad' && A.isPlated() && A.Hole_Size_X != A.Hole_Size_Y")
+  (constraint hole_size (min 0.5mm)))
+
+(rule "JLC - nonplated round holes"
+  (condition "A.Type == 'Pad' && A.Pad_Type == 'NPTH, mechanical' && A.Hole_Size_X == A.Hole_Size_Y")
+  (constraint hole_size (min 0.5mm)))
+
+(rule "JLC - nonplated slots"
+  (condition "A.Type == 'Pad' && A.Pad_Type == 'NPTH, mechanical' && A.Hole_Size_X != A.Hole_Size_Y")
+  (constraint hole_size (min 1mm)))
+
+# Includes same-net vias. Vias are ordered "Plugged" (JLC's free 4-layer
+# default: tented and mask-filled); 0.2 mm keeps the hole clear of the paste
+# aperture with margin.
+# Avoid via-in-pad so epoxy fill / copper cap is not needed. The back-side
+# hand-solder pad row J3 (ESC) is exempt: JLC assembles the front only, and a
+# via inside a wire pad is the owner's choice there. (J10 is now a THT header.)
+(rule "JLC - holes outside SMD lands"
+  (condition "B.Type == 'Pad' && B.Pad_Type == 'SMD' && !B.memberOfFootprint('J3')")
+  (constraint physical_hole_clearance (min 0.2mm)))
+
+# JLC's SMD spacing page (jlcpcb.com/help/article/minimum-spacing-for-smd-components)
+# gives body-to-body recommendations: 0402-0402 0.18 mm, 0603 0.25 mm, SOT-23 0.4 mm,
+# QFN-QFN 1.0 mm. KiCad courtyards already carry 0.21-0.41 mm (0402) or 0.25 mm
+# (SOT/SOIC/QFN) of excess per part, so two non-overlapping courtyards already exceed
+# every chip/SOT/SOIC figure; only IC-to-IC needs extra courtyard gap (1.0 - 2 x 0.25).
+# Reviewed 2026-09-22: 81 courtyard findings were all non-overlapping courtyards.
+# New package families need review; this covers the packages fitted to MARV V2.
+(rule "Assembly - ordinary component courtyard gap"
+  (constraint courtyard_clearance (min 0mm)))
+
+(rule "Assembly - large passive courtyard gap"
+  (condition "A.Reference == 'C19' || B.Reference == 'C19'")
+  (constraint courtyard_clearance (min 0mm)))
+
+(rule "Assembly - SOT courtyard gap"
+  (condition "A.Reference == 'Q1' || B.Reference == 'Q1' || A.Reference == 'U7' || B.Reference == 'U7' || A.Reference == 'U12' || B.Reference == 'U12'")
+  (constraint courtyard_clearance (min 0mm)))
+
+(rule "Assembly - SOIC courtyard gap"
+  (condition "A.Reference == 'U24' || B.Reference == 'U24'")
+  (constraint courtyard_clearance (min 0mm)))
+
+(rule "Assembly - QFN and LGA to IC courtyard gap"
+  (condition "((A.Reference == 'U20' || A.Reference == 'U21' || A.Reference == 'U22' || A.Reference == 'U23') && (B.Reference == 'U*' || B.Reference == 'Q*')) || ((B.Reference == 'U20' || B.Reference == 'U21' || B.Reference == 'U22' || B.Reference == 'U23') && (A.Reference == 'U*' || A.Reference == 'Q*'))")
+  (constraint courtyard_clearance (min 0.5mm)))
+
+# Manufacturer recommendations to review; existing lands are never resized.
+(rule "JLC - small SMD land review"
+  (condition "A.Type == 'Pad' && A.Pad_Type == 'SMD' && A.Pad_Number != ''")
+  (constraint assertion "A.Size_X >= 0.25mm && A.Size_Y >= 0.25mm")
+  (severity warning))
+
+# The Bosch datasheet asks for 0.20 mm between BMP581 lands.
+(rule "BMP581 - pad spacing"
+  (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.memberOfFootprint('U22') && B.memberOfFootprint('U22')")
+  (constraint clearance (min 0.2mm)))
+
+# Silk shapes are not covered by the global text-thickness limit.
+(rule "JLC - silkscreen graphic stroke"
+  (condition "A.Type == 'Graphic' && A.Line_Width > 0mm && (A.Layer == 'F.Silkscreen' || A.Layer == 'B.Silkscreen')")
+  (constraint assertion "A.Line_Width >= 0.15mm")
+  (severity warning))
+# END MANAGED MARV JLCPCB DFM
+
+# Core regulator (RP2350 datasheet §6.3.8, Fig. 23-24): VREG_LX passes between the
+# pads of CIN (C39) and COUT (C45). Those 0402 pads are 0.40 mm apart, so a 0.15 mm
+# trace needs 0.125 mm per side. JLC's four-layer outer-copper floor is 0.09 mm
+# (3.5 mil) at standard price, so this local 0.12 mm is still free-tier. Only the
+# pads of these two footprints are relaxed; everything else keeps 0.15 mm.
+(rule "Core regulator - C39/C45 pad clearance for VREG_LX pass-through"
+  (condition "A.Type == 'Pad' && (A.memberOfFootprint('C39') || A.memberOfFootprint('C45'))")
+  (constraint clearance (min 0.12mm)))

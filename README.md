@@ -14,9 +14,11 @@ the schematic and routed board, local footprints and 3D models, offline
 datasheets, the design checks, and the input-power simulation. There
 is no firmware here.
 
-**Status (2026-09-22): order-ready.** ERC 0, DRC 0 errors / 0 unconnected /
-0 schematic-parity issues; fabrication and assembly exports regenerate from the
-saved design (see [Ordering](#ordering)).
+**Status (2026-09-23): customer-supplied assembly frame exported and verified.** ERC 0,
+DRC 0 errors / 0 unconnected / 0 schematic-parity issues. There are 104 DRC
+warnings, detailed in the [manufacturing check](reports/manufacturing-check.md).
+The [72 × 72 mm manufacturing frame](reports/manufacturing-panel.md) supplies
+rails/fiducials for Standard assembly. Review JLCPCB previews before ordering.
 
 [Design specification](DESIGN_SPEC.md) · [GPIO pinout](PINOUT.md) ·
 [Libraries](LIBRARIES.md) · [Datasheets](datasheets/README.md) ·
@@ -43,7 +45,7 @@ updated images alongside PCB changes to keep this gallery current.
 | | |
 |---|---|
 | MCU | RP2354B (QFN-80, 2 MB in-package flash), 12 MHz crystal, USB-C device port, WS2812C status LED, RESET and BOOTSEL buttons, SWD header |
-| Size / stack | 50.8 × 45.6 mm, four layers: F.Cu signals · In1 solid GND · In2 V3V3_SYS plane · B.Cu signals. 1.6 mm FR-4, 1 oz outer / 0.5 oz inner, green mask, HASL |
+| Size / stack | 50.7 × 45.5 mm finished outline (72 × 72 mm manufacturing frame), four layers: F.Cu signals · In1 solid GND · In2 V3V3_SYS plane · B.Cu signals. 1.6 mm FR-4, 1 oz outer / 0.5 oz inner, green mask, HASL |
 | Rules | 0.15 mm minimum track and clearance, one via size 0.60 / 0.30 mm, no blind/buried/micro vias — JLCPCB's standard four-layer tier with no paid options |
 | Assembly | Front side SMT at JLCPCB (88 placements, 34 unique parts). Back side: ESC pad row J3, SWD header J10, unpopulated QSPI expansion socket U24, test points |
 | Mounting | Four M3 grommet holes (4.0 mm) with GND rings |
@@ -203,27 +205,38 @@ from KiCad's PCB Editor. Project settings are saved in
 [fabrication-toolkit-options.json](fabrication-toolkit-options.json); no custom
 Gerber, BOM or placement exporter is needed.
 
-1. Open the current saved project (reload if it was open during external edits).
-   After schematic changes, update the PCB from the schematic and review the
-   changes. Save the board and run ERC/DRC before exporting.
+1. Open **MARV-V2-panel.kicad_pro** for the Standard assembly export. This is
+   a saved manufacturing copy with customer-supplied rails. After circuit-design
+   changes, update the original board, synchronize the manufacturing copy, and
+   run the checks before exporting. See the [panel notes](reports/manufacturing-panel.md).
 2. Click **Fabrication Toolkit → Generate**. The saved options enable automatic
-   component translations and exclude DNP parts. Automatic zone refill, V-cuts,
-   alternate outlines and plotting all active layers are **off**. Refill zones
+   component translations and exclude DNP parts. The **User.1 V-cut option is on** for the manufacturing panel. Automatic zone
+   refill, alternate outlines and plotting all active layers are **off**. Refill zones
    yourself in KiCad when copper changes require it, before the final DRC.
 3. Upload the generated files:
 
    | JLCPCB step | File |
    | --- | --- |
-   | PCB fabrication | `production/MARV-V2.zip` (Gerbers and drills) |
+   | PCB fabrication | `production/MARV-V2-panel.zip` (Gerbers and drills with rails) |
    | Assembly parts | `production/bom.csv` |
    | Assembly placement | `production/positions.csv` |
 
+These three files were regenerated together from the manufacturing panel on
+**2026-09-23**. The BOM and placements match the original board; the Gerbers
+include the rails, routed channels, V-score annotations and fiducials;
+the NPTH drills include tooling holes and the original USB locating holes. The local
+`production/order-manifest.json` records source/output SHA-256 hashes, and
+`production/SHA256SUMS` checks the three upload files. See the
+[panel verification](reports/manufacturing-panel.md) for validation results
+and remaining preview checks. Regenerate after any saved design change.
+
 The initial order is **5 PCBs manufactured, 2 assembled on the top side** and
 3 bare. Select **1 design, Single PCB, 4 layers, 1.6 mm, green mask, white silk,
-HASL (with lead), standard copper and 0.30 mm minimum via holes**. Choose
-Economic assembly if the final quote permits it. This project does not supply
-a panel or V-cut drawing; use JLC's panel assistance if its chosen assembly
-service requires one.
+HASL (with lead), standard copper and 0.30 mm minimum via holes**. Use
+**Standard assembly** and **Edge Rails/Fiducials → Added by Customer**.
+The 72 × 72 mm frame contains one finished PCB and uses two full-height
+V-scores through its side connections, with no mouse-bite holes or added rail silk. It can be removed after delivery; check the quote no longer includes
+JLC's rail-addition service charge.
 
 The schematic's `LCSC` fields and native BOM/position exclusions define the
 assembly selection. J6–J8 and J10 are owner-soldered headers; J3, H1–H4,
@@ -252,6 +265,7 @@ CSV inventories were retired; Git history retains them.
 | `DESIGN_SPEC.md`, `PINOUT.md` | Intended circuit and boundaries; every GPIO with its alternates |
 | `config/dfm/` | Reviewed JLCPCB profile and custom-rule template |
 | `tools/` | Netlist checker, footprint audit, DFM tool, input-power simulation, sheet relinker, netlist fingerprint, PCB image renderer |
+| `MARV-V2-panel.kicad_*` | Saved one-board manufacturing frame for Standard assembly with customer-supplied rails |
 | `fabrication-toolkit-options.json` | Native Fabrication Toolkit settings for JLCPCB order exports |
 | `tests/` | Unit tests for the DFM tool's preservation guarantees |
 | `simulations/` | The input-power SPICE deck, its README and the generated results |
@@ -264,6 +278,8 @@ Reports, newest first:
 
 | Report | What it records |
 |---|---|
+| [manufacturing-panel.md](reports/manufacturing-panel.md) | Customer-supplied V-cut frame, current order package and panel verification |
+| [manufacturing-check.md](reports/manufacturing-check.md) | Current manufacturing exports, source verification, DRC warnings and order handoff |
 | [electrical-review.md](reports/electrical-review.md) | Review of the saved board before the core-regulator rework |
 | [fabrication-cost-audit.md](reports/fabrication-cost-audit.md) | Why the board fits JLC's standard four-layer tier with no upcharges |
 | [signal-trace-widths.md](reports/signal-trace-widths.md) | The 55 nets in the 0.15 mm Signal class |

@@ -2,7 +2,7 @@
   "EXTRA_LAYERS": "",
   "ALL_ACTIVE_LAYERS": false,
   "ARCHIVE_NAME": "",
-  "EXTEND_EDGE_CUT": false,
+  "EXTEND_EDGE_CUT": true,
   "ALTERNATIVE_EDGE_CUT": false,
   "AUTO TRANSLATE": true,
   "AUTO FILL": false,

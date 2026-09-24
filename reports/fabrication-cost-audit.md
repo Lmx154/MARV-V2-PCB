@@ -1,5 +1,9 @@
 # MARV V2 standard fabrication cost audit
 
+Historical audit of the 2026-09-21 layout. The error counts below are retained
+as history; see the [2026-09-23 manufacturing check](manufacturing-check.md) for
+the current saved design and order files.
+
 Reviewed 2026-09-21. The owner wants the budget spent on components rather than
 precision PCB fabrication. The selected dimensions use ordinary four-layer
 technology, but the current saved layout still has clearance violations and is
