@@ -2943,6 +2943,12 @@
 		(uuid "1b358380-c8cc-51d6-8193-aaca017a8084")
 	)
 	(junction
+		(at 350.52 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1dd580e6-37d0-4178-9efd-cb5fef3c3477")
+	)
+	(junction
 		(at 152.4 196.85)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3001,6 +3007,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5351915b-c14c-52c2-815d-b2b74a71b12a")
+	)
+	(junction
+		(at 367.03 96.52)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "572f4d60-a79b-4569-9c25-c7af4f635bd0")
 	)
 	(junction
 		(at 62.23 143.51)
@@ -3163,6 +3175,18 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "fcebc096-4c7e-50c3-888f-24f8af7aa06b")
+	)
+	(no_connect
+		(at 266.7 190.5)
+		(uuid "012db16f-9895-417e-8f93-cb43f705200a")
+	)
+	(no_connect
+		(at 266.7 170.18)
+		(uuid "15926b7c-5272-4db0-92d2-948ccb6b8bd5")
+	)
+	(no_connect
+		(at 266.7 167.64)
+		(uuid "a583aa7b-6b59-4514-a7c3-1b1a2551a528")
 	)
 	(wire
 		(pts
@@ -3363,6 +3387,16 @@
 			(type default)
 		)
 		(uuid "1c3d0712-ca37-59e5-b2ed-dca08732c4df")
+	)
+	(wire
+		(pts
+			(xy 266.7 195.58) (xy 274.32 195.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1cf1e1d0-f3e6-4217-b6c1-42ec810849dd")
 	)
 	(wire
 		(pts
@@ -4066,6 +4100,16 @@
 	)
 	(wire
 		(pts
+			(xy 361.95 96.52) (xy 367.03 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "701bc7eb-056a-4877-91a9-21b1ef9f24b0")
+	)
+	(wire
+		(pts
 			(xy 62.23 158.75) (xy 62.23 166.37)
 		)
 		(stroke
@@ -4253,6 +4297,16 @@
 			(type default)
 		)
 		(uuid "83410f77-ef8a-5da5-8302-15051f05b183")
+	)
+	(wire
+		(pts
+			(xy 208.28 190.5) (xy 215.9 190.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8387ef64-3246-42f1-b7df-7deab1d889e9")
 	)
 	(wire
 		(pts
@@ -4946,6 +5000,16 @@
 	)
 	(wire
 		(pts
+			(xy 367.03 96.52) (xy 367.03 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d6bdb94e-3590-4ec3-bc9c-0a0621e030fa")
+	)
+	(wire
+		(pts
 			(xy 266.7 172.72) (xy 274.32 172.72)
 		)
 		(stroke
@@ -5023,6 +5087,16 @@
 			(type default)
 		)
 		(uuid "e11098e6-cf4b-526e-b288-50942026f783")
+	)
+	(wire
+		(pts
+			(xy 266.7 187.96) (xy 274.32 187.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1240add-cebf-41e2-ac13-ddcfbabafd42")
 	)
 	(wire
 		(pts
@@ -5146,6 +5220,16 @@
 	)
 	(wire
 		(pts
+			(xy 350.52 96.52) (xy 354.33 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f3b6336e-84a8-4a9a-9bb7-c81c38c8b270")
+	)
+	(wire
+		(pts
 			(xy 205.74 107.95) (xy 205.74 116.84)
 		)
 		(stroke
@@ -5203,6 +5287,16 @@
 			(type default)
 		)
 		(uuid "ffa16e69-1c39-57a8-a34f-c62b73c10447")
+	)
+	(wire
+		(pts
+			(xy 350.52 88.9) (xy 350.52 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ffb7d693-190f-422b-908c-9e77731b8f76")
 	)
 	(global_label "SD_DAT1"
 		(shape passive)
@@ -5326,6 +5420,28 @@
 		(uuid "124b3ecf-6e90-5a42-99b1-dad3dfa7b20f")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 274.32 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "PWM3"
+		(shape passive)
+		(at 274.32 195.58 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "1aa3b46a-2078-48d0-9428-d599e5b3ea28")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 274.32 195.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5590,6 +5706,28 @@
 		(uuid "40c4b511-afdb-549d-aaf3-aafa80a79cc9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 208.28 147.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "LED_DATA"
+		(shape passive)
+		(at 208.28 190.5 180)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify right)
+		)
+		(uuid "45009c2e-c4e4-4ae3-91ff-2043f9ffadb0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 208.28 190.5 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6316,6 +6454,28 @@
 		(uuid "d5067769-a667-5d91-960a-0354d99b69b6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 208.28 198.12 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "ESC_TELEM_RX"
+		(shape passive)
+		(at 274.32 187.96 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "d630fd25-37be-4bf8-bc52-f9271186a063")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 274.32 187.96 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7695,100 +7855,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 358.14 96.52 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "3dd94d7c-3754-4673-87fa-5457f685bb54")
-		(property "Reference" "C81"
-			(at 354.74 92.92 270)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.8 0.8)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "4.7u / 10 V X5R 0402, DVDD second bulk, far edge of U20 (RP2350 ds 6.3.8.1)"
-			(at 369.57 95.42 270)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.8 0.8)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 358.14 96.52 270)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.8 0.8)
-				)
-				(justify left)
-			)
-		)
-		(property "Datasheet" ""
-			(at 358.14 96.52 270)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.8 0.8)
-				)
-				(justify left)
-			)
-		)
-		(property "Description" ""
-			(at 358.14 96.52 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C23733"
-			(at 358.14 96.52 270)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 0.8 0.8)
-				)
-				(justify left)
-			)
-		)
-		(pin "1"
-			(uuid "49922ea8-e48f-4c8a-89e1-43fe60610416")
-		)
-		(pin "2"
-			(uuid "8f88cd1d-05b9-426f-a202-056d359bbad5")
-		)
-		(instances
-			(project "MARV-V2"
-				(path "/951d7307-88ce-5bfb-b9e0-55612ee5a02b/203e2964-cb5c-592c-ba13-6544f885ad75"
-					(reference "C81")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:L")
 		(at 307.34 55.88 90)
 		(unit 1)
@@ -8308,6 +8374,100 @@
 			(project "MARV-V2"
 				(path "/951d7307-88ce-5bfb-b9e0-55612ee5a02b/203e2964-cb5c-592c-ba13-6544f885ad75"
 					(reference "#PWR021")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 358.14 96.52 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "3dd94d7c-3754-4673-87fa-5457f685bb54")
+		(property "Reference" "C81"
+			(at 354.74 92.92 270)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7u / 10 V X5R 0402, DVDD second bulk, far edge of U20 (RP2350 ds 6.3.8.1)"
+			(at 369.57 95.42 270)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+			(at 358.14 96.52 270)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify left)
+			)
+		)
+		(property "Datasheet" ""
+			(at 358.14 96.52 270)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify left)
+			)
+		)
+		(property "Description" ""
+			(at 358.14 96.52 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23733"
+			(at 358.14 96.52 270)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify left)
+			)
+		)
+		(pin "1"
+			(uuid "49922ea8-e48f-4c8a-89e1-43fe60610416")
+		)
+		(pin "2"
+			(uuid "8f88cd1d-05b9-426f-a202-056d359bbad5")
+		)
+		(instances
+			(project "MARV-V2"
+				(path "/951d7307-88ce-5bfb-b9e0-55612ee5a02b/203e2964-cb5c-592c-ba13-6544f885ad75"
+					(reference "C81")
 					(unit 1)
 				)
 			)
@@ -10999,18 +11159,6 @@
 				(justify left)
 			)
 		)
-		(property "LCSC" "C25092"
-			(at 347.98 189.23 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1 1)
-				)
-				(justify left)
-			)
-		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
 			(at 345.44 187.96 0)
 			(hide yes)
@@ -11042,6 +11190,18 @@
 				)
 			)
 		)
+		(property "LCSC" "C25092"
+			(at 347.98 189.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify left)
+			)
+		)
 		(pin "1"
 			(uuid "5547555f-0300-4384-9bf4-0ed08d04649f")
 		)
@@ -11056,132 +11216,5 @@
 				)
 			)
 		)
-	)
-	(wire
-		(pts
-			(xy 266.7 187.96) (xy 274.32 187.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e1240add-cebf-41e2-ac13-ddcfbabafd42")
-	)
-	(global_label "ESC_TELEM_RX"
-		(shape passive)
-		(at 274.32 187.96 0)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "d630fd25-37be-4bf8-bc52-f9271186a063")
-	)
-	(wire
-		(pts
-			(xy 266.7 195.58) (xy 274.32 195.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1cf1e1d0-f3e6-4217-b6c1-42ec810849dd")
-	)
-	(global_label "PWM3"
-		(shape passive)
-		(at 274.32 195.58 0)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify left)
-		)
-		(uuid "1aa3b46a-2078-48d0-9428-d599e5b3ea28")
-	)
-	(no_connect
-		(at 266.7 167.64)
-		(uuid "a583aa7b-6b59-4514-a7c3-1b1a2551a528")
-	)
-	(no_connect
-		(at 266.7 170.18)
-		(uuid "15926b7c-5272-4db0-92d2-948ccb6b8bd5")
-	)
-	(no_connect
-		(at 266.7 190.5)
-		(uuid "012db16f-9895-417e-8f93-cb43f705200a")
-	)
-	(wire
-		(pts
-			(xy 208.28 190.5) (xy 215.9 190.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8387ef64-3246-42f1-b7df-7deab1d889e9")
-	)
-	(wire
-		(pts
-			(xy 367.03 96.52) (xy 367.03 100.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d6bdb94e-3590-4ec3-bc9c-0a0621e030fa")
-	)
-	(wire
-		(pts
-			(xy 361.95 96.52) (xy 367.03 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "701bc7eb-056a-4877-91a9-21b1ef9f24b0")
-	)
-	(wire
-		(pts
-			(xy 350.52 88.9) (xy 350.52 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ffb7d693-190f-422b-908c-9e77731b8f76")
-	)
-	(wire
-		(pts
-			(xy 350.52 96.52) (xy 354.33 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f3b6336e-84a8-4a9a-9bb7-c81c38c8b270")
-	)
-	(junction
-		(at 367.03 96.52)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "572f4d60-a79b-4569-9c25-c7af4f635bd0")
-	)
-	(junction
-		(at 350.52 88.9)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "1dd580e6-37d0-4178-9efd-cb5fef3c3477")
-	)
-	(global_label "LED_DATA"
-		(shape passive)
-		(at 208.28 190.5 180)
-		(effects
-			(font
-				(size 1 1)
-			)
-			(justify right)
-		)
-		(uuid "45009c2e-c4e4-4ae3-91ff-2043f9ffadb0")
 	)
 )

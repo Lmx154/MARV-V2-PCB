@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "MARV_Sensors")(type "KiCad")(uri "${KIPRJMOD}/MARV_Sensors.kicad_sym")(options "")(descr "Project-local sensors used by MARV V2"))
+)
