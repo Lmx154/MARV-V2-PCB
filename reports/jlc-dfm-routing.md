@@ -1,5 +1,67 @@
 # MARV V2 — JLCPCB DFM and routing setup
 
+## Manufacturing precheck — 2026-10-20
+
+**The observed PCB features fit JLCPCB's capabilities, but the saved manufacturing package is not ready to order. This BOM requires Standard PCBA.** This section supersedes earlier readiness claims for the current saved board; the older sections remain design history.
+
+### Direct file checks
+
+Parsed `MARV-V2.kicad_pcb`, `MARV-V2-panel.kicad_pcb`, `production/bom.csv` and `production/positions.csv`.
+
+| Item | Current saved board |
+| --- | --- |
+| Board body | 50.7 × 45.5 mm between Edge.Cuts centerlines |
+| Construction | Four layers, nominal 1.6 mm FR-4, green mask; 0.035 mm outer / 0.0152 mm inner copper in stackup |
+| Finish | HAL SnPb / leaded HASL |
+| Tracks | 1,038 segments; minimum width 0.15 mm |
+| Routing vias | 170, all 0.60 mm copper / 0.30 mm drill |
+| Assembly | 88 fitted SMT components, all front side, 34 distinct LCSC codes |
+| Packages | 0402 passives; U20 QFN-80 at 0.4 mm pitch, narrowest land dimension 0.20 mm |
+| BOM | 84 rows; references, quantities and LCSC fields match all 88 fitted devices |
+| Mask | Global pad expansion zero, minimum mask width 0.10 mm, vias tented both sides |
+
+JLC's nominal capabilities permit these feature sizes. Copper setbacks differ for routed edges (0.20 mm) and V-scores (0.40 mm); this is not a measurement of current clearance everywhere. [PCB capabilities](https://jlcpcb.com/capabilities/pcb-capabilities/)
+
+Standard PCBA lists 0.35 mm minimum IC pitch, a 70 × 70 mm minimum assembly envelope, rails and fiducials, and V-cut support. The existing 72 × 72 mm frame has three tooling holes and three fiducials, but its circuit content is stale. [Assembly capabilities](https://jlcpcb.com/capabilities/pcb-assembly-capabilities)
+
+### Standard assembly is required by the selected sensors
+
+- [BMP581 / C5362283](https://jlcpcb.com/partdetail/BoschSensortec-BMP581/C5362283): **Standard only; X-ray required**.
+- [ADXL375BCCZ / C579466](https://jlcpcb.com/partdetail/ANALOG_DEVICES_INC-ADXL375BCCZ/C579466): **Standard only**.
+- [RP2354B / C39843328](https://jlcpcb.com/partdetail/RaspberryPi-RP2354B/C39843328), [ICM-45686 / C22459454](https://jlcpcb.com/partdetail/TDKInvenSense-ICM45686/C22459454), and [L20 / C42411119](https://jlcpcb.com/partdetail/AbraconLlc-AOTA_B201610S3R3_101T/C42411119) are also catalogued for assembly.
+
+Catalogue eligibility does not reserve stock. Live quantities for the order remain unverified.
+
+### Confirmed release blocker: stale panel and placement CSV
+
+The panel is an older snapshot: 26 footprint position/orientation records differ, including DNP and graphic footprints. It has 1,151 segments and 179 routing vias, versus 1,038 and 170 in the main board. It also lacks the latest local GND-pour settings.
+
+All 88 CSV placement centers match the old panel, but **23 differ from the current main board**:
+C25, C26, C36, C37, C38, C40, C41, C62, C79, D20, D21, J4, R20, R22, R23, R24, R35, R4, R5, R55, R56, SW2 and U12.
+
+For example, J4 is now at (87.55, 119.06) mm; the panel/CSV locates it at (93.00, 119.10) mm. The USB overhang pocket therefore also needs review. Regenerate the panel and Gerbers/drills/BOM/CPL together from the finished board; do not pair new copper files with old placement coordinates.
+
+Raw KiCad/CPL rotation differences are not automatically errors: the Fabrication Toolkit applies component rotation corrections. Preserve and review these during export. The September zero-error DRC reports do not validate the current board.
+
+### Process choices and remaining checks
+
+ENIG is preferable for QFN/LGA pad planarity; it is a recommendation, not a claim that Standard PCBA universally prohibits HASL. The saved finish was not changed. [Finish guidance](https://jlcpcb.com/help/article/jlcpcb-surface-finish)
+
+A limited geometry screen found no routing-hole edge less than 0.20 mm from fitted front-side SMD copper lands, within numerical tolerance. It covered rectangular, rounded-rectangular, oval and circular pads, and did not replace KiCad DRC or inspect every drilled footprint pad/custom shape.
+
+Resolve **tenting versus ink plugging** before ordering. The saved PCB specifies tenting; older project notes say plugged. JLC's plugging guidance has a separate 0.35 mm condition near mask openings. There are 52 via/land pairs with hole-edge-to-copper spacing below 0.35 mm, so the project's 0.20 mm rule is not proof of plugging compatibility. The published wording and final mask geometry require CAM interpretation. Do not confuse mask-ink plugging with epoxy-filled/capped via-in-pad. [Via covering](https://jlcpcb.com/help/article/pcb-via-covering)
+
+Before release:
+1. Refill and run current KiCad DRC with schematic parity; check actual clearances, connections, courtyards, mask slivers and paste apertures.
+2. Synchronize the frame and connector pockets; recheck copper-to-score spacing.
+3. Export one matching file set with V-scores included; retain the intended DNP/hand-solder exclusions.
+4. Review JLC CAM and assembly previews, including pad 1, polarized parts, sensor rotations and stencil apertures; confirm finish, via covering, current stock and quote.
+
+Local terminal execution fails at sandbox initialization, so refill/DRC/export tools could not run. The binary fabrication ZIP was not inspected and no files were uploaded to JLC. No PCB geometry or production files were changed by this audit.
+
+---
+
+
 Verified against published JLCPCB information on **2026-09-18**, using KiCad **10.0.6**.
 Signal defaults were updated on **2026-09-21**: see the
 [exact 55-net list](signal-trace-widths.md) and the current
