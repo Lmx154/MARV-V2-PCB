@@ -55,8 +55,8 @@ expected={
  # so the rail does the buck-before-LDO sequencing instead of a status pin.
  ('U12','1'):'V5_SYS',('U12','2'):'GND',('U12','3'):'V3V3_SYS',('U12','5'):'V3V3_ANA',
  ('J4','A5'):'USB_CC1',('J4','B5'):'USB_CC2',('J4','SH'):'GND',
- # J3 is the MicoAir AM32 4-in-1 ESC pad row, NINE pads. Pads 1-6 are the ESC silkscreen read left
- # to right: CURR, TX, M4, M3, M2, M1 -- so pin 3 is PWM4 and pin 6 is PWM1, NOT the other way round.
+ # J3 is the FC ESC interface, NINE pads. Connect the G55M by signal name, not pad position.
+ # FC pins 1-6: CURR, TX, M4, M3, M2, M1; pin 3 is PWM4 and pin 6 is PWM1.
  # Pads 7-9 are this board's power entry: 7 is the external BEC's regulated 5 V, 8 is GND and 9 is
  # the raw-pack SENSE wire. This assertion is the one that catches a reversed motor row or a 5 V pad
  # swapped with the VBAT sense pad, which is why every pin is listed.
@@ -168,6 +168,8 @@ _retired = {'U3','U5','D23','C16','C67','C68','C69','R31','R32','BZ1',
             'C73','C74','C75','C76','C77','C80','R8','R9','R42','R43','R44','R45','R46','R47'}
 _refs = {c.get('ref') for c in root.find('components')}
 assert not _retired & _refs, sorted(_retired & _refs)
+assert not {'R59','C82'} & _refs, 'INA226 support parts must be removed'
+assert not {'SHUNT_P','SHUNT_N','BAT_INT'} & nets.keys(), 'INA226 nets must be removed'
 # and no net of the deleted driver survives either (BUZZ_PWM / BUZZ_G / BUZZ_D / BUZZER*)
 assert not [n for n in nets if n.upper().startswith('BUZZ')], sorted(
     n for n in nets if n.upper().startswith('BUZZ'))
@@ -193,7 +195,7 @@ _unexpected = sorted(r for r, p in _props.items() if 'dnp' in p)
 assert _unexpected == sorted(_DNP), ('unexpected DNP parts', _unexpected)
 assert 'dnp' not in _props.get('R35', set()), 'R35 (FLASH_CS1 pull-up) must stay populated'
 # POWER CHAIN BOUNDARY (DESIGN_SPEC "Decisions", 2026-09-17):
-#     external BEC -> J3 pin 7 -> 5V_IN -> (Q1 P-FET) -> V5_SYS -> U7 -> V3V3_SYS -> U12 -> V3V3_ANA
+#     external BEC -> J3 pin 7 -> 5V_IN -> (Q1 P-FET) -> V5_SYS -> U7 -> V3V3_SYS; V5_SYS -> U12 -> V3V3_ANA
 #                     USB_VBUS -> (D1 Schottky) ----^
 # and, separately, raw pack -> J3 pin 9 -> VBAT -> R27, a SENSE wire that carries no load.
 # 1. VBAT reaches exactly one connector (J3, the ESC row), NO IC pin at all, and nothing but the top
@@ -236,10 +238,10 @@ assert {(ref,pin) for ref,pin in nets['V3V3_SYS'] if ref.startswith('J')}=={
 assert {(ref,pin) for ref,pin in nets['GND'] if ref=='J8'}=={
     ('J8',str(_p)) for _p in range(1,15)},sorted(p for p in nets['GND'] if p[0]=='J8')
 # 4. D+/D- run straight from the receptacle into the 27 R series pair: U8, the USBLC6 ESD array, is
-#    gone, so each data net is exactly the four receptacle pins plus one resistor end.
-for _d,_r in (('USB_DM','R23'),('USB_DP','R22')):
-    assert nets[_d]=={('J4','A%s'%('7' if _d=='USB_DM' else '6')),
-                      ('J4','B%s'%('7' if _d=='USB_DM' else '6')),(_r,'1')},nets[_d]
+#    gone, so each data net is exactly two receptacle pins plus one resistor end.
+for _d,_r in (('USB_D-','R23'),('USB_D+','R22')):
+    assert nets[_d]=={('J4','A%s'%('7' if _d=='USB_D-' else '6')),
+                      ('J4','B%s'%('7' if _d=='USB_D-' else '6')),(_r,'1')},nets[_d]
 # 5. PWM1-4 leave the board ONLY on the ESC pad row; PWM5-8 leave ONLY on the servo block.
 for n in range(1,5):
     assert {ref for ref,pin in nets['PWM%d'%n] if ref.startswith('J')}=={'J3'},nets['PWM%d'%n]

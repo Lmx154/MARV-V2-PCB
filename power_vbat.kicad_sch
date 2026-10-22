@@ -897,9 +897,9 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "ESC PAD ROW J3: CURR, TX, M4, M3, M2, M1, 5V_IN, GND, VBAT.\nCURR -> R53/C78 -> GPIO42 (ADC2); TX -> R54 -> GPIO32 (PIO UART RX).\nMotor PWM4/3/2/1 -> GPIO36/38/39/43.\nPin 7 receives regulated 5 V from an external buck or boost; C19 is its bulk capacitor.\nPin 9 senses raw battery through R27/R28/C48 to GPIO41 (ADC1); it powers no load.\nPad pitch is assumed 2.00 mm: confirm against the physical ESC.\nExternal converter current limiting, charging and battery cutoff are off-board."
+	(text "ESC PAD ROW J3: CURR, TX, M4, M3, M2, M1, 5V_IN, GND, VBAT.\nG55M C -> J3.1 -> R53/C78 -> GPIO41 / ADC1 (MCU pin 52).\nG55M T -> J3.2 -> R54 -> GPIO34 (PIO UART RX). PWM4/3/2/1 -> GPIO36/37/38/39.\nPin 7 receives regulated 5 V from an external converter; C19 is its bulk capacitor.\nPin 9 senses raw battery through R27/R28/C48 to GPIO42 / ADC2 (MCU pin 53).\nJ3 pad order is our FC pinout, not the G55M pad order. Connect by signal name."
 		(exclude_from_sim no)
-		(at 10 189.115 0)
+		(at 15 189.115 0)
 		(effects
 			(font
 				(size 1.1 1.1)
@@ -908,9 +908,9 @@
 		)
 		(uuid "142fef88-7e16-54da-8a25-06c006df2111")
 	)
-	(text "BOARD INPUTS: regulated 5 V at J3 pin 7 from an external converter, plus USB VBUS at J4.\nExternal choices: 2S-6S -> 5 V / 3 A buck, or 1S 18650 -> 5 V boost.\nJ3 pin 9 carries raw battery voltage only to the R27/R28 sense divider.\n5V_IN supplies servo power (J7 rows 7-10) and Q1. GPS/ELRS use V3V3_SYS."
+	(text "BOARD INPUTS: regulated 5 V at J3 pin 7 from an external converter, plus USB VBUS at J4.\nFC supply options: 2S-6S -> 5 V buck, or 1S -> 5 V boost; the G55M ESC itself is rated 3S-6S.\nJ3 pin 9 is battery-voltage sense only. All J7 power rows use V3V3_SYS.\nBattery/motor current stays on the ESC; the FC reads its analog current output."
 		(exclude_from_sim no)
-		(at 10 178 0)
+		(at 15 178 0)
 		(effects
 			(font
 				(size 1.1 1.1)
@@ -963,9 +963,9 @@
 		)
 		(uuid "d1e47554-f3f2-5e37-b879-d0ec2fef00b6")
 	)
-	(text "TELEMETRY AND ANALOG INPUTS (100 nF at each ADC pin).\nVBAT_SENSE: R27/R28 100k/10k scale VBAT by 1/11, so the 3.3 V ADC full scale is 36.3 V. A 6S pack at its\n25.2 V maximum reads 2.29 V and a 2S pack at 6.0 V reads 0.55 V, so the whole 2-6S window is on-scale with\nheadroom; the divider draws 229 uA at 25.2 V. The old 5V_IN divider is gone with the 5 V input itself.\nCURR_SENSE: the ESC current-sense output (J3 pin 1, 12.75 mV/A, 0-3.3 V) through R53 1k into C78 100 nF at\nthe pin - a 100 us RC anti-alias/ESD network, well under the RP2350 ADC source-impedance guidance.\nESC_TELEM: the ESC KISS telemetry output (J3 pin 2, 3.3 V, 115200 baud, one-wire from the ESC) through R54\n1k into GPIO32, read by a PIO UART (GPIOBASE 16 window). The resistor is series protection only, not a level\nshifter: the ESC pad row is 3.3 V CMOS on both the telemetry and the four motor lines.\nVBUS_SENSE keeps 10k/15k, now on GPIO40 (ADC0); VBAT_SENSE moved to GPIO41 (ADC1).\nD20 WS2812C-2020: VDD on V5_SYS with C79 100 nF, DIN from GPIO3 through R55 100 R, DOUT no-connect (single\npixel). Its DIN VIH minimum is 2.7 V (datasheet Electrical Characteristics), which 3.3 V CMOS clears - that\nis why the C variant is used rather than a 5050 WS2812B, whose VIH is 0.7 x VDD = 3.5 V.\nQSPI_* are the dedicated QSPI pads: they reach the in-package flash die AND the package pins\n(RP2350 datasheet Sec 14.3), so U24 shares the bus with GPIO0/QMI CS1n (FLASH_CS1) as its select.\nRP2354 requires QSPI_IOVDD = 3.3 V, and IOVDD = 3.3 V to run a second QSPI device (Sec 14.9)."
+	(text "TELEMETRY AND ANALOG INPUTS\nCURR_SENSE: G55M C output through R53 1k and C78 100n to GPIO41 / ADC1 (MCU pin 52).\nThe FC firmware converts ADC voltage to amps using calibrated scale and offset.\nG55M output sensitivity/range must be verified; do not assume the old ESC 12.75 mV/A value.\nR53/C78 provide filtering; they do not divide the voltage. MCU ADC input must stay within 0-3.3 V.\nVBAT_SENSE: R27/R28 100k/10k with C48 100n -> GPIO42 / ADC2 (MCU pin 53).\nDivider ratio is 1/11; 25.2 V battery gives about 2.29 V at the ADC.\nVBUS_SENSE remains on GPIO40 / ADC0. ESC telemetry remains separate via R54 to GPIO34.\nNo INA226, external shunt connector, or motor-current path is fitted on the FC.\nCurrent includes only loads passing through the ESC sensor; a separate battery-to-FC supply branch is excluded."
 		(exclude_from_sim no)
-		(at 10 225.178 0)
+		(at 15 225.178 0)
 		(effects
 			(font
 				(size 1.1 1.1)

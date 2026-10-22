@@ -2397,7 +2397,7 @@
 		)
 		(uuid "fd5733ea-bc60-5afb-980d-f83b41cea241")
 	)
-	(global_label "USB_DM_RP"
+	(global_label "USB_RP_D-"
 		(shape passive)
 		(at 168.91 104.14 0)
 		(effects
@@ -2419,7 +2419,7 @@
 			)
 		)
 	)
-	(global_label "USB_DM"
+	(global_label "USB_D-"
 		(shape passive)
 		(at 95.25 81.28 90)
 		(effects
@@ -2441,7 +2441,7 @@
 			)
 		)
 	)
-	(global_label "USB_DP"
+	(global_label "USB_D+"
 		(shape passive)
 		(at 113.03 128.27 90)
 		(effects
@@ -2617,7 +2617,7 @@
 			)
 		)
 	)
-	(global_label "USB_DP_RP"
+	(global_label "USB_RP_D+"
 		(shape passive)
 		(at 168.91 123.19 0)
 		(effects

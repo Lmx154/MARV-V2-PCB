@@ -128,23 +128,12 @@ controller remains. Pin alternate functions do not create extra controllers.
 
 ## Revision boundary
 
-This communication update changes the schematic only. The PCB retains its previous
-nets and placement until the owner updates it from the schematic. R57 and R58 are
-new parts; R50 changes from 10k on BARO_CS to 4.7k on BARO_SCL. TP5 now probes BARO_SDA.
-To free GPIO2/3/4 for SPI0, ICM_INT2 moves from GPIO2 to GPIO18, LED_DATA from GPIO3
-to GPIO33, and ADXL_CS from GPIO4 to GPIO14. The SD clock and command move from
-GPIO33/34 to GPIO26/27. ADXL_INT2 is newly connected to GPIO21.
+On 2026-10-22 the INA226 proposal was removed and the original analog sensing
+circuit restored. J3.1 CURR feeds GPIO41/ADC1 (MCU pin 52) via R53/C78;
+J3.9 VBAT feeds GPIO42/ADC2 (MCU pin 53) via R27/R28/C48. U25, R59, C82 and
+J12 are absent. I2C1 remains on GPIO22/23 for the external magnetometer only.
+No PCB routing or placement was changed. The owner checks schematic/PCB parity
+and DRC after any manual PCB work. See [G55M wiring](reports/g55m-battery-sensing.md).
 
-References: [RP2350 datasheet, GPIO function table and PIO GPIOBASE](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf),
-[BMP581 datasheet, protocol selection and I2C wiring](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf).
-
-The locking-connector revision selects Molex 47219-2001 / LCSC C164170 for J11.
-R41 and SD_DET are removed because this connector has no detect switch.
-The eight card contacts and native SD GPIO26–31 connections are unchanged.
-
-Pin-order revision (2026-09-20): GPIOs on the MCU's left and top-left edges are
-re-ordered so traces meet J3 and J11 without detours. J3 top to bottom is now
-ESC_TELEM_RX GPIO34, PWM4–PWM1 GPIO36–39, CURR_SENSE ADC1 (GPIO41), VBAT_SENSE
-ADC2 (GPIO42). The SD bus is DAT0–DAT3 GPIO28–31, CLK GPIO32, CMD GPIO33; LED_DATA
-is GPIO43; GPIO26, GPIO27 and GPIO35 become the no-connect spares. No connector
-pinout, net name or part changes; the owner updates the PCB from the schematic.
+References: [RP2350 datasheet](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf),
+[BMP581 datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp581-ds004.pdf).

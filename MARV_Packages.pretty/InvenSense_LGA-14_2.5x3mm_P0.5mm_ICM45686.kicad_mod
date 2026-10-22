@@ -35,8 +35,19 @@
 			)
 		)
 	)
-	(attr smd)
+	(attr smd allow_soldermask_bridges)
 	(duplicate_pad_numbers_are_jumpers no)
+	(fp_rect
+		(start -1.52 -1.27)
+		(end 1.52 1.27)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.Mask")
+		(uuid "59c9faa7-901d-4cd9-b14a-1525fe3b0c59")
+	)
 	(fp_line
 		(start -1.61 -1.36)
 		(end -0.935 -1.36)

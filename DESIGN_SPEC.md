@@ -93,6 +93,17 @@ For the IO block, each row has J6 = signal, J7 = power, J8 = ground:
 All signal IO is 3.3 V logic. J3 carries PWM1–4 to the ESC.
 See [PINOUT.md](PINOUT.md) for individual MCU assignments.
 
+## Battery monitoring
+
+Use the GOKU G55M ESC's **C analog current output** on J3.1. R53 1k and C78
+100n filter it into GPIO41/ADC1 (MCU pin 52). R27/R28 100k/10k and C48 100n
+sense VBAT on GPIO42/ADC2 (MCU pin 53). USB VBUS sensing remains ADC0.
+The INA226 proposal is removed: no extra shunt, J12 sense pads or I2C changes.
+Current scale/offset and the G55M output range need verification; do not reuse
+an assumed 12.75 mV/A sensitivity from a different ESC. G55M is rated 3S–6S;
+the FC's 1S–6S supply capability does not extend the ESC's input range.
+See [G55M sensing and wiring](reports/g55m-battery-sensing.md).
+
 ## Sensor and storage communication
 
 ADXL375 has exclusive hardware SPI0 (SCK GPIO2, MOSI GPIO3, MISO GPIO4, CS GPIO14).
@@ -142,8 +153,10 @@ The active simulation checks **power arriving at V5_SYS only**. It does not
 predict sensor noise, regulator-loop stability, enclosure temperature or flight
 performance. See [simulation results](simulations/RESULTS.md).
 
-Routing and DRC are complete (2026-09-22: 0 errors, 0 unconnected, 0 parity).
-Remaining work is off the board: confirm physical ESC pad pitch; select the
+The analog sensing circuit was restored in the schematic on 2026-10-22, with
+no PCB edits. The owner retains placement/routing and must run final DRC and
+schematic/PCB parity checks. Connect the G55M by signal name rather than
+assuming pad-row order or pitch matches J3; select the
 external converters and compatible 3.3 V modules; review JLC assembly rotations
 in the ordering preview; then measure source transitions, supply noise during
 module/SD activity, and temperatures on hardware. These checks do not mandate

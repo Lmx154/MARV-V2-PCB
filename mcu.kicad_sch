@@ -2785,7 +2785,7 @@
 		)
 		(uuid "2107c554-d365-573a-9cfb-23e5a778a93a")
 	)
-	(text "PORT NAMING: a port label is named for the peripheral pin it comes from, so GPS_TX / ELRS_TX are module outputs\nand land on MCU UART RX pins, while GPS_RX / ELRS_RX are module inputs fed by the MCU UART TX pins. On the IO\narray (POWER 3) the UART rows are therefore 1 GPS_RX (silk T0) / 2 GPS_TX (R0) / 3 ELRS_RX (T1) / 4 ELRS_TX (R1),\nrows 5/6 are MAG_SDA / MAG_SCL, rows 7-10 the PWM5-8 servo signals and rows 11-14 the four exposed spares.\nThe array is three stacked 1x14 rows: J6 SIGNAL, J7 POWER, J8 GND. All array SIGNAL pins are 3.3 V CMOS.\nGPIO37 (pin 46) is SPARE and unconnected again: it used to read PWR_SRC_ST, the open-drain status output of\nthe U25 TPS2121 mux, and the mux is gone. USB presence is already readable on the VBUS_SENSE divider (GPIO40)."
+	(text "PORT NAMING: a port label is named for the peripheral pin it comes from, so GPS_TX / ELRS_TX are module outputs\nand land on MCU UART RX pins, while GPS_RX / ELRS_RX are module inputs fed by the MCU UART TX pins. On the IO\narray (POWER 3) the UART rows are therefore 1 GPS_RX (silk T0) / 2 GPS_TX (R0) / 3 ELRS_RX (T1) / 4 ELRS_TX (R1),\nrows 5/6 are MAG_SDA / MAG_SCL, rows 7-10 the PWM5-8 servo signals and rows 11-14 the four exposed spares.\nThe array is three stacked 1x14 rows: J6 SIGNAL, J7 POWER, J8 GND. All array SIGNAL pins are 3.3 V CMOS.\nBattery monitoring uses GPIO41 / ADC1 for ESC current and GPIO42 / ADC2 for battery voltage.\nUSB presence remains readable on VBUS_SENSE (GPIO40 / ADC0)."
 		(exclude_from_sim no)
 		(at 140 240.243 0)
 		(effects
@@ -6860,7 +6860,7 @@
 			)
 		)
 	)
-	(global_label "USB_DP_RP"
+	(global_label "USB_RP_D+"
 		(shape passive)
 		(at 208.28 127 180)
 		(effects
@@ -6882,7 +6882,7 @@
 			)
 		)
 	)
-	(global_label "USB_DM_RP"
+	(global_label "USB_RP_D-"
 		(shape passive)
 		(at 208.28 124.46 180)
 		(effects
