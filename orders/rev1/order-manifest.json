@@ -1,0 +1,132 @@
+{
+  "verified_at": "2026-10-27T01:47:04.061520-05:00",
+  "kicad_version": "10.0.7",
+  "exporter": "Installed Fabrication Toolkit CLI",
+  "source_board": "MARV-V2.kicad_pcb",
+  "export_board": "MARV-V2-panel.kicad_pcb",
+  "source_sha256": {
+    "MARV-V2.kicad_dru": "0118f9e9284cbdeb4b5af9f070f01212c9026bac39aa629e13ccb911a2af9680",
+    "MARV-V2.kicad_pcb": "77161177b401058d12b6ea58fe4ea8d501720b03185c4af30f4ff7deda83b29e",
+    "MARV-V2.kicad_prl": "931f83b5407c5186beb867ff86eddde6c992e22b3b3283afbcfd79eda7a17339",
+    "MARV-V2.kicad_pro": "92535f8925b8b4918b5283de168437442ef66bab2dc75f73ae2382a17358da0a",
+    "MARV-V2.kicad_sch": "552942c6af27516dd0633edd02e83be491058aba238d7cf80a13d50161cb3bd6",
+    "MARV_Packages.pretty/Bosch_LGA-10_2x2mm_BMP581.kicad_mod": "a7d03b623aa9dece1d28c47c570723097af7498c71050c5d20748227407240af",
+    "MARV_Packages.pretty/Info_SensorTable.kicad_mod": "286730ca888fbd274b137926018b780dfd3f12dd6bf592685f5cd4992267cd89",
+    "MARV_Packages.pretty/InvenSense_LGA-14_2.5x3mm_P0.5mm_ICM45686.kicad_mod": "a7fde6089a31f664d92e0cd9a80d5864a93514e45f3ebf6e18a999854e1e04a4",
+    "MARV_Packages.pretty/LED_WS2812B-2020_PLCC4_2.0x2.0mm.kicad_mod": "1145941b43f93a901f8aa8d90d983b6eaa7d73c265fbb0c7c28008832c15b0e2",
+    "MARV_Packages.pretty/L_Changjiang_FTC404030S.kicad_mod": "bed7fe89bdf64f501f6a509adfbe0fcc1dece41a5a5d1249abf82301e2503491",
+    "MARV_Packages.pretty/Logo_AxisMarker.kicad_mod": "e347e31dd34840b25c209ea0ab0078632c7a43fd07e66316f3983b5ba2f920af",
+    "MARV_Packages.pretty/Logo_Chevron.kicad_mod": "6238de35bbb912f6b4a2e2cef9ca1c9c1cad0fb028cde666cffcfae8b8a91b57",
+    "MARV_Packages.pretty/MountingHole_4.0mm_Grommet_Pad_Via.kicad_mod": "45d570ae8c5d7f116d5b04db3e4fa45992334ccd38da03bbe95eed16d253a1b8",
+    "MARV_Packages.pretty/Oscillator_SMD_HCI_1521H-4Pin_2.0x1.6mm.kicad_mod": "1b4a7810f9a5fac34f3dc7cc65b87d24c48f11d37302de990e62b2be0130bb24",
+    "MARV_Packages.pretty/PadRow_1x08_P2.00mm.kicad_mod": "7d32a8cb0f3148f066a9092d5f82a20948d6fdbc7241867d5e12455da8add558",
+    "MARV_Packages.pretty/PinHeader_1x14_P2.54mm_Vertical_IORow.kicad_mod": "6eb8114ee85e337724616cad03e9e5e3b40ce1d0f7616a9b91c4bfb0a7443f87",
+    "MARV_Packages.pretty/QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm.kicad_mod": "7754ed09fcc638eba1dbd36de6acd272880c0f357345760a0e795151e4192155",
+    "MARV_Packages.pretty/ST_LGA-14_2.5x3mm_P0.5mm_LSM6DSK320X.kicad_mod": "c54723e1366dea44ceacbdc37a03967a2c115a7dfd9a2d19614b301c13a8ab0c",
+    "MARV_Packages.pretty/USB_C_Receptacle_HRO_TYPE-C-31-M-12.kicad_mod": "e0189ef37d66ea96ac7301abc3731a62fd9e527b57fc44c5a419ee4d91a44e72",
+    "MARV_Packages.pretty/microSD_HC_Molex_47219-2001.kicad_mod": "21a5ca1ad71546f0001b726f8e0b4759e3c106febec2f1a5fd84b66b18ebb81e",
+    "MARV_Sensors.kicad_sym": "4eb24e89fcbc8df93daf526b9f9ab65c3de09f8a19c90bae0cb4e8262f239d60",
+    "baro.kicad_sch": "9b06eb0a5a4081c1c6a499642e0b829dd51aa7826f5e599e8880019505d3e616",
+    "fabrication-toolkit-options.json": "5b8bbb2c0d55ac36ebb6e9bbf59d70c83a06250cae7cd1efee52e41b5bc7bb2f",
+    "fp-lib-table": "fb8ee86189afccfd713fd57da98836a0b702568c2d2aa26ff3a67ac53a870815",
+    "highg.kicad_sch": "f4dba2985f9c3687cf309a58206d083e0146f1c95d9172feeb2bf2ff0f2173b5",
+    "imu.kicad_sch": "83d17a99e3b78e0cd8f082488108db949a68a92834d5d3b7a1411cdd0cebe402",
+    "io_block.kicad_sch": "e338bc632a41d6ce5e144f84d9cb4c567e679dc915dfd97b5d6cc0de2bdb3d63",
+    "mcu.kicad_sch": "28a0019a11c004e9386d143735f341d6381cab917d6cb5b81f2de9d253470c03",
+    "power_3v3.kicad_sch": "67d7a06336a8afd52d6a327fab2d062cade57134cba1377d2159a917c692e35b",
+    "power_or.kicad_sch": "810cdcff44762be0b29ffe2073d9d72ae0f5baf41f570262d07c71357c4bb356",
+    "power_vbat.kicad_sch": "ea348acf8fc5c70677803c05e3ec2f7b719ff11171c1b3c2483157e08933774b",
+    "qspi_expansion.kicad_sch": "c716282683c3d3bec39194d4f3b9a18889c0a5b3df7a4340967f522823fbc5d9",
+    "sd.kicad_sch": "6cc5d2dd5d10ccba94524e97c137524baedc10879621ffbc3daa0c2086a32371",
+    "sym-lib-table": "f0da120c387bd505becb1785d7867f44b7a090d123e5113130fb377ed0a8b3ce",
+    "usb_debug.kicad_sch": "6f2828ebd34544091de2a447df43de26ba53edeb44288571ef793e138e7ae657"
+  },
+  "panel_source_sha256": {
+    "MARV-V2-panel.kicad_dru": "0118f9e9284cbdeb4b5af9f070f01212c9026bac39aa629e13ccb911a2af9680",
+    "MARV-V2-panel.kicad_pcb": "422c2d4481bb9f8250fbfe5b2e10f2bed25eb53a5c0ace3e205e21e653f2425d",
+    "MARV-V2-panel.kicad_prl": "742c9d651ee547e8c7960a2cc3bbecd288d3c888c5ca5073225a0352d5e872e9",
+    "MARV-V2-panel.kicad_pro": "96796435458b295b317e5dd0391640dce0d938a28614d6b54fc9f82ada559f3d"
+  },
+  "exporter_sha256": {
+    "__init__.py": "2c36006d791703e089e920f4464a3339ec9c6835a75836a92e81a62af439858c",
+    "cli.py": "dfed12557d348fde5cf3e1211a1c1c0e25d2b3d03671913045999d2601b29715",
+    "config.py": "dde5d5cc1fae97d9bf67a4acb89db25efb5da0812cff903723379da7eadbd9c4",
+    "events.py": "943775bdda8355beff6f0e2ca0615fc158e40e4181ca10bbe37d198d0379fa2e",
+    "options.py": "2bff0ee73db9ae472ee6d2509d93ec4903f69e97cbf8d19f2c1e2dcaf2a3cf80",
+    "plugin.py": "156198db0b8f65bbe81a7588c90bfcd465ee1a96fa4c4e77805af18df18be4f2",
+    "process.py": "28265e2b8c460d3e45efdd4c313901de3e982d397cec7faa96e6a28539e7a8d9",
+    "thread.py": "1d0449d1679a2b4d030713d995931161d84c60a9431c136290d834e102c36e12",
+    "utils.py": "f64282f406dd7f82b715b96fd08e8f825a43b9f06ffa44682adf25b50cc0b253"
+  },
+  "rotation_database_sha256": "864817b927f727f24913c3d72caab8c7786805d2023b54b5f798f8b50f05e2d6",
+  "upload_sha256": {
+    "MARV-V2-panel.zip": "b8c0325813c79df938e004f62561cec49c06f8f6687cc148b585b261761ebe04",
+    "bom.csv": "54a8f3b399c77864fa7727e4bbe27aa6f3fe66afddc04b770a0197fabd34d0e6",
+    "positions.csv": "4c756b061131bf8f2152614f6c978c677f13ded84ee6a5d608ca86451c3cbd84"
+  },
+  "verification": {
+    "panel_size_mm": [
+      72,
+      72
+    ],
+    "v_score_x_mm": [
+      74.55,
+      125.45
+    ],
+    "v_score_y_mm": [
+      77.15,
+      122.85
+    ],
+    "full_span_scores": 4,
+    "score_offset_outside_original_edges_mm": 0.1,
+    "minimum_copper_clearance_mm": 0.4005,
+    "routed_reliefs": "four corners, microSD and USB-C overhangs only; USB-C pocket x 81.205-93.895 mm at J4 (87.55, 119.06)",
+    "mouse_bite_holes": 0,
+    "added_rail_silkscreen": false,
+    "drill_map_drawings_in_zip": false,
+    "source_circuit_unchanged": true,
+    "zones_modified": false,
+    "assembly_csv_files_unchanged": false,
+    "drc_panel": {
+      "errors": 22,
+      "warnings": 184,
+      "unconnected_items": 0
+    },
+    "drc_source": {
+      "errors": 22,
+      "warnings": 184,
+      "unconnected_items": 0
+    },
+    "drc_note": "panel .kicad_pro/.kicad_dru synced from the source; panel DRC counts compared with the source counts above"
+  },
+  "source_erc_violations": 0,
+  "source_erc_warnings": 0,
+  "source_erc_note": "0 errors, 0 warnings",
+  "source_schematic_parity_issues": 0,
+  "report": "reports/manufacturing-panel.md",
+  "order_settings": {
+    "pcba_type": "Standard",
+    "assembly_side": "Top",
+    "edge_rails_fiducials": "Added by Customer",
+    "fabricated_frames": 5,
+    "assembled_frames": 2,
+    "boards_per_frame": 1,
+    "panel_width_mm": 72,
+    "panel_height_mm": 72,
+    "separation": "Four full-span V-scores 0.10 mm outside each straight edge; routed corner and connector reliefs"
+  },
+  "limitations": [
+    "Synchronize manufacturing copy after source edits",
+    "JLCPCB must review V-score/outline CAM and assembly placement preview",
+    "Native 3D render does not model V-score grooves; see mechanical SVG",
+    "Scores leave a 0.10 mm lip on all four edges",
+    "Assembly selection: H1-H4, J3, J6-J8, J10 are excluded from BOM/position files, and U24 (optional memory, DNP) is excluded as do-not-populate; J17 (5V converter module) is in bom.csv without an LCSC number and excluded from positions.csv (hand-fitted). J6-J8 are hand-soldered by the owner.",
+    "Source DRC errors retained (22: 3 clearance, 1 courtyards_overlap, 18 hole_clearance); source ERC has 0 violations"
+  ],
+  "export_options": {
+    "auto_translate": true,
+    "exclude_dnp": true,
+    "auto_fill": false,
+    "user1_vcut": true
+  }
+}

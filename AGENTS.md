@@ -9,3 +9,6 @@
 - Do not add circuitry, change GPIOs or resize the board just to improve a
   simulation predicate, sourcing score or placement/routing optimization score.
 - The active simulation is input-only: `tools/simulate_power_input.py`.
+- Rev 1 was ordered from JLCPCB. `orders/rev1/README.md` records the exact
+  upload files and every PCB/PCBA option. To reorder Rev 1, use those archived
+  files and settings as recorded; do not regenerate or change them.

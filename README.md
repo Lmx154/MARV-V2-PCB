@@ -53,6 +53,7 @@ tools/                             netlist checker, footprint audit, input-power
 tools/panel/                       manufacturing-frame sync and checks; README has the refresh sequence
 simulations/                       input-power SPICE deck, README and generated results
 reports/                           decision and review records (table below)
+orders/rev1/                       Rev 1 JLCPCB order record: exact upload files, all order options, BOM as ordered
 images/                            PCB renders used in this README
 site/                              results website (simulation, checks), built by tools/build_site.py
 .github/workflows/pages.yml        publishes site/ with GitHub Pages
@@ -191,6 +192,10 @@ and pads except the LGA sensors U21, U22 and U23.
 
 ## Ordering
 
+**Rev 1 was ordered from JLCPCB. The exact upload files and every PCB and PCBA option
+selected are archived in [orders/rev1/](orders/rev1/README.md). To reorder Rev 1, follow
+that record; it takes precedence over the general steps below.**
+
 Use the installed [Fabrication Toolkit](https://github.com/bennymeg/Fabrication-Toolkit)
 from KiCad's PCB Editor. Project settings are saved in
 [fabrication-toolkit-options.json](fabrication-toolkit-options.json); no custom
@@ -222,7 +227,7 @@ the NPTH drills include tooling holes and the original USB locating holes. The l
 and remaining preview checks. Regenerate after any saved design change.
 
 The initial order is **5 PCBs manufactured, 2 assembled on the top side** and
-3 bare. Select **1 design, Single PCB, 4 layers, 1.6 mm, green mask, white silk,
+3 bare. Select **1 design, Delivery Format: Panel by Customer (1 × 1), 4 layers, 1.6 mm, green mask, white silk,
 ENIG, standard copper and 0.30 mm minimum via holes**. Use
 **Standard assembly** and **Edge Rails/Fiducials → Added by Customer**.
 The 72 × 72 mm frame contains one finished PCB and uses two full-height
