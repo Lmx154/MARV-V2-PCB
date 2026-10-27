@@ -1,0 +1,12 @@
+* Input OR diode models. Neither card is a vendor macromodel.
+* D1 forward curve fitted to the local 1N5819WS datasheet maximum points:
+* 0.60 V at 1 A and 0.90 V at 3 A (25 C). Intermediate-current behavior is
+* interpolation, not a guaranteed worst-case envelope.
+* IS also sets approximately 5.3 uA reverse leakage in this model. It does
+* not bound real leakage over voltage and temperature; no hot-leakage claim.
+.model D1N5819WS_MAX D(IS=5.3e-6 N=1.5 RS=0.1287 CJO=110e-12 M=0.35 VJ=0.45
++ BV=40 IBV=1e-4 EG=0.69 XTI=2)
+
+* D21 is sourced as KT-0603W / C2290. This remains an approximate white-LED
+* curve (~2.87 V at 5 mA), not a characterized model of that selected part.
+.model DLEDWHITE D(IS=1e-26 N=2.0 RS=10 CJO=30e-12)

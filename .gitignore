@@ -1,0 +1,31 @@
+# KiCad per-user / transient files
+*.kicad_prl
+*-backups/
+_autosave-*
+fp-info-cache
+*.lck
+*.kicad_sch-bak
+*.kicad_pcb-bak
+# Python
+__pycache__/
+*.pyc
+# Generated checks/exports
+build/
+# Preserve pre-existing local recovery files without tracking them
+/backups/
+# ngspice scratch
+simulations/*.log
+# Editor / tool state
+.history/
+.serena/
+
+# Fabrication Toolkit generated order files
+/production/
+
+# Local working plan (owner requests and milestones); not part of the published design
+/docs/plan.md
+
+# Third-party files without an open licence: keep local copies, never commit.
+# Sources are listed in datasheets/README.md and simulations/README.md.
+datasheets/*.pdf
+simulations/models/AO3401A.mod

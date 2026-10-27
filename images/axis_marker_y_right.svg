@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 190">
+  <g fill="none" stroke="#ffffff" stroke-width="7"
+     stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Z axis: out of the page / toward viewer -->
+    <circle cx="82" cy="66" r="20"/>
+    <circle cx="82" cy="66" r="4" fill="#ffffff" stroke="none"/>
+
+    <!-- Y axis: right -->
+    <path d="M102 66 H136"/>
+    <path d="M124 55 L136 66 L124 77"/>
+
+    <!-- X axis: down -->
+    <path d="M82 86 V120"/>
+    <path d="M71 108 L82 120 L93 108"/>
+
+    <!-- Upright Y label -->
+    <path d="M146 49 L155 59 L164 49"/>
+    <path d="M155 59 V76"/>
+
+    <!-- Upright X label -->
+    <path d="M71 142 L93 164"/>
+    <path d="M93 142 L71 164"/>
+  </g>
+</svg>
