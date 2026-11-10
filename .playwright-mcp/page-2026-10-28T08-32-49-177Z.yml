@@ -1,0 +1,596 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 24-hour PCB production. Fast Delivery to United States.
+      - generic [ref=e8]:
+        - link " Coupons" [ref=e9] [cursor=pointer]:
+          - /url: /coupon-center
+          - generic [ref=e10]: 
+          - generic [ref=e11]: Coupons
+        - link " APP Download" [ref=e12] [cursor=pointer]:
+          - /url: https://jlcone.com/download
+          - generic [ref=e13]: 
+          - generic [ref=e14]: APP Download
+        - generic [ref=e15]: USD
+    - navigation "Parts navigation" [ref=e24]:
+      - generic [ref=e25]:
+        - text:    
+        - generic [ref=e26]:
+          - link "Assembly Parts Lib" [ref=e27] [cursor=pointer]:
+            - /url: /
+            - generic [aria-hidden] [ref=e28]: 
+          - link "Assembly Parts Lib" [ref=e30] [cursor=pointer]:
+            - /url: /parts
+            - generic [ref=e32]: For PCBA Only
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - 'combobox "Search by keyword or part #" [ref=e36]'
+          - button "Upload BOM" [ref=e38] [cursor=pointer]:
+            - generic [aria-hidden] [ref=e39]: 
+        - button "Search" [ref=e41] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e42]: 
+      - generic [ref=e43]:
+        - text: 
+        - link "Parts Cart" [ref=e44] [cursor=pointer]:
+          - /url: https://jlcpcb.com/user-center/smtPrivateLibrary/partsCart/
+          - generic [ref=e45]:
+            - generic [aria-hidden] [ref=e46]: 
+            - generic: "0"
+        - button "Sign In" [ref=e50] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e52]: 
+      - text:  
+    - navigation "Parts sections" [ref=e53]:
+      - generic [ref=e55]:
+        - link "Products" [ref=e57] [cursor=pointer]:
+          - /url: /parts/all-electronic-components
+          - generic [aria-hidden] [ref=e58]: 
+        - list [ref=e61]:
+          - listitem [ref=e62]:
+            - link "In Stock Parts" [ref=e63] [cursor=pointer]:
+              - /url: /parts/in-stock-parts
+          - listitem [ref=e65]:
+            - link "Bom Tool" [ref=e66] [cursor=pointer]:
+              - /url: https://jlcpcb.com/parts/bom-tool
+          - listitem [ref=e68]:
+            - link "Request a Quote" [ref=e69] [cursor=pointer]:
+              - /url: /parts/request-quote
+          - listitem [ref=e71]:
+            - generic [ref=e72] [cursor=pointer]:
+              - generic [ref=e73]: Support
+              - generic [aria-hidden] [ref=e74]: 
+    - main [ref=e75]:
+      - generic [ref=e77]:
+        - text:                
+        - generic [ref=e78]:
+          - navigation "Breadcrumb" [ref=e79]:
+            - list [ref=e80]:
+              - listitem [ref=e81]:
+                - link "JLCPCB" [ref=e82] [cursor=pointer]:
+                  - /url: https://jlcpcb.com
+              - listitem [ref=e83]:
+                - link "Parts Library" [ref=e86] [cursor=pointer]:
+                  - /url: https://jlcpcb.com/parts
+              - listitem [ref=e87]:
+                - link "All Components" [ref=e90] [cursor=pointer]:
+                  - /url: https://jlcpcb.com/parts/all-electronic-components
+              - listitem [ref=e91]:
+                - link "Crystals, Oscillators, Resonators" [ref=e94] [cursor=pointer]:
+                  - /url: https://jlcpcb.com/parts/1st/Crystals_Oscillators_Resonators_7
+              - listitem [ref=e95]:
+                - link "Crystal Oscillators" [ref=e98] [cursor=pointer]:
+                  - /url: https://jlcpcb.com/parts/2nd/Crystals_Oscillators_Resonators/Crystal_Oscillators_2942
+              - listitem [ref=e99]:
+                - generic [ref=e102]: 1521H-32K000J18DTSL
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - generic [ref=e106]:
+                - generic [ref=e107]:
+                  - img "1521H-32K000J18DTSL" [ref=e111]
+                  - generic [ref=e112]:
+                    - button [ref=e113] [cursor=pointer]:
+                      - img "1521H-32K000J18DTSL thumbnail 1" [ref=e116]
+                    - button [ref=e117] [cursor=pointer]:
+                      - img "1521H-32K000J18DTSL thumbnail 2" [ref=e120]
+                    - button [ref=e121] [cursor=pointer]:
+                      - img "1521H-32K000J18DTSL thumbnail 3" [ref=e124]
+                  - paragraph [ref=e125]: "* Images are for reference only"
+                  - generic [ref=e126]:
+                    - button "" [ref=e127] [cursor=pointer]
+                    - button "" [ref=e129] [cursor=pointer]
+                    - button "" [ref=e131] [cursor=pointer]
+                - generic [ref=e133]:
+                  - generic [ref=e134]:
+                    - heading "1521H-32K000J18DTSL" [level=1] [ref=e135]
+                    - button "" [ref=e136] [cursor=pointer]
+                    - generic [ref=e138]: Extended
+                  - generic [ref=e139]:
+                    - generic [ref=e140]:
+                      - term [ref=e141]: Manufacturer
+                      - definition [ref=e142]:
+                        - generic [ref=e143]:
+                          - heading [level=2] [ref=e144]:
+                            - link "HCI" [ref=e145] [cursor=pointer]:
+                              - /url: https://jlcpcb.com/parts/manufacturers/HCI?brand=385285332294176769
+                          - button "" [ref=e146] [cursor=pointer]
+                    - generic [ref=e148]:
+                      - term [ref=e149]: "MFR.Part #"
+                      - definition [ref=e150]:
+                        - generic [ref=e151]:
+                          - generic [ref=e152]: 1521H-32K000J18DTSL
+                          - button "" [ref=e153] [cursor=pointer]
+                    - generic [ref=e155]:
+                      - term [ref=e156]: "JLCPCB Part #"
+                      - definition [ref=e157]:
+                        - generic [ref=e158]:
+                          - generic [ref=e159]: C19674133
+                          - button "" [ref=e160] [cursor=pointer]
+                    - generic [ref=e162]:
+                      - term [ref=e163]: Package
+                      - definition [ref=e164]:
+                        - generic [ref=e165]:
+                          - generic [ref=e166]: SMD2016-4P
+                          - button "" [ref=e167] [cursor=pointer]
+                    - generic [ref=e169]:
+                      - term [ref=e170]: Description
+                      - definition [ref=e171]:
+                        - generic [ref=e172]:
+                          - generic [ref=e173]: "-40℃~+85℃ 1.8V~3.3V 10mA 32kHz HCMOS ±10ppm ±20ppm SMD2016-4P Crystal Oscillators ROHS"
+                          - button "" [ref=e174] [cursor=pointer]
+                    - generic [ref=e176]:
+                      - term [ref=e177]: EasyEDA Libraries
+                      - definition [ref=e178]:
+                        - button "PCB Footprint or Symbol" [ref=e179] [cursor=pointer]
+                    - generic [ref=e180]:
+                      - term [ref=e181]: ECCN
+                      - definition [ref=e182]: EAR99
+                    - generic [ref=e183]:
+                      - term [ref=e184]: Datasheet
+                      - definition [ref=e185]:
+                        - generic [ref=e186]:
+                          - img [aria-hidden] [ref=e187] [cursor=pointer]
+                          - link "Download" [ref=e189] [cursor=pointer]:
+                            - /url: https://jlc-prod-smt.oss-eu-central-1.aliyuncs.com/smtDataManualFile/8590924112351350784-C19674133.pdf?response-content-disposition=attachment%3B%20filename%3DC19674133.pdf%3B%20filename%2A%3DUTF-8%27%27C19674133.pdf&x-oss-date=20261028T083233Z&x-oss-expires=1800&x-oss-security-token=CAISgAN1q6Ft5B2yfSjIr5vFfY%2F42YlP1IeAQHPztngfRM1%2Biq%2FloDz2IHhMdHJsAOodtv0%2FmmhT6PkclqRLcbhpcmfjV%2BZHzLB8qbY5wm0x557b16cNrbH4M4H6aXeirtuwDsz9SNTCALjPD3nPii50x5bjaDymRCbLGJaViJlhHLN1Ow6jdmhpCctxLAlvo9NgFxm3D%2Fu2NQPwiWf9FVdhvhEG6Vly8qOi2MaRmFy8yFTx0b0SvJ%2BjYMrmPctoN9JnSdC5mfdzau3a1TJ84gRD0a5wkaVA1zbDs5bfISEIuUzebreLqY03dV4mOvdqIcMe8qigz88fk%2FfIioH6xyxKOexoSCnFTOiiupCcQLPyao9jLu6iayqViY7QaIOTqQohZmkAMwVOasAsI3Ngh4zF97Qt0cVNkXO9gWfLI8DtuMleWkqmym9PmaHD0eS19jklBdzSlusJRAJJUVBflCeKEaRNSAd3WGhEfM2%2BBt4QT30w5N2u00S8OSMIctyqxqKWD5sagAEZlDGkBHXQu%2F6TLClxFazn3Z3b3NS4L4W32PcgrctVfj%2Fgre9A5Psoxbx4P0nLG6vLvJN%2FzlS%2BWK6O0APKwEPwseTu2mq%2F0RcFJ%2FNhBmIH1va4qPTryTe%2Bft2ejgKH5CZvVoYv6Rv7ZHjjwgSO3W3w%2F%2F3wVFRtMdxctAjmB9N3xCAA&x-oss-signature-version=OSS4-HMAC-SHA256&x-oss-credential=STS.NXp65L4VncEkBUBRxJHBRejNB%2F20261028%2Feu-central-1%2Foss%2Faliyun_v4_request&x-oss-signature=38c4e0ff50459dd3891de53b4e3b42410a4fe9e16d8881a51055ce209e1f67e5
+                    - generic [ref=e190]:
+                      - term [ref=e191]: Source
+                      - definition [ref=e192]: JLCPCB
+                    - generic [ref=e193]:
+                      - term [ref=e194]: Assembly Type
+                      - definition [ref=e195]:
+                        - generic [ref=e196]: SMT Assembly
+                    - generic [ref=e198]:
+                      - term [ref=e199]: PCBA Type
+                      - definition [ref=e200]:
+                        - generic [ref=e201]: Economic and Standard
+                    - generic [ref=e203]:
+                      - term [ref=e204]:
+                        - text: MSL Level
+                        - generic [ref=e205] [cursor=pointer]: 
+                      - definition [ref=e206]: MSL 1
+                  - generic [ref=e207]:
+                    - generic [aria-hidden] [ref=e208]: 
+                    - paragraph [ref=e209]: "Note: The purchased components are stored in your JLCPCB parts library for future PCBA orders only, and cannot be shipped separately."
+              - text:             
+              - generic [ref=e210]:
+                - navigation "Detail sections" [ref=e211]:
+                  - tablist [ref=e214]:
+                    - tab "Specifications" [ref=e215] [cursor=pointer]
+                    - tab "PCB Assembly Tips" [ref=e217] [cursor=pointer]
+                    - tab "Documents" [ref=e219] [cursor=pointer]
+                    - tab "PCB Footprint/Symbol" [active] [selected] [ref=e221] [cursor=pointer]
+                - generic [ref=e226]:
+                  - region [ref=e227]:
+                    - generic [ref=e228]:
+                      - generic [ref=e229]:
+                        - heading "1521H-32K000J18DTSL Specifications" [level=2] [ref=e232]
+                        - generic [ref=e233]:
+                          - paragraph [ref=e234]: 1521H-32K000J18DTSL technical specifications, attributes, and parameters.
+                          - button "Report an Error?" [ref=e235] [cursor=pointer]
+                      - table [ref=e238]:
+                        - rowgroup [ref=e239]:
+                          - row [ref=e240]:
+                            - columnheader [ref=e241]
+                            - columnheader "Attributes" [ref=e242]
+                            - columnheader "Value" [ref=e243]
+                        - rowgroup [ref=e244]:
+                          - row [ref=e245]:
+                            - cell [ref=e246]:
+                              - checkbox "Select Category" [checked] [disabled] [ref=e248]
+                            - cell "Category" [ref=e249]
+                            - cell "Crystals, Oscillators, Resonators/Crystal Oscillators" [ref=e250]
+                          - row [ref=e251]:
+                            - cell [ref=e252]:
+                              - checkbox "Select Manufacturer" [ref=e254] [cursor=pointer]
+                            - cell "Manufacturer" [ref=e255]
+                            - cell [ref=e256]:
+                              - link "HCI" [ref=e257] [cursor=pointer]:
+                                - /url: /parts/manufacturers/HCI?brand=385285332294176769
+                          - row [ref=e258]:
+                            - cell [ref=e259]:
+                              - checkbox "Select Package" [ref=e261] [cursor=pointer]
+                            - cell "Package" [ref=e262]
+                            - cell "SMD2016-4P" [ref=e263]
+                          - row [ref=e264]:
+                            - cell [ref=e265]:
+                              - checkbox "Select Operating Temperature" [ref=e267] [cursor=pointer]
+                            - cell "Operating Temperature" [ref=e268]
+                            - cell "-40℃~+85℃" [ref=e269]
+                          - row [ref=e270]:
+                            - cell [ref=e271]:
+                              - checkbox "Select Normal temperature Frequency Tolerance" [ref=e273] [cursor=pointer]
+                            - cell "Normal temperature Frequency Tolerance" [ref=e274]
+                            - cell "±10ppm" [ref=e275]
+                          - row [ref=e276]:
+                            - cell [ref=e277]:
+                              - checkbox "Select Output Type" [ref=e279] [cursor=pointer]
+                            - cell "Output Type" [ref=e280]
+                            - cell "HCMOS" [ref=e281]
+                          - row [ref=e282]:
+                            - cell [ref=e283]:
+                              - checkbox "Select Voltage - Supply" [ref=e285] [cursor=pointer]
+                            - cell "Voltage - Supply" [ref=e286]
+                            - cell "1.8V~3.3V" [ref=e287]
+                          - row [ref=e288]:
+                            - cell [ref=e289]:
+                              - checkbox "Select Frequency Stability" [ref=e291] [cursor=pointer]
+                            - cell "Frequency Stability" [ref=e292]
+                            - cell "±20ppm" [ref=e293]
+                          - row [ref=e294]:
+                            - cell [ref=e295]:
+                              - checkbox "Select Frequency" [ref=e297] [cursor=pointer]
+                            - cell "Frequency" [ref=e298]
+                            - cell "32kHz" [ref=e299]
+                          - row [ref=e300]:
+                            - cell [ref=e301]:
+                              - checkbox "Select Current - Supply" [ref=e303] [cursor=pointer]
+                            - cell "Current - Supply" [ref=e304]
+                            - cell "10mA" [ref=e305]
+                      - generic [ref=e306]:
+                        - generic [ref=e307]: "Results remaining: 101765"
+                        - button "View Similar" [ref=e308] [cursor=pointer]
+                  - region [ref=e309]:
+                    - generic [ref=e310]:
+                      - heading "PCB Assembly Tips" [level=2] [ref=e313]
+                      - paragraph [ref=e314]:
+                        - text: From components to fully assembled PCBs. JLCPCB supports PCB assembly for the 1521H-32K000J18DTSL. Sign up to receive and
+                        - link "start your assembly today" [ref=e315] [cursor=pointer]:
+                          - /url: https://cart.jlcpcb.com/quote?from=audrey1
+                        - text: →
+                      - list [ref=e316]:
+                        - listitem [ref=e317]:
+                          - generic [ref=e318]: "1"
+                          - paragraph [ref=e320]: Step 1 - Pre-order the parts you need from JLCPCB.
+                        - listitem [ref=e321]:
+                          - generic [ref=e322]: "2"
+                          - paragraph [ref=e324]: Step 2 - Place a PCBA order to have those parts assembled onto your boards.
+                        - listitem [ref=e325]:
+                          - generic [ref=e326]: "3"
+                          - paragraph [ref=e327]: Step 3 - JLCPCB manufactures and assembles your boards in as fast as 3 days.
+                      - generic [ref=e328]:
+                        - img "JLCPCB Assembly Tutorial" [ref=e330]
+                        - button "Play video" [ref=e331] [cursor=pointer]
+                      - link "Learn more about JLCPCB Assembly " [ref=e336] [cursor=pointer]:
+                        - /url: /pcb-assembly
+                        - generic [ref=e337]: Learn more about JLCPCB Assembly
+                        - generic [ref=e338]: 
+                  - region [ref=e339]:
+                    - generic [ref=e340]:
+                      - generic [ref=e341]:
+                        - heading "1521H-32K000J18DTSL Documents" [level=2] [ref=e344]
+                        - paragraph [ref=e345]: 1521H-32K000J18DTSL datasheets or manufacturer documentation.
+                      - paragraph [ref=e346]:
+                        - text: "Datasheet:"
+                        - link "1521H-32K000J18DTSL Datasheet (PDF)" [ref=e347] [cursor=pointer]:
+                          - /url: https://jlc-prod-smt.oss-eu-central-1.aliyuncs.com/smtDataManualFile/8590924112351350784-C19674133.pdf?response-content-disposition=attachment%3B%20filename%3DC19674133.pdf%3B%20filename%2A%3DUTF-8%27%27C19674133.pdf&x-oss-date=20261028T083233Z&x-oss-expires=1800&x-oss-security-token=CAISgAN1q6Ft5B2yfSjIr5vFfY%2F42YlP1IeAQHPztngfRM1%2Biq%2FloDz2IHhMdHJsAOodtv0%2FmmhT6PkclqRLcbhpcmfjV%2BZHzLB8qbY5wm0x557b16cNrbH4M4H6aXeirtuwDsz9SNTCALjPD3nPii50x5bjaDymRCbLGJaViJlhHLN1Ow6jdmhpCctxLAlvo9NgFxm3D%2Fu2NQPwiWf9FVdhvhEG6Vly8qOi2MaRmFy8yFTx0b0SvJ%2BjYMrmPctoN9JnSdC5mfdzau3a1TJ84gRD0a5wkaVA1zbDs5bfISEIuUzebreLqY03dV4mOvdqIcMe8qigz88fk%2FfIioH6xyxKOexoSCnFTOiiupCcQLPyao9jLu6iayqViY7QaIOTqQohZmkAMwVOasAsI3Ngh4zF97Qt0cVNkXO9gWfLI8DtuMleWkqmym9PmaHD0eS19jklBdzSlusJRAJJUVBflCeKEaRNSAd3WGhEfM2%2BBt4QT30w5N2u00S8OSMIctyqxqKWD5sagAEZlDGkBHXQu%2F6TLClxFazn3Z3b3NS4L4W32PcgrctVfj%2Fgre9A5Psoxbx4P0nLG6vLvJN%2FzlS%2BWK6O0APKwEPwseTu2mq%2F0RcFJ%2FNhBmIH1va4qPTryTe%2Bft2ejgKH5CZvVoYv6Rv7ZHjjwgSO3W3w%2F%2F3wVFRtMdxctAjmB9N3xCAA&x-oss-signature-version=OSS4-HMAC-SHA256&x-oss-credential=STS.NXp65L4VncEkBUBRxJHBRejNB%2F20261028%2Feu-central-1%2Foss%2Faliyun_v4_request&x-oss-signature=38c4e0ff50459dd3891de53b4e3b42410a4fe9e16d8881a51055ce209e1f67e5
+                  - region [ref=e348]:
+                    - generic [ref=e349]:
+                      - generic [ref=e350]:
+                        - heading "1521H-32K000J18DTSL Schematic Symbol & PCB Footprint" [level=2] [ref=e353]
+                        - paragraph [ref=e354]: The 1521H-32K000J18DTSL schematic symbol and PCB footprint are available in the EasyEDA PCB design tool.
+                      - figure [ref=e355]:
+                        - iframe [ref=e356]:
+                          - generic [ref=f3e3]:
+                            - text: Currently, there is no library. You can
+                            - link "request free CAD model design at EasyEDA." [ref=f3e4] [cursor=pointer]:
+                              - /url: https://easyeda.com/page/apply-new-part
+              - generic [ref=e588]:
+                - heading "You May Be Interested in" [level=2] [ref=e591]
+                - list [ref=e592]:
+                  - listitem [ref=e593]:
+                    - link [ref=e594] [cursor=pointer]:
+                      - /url: /partdetail/HCI-049SS412288F20LJDTL/C5361345
+                      - img "component-HCI 049SS412.288F20LJDTL" [ref=e598]
+                      - generic [ref=e599]:
+                        - paragraph [ref=e600]: HCI 049SS412.288F20LJDTL
+                        - paragraph [ref=e601]: "In Stock: 20"
+                        - paragraph [ref=e603]: $0.6175
+                  - listitem [ref=e604]:
+                    - link [ref=e605] [cursor=pointer]:
+                      - /url: /partdetail/HCI-0132M4_39000F08DTNLL/C53695808
+                      - img "component-HCI 0132M4-39.000F08DTNLL" [ref=e609]
+                      - generic [ref=e610]:
+                        - paragraph [ref=e611]: HCI 0132M4-39.000F08DTNLL
+                        - paragraph [ref=e612]: "In Stock: 2,511"
+                        - paragraph [ref=e614]: $0.0773
+                  - listitem [ref=e615]:
+                    - link [ref=e616] [cursor=pointer]:
+                      - /url: /partdetail/HCI-XC32M4_20_000F18NJDTK/C20508695
+                      - img "component-HCI XC32M4-20.000-F18NJDTK" [ref=e620]
+                      - generic [ref=e621]:
+                        - paragraph [ref=e622]: HCI XC32M4-20.000-F18NJDTK
+                        - paragraph [ref=e623]: "In Stock: 0"
+                        - paragraph [ref=e625]: $0.4073
+                  - listitem [ref=e626]:
+                    - link [ref=e627] [cursor=pointer]:
+                      - /url: /partdetail/HCI-0132M4_197028F20DTNJL/C7425004
+                      - img "component-HCI 0132M4-19.7028F20DTNJL" [ref=e631]
+                      - generic [ref=e632]:
+                        - paragraph [ref=e633]: HCI 0132M4-19.7028F20DTNJL
+                        - paragraph [ref=e634]: "In Stock: 170"
+                        - paragraph [ref=e636]: $0.0850
+                  - listitem [ref=e637]:
+                    - link [ref=e638] [cursor=pointer]:
+                      - /url: /partdetail/HCI-0132M4_20000F10DTNLL/C54868572
+                      - img "component-HCI 0132M4-20.000F10DTNLL" [ref=e642]
+                      - generic [ref=e643]:
+                        - paragraph [ref=e644]: HCI 0132M4-20.000F10DTNLL
+                        - paragraph [ref=e645]: "In Stock: 5,928"
+                        - paragraph [ref=e647]: $0.0697
+                - navigation "Pagination" [ref=e648]:
+                  - button "Page 1" [ref=e649] [cursor=pointer]
+                  - button "Page 2" [ref=e650] [cursor=pointer]
+                  - button "Page 3" [ref=e651] [cursor=pointer]
+            - complementary [ref=e359]:
+              - generic [ref=e360]:
+                - generic [ref=e361]:
+                  - generic [ref=e362]:
+                    - paragraph [ref=e363]: "In Stock: 93"
+                    - generic [ref=e364]:
+                      - generic [ref=e365]: "Minimum: 1"
+                      - generic [ref=e367]: "Full Reel: 3000"
+                  - generic [ref=e368]:
+                    - textbox "Quantity" [ref=e369]: "1"
+                    - generic [ref=e370]:
+                      - generic [ref=e371]:
+                        - generic [ref=e372]: $1.05
+                        - button "Save $30.00" [ref=e373] [cursor=pointer]
+                      - button "" [ref=e374] [cursor=pointer]
+                  - button " Add to My Part Lib for Assembly" [ref=e376] [cursor=pointer]:
+                    - generic [ref=e377]: 
+                    - generic [ref=e378]: Add to My Part Lib for Assembly
+                  - paragraph [ref=e379]: "Available Order Qty: 93"
+                  - generic [ref=e380]:
+                    - generic [ref=e381]:
+                      - generic [ref=e382]: Qty
+                      - generic [ref=e383]: Unit Price
+                    - generic [ref=e384] [cursor=pointer]:
+                      - generic [ref=e385]: 1+
+                      - generic [ref=e386]: $1.0531
+                    - generic [ref=e387] [cursor=pointer]:
+                      - generic [ref=e388]: 10+
+                      - generic [ref=e389]: $0.8451
+                    - generic [ref=e390] [cursor=pointer]:
+                      - generic [ref=e391]: 30+
+                      - generic [ref=e392]: $0.7419
+                    - generic [ref=e393] [cursor=pointer]:
+                      - generic [ref=e394]: 100+
+                      - generic [ref=e395]: $0.6387
+                    - generic [ref=e396] [cursor=pointer]:
+                      - generic [ref=e397]: 500+
+                      - generic [ref=e398]: $0.5765
+                    - generic [ref=e399] [cursor=pointer]:
+                      - generic [ref=e400]: 1000+
+                      - generic [ref=e401]: $0.5454
+                - generic [ref=e403]:
+                  - heading "Related Products" [level=3] [ref=e404]
+                  - list [ref=e405]:
+                    - listitem [ref=e406] [cursor=pointer]:
+                      - link [ref=e407]:
+                        - /url: /partdetail/HCI-1521H_22000J18DTSL/C20624141
+                        - img "recommended parts-1521H-22.000J18DTSL" [ref=e411]
+                        - generic [ref=e412]:
+                          - paragraph [ref=e413]: 1521H-22.000J18DTSL
+                          - paragraph [ref=e414]: HCI
+                          - paragraph [ref=e415]: $0.6748
+                    - listitem [ref=e416] [cursor=pointer]:
+                      - link [ref=e417]:
+                        - /url: /partdetail/HCI-1521H32K000A18DZSL/C19674132
+                        - img "recommended parts-1521H-32K000A18DZSL" [ref=e421]
+                        - generic [ref=e422]:
+                          - paragraph [ref=e423]: 1521H-32K000A18DZSL
+                          - paragraph [ref=e424]: HCI
+                          - paragraph [ref=e425]: $0.9384
+                    - listitem [ref=e426] [cursor=pointer]:
+                      - link [ref=e427]:
+                        - /url: /partdetail/AbraconLLC-ASA_60_000MHZ_LT/C1987477
+                        - img "recommended parts-ASA-60.000MHZ-L-T" [ref=e431]
+                        - generic [ref=e432]:
+                          - paragraph [ref=e433]: ASA-60.000MHZ-L-T
+                          - paragraph [ref=e434]: Abracon LLC
+                          - paragraph [ref=e435]: $1.4854
+                    - listitem [ref=e436] [cursor=pointer]:
+                      - link [ref=e437]:
+                        - /url: /partdetail/22714804-3QHTF21_65_813PD/C21294462
+                        - img "recommended parts-3QHTF21-65.813-PD" [ref=e441]
+                        - generic [ref=e442]:
+                          - paragraph [ref=e443]: 3QHTF21-65.813-PD
+                          - paragraph [ref=e444]: MERCURY Electronic
+                          - paragraph [ref=e445]: $8.7960
+                    - listitem [ref=e446] [cursor=pointer]:
+                      - link [ref=e447]:
+                        - /url: /partdetail/22196035-3QHTF21_5_89824OE/C20780950
+                        - img "recommended parts-3QHTF21-5.89824-OE" [ref=e451]
+                        - generic [ref=e452]:
+                          - paragraph [ref=e453]: 3QHTF21-5.89824-OE
+                          - paragraph [ref=e454]: MERCURY Electronic
+                          - paragraph [ref=e455]: $18.4582
+                    - listitem [ref=e456] [cursor=pointer]:
+                      - link [ref=e457]:
+                        - /url: /partdetail/23602563-25QHTF21_7_7328OE/C22171045
+                        - img "recommended parts-25QHTF21-7.7328-OE" [ref=e461]
+                        - generic [ref=e462]:
+                          - paragraph [ref=e463]: 25QHTF21-7.7328-OE
+                          - paragraph [ref=e464]: MERCURY Electronic
+                          - paragraph [ref=e465]: $18.4582
+    - contentinfo [ref=e466]:
+      - generic [ref=e467]:
+        - generic [ref=e468]:
+          - generic [ref=e469]:
+            - button " Online Chat >" [ref=e470] [cursor=pointer]:
+              - generic [ref=e471]: 
+              - text: Online Chat >
+            - generic [ref=e472]: Chat with our live agent for fast reply.
+            - generic [ref=e473]: "Mon-Fri: 24 hours, Sat: 9am-6pm, GMT+8"
+          - generic [ref=e474]:
+            - link " Email Us >" [ref=e475] [cursor=pointer]:
+              - /url: https://jlcpcb.com/help/contact
+              - generic [ref=e476]: 
+              - text: Email Us >
+            - generic [ref=e477]: Contact us at support@jlcpcb.com
+            - generic [ref=e478]: Typically reply within hours.
+          - generic [ref=e479]:
+            - link " Help Center >" [ref=e480] [cursor=pointer]:
+              - /url: https://jlcpcb.com/help
+              - generic [ref=e481]: 
+              - text: Help Center >
+            - generic [ref=e482]: Get instant answers.
+            - generic [ref=e483]: 24/7 Available.
+        - text:                
+        - generic [ref=e485]:
+          - generic [ref=e486]:
+            - generic [ref=e487]: Services & Tools
+            - generic [ref=e488]:
+              - link "Electronic Parts" [ref=e489] [cursor=pointer]:
+                - /url: https://jlcpcb.com/parts
+              - link "BOM Tool" [ref=e490] [cursor=pointer]:
+                - /url: https://jlcpcb.com/parts/bom-tool
+              - link "Request a Quote" [ref=e491] [cursor=pointer]:
+                - /url: https://jlcpcb.com/parts/request-quote
+              - link "Manufacturers" [ref=e492] [cursor=pointer]:
+                - /url: https://jlcpcb.com/parts/manufacturers
+              - link "PCB Assembly" [ref=e493] [cursor=pointer]:
+                - /url: https://jlcpcb.com/pcb-assembly
+          - generic [ref=e494]:
+            - generic [ref=e495]: Support
+            - generic [ref=e496]:
+              - link "Contact Us" [ref=e497] [cursor=pointer]:
+                - /url: https://jlcpcb.com/help/contact/Electronic Components
+              - link "How to Order" [ref=e498] [cursor=pointer]:
+                - /url: https://jlcpcb.com/help/article/how-to-build-your-own-parts-library-in-jlcpcb
+              - link "User Guides" [ref=e499] [cursor=pointer]:
+                - /url: https://jlcpcb.com/help/catalog/191-PCBA-Parts-Sourcing
+              - link "Sourcing Tips" [ref=e500] [cursor=pointer]:
+                - /url: https://jlcpcb.com/blog/category/components-sourcing
+              - link "Payment Methods" [ref=e501] [cursor=pointer]:
+                - /url: https://jlcpcb.com/payments
+          - generic [ref=e502]:
+            - generic [ref=e503]: Company
+            - generic [ref=e504]:
+              - link "About Us" [ref=e505] [cursor=pointer]:
+                - /url: https://jlcpcb.com/about-us
+              - link "Quality Assurance" [ref=e506] [cursor=pointer]:
+                - /url: https://jlcpcb.com/about-us/quality-control
+              - link "How We Work" [ref=e507] [cursor=pointer]:
+                - /url: https://jlcpcb.com/about-us/how-it-works
+              - link "Certifications" [ref=e508] [cursor=pointer]:
+                - /url: https://jlcpcb.com/certifications
+              - link "Security" [ref=e509] [cursor=pointer]:
+                - /url: https://jlcpcb.com/privacy-security
+              - link "JLCAPI" [ref=e510] [cursor=pointer]:
+                - /url: https://api.jlcpcb.com/
+              - link "News" [ref=e511] [cursor=pointer]:
+                - /url: https://jlcpcb.com/news
+              - link "Cooperation" [ref=e512] [cursor=pointer]:
+                - /url: https://jlcpcb.com/cooperation
+              - link "Careers" [ref=e513] [cursor=pointer]:
+                - /url: https://jlcpcb.com/careers
+          - generic [ref=e514]:
+            - generic [ref=e515]: Electronics
+            - generic [ref=e516]:
+              - link "EasyEDA" [ref=e517] [cursor=pointer]:
+                - /url: https://easyeda.com
+              - link "JLCPCB" [ref=e518] [cursor=pointer]:
+                - /url: https://jlcpcb.com
+              - link "JLCDFM" [ref=e519] [cursor=pointer]:
+                - /url: https://jlcdfm.com
+              - link "LCSC" [ref=e520] [cursor=pointer]:
+                - /url: https://www.lcsc.com
+              - link "OSHWLAB" [ref=e521] [cursor=pointer]:
+                - /url: https://oshwlab.com/
+          - generic [ref=e522]:
+            - generic [ref=e523]: Mechanical
+            - generic [ref=e524]:
+              - link "JLC3DP" [ref=e525] [cursor=pointer]:
+                - /url: https://jlc3dp.com
+              - link "JLCCNC" [ref=e526] [cursor=pointer]:
+                - /url: https://jlccnc.com
+              - link "JLCMC" [ref=e527] [cursor=pointer]:
+                - /url: https://jlcmc.com
+          - generic [ref=e528]:
+            - generic [ref=e529]: 
+            - generic [ref=e530]:
+              - generic [ref=e531]:
+                - paragraph [ref=e532]: Download JLCONE Desktop—Get $524 Exclusive Coupons
+                - generic [ref=e533]:
+                  - generic [ref=e534]:
+                    - link " Windows" [ref=e535] [cursor=pointer]:
+                      - /url: https://jlcone.com/download
+                      - generic [ref=e536]:
+                        - generic [ref=e537]: 
+                        - generic [ref=e538]: Windows
+                    - link " MAC" [ref=e539] [cursor=pointer]:
+                      - /url: https://jlcone.com/download
+                      - generic [ref=e540]:
+                        - generic [ref=e541]: 
+                        - generic [ref=e542]: MAC
+                  - generic [ref=e543]:
+                    - link " Android" [ref=e544] [cursor=pointer]:
+                      - /url: https://jlcone.com/download#mobile-app
+                      - generic [ref=e545]:
+                        - generic [ref=e546]: 
+                        - generic [ref=e547]: Android
+                    - link " IOS" [ref=e548] [cursor=pointer]:
+                      - /url: https://jlcone.com/download#mobile-app
+                      - generic [ref=e549]:
+                        - generic [ref=e550]: 
+                        - generic [ref=e551]: IOS
+              - generic [ref=e552]:
+                - paragraph [ref=e553]: CONNECT WITH US
+                - generic [ref=e554]:
+                  - link "Facebook" [ref=e555] [cursor=pointer]:
+                    - /url: https://www.facebook.com/jlcpcb
+                    - generic [ref=e556]: 
+                  - link "Twitter" [ref=e557] [cursor=pointer]:
+                    - /url: https://twitter.com/jlcpcb
+                    - generic [ref=e558]: 
+                  - link "Instagram" [ref=e559] [cursor=pointer]:
+                    - /url: https://www.instagram.com/jlcpcb
+                    - generic [ref=e560]: 
+                  - link "YouTube" [ref=e561] [cursor=pointer]:
+                    - /url: https://www.youtube.com/JLCPCB
+                    - generic [ref=e562]: 
+                  - link "LinkedIn" [ref=e563] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/company/jlcpcb
+                    - generic [ref=e564]: 
+                  - link "Reddit" [ref=e565] [cursor=pointer]:
+                    - /url: https://www.reddit.com/r/JLCPCBLab/
+                    - generic [ref=e566]: 
+        - generic [ref=e568]:
+          - generic [ref=e569]: © 2026 JLCPCB.COM All Rights Reserved.
+          - link "Privacy Policy" [ref=e570] [cursor=pointer]:
+            - /url: https://jlcpcb.com/help/article/Privacy-Policy
+          - link "Terms & Conditions" [ref=e571] [cursor=pointer]:
+            - /url: https://jlcpcb.com/help/article/Terms-%26-Conditions
+          - link "Cookies Policy" [ref=e572] [cursor=pointer]:
+            - /url: https://jlcpcb.com/help/article/JLCPCB-Cookie-Notice
+          - link "Do Not Sell or Share My Personal Information" [ref=e573] [cursor=pointer]:
+            - /url: https://jlcpcb.com/privacy-policy/do-not-sell-or-share-my-personal-information
+    - generic:
+      - generic [ref=e574]:
+        - generic [ref=e576]:
+          - text: Welcome back, may I help you?
+          - button "Chat Now" [ref=e579] [cursor=pointer]
+        - textbox "Write a message" [ref=e581]
+      - iframe [ref=e585]:
+        - generic [ref=f4e5] [cursor=pointer]
+  - region "Notifications alt+T"
+  - alert [ref=e586]

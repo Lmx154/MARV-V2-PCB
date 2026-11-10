@@ -1,0 +1,728 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link [ref=e6] [cursor=pointer]:
+          - /url: https://www.lcsc.com/electronica
+          - img "lcsc notice" [ref=e7]
+        - button "Close notification" [ref=e8] [cursor=pointer]
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - link "Hot-Selling Page" [ref=e14] [cursor=pointer]:
+            - /url: https://www.lcsc.com/flashSale?isHot=1
+            - text: Hot-Selling
+          - link "Get Coupons Here" [ref=e15] [cursor=pointer]:
+            - /url: https://www.lcsc.com/coupons?source=lcsc
+            - generic [ref=e16]: Coupons
+          - link "Get API Here" [ref=e17] [cursor=pointer]:
+            - /url: https://www.lcsc.com/agent
+            - text: API
+        - generic [ref=e18]: Language
+        - generic [ref=e23]: Help
+        - link "Contact Us" [ref=e29] [cursor=pointer]:
+          - /url: https://www.lcsc.com/service/question
+      - generic [ref=e33]:
+        - link "LCSC Electronics home" [ref=e35] [cursor=pointer]:
+          - /url: https://www.lcsc.com/
+          - img "LCSC Electronics logo" [ref=e36]
+          - img "LCSC Electronics svg logo" [ref=e37]
+        - generic [ref=e39]:
+          - generic [ref=e42]:
+            - textbox "search input" [ref=e44]:
+              - /placeholder: CJT(Changjiang Connectors)
+            - button "search button" [ref=e46] [cursor=pointer]
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - link "TI" [ref=e51] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/100.html?s_z=t_b_TI
+              - link "ST" [ref=e52] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/74.html?s_z=t_b_ST
+              - link "ADI" [ref=e53] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/178.html?s_z=t_b_ADI
+              - link "Winbond" [ref=e54] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/387.html?s_z=t_b_Winbond
+              - link "Infineon" [ref=e55] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/330.html?s_z=t_b_Infineon
+              - link "muRata" [ref=e56] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/79.html?s_z=t_b_muRata
+              - link "MICROCHIP" [ref=e57] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/169.html?s_z=t_b_MICROCHIP
+              - link "Samsung Electro-Mechanics" [ref=e58] [cursor=pointer]:
+                - /url: https://www.lcsc.com/brand-detail/254.html?s_z=t_b_Samsung%2520Electro-Mechanics
+            - link "Samples Offer" [ref=e60] [cursor=pointer]:
+              - /url: https://www.lcsc.com/samples
+          - generic [ref=e61] [cursor=pointer]: Upload a BOM
+        - button "Sign In button" [ref=e69] [cursor=pointer]:
+          - generic "Sign In" [ref=e73]
+        - button "The current currency is USD, click to change to other currencies" [ref=e75] [cursor=pointer]:
+          - generic [ref=e79]: USD
+        - link "Cart" [ref=e83] [cursor=pointer]:
+          - /url: https://www.lcsc.com/cart
+    - navigation [ref=e89]:
+      - generic [ref=e93]:
+        - link "Catalog Page" [ref=e95] [cursor=pointer]:
+          - /url: https://www.lcsc.com/products
+          - generic [ref=e96]: Catalog
+          - img "All Products icon" [ref=e97]
+        - generic [ref=e98]:
+          - link "Products Page" [ref=e100] [cursor=pointer]:
+            - /url: https://www.lcsc.com/products
+            - generic [ref=e101]: Products
+          - link "Manufacturers Page" [ref=e103] [cursor=pointer]:
+            - /url: https://www.lcsc.com/supplier
+            - generic [ref=e104]: Manufacturers
+          - link "RFQ/BOM Page" [ref=e106] [cursor=pointer]:
+            - /url: https://www.lcsc.com/inquiry
+            - generic [ref=e107]: RFQ/BOM
+          - link "Deals Page" [ref=e109] [cursor=pointer]:
+            - /url: https://www.lcsc.com/flashSale
+            - generic [ref=e110]: Deals
+          - link "Custom Cables Page" [ref=e112] [cursor=pointer]:
+            - /url: https://lcsccable.com
+            - generic [ref=e113]: Custom Cables
+          - button "Solutions" [ref=e115] [cursor=pointer]
+          - button "Resources" [ref=e120] [cursor=pointer]
+    - main [ref=e124]:
+      - generic [ref=e125]:
+        - navigation "Breadcrumb" [ref=e126]:
+          - list [ref=e127]:
+            - listitem [ref=e128]:
+              - link "Home" [ref=e129] [cursor=pointer]:
+                - /url: https://www.lcsc.com/
+              - text: /
+            - listitem [ref=e130]:
+              - link "Products" [ref=e131] [cursor=pointer]:
+                - /url: https://www.lcsc.com/products
+              - text: /
+            - listitem [ref=e132]:
+              - link "Passives" [ref=e133] [cursor=pointer]:
+                - /url: https://www.lcsc.com/category/30.html
+              - text: /
+            - listitem [ref=e134]:
+              - link "Crystals, Oscillators, Resonators" [ref=e135] [cursor=pointer]:
+                - /url: https://www.lcsc.com/category/496.html
+              - text: /
+            - listitem [ref=e136]:
+              - link "Crystals" [ref=e137] [cursor=pointer]:
+                - /url: https://www.lcsc.com/category/1155.html
+              - text: /
+            - listitem [ref=e138]: HCI 1521H-32K000J18DTSL
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - generic [ref=e144]:
+                  - generic [ref=e145]:
+                    - button "Add to Favourites" [ref=e146] [cursor=pointer]:
+                      - generic [ref=e147]: Favorites
+                    - link "Not drawn yet" [ref=e701] [cursor=pointer]:
+                      - /url: https://www.lcsc.com/product-image/C19674133.html?whichImg=pcb
+                    - generic [ref=e158]:
+                      - button "Previous image" [ref=e159] [cursor=pointer]
+                      - list [ref=e160]:
+                        - listitem [ref=e161]:
+                          - img "1521H-32K000J18DTSL thumbnail 1" [ref=e162] [cursor=pointer]
+                        - listitem [ref=e163]:
+                          - img "1521H-32K000J18DTSL thumbnail 2" [ref=e164] [cursor=pointer]
+                        - listitem [ref=e165]:
+                          - img "1521H-32K000J18DTSL thumbnail 3" [ref=e166] [cursor=pointer]
+                        - listitem [ref=e167]:
+                          - generic [ref=e168] [cursor=pointer]: Pinout
+                        - listitem [ref=e169]:
+                          - generic [ref=e170] [cursor=pointer]: Footprint
+                      - button "Next image" [ref=e171] [cursor=pointer]
+                    - generic [ref=e172]: Images for reference only
+                  - generic [ref=e174]:
+                    - generic [ref=e175]: EDA Models
+                    - button "Open the EasyEDA Model" [ref=e176] [cursor=pointer]:
+                      - generic [ref=e179]: EasyEDA
+                - generic [ref=e180]:
+                  - generic [ref=e181]:
+                    - button "Copy button" [ref=e185] [cursor=pointer]
+                    - heading "HCI 1521H-32K000J18DTSL" [level=1] [ref=e190] [cursor=pointer]
+                  - table [ref=e195]:
+                    - rowgroup [ref=e196]:
+                      - row [ref=e197]:
+                        - cell "Manufacturer" [ref=e198]
+                        - cell "HCI Asian Brands" [ref=e199]:
+                          - generic [ref=e201]:
+                            - link "HCI" [ref=e202] [cursor=pointer]:
+                              - /url: https://www.lcsc.com/brand-detail/12047.html
+                            - generic "Asian Brand" [ref=e203]: Asian Brands
+                      - row [ref=e205]:
+                        - cell "MPN" [ref=e206]
+                        - cell "1521H-32K000J18DTSL" [ref=e207]
+                      - row [ref=e211]:
+                        - 'cell "LCSC Part #" [ref=e212]'
+                        - cell "C19674133" [ref=e213]
+                      - row [ref=e217]:
+                        - cell "Packaging" [ref=e218]
+                        - cell "SMD2016-4P" [ref=e219]
+                      - row [ref=e223]:
+                        - 'cell "Customer #" [ref=e224]'
+                        - cell [ref=e225]:
+                          - generic [ref=e226]:
+                            - textbox "Customer Number" [ref=e227]
+                            - img "caret-down"
+                      - row [ref=e228]:
+                        - cell "Key Attributes" [ref=e229]
+                        - cell "XTAL OSC 32kHz HCMOS SMD" [ref=e230]
+                      - row [ref=e234]:
+                        - cell "Datasheet" [ref=e235]
+                        - cell [ref=e236]:
+                          - link "pdf icon HCI 1521H-32K000J18DTSL" [ref=e237] [cursor=pointer]:
+                            - /url: https://www.lcsc.com/datasheet/C19674133.pdf
+                            - img "pdf icon" [ref=e238]
+                            - generic [ref=e240]: HCI 1521H-32K000J18DTSL
+                      - row [ref=e241]:
+                        - cell "RoHS Compliance" [ref=e242]
+                        - cell [ref=e243]:
+                          - button "1 documents available" [ref=e244] [cursor=pointer]
+                      - row [ref=e245]:
+                        - cell "Alternative Parts" [ref=e246]
+                        - cell "2" [ref=e247]
+              - generic [ref=e248]:
+                - generic [ref=e250]:
+                  - generic [ref=e251]:
+                    - heading "Products Specifications" [level=2] [ref=e252]
+                    - generic [ref=e253]:
+                      - button "All" [ref=e254] [cursor=pointer]
+                      - checkbox [ref=e257] [cursor=pointer]
+                  - generic [ref=e259]:
+                    - table [ref=e262]:
+                      - rowgroup [ref=e263]:
+                        - row [ref=e264]:
+                          - columnheader "Type" [ref=e265]
+                          - columnheader "Description" [ref=e266]
+                          - columnheader [ref=e267]
+                      - rowgroup [ref=e268]:
+                        - row "Category Passives/Crystals, Oscillators, Resonators/Crystals" [ref=e269]:
+                          - cell "Category" [ref=e270]
+                          - cell [ref=e271]:
+                            - link "Passives/Crystals, Oscillators, Resonators/Crystals" [ref=e272] [cursor=pointer]:
+                              - /url: https://www.lcsc.com/category/1155.html
+                          - cell [ref=e273]:
+                            - generic [ref=e275]:
+                              - checkbox [checked] [disabled]
+                        - row "Manufacturer HCI" [ref=e277]:
+                          - cell "Manufacturer" [ref=e278]
+                          - cell [ref=e279]:
+                            - link "HCI" [ref=e280] [cursor=pointer]:
+                              - /url: https://www.lcsc.com/brand-detail/12047.html
+                          - cell [ref=e281]:
+                            - checkbox [ref=e284] [cursor=pointer]
+                        - row "Packaging SMD2016-4P" [ref=e286]:
+                          - cell "Packaging" [ref=e287]
+                          - cell "SMD2016-4P" [ref=e288]
+                          - cell [ref=e289]:
+                            - checkbox [ref=e292] [cursor=pointer]
+                        - row "Frequency Stability ±20ppm" [ref=e294]:
+                          - cell "Frequency Stability" [ref=e295]
+                          - cell "±20ppm" [ref=e296]
+                          - cell [ref=e297]:
+                            - checkbox [ref=e300] [cursor=pointer]
+                        - row "Output Type HCMOS" [ref=e302]:
+                          - cell "Output Type" [ref=e303]
+                          - cell "HCMOS" [ref=e304]
+                          - cell [ref=e305]:
+                            - checkbox [ref=e308] [cursor=pointer]
+                    - table [ref=e312]:
+                      - rowgroup [ref=e313]:
+                        - row [ref=e314]:
+                          - columnheader "Type" [ref=e315]
+                          - columnheader "Description" [ref=e316]
+                          - columnheader [ref=e317]
+                      - rowgroup [ref=e318]:
+                        - row "Operating Temperature -40℃~+85℃" [ref=e319]:
+                          - cell "Operating Temperature" [ref=e320]
+                          - cell "-40℃~+85℃" [ref=e321]
+                          - cell [ref=e322]:
+                            - checkbox [ref=e325] [cursor=pointer]
+                        - row "Voltage - Supply 1.8V~3.3V" [ref=e327]:
+                          - cell "Voltage - Supply" [ref=e328]
+                          - cell "1.8V~3.3V" [ref=e329]
+                          - cell [ref=e330]:
+                            - checkbox [ref=e333] [cursor=pointer]
+                        - row "Normal temperature Frequency Tolerance ±10ppm" [ref=e335]:
+                          - cell "Normal temperature Frequency Tolerance" [ref=e336]
+                          - cell "±10ppm" [ref=e337]
+                          - cell [ref=e338]:
+                            - checkbox [ref=e341] [cursor=pointer]
+                        - row "Current - Supply 10mA" [ref=e343]:
+                          - cell "Current - Supply" [ref=e344]
+                          - cell "10mA" [ref=e345]
+                          - cell [ref=e346]:
+                            - checkbox [ref=e349] [cursor=pointer]
+                        - row "Frequency 32kHz" [ref=e351]:
+                          - cell "Frequency" [ref=e352]
+                          - cell "32kHz" [ref=e353]
+                          - cell [ref=e354]:
+                            - checkbox [ref=e357] [cursor=pointer]
+                  - generic [ref=e359]:
+                    - button "Help & Feedback" [ref=e360] [cursor=pointer]
+                    - link "Show similar products (148476) >" [ref=e361] [cursor=pointer]:
+                      - /url: https://www.lcsc.com/category/1155.html
+                - generic [ref=e362]:
+                  - generic [ref=e363]:
+                    - generic [ref=e364]:
+                      - heading "Features" [level=2] [ref=e365]
+                      - generic [ref=e366]: AI Translation
+                    - list [ref=e368]:
+                      - listitem [ref=e369]: Small dimensions 2.0×1.6×0.75 with 4 solder pads.
+                      - listitem [ref=e370]: Tight stabilities over temperature range.
+                      - listitem [ref=e371]: Tri-state enable/ disable function (pad 1).
+                      - listitem [ref=e372]: Automotive compliance to AEC-Q200 available.
+                      - listitem [ref=e373]: RoHS compliant, LEAD-FREE, HALOGEN-FREE and REACH compliant.
+                  - generic [ref=e374]:
+                    - generic [ref=e375]:
+                      - heading "Applications" [level=2] [ref=e376]
+                      - generic [ref=e377]: AI Translation
+                    - list [ref=e379]:
+                      - listitem [ref=e380]: WiFi / WiMAX / Bluetooth
+                      - listitem [ref=e381]: Set-top Box / HDTV
+                      - listitem [ref=e382]: Mobil phone
+                      - listitem [ref=e383]: DSC / PDA
+            - generic [ref=e385]:
+              - generic [ref=e389]:
+                - generic [ref=e390]: Every Order Guarantee
+                - generic [ref=e391]: 100% Authentic · 30-Day Return or Replacement
+              - generic [ref=e393]:
+                - generic [ref=e395]:
+                  - generic [ref=e396]: SMT Extended
+                  - generic [ref=e397] [cursor=pointer]: SMT Parts Deal
+                  - generic [ref=e398] [cursor=pointer]: PCB from $2/5 pcs
+                - generic [ref=e400]:
+                  - generic [ref=e401]: "In-Stock: 93"
+                  - generic [ref=e403]: 93 In stock, ships now
+                - generic [ref=e404]:
+                  - generic [ref=e405]: "Minimum: 1"
+                  - generic [ref=e406]: "Multiple: 1"
+                  - generic [ref=e407]: "Sales Unit: Piece"
+                - generic [ref=e408]:
+                  - textbox [ref=e411]: "1"
+                  - generic [ref=e706]:
+                    - generic [ref=e708] [cursor=pointer]:
+                      - img "Cut Tape" [ref=e711]
+                      - generic [ref=e713]: Cut Tape
+                    - generic [ref=e716] [cursor=pointer]:
+                      - img "LCSC-Reel" [ref=e717]
+                      - generic [ref=e719]:
+                        - generic [ref=e720]: LCSC-Reel
+                        - generic [ref=e721]: $3
+                - generic [ref=e723]:
+                  - generic [ref=e724]:
+                    - generic [ref=e725]: Packaging
+                    - generic [ref=e726]: Qty
+                    - generic [ref=e728]: Unit Price
+                    - generic [ref=e730]: Total Amount
+                  - generic [ref=e731]:
+                    - generic [ref=e732]: Cut Tape
+                    - generic [ref=e733]: "1"
+                    - generic [ref=e735]: $ 0.8439
+                    - generic [ref=e737]:
+                      - generic [ref=e738]: $ 1.05
+                      - generic [ref=e739]: $ 0.84
+                  - generic [ref=e740]: $ 0.84
+                - button "Add to Cart" [ref=e413] [cursor=pointer]
+                - generic [ref=e415]: Add to BOM List
+                - table [ref=e417]:
+                  - rowgroup [ref=e418]:
+                    - row [ref=e419]:
+                      - columnheader "Qty" [ref=e420]
+                      - columnheader "Unit Price" [ref=e421]
+                      - columnheader "Total Amount" [ref=e422]
+                  - rowgroup [ref=e423]:
+                    - row [ref=e424]:
+                      - button "1+" [ref=e425] [cursor=pointer]
+                      - cell "$ 1.0548$ 0.8439" [ref=e426]:
+                        - generic [ref=e427]: $ 1.0548
+                        - generic [ref=e428]: $ 0.8439
+                      - cell "$ 0.84" [ref=e429]
+                    - row [ref=e430]:
+                      - button "10+" [ref=e431] [cursor=pointer]
+                      - cell "$ 0.8465$ 0.6772" [ref=e432]:
+                        - generic [ref=e433]: $ 0.8465
+                        - generic [ref=e434]: $ 0.6772
+                      - cell "$ 6.77" [ref=e435]
+                    - row [ref=e436]:
+                      - button "30+" [ref=e437] [cursor=pointer]
+                      - cell "$ 0.7431$ 0.5945" [ref=e438]:
+                        - generic [ref=e439]: $ 0.7431
+                        - generic [ref=e440]: $ 0.5945
+                      - cell "$ 17.84" [ref=e441]
+                    - row [ref=e442]:
+                      - button "100+" [ref=e443] [cursor=pointer]
+                      - cell "$ 0.6398$ 0.5119" [ref=e444]:
+                        - generic [ref=e445]: $ 0.6398
+                        - generic [ref=e446]: $ 0.5119
+                      - cell "$ 51.19" [ref=e447]
+                    - row [ref=e448]:
+                      - button "500+" [ref=e449] [cursor=pointer]
+                      - cell "$ 0.5775$ 0.4620" [ref=e450]:
+                        - generic [ref=e451]: $ 0.5775
+                        - generic [ref=e452]: $ 0.4620
+                      - cell "$ 231.00" [ref=e453]
+                    - row [ref=e454]:
+                      - button "1,000+" [ref=e455] [cursor=pointer]
+                      - cell "$ 0.5463$ 0.4371" [ref=e456]:
+                        - generic [ref=e457]: $ 0.5463
+                        - generic [ref=e458]: $ 0.4371
+                      - cell "$ 437.10" [ref=e459]
+                    - row [ref=e460]:
+                      - cell "Standard Packaging 3000/Full Reel" [ref=e461]:
+                        - generic [ref=e462]:
+                          - generic [ref=e463]: Standard Packaging
+                          - generic [ref=e464]: 3000/Full Reel
+                - generic [ref=e465]: Better price for more quantity?
+                - generic [ref=e467]:
+                  - generic [ref=e468]:
+                    - textbox "Enter Qty" [ref=e470]
+                    - generic [ref=e471]: $
+                    - textbox "Target Price" [ref=e473]
+                  - button "Get Quote" [ref=e475] [cursor=pointer]
+              - generic [ref=e476]:
+                - generic [ref=e477]:
+                  - heading "Other Suppliers on LCSC" [level=2] [ref=e478]
+                  - button [ref=e479] [cursor=pointer]
+                - generic [ref=e745]:
+                  - generic [ref=e746]: "Availability: 20,393"
+                  - generic [ref=e748]: "Est. Lead Time to LCSC: 31-33 business days"
+                  - generic [ref=e749]:
+                    - textbox [ref=e752]
+                    - button "Add to Cart" [ref=e754] [cursor=pointer]
+                  - table [ref=e756]:
+                    - rowgroup [ref=e757]:
+                      - row [ref=e758]:
+                        - 'columnheader "QtyStandard Pack Quantity: 3,000" [ref=e759]':
+                          - text: Qty
+                          - generic [ref=e760]: "Standard Pack Quantity: 3,000"
+                        - columnheader "Unit Price" [ref=e761]
+                    - rowgroup [ref=e762]:
+                      - row [ref=e763]:
+                        - cell "10+" [ref=e764]
+                        - cell "$ 0.702" [ref=e766]
+                      - row [ref=e767]:
+                        - cell "100+" [ref=e768]
+                        - cell "$ 0.6353" [ref=e770]
+                      - row [ref=e771]:
+                        - cell "500+" [ref=e772]
+                        - cell "$ 0.5647" [ref=e774]
+                      - row [ref=e775]:
+                        - cell "1,000+" [ref=e776]
+                        - cell "$ 0.5378" [ref=e778]
+                      - row [ref=e779]:
+                        - cell "3,000+" [ref=e780]
+                        - cell "$ 0.5029" [ref=e782]
+          - generic [ref=e783]:
+            - generic [ref=e785]:
+              - generic [ref=e786]:
+                - heading "Datasheet" [level=2] [ref=e787]
+                - generic [ref=e788]:
+                  - link "Fullscreen" [ref=e789] [cursor=pointer]:
+                    - /url: https://www.lcsc.com/datasheet/C19674133.pdf
+                  - generic [ref=e790] [cursor=pointer]:
+                    - img "pdf icon" [ref=e791]
+                    - text: Download
+              - iframe [ref=e793]
+            - generic [ref=e794]:
+              - heading "Compliance & Export Codes" [level=2] [ref=e795]
+              - generic [ref=e796]:
+                - table [ref=e798]:
+                  - rowgroup [ref=e799]:
+                    - row [ref=e800]:
+                      - columnheader "Type" [ref=e801]
+                      - columnheader "Details" [ref=e802]
+                  - rowgroup [ref=e803]:
+                    - row [ref=e804]:
+                      - cell "RoHS" [ref=e805]
+                      - cell "ROHS Compliant" [ref=e806]
+                    - row [ref=e807]:
+                      - cell "ECCN" [ref=e808]
+                      - cell "EAR99" [ref=e809]
+                    - row [ref=e810]:
+                      - cell "CNHTS" [ref=e811]
+                      - cell "8541600000" [ref=e812]
+                    - row [ref=e813]:
+                      - cell "USHTS" [ref=e814]
+                      - cell "8541600080" [ref=e815]
+                    - row [ref=e816]:
+                      - cell "TARIC" [ref=e817]
+                      - cell "8541600000" [ref=e818]
+                - table [ref=e820]:
+                  - rowgroup [ref=e821]:
+                    - row [ref=e822]:
+                      - columnheader "Type" [ref=e823]
+                      - columnheader "Details" [ref=e824]
+                  - rowgroup [ref=e825]:
+                    - row [ref=e826]:
+                      - cell "CAHTS" [ref=e827]
+                      - cell "8541600010" [ref=e828]
+                    - row [ref=e829]:
+                      - cell "BRHTS" [ref=e830]
+                      - cell "85416010" [ref=e831]
+                    - row [ref=e832]:
+                      - cell "INHTS" [ref=e833]
+                      - cell "85416000" [ref=e834]
+                    - row [ref=e835]:
+                      - cell "MXHTS" [ref=e836]
+                      - cell "8541.60.01" [ref=e837]
+                    - row [ref=e838]:
+                      - cell [ref=e839]
+                      - cell [ref=e840]
+          - generic [ref=e486]:
+            - heading "Alternative Parts" [level=2] [ref=e487]
+            - table [ref=e489]:
+              - rowgroup [ref=e490]:
+                - row [ref=e491]:
+                  - columnheader [ref=e492]
+                  - columnheader "MPN" [ref=e493]
+                  - columnheader "Manufacturer" [ref=e494]
+                  - columnheader "Alternative Type" [ref=e495]
+                  - columnheader "Packaging" [ref=e496]
+                  - columnheader "Availability" [ref=e497]
+                  - columnheader "Unit Price" [ref=e498]
+                  - columnheader [ref=e499]
+              - rowgroup [ref=e500]:
+                - row "CO21H4-32.000kHz-18JHPSTL HCI Similar SMD2016-4P 279 $0.6096 $0.6485 Add" [ref=e501]:
+                  - cell [ref=e502]:
+                    - checkbox [ref=e505] [cursor=pointer]
+                  - cell [ref=e507]:
+                    - link "CO21H4-32.000kHz-18JHPSTL" [ref=e508] [cursor=pointer]:
+                      - /url: https://www.lcsc.com/product-detail/C2842288.html?is_substitute=1&original_product_code=C19674133&original_unit_price=0.8439
+                  - cell "HCI" [ref=e509]
+                  - cell [ref=e510]:
+                    - generic [ref=e511]:
+                      - text: Similar
+                      - generic [ref=e512] [cursor=pointer]
+                  - cell "SMD2016-4P" [ref=e515]
+                  - cell "279" [ref=e516]
+                  - cell "$0.6096 $0.6485" [ref=e517]:
+                    - generic [ref=e518]: $0.6096
+                    - generic [ref=e519]: $0.6485
+                  - cell [ref=e520]:
+                    - generic [ref=e521]:
+                      - textbox "1" [ref=e524]
+                      - button "Add" [ref=e526] [cursor=pointer]
+                - row "1521H-32K000A18DZSL HCI Similar SMD2016-4P 31 $0.8798 $0.9359 Add" [ref=e528]:
+                  - cell [ref=e529]:
+                    - checkbox [ref=e532] [cursor=pointer]
+                  - cell [ref=e534]:
+                    - link "1521H-32K000A18DZSL" [ref=e535] [cursor=pointer]:
+                      - /url: https://www.lcsc.com/product-detail/C19674132.html?is_substitute=1&original_product_code=C19674133&original_unit_price=0.8439
+                  - cell "HCI" [ref=e536]
+                  - cell [ref=e537]:
+                    - generic [ref=e538]:
+                      - text: Similar
+                      - generic [ref=e539] [cursor=pointer]
+                  - cell "SMD2016-4P" [ref=e542]
+                  - cell "31" [ref=e543]
+                  - cell "$0.8798 $0.9359" [ref=e544]:
+                    - generic [ref=e545]: $0.8798
+                    - generic [ref=e546]: $0.9359
+                  - cell [ref=e547]:
+                    - generic [ref=e548]:
+                      - textbox "1" [ref=e551]
+                      - button "Add" [ref=e553] [cursor=pointer]
+            - generic [ref=e555]:
+              - button "Compare Selected (up to 6)" [disabled] [ref=e556]
+              - link "View and Compare All Alternative Parts." [ref=e557] [cursor=pointer]:
+                - /url: https://www.lcsc.com/tools/cross-reference?mpn=1521H-32K000J18DTSL&productCode=C19674133
+    - contentinfo [ref=e558]:
+      - generic [ref=e560]:
+        - generic [ref=e561]:
+          - generic "about Information" [ref=e562]: Information
+          - list [ref=e563]:
+            - listitem [ref=e564]:
+              - link "Go to About LCSC Page" [ref=e565] [cursor=pointer]:
+                - /url: https://www.lcsc.com/about/company
+                - text: About LCSC
+            - listitem [ref=e566]:
+              - link "Go to Contact Us Page" [ref=e567] [cursor=pointer]:
+                - /url: https://www.lcsc.com/service/question
+                - text: Contact Us
+            - listitem [ref=e568]:
+              - link "Go to LCSC Seller Page" [ref=e569] [cursor=pointer]:
+                - /url: https://www.lcsc.com/about/supplier
+                - text: LCSC Seller
+            - listitem [ref=e570]:
+              - link "Go to Quality Assurance Page" [ref=e571] [cursor=pointer]:
+                - /url: https://assets.lcsc.com/datasheet/szlcsc/Download-ISO9001-Certification.pdf
+                - text: Quality Assurance
+            - listitem [ref=e572]:
+              - link "Go to Terms and Conditions Page" [ref=e573] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help/terms-and-conditions
+                - text: Terms and Conditions
+            - listitem [ref=e574]:
+              - link "Go to Privacy Policy Page" [ref=e575] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help/privacy
+                - text: Privacy Policy
+            - listitem [ref=e576]:
+              - link "Go to Cookie Notice Page" [ref=e577] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help-center/lcsc-information/cookie-notice
+                - text: Cookie Notice
+            - listitem [ref=e578]:
+              - link "Go to Blog Page" [ref=e579] [cursor=pointer]:
+                - /url: https://www.lcsc.com/blog
+                - text: Blog
+        - generic [ref=e580]:
+          - generic "about Tools" [ref=e581]: Tools
+          - list [ref=e582]:
+            - listitem [ref=e583]:
+              - link "Go to BOM Tool/RFQ Page" [ref=e584] [cursor=pointer]:
+                - /url: https://www.lcsc.com/bom
+                - text: BOM Tool/RFQ
+            - listitem [ref=e585]:
+              - link "Go to API Page" [ref=e586] [cursor=pointer]:
+                - /url: https://www.lcsc.com/agent
+                - text: API
+            - listitem [ref=e587]:
+              - link "Go to LCSC Calculator Hub Page" [ref=e588] [cursor=pointer]:
+                - /url: https://www.lcsc.com/tools
+                - text: LCSC Calculator Hub
+            - listitem [ref=e589]:
+              - link "Go to Cross Reference Page" [ref=e590] [cursor=pointer]:
+                - /url: https://www.lcsc.com/tools/cross-reference
+                - text: Cross Reference
+        - generic [ref=e591]:
+          - generic "about Customer Service" [ref=e592]: Customer Service
+          - list [ref=e593]:
+            - listitem [ref=e594]:
+              - link "Go to Track Order Page" [ref=e595] [cursor=pointer]:
+                - /url: https://www.lcsc.com/personalCenter/order/list
+                - text: Track Order
+            - listitem [ref=e596]:
+              - link "Go to Return Policy Page" [ref=e597] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help-center/return-refund
+                - text: Return Policy
+            - listitem [ref=e598]:
+              - link "Go to How to Checkout Page" [ref=e599] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help-center/ordering-quotation/order-and-checkout
+                - text: How to Checkout
+            - listitem [ref=e600]:
+              - link "Go to Orders & Payment Terms Page" [ref=e601] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help-center/payment-invoice/payment-methods
+                - text: Orders & Payment Terms
+            - listitem [ref=e602]:
+              - link "Go to International Shipping Page" [ref=e603] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help-center/shipping-delivering
+                - text: International Shipping
+            - listitem [ref=e604]:
+              - button "Feedback" [ref=e605] [cursor=pointer]
+            - listitem [ref=e606]:
+              - link "Go to FAQ Page" [ref=e607] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help-center
+                - text: FAQ
+            - listitem [ref=e608]:
+              - link "Go to Help Center Page" [ref=e609] [cursor=pointer]:
+                - /url: https://www.lcsc.com/help-center
+                - text: Help Center
+        - generic [ref=e610]:
+          - generic "about Electronic Components" [ref=e611]: Electronic Components
+          - list [ref=e612]:
+            - listitem [ref=e613]:
+              - link "Go to EasyEDA Page" [ref=e614] [cursor=pointer]:
+                - /url: https://easyeda.com
+                - text: EasyEDA
+            - listitem [ref=e615]:
+              - link "Go to JLCPCB Page" [ref=e616] [cursor=pointer]:
+                - /url: https://jlcpcb.com
+                - text: JLCPCB
+            - listitem [ref=e617]:
+              - link "Go to LCSC Page" [ref=e618] [cursor=pointer]:
+                - /url: https://www.lcsc.com/
+                - text: LCSC
+            - listitem [ref=e619]:
+              - link "Go to CUSTOM CABLES Page" [ref=e620] [cursor=pointer]:
+                - /url: https://lcsccable.com
+                - text: CUSTOM CABLES
+            - listitem [ref=e621]:
+              - link "Go to FRONT PANELS Page" [ref=e622] [cursor=pointer]:
+                - /url: https://www.lcsc.com/front-panel
+                - text: FRONT PANELS
+        - generic [ref=e623]:
+          - generic "about Connect With Us" [ref=e624]: Connect With Us
+          - generic [ref=e625]:
+            - generic [ref=e626]:
+              - generic [ref=e627]: "Customer Service:"
+              - text: 0086-755-83210457
+            - generic [ref=e628]:
+              - generic [ref=e629]: "Logistics Dept.:"
+              - text: 0086-755-83233027
+            - generic [ref=e630]:
+              - generic [ref=e631]: "Email:"
+              - link "support@lcsc.com" [ref=e632] [cursor=pointer]:
+                - /url: mailto:support@lcsc.com
+            - generic [ref=e633]:
+              - generic [ref=e634]: 9:30 am - 12 am, 1:30 pm - 10 pm
+              - generic [ref=e635]: Monday - Friday, UTC/GMT +8
+              - generic [ref=e636]: "Current Time: Wed, Oct 28, 16:31:25 GMT+8"
+          - generic [ref=e637]: Follow Us
+          - generic [ref=e638]:
+            - link "LCSC Electronics official instagram" [ref=e639] [cursor=pointer]:
+              - /url: https://www.instagram.com/lcscelectronics
+            - link "LCSC Electronics official facebook" [ref=e642] [cursor=pointer]:
+              - /url: https://www.facebook.com/lcsc.electronics
+            - link "LCSC Electronics official linkedIn" [ref=e645] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/lcsc-electronics
+            - link "LCSC Electronics official twitter" [ref=e648] [cursor=pointer]:
+              - /url: https://x.com/lcscelectronics
+            - link "LCSC Electronics official youtube" [ref=e651] [cursor=pointer]:
+              - /url: https://www.youtube.com/c/LCSCElectronics
+      - generic [ref=e656]:
+        - link "PCI DSS certified" [ref=e657] [cursor=pointer]:
+          - /url: /payment/PCI.pdf
+          - img "PCI DSS certified" [ref=e658]
+        - generic [ref=e659]:
+          - link "trustlogo about lcsc.com" [ref=e660] [cursor=pointer]:
+            - /url: https://www.trustlogo.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=CL1&v_search=https://www.lcsc.com&x=6&y=5
+            - img "SSL encrypted payment icon" [ref=e661]
+          - generic [ref=e663]: EncryptedPayment
+        - img "paypal logo" [ref=e664]
+        - img "visa logo" [ref=e666]
+        - img "master logo" [ref=e668]
+        - img "amex logo" [ref=e670]
+        - img "jcb logo" [ref=e672]
+        - img "Diners Club logo" [ref=e674]
+        - img "dhl logo" [ref=e676]
+        - img "fedex logo" [ref=e678]
+        - img "singgapore post logo" [ref=e680]
+        - img "ems logo" [ref=e682]
+        - img "sf express logo" [ref=e684]
+      - generic [ref=e686]:
+        - link "Go to Terms & Conditions Page" [ref=e687] [cursor=pointer]:
+          - /url: https://www.lcsc.com/help/terms-and-conditions
+          - text: Terms & Conditions
+        - text: "|"
+        - link "Go to Privacy Notice Page" [ref=e688] [cursor=pointer]:
+          - /url: https://www.lcsc.com/help/privacy
+          - text: Privacy Notice
+        - text: "| Cookie Settings |"
+        - link "Go to Do Not Sell or Share My Personal Information Page" [ref=e689] [cursor=pointer]:
+          - /url: https://www.lcsc.com/help/do-not-sell
+          - text: Do Not Sell / Do Not Share My Personal Information
+      - generic [ref=e691]:
+        - generic [ref=e692]: © 2026 LCSC.COM All Rights Reserved.
+        - generic [ref=e693]:
+          - link "about 粤ICP备17041818号" [ref=e694] [cursor=pointer]:
+            - /url: http://beian.miit.gov.cn
+            - text: 粤ICP备17041818号
+          - link "about ISO/IEC" [ref=e695] [cursor=pointer]:
+            - /url: https://static.lcsc.com/feassets/pc/file/251202/ISO-IEC%20Certificate.pdf
+            - text: ISO/IEC
+    - complementary [ref=e696]:
+      - link "Contact us" [ref=e697] [cursor=pointer]:
+        - /url: https://www.lcsc.com/service/question
+    - generic [ref=e841]:
+      - generic [ref=e843]:
+        - generic [ref=e844]:
+          - text: LCSC uses cookies and similar technology to improve site performance, enhance security, personal content and ads, and understand how you interact with our services. This information is shared with third-party service providers. Learn more in our
+          - link "Cookie Policy" [ref=e845] [cursor=pointer]:
+            - /url: https://www.lcsc.com/help-center/lcsc-information/cookie-notice
+          - text: .
+        - generic [ref=e846]:
+          - button "Cookie Settings" [ref=e847] [cursor=pointer]
+          - generic [ref=e849]:
+            - button "Reject All" [ref=e850] [cursor=pointer]
+            - button "Accept All Cookies" [ref=e852] [cursor=pointer]
+      - button "Close cookie notice" [ref=e854] [cursor=pointer]
+  - alert [ref=e700]

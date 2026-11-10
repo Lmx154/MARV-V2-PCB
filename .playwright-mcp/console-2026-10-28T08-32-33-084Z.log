@@ -1,0 +1,2 @@
+[    1659ms] [ERROR] Access to XMLHttpRequest at 'https://rs.jlcpcb.com/webResource/jlcpcb/config.json' from origin 'https://jlcpcb.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://jlcpcb.com/partdetail/HCI-1521H32K000J18DTSL/C19674133:0
+[    1659ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://rs.jlcpcb.com/webResource/jlcpcb/config.json:0
