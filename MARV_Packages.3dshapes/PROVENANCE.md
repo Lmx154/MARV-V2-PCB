@@ -22,7 +22,6 @@ pin 1 was checked in close-up renders.
 | `USB_C_Receptacle_HRO_TYPE-C-31-M-12.step` | J4, HRO TYPE-C-31-M-12 | HRO drawing (cited by the footprint): shell 8.94 x 3.26 x 7.35, opening 8.34 x 2.56, tongue 0.70, rear tails 0.40, shell legs 1.10/0.80 long, 1.01 deep, pegs 0.50 | 800982 | `574c5a2824757118387ed9412c8515687bfa1fc8ddf1bdaf773ce567684b466e` |
 | `microSD_HC_Molex_47219-2001.step` | J11, Molex 47219-2001 hinged-lid socket | Molex sales drawing 472192001: 13.60 x 14.50 x 1.90, contacts on 1.10 pitch, lock nails 8.30 apart, card slot 11.16 | 829595 | `944f8952c413a6f9af84df5879ba8ce609f4a86d42c02dda66928a3b0c8364ff` |
 | `Capacitor_Panasonic_POSCAP_6TPE100MAZB_CASE-B2.step` | C19, Panasonic 6TPE100MAZB (case B2) | Panasonic TPE spec sheet `S_POSCAP_TPE_E.pdf` p.1, B2 row: 3.5 x 2.8 x 1.9, terminal S 0.8, W1 2.2 | 128198 | `e1b19c2485e9b9782abcc0909e7f50fc546f54bdf43fc18678d73abf80fd4cdc` |
-| `Oscillator_HCI_1521H_2.0x1.6mm.step` | X1, HCI 1521H-32K000J18DTSL | HCI 1521H sheet, outline CS02016p4 Rev 1: 2.05 x 1.65 x 0.75, pads 0.58 x 0.48 on 1.28 x 0.98 centres, pad-1 chamfer | 211462 | `054ac20b0f492711dc55c18b1d1bd7f9ac7ace8b14f43eb091e39bde70c65773` |
 | `LED_WS2812B-2020_PLCC4_2.0x2.0mm.step` | D20, Worldsemi WS2812C-2020 | WS2812C-2020 datasheet p.2 "Mechanical Dimensions": 2.20 x 2.00 x 0.84, base 0.28, terminal gap 1.13 | 481290 | `d156733354dd9285365d4fb05efebbfd302172972f8d21f78b17f31adaccd09b` |
 | `QFN-80-1EP_10x10mm_P0.4mm_EP3.4x3.4mm.step` | U20, RP2354B | RP2350 datasheet Fig. 145 table: D/E 10, A 0.85, A3 0.203, b 0.20, L 0.40, e 0.40, EP 3.4 x 3.4, matte Sn; terminals flush with the body | 961541 | `dcf982ba7a8cfb17be2da64c8ec20ba64b0e92822694d8d7c1cd2fb7c1e006cd` |
 | `ICM-45686.step` | U21, TDK ICM-45686 | TDK DS-000489 pp.51-52: 3.0 x 2.5 x 0.81, substrate 0.105, pads 0.475 x 0.25 inset 0.10 | 185820 | `6ab40fa41b51932e80dbc76dfca84801f37ae3179fe86bb6dd8b4873d5218b5b` |
@@ -44,7 +43,6 @@ Assumed or scaled values (not dimensioned in the source):
 - **C19:** terminal wrap height, top-edge draft and polarity-band length scaled off the drawing.
   The stock KiCad `CP_EIA-3528-21_Kemet-B` lands sit 0.19 mm further out than the Panasonic
   terminal centres; the model follows Panasonic. The anode band is over pad 1.
-- **X1:** ceramic and lid heights and pin-1 dot position scaled off the drawing.
 - **D20:** the lens width (1.45) and the positions of the controller IC and R/G/B dies are scaled
   off the top view. The lens is translucent (alpha 0.35). Terminal centres are 0.085 mm inboard
   of the footprint lands, which extend past the package edge.

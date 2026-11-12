@@ -515,7 +515,7 @@ def main():
 <title>MARV V2 design checks</title><style>{CSS}</style></head><body>
 <header class="top"><h1>MARV V2 design checks</h1>
 <p class="muted" style="margin:0">Results of the project checks on the saved schematic and PCB. Static page: nothing to install or run.</p>
-<div class="meta"><span>Board revision 1</span>
+<div class="meta"><span>Board revision 2</span>
 <span>Generated {now}</span><span>{esc(tool_versions())}</span></div>
 <div class="meta"><span>Docs on GitHub: {docs}</span></div>
 <div class="status">{status}</div>

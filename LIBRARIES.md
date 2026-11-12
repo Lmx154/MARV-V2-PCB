@@ -34,15 +34,15 @@ The schematic and [DESIGN_SPEC.md](DESIGN_SPEC.md) define the current circuit.
   Copied from KiCad 10 `Connector_Card:microSD_HC_Molex_47219-2001`; pads 1–8
   and four grounded SH tabs. No card-detect contacts. Its project-authored STEP model is built from the Molex drawing and aligned with
   the footprint. See `MARV_Packages.3dshapes/PROVENANCE.md`.
-  All 101 components pass the footprint/model audit.
+  All 99 components pass the footprint/model audit.
 - H1–H4: board features; no 3D body required.
-- U24: unpopulated backside SOIC-8, **150 mil** expansion land. Documented fit options
-  are W25Q32JVSNIQ flash or APS6404L-SQN-SN PSRAM; verify the exact package suffix
-  before populating. C62 and R35 remain fitted on the front.
+- U24: populated front-side SOIC-8, **150 mil**, with the APS6404L-3SQN-SN 8 MB QSPI PSRAM
+  (LCSC C3028887) from Rev 2. The land still accepts W25Q32JVSNIQ flash as an alternative fit;
+  verify the exact package suffix before substituting. C62 and R35 remain fitted on the front.
 
 The library holds only parts used by the board.
 
-The 3D models of J4, J11, C19, X1, D20, U20, U21, U22 and U23 are the project's own CC0
+The 3D models of J4, J11, C19, D20, U20, U21, U22 and U23 are the project's own CC0
 models, built on 2026-10-27 from manufacturer dimensions; sources, assumptions and hashes are in
 [PROVENANCE.md](MARV_Packages.3dshapes/PROVENANCE.md).
 
@@ -61,8 +61,9 @@ Sourcing choices:
   10 uF / 10 V X7R.
 - C7/C25/C59/C62: C52923, 1 uF / 25 V X5R, while descriptive values still say
   1 uF / 10 V X7R.
-- Optional U24 fit choices remain W25Q32JVSNIQ C5355146 or APS6404L-SQN-SN
-  C5360304 (150 mil SOIC/SOP-8); fit only one. U24 is currently DNP.
+- U24 is fitted from Rev 2 with APS6404L-3SQN-SN C3028887 (150 mil SOIC/SOP-8); the
+  alternative fit is W25Q32JVSNIQ C5355146. Fit only one. Do not fit APS6404L-SQN-SN (C5360304):
+  it is the 1.8 V family (1.62-1.98 V) and U24 is on the 3.3 V rail.
 - Owner-soldered header sources: J6–J8 C2905490; J10 C49257.
 
 Use schematic LCSC

@@ -10,8 +10,8 @@ copy gives a fast, offline reference — `pdftotext <file>.pdf - | less` (or `pd
 Plain passives (R/L/C, ferrite beads) and mounting hardware are excluded; see
 the schematic values / freshly generated `production/bom.csv` for those.
 
-Two datasheets (`W25Q32JV.pdf`, `APS6404L.pdf`) both cover U24: it is one SOIC-8 socket that takes
-either part (DNP by default; see `qspi_expansion.kicad_sch`).
+Two datasheets (`W25Q32JV.pdf`, `APS6404L-3SQN.pdf`) both cover U24: it is one SOIC-8 socket that takes
+either part (fitted with APS6404L-3SQN-SN from Rev 2; see `qspi_expansion.kicad_sch`).
 
 | Refdes | Part | Manufacturer | File | Source URL | Date fetched | Relevant section/page |
 |---|---|---|---|---|---|---|
@@ -21,20 +21,19 @@ either part (DNP by default; see `qspi_expansion.kicad_sch`).
 | U23 | LSM6DSK320XTR (LCSC C53025794) | STMicroelectronics | `LSM6DSK320X.pdf` | https://www.st.com/resource/en/datasheet/lsm6dsk320x.pdf (DS15060 Rev 1, July 2026; downloaded by the owner) | 2026-10-26 | Table 2 pin description, p.11; Figure 27 mode 1 connections, p.47; Figure 31 package, p.185 |
 | U7 | AP63203WU-7 | Diodes Incorporated | `AP63203.pdf` | https://www.diodes.com/assets/Datasheets/AP63200-AP63201-AP63203-AP63205.pdf | 2026-09-17 | Figure 21 "Typical Application Circuit of AP63203/AP63205", p.9 |
 | U12 | TPS7A2033PDBVR | Texas Instruments | `TPS7A2033.pdf` | https://www.ti.com/lit/ds/symlink/tps7a20.pdf | 2026-09-17 | Sec 7.2 "Typical Application" / Figure 7-4, p.30; Sec 7.4 "Layout", p.31 |
-| U24 (fit option A) | W25Q32JVSNIQ (32 Mbit QSPI NOR) | Winbond | `W25Q32JV.pdf` | https://www.winbond.com/resource-files/W25Q32JV%20RevJ%2012242024%20Plus.pdf | 2026-09-17 | Figure 1a, 8-pin SOIC 150-mil pin assignment (package code SN), p.6 |
-| U24 (fit option B) | APS6404L-SQN-SN (8 MB QSPI PSRAM) | AP Memory | `APS6404L.pdf` | https://www.apmemory.com/tw/downloadFiles/0324112120g3605268 | 2026-09-17 | Table 1 "Ordering Information" (confirms `-SQN-SN` suffix), p.7 |
+| U24 (alternative fit) | W25Q32JVSNIQ (32 Mbit QSPI NOR) | Winbond | `W25Q32JV.pdf` | https://www.winbond.com/resource-files/W25Q32JV%20RevJ%2012242024%20Plus.pdf | 2026-09-17 | Figure 1a, 8-pin SOIC 150-mil pin assignment (package code SN), p.6 |
+| U24 (fitted from Rev 2) | APS6404L-3SQN-SN (8 MB QSPI PSRAM, 3 V family) | AP Memory | `APS6404L-3SQN.pdf` | https://apmemory.com/cn/downloadFiles/0324112120ql593401 | 2026-11-11 | VDD 2.7 to 3.6 V, p.1; SOP-8L(150) outline, p.6; Table 1 "Ordering Information" (confirms `-3SQN-SN` suffix), p.8; Sec 16.4 decoupling, p.26. The 1.8 V `-SQN` family (`APS6404L.pdf`, VDD 1.62 to 1.98 V) must not be fitted |
 | D20 | WS2812C-2020-V1 (fitted part: WS2812C-2020-V6, LCSC C55109522, same pinout and pad drawing) | Worldsemi | `WS2812C-2020.pdf` | https://www.lcsc.com/datasheet/lcsc_datasheet_2202221130_Worldsemi-WS2812C-2020-V1_C2976072.pdf (LCSC-hosted) | 2026-09-17 | Features / pin function / reflow profile, p.1-2 |
 | Q1 | AO3401A | Alpha & Omega Semiconductor | `AO3401A.pdf` | https://www.aosmd.com/pdfs/datasheet/AO3401A.pdf | 2026-09-17 | Pin configuration and electrical characteristics table, p.1-2 |
 | D1 | 1N5819WS | Guangdong Hottech | `1N5819WS.pdf` | https://www.lcsc.com/datasheet/lcsc_datasheet_Guangdong-Hottech-1N5819WS_C191023.pdf (LCSC-hosted) | 2026-09-17 | Electrical characteristics (VF, IR), p.1-2 |
 | Y1 | 12 MHz TAXM12M4RFBCCT2T | Shenzhen Yajingxin Electronics | `TAXM12M4RFBCCT2T.pdf` | https://www.lcsc.com/product-detail/C133337.html (manufacturer spec sheet, LCSC-hosted) | 2026-09-17 | Specification table (12.000 MHz, CL = 12 pF), p.1 |
-| X1 | 1521H-32K000J18DTSL 32.000 kHz CMOS crystal oscillator (LCSC C19674133; supply build unconfirmed: the "18" ordering code may denote HCI's 1.8 V build, confirm 3.3 V with HCI before ordering) | HCI | `xtal32000.pdf` (HCI 1521H family sheet, supplied by the owner) | https://www.lcsc.com/product-detail/crystal-oscillators_hci-1521h-32k000j18dtsl_C19674133.html | 2026-10-26 | Specification table; pad function table (1 = E/D or N.C., 2 = GND, 3 = Output, 4 = Vcc); land pattern suggestion (CS02016p4 Rev 1) |
 | J4 | USB-C receptacle TYPE-C-31-M-12 | Korean Hroparts Elec (HRO Electronics) | `TYPE-C-31-M-12.pdf` | https://www.lcsc.com/product-detail/C165948.html (manufacturer drawing, LCSC-hosted) | 2026-09-17 | Pinout table (A1-A12/B1-B12) and PCB land pattern, p.1 |
 | J11 | Molex 47219-2001 / 472192001, C164170, locking hinged microSD | Molex | `472192001.pdf`; `472192001-drawing.pdf` | https://www.es.co.th/Schemetic/PDF/472192001.PDF (Molex part datasheet, generated 2025-04-07); https://cdn.promelec.ru/upload/items/2020/09/01/472192001_sd.pdf (Molex drawing mirror) | 2026-09-17 | Datasheet pp.1–3: hinge type, 8 contacts, no detect switch; drawing p.1: pad layout and pin numbering |
 | SW1, SW2 | B3U-1000P tactile switch | Omron | `B3U-1000P.pdf` | https://omronfs.omron.com/en_US/ecb/products/pdf/en-b3u.pdf | 2026-09-17 | Ratings and characteristics table, p.1-2 |
 
 ## UNKNOWN
 
-None — all 15 non-passive parts resolved to a verified manufacturer (or manufacturer-authorized
+None — all 14 non-passive parts resolved to a verified manufacturer (or manufacturer-authorized
 distributor mirror) PDF. Three parts required a fallback from the manufacturer's own site to an
 LCSC-hosted copy after the manufacturer link was gated or blocked outbound `curl`/`wget` requests
 (see the Source URL column: ICM-45686, WS2812C-2020, 1N5819WS, TAXM12M4RFBCCT2T and

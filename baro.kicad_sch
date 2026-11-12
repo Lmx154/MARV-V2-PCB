@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "BOARD 2 / BMP581 barometer")
-		(date "2026-10-26")
-		(rev "1")
+		(date "2026-11-11")
+		(rev "2")
 	)
 	(lib_symbols
 		(symbol "Device:C"

@@ -13,19 +13,20 @@ def netof(pin):
     """The net a pin is really on, or None if it is unconnected.  KiCad names
     the single-node net of a pin carrying a no-connect flag
     'unconnected-(U20-GPIO1-Pad78)'; that is not a net, it is the absence of
-    one.  Only the four no-connect spare GPIOs have no net."""
+    one.  Only the three no-connect spare GPIOs have no net."""
     n = pin_net.get(pin)
     return None if n is None or n.startswith('unconnected-') else n
 
 # Expected GPIO connections, maintained alongside the saved schematic and PINOUT.md.
 # GPIO0-27 and GPIO35 follow the GPIO tables in PINOUT.md:
-# GPIO1/26/27/35 are the four spares; they carry no-connect flags (None below).
+# GPIO1/26/35 are the three no-connect spares; they carry no-connect flags (None below).
+# GPIO27 clocks the ICM-45686 CLKIN pin (net ICM_CLKIN, 32.000 kHz generated in firmware).
 PINOUT={
  0:'FLASH_CS1', 1:None, 2:'PWM8', 3:'PWM7', 4:'PWM6', 5:'PWM5',
  6:'IMU2_INT2', 7:'IMU2_INT1', 8:'IMU2_MISO', 9:'IMU2_CS', 10:'IMU2_SCK', 11:'IMU2_MOSI',
  12:'MAG_SDA', 13:'MAG_SCL', 14:'GPS_RX', 15:'ICM_INT1', 16:'ICM_MISO', 17:'GPS_TX',
  18:'ICM_SCK', 19:'ICM_MOSI', 20:'ICM_CS', 21:'BARO_INT', 22:'BARO_SDA', 23:'BARO_SCL',
- 24:'ELRS_RX', 25:'ELRS_TX', 26:None, 27:None, 28:'SD_DAT0', 29:'SD_DAT1',
+ 24:'ELRS_RX', 25:'ELRS_TX', 26:None, 27:'ICM_CLKIN', 28:'SD_DAT0', 29:'SD_DAT1',
  30:'SD_DAT2', 31:'SD_DAT3', 32:'SD_CLK_MCU', 33:'SD_CMD', 34:'ESC_TELEM_RX', 35:None,
  36:'PWM4', 37:'PWM3', 38:'PWM2', 39:'PWM1', 40:'VBUS_SENSE', 41:'CURR_SENSE',
  42:'VBAT_SENSE', 43:'LED_DATA', 44:'IO_GPIO44', 45:'IO_GPIO45', 46:'IO_GPIO46', 47:'IO_GPIO47',
@@ -116,11 +117,9 @@ expected={
  ('C50','1'):'V3V3_ANA',('C50','2'):'GND',('C52','1'):'V3V3_ANA',('C52','2'):'GND',
  ('C54','1'):'V3V3_ANA',('C54','2'):'GND',('C56','1'):'V3V3_ANA',('C56','2'):'GND',
  ('C59','1'):'V3V3_ANA',('C59','2'):'GND',('C60','1'):'V3V3_ANA',('C60','2'):'GND',
- # U21 CLKIN oscillator X1 (HCI 1521H-32K000J18DTSL, 32.000 kHz CMOS; 1521H family sheet pad function table):
- # E/D (1, tri-state enable, always enabled) and Vcc (4) both on V3V3_ANA, GND (2), OUT (3) on ICM_CLKIN
- # (BUS_NODES); C1 on Vcc, 100 nF.
- ('X1','1'):'V3V3_ANA',('X1','4'):'V3V3_ANA',('X1','2'):'GND',
- ('C1','1'):'V3V3_ANA',('C1','2'):'GND',
+ # U21 CLKIN (pin 9) is driven by U20 GPIO27 (pad 28), a firmware-generated 32.000 kHz clock (BUS_NODES);
+ # the Rev 1 oscillator X1 and its cap C1 are gone (asserted absent below).
+ ('U20','28'):'ICM_CLKIN',('U21','9'):'ICM_CLKIN',
  # THE USB POWER INDICATOR: USB_VBUS -> R56 1k -> USB_LED_A -> D21 anode (Device:LED
  # pin 2), cathode (pin 1) to GND.  Both pins are asserted because a reversed LED is a part that never
  # lights and never fails anything else.
@@ -155,6 +154,8 @@ assert {('J4','A4'),('J4','A9'),('J4','B4'),('J4','B9')} <= nets['USB_VBUS']
 # power indicator on the usb_debug sheet (asserted above) and is not in this set.  BZ1 the
 # through-hole buzzer, and with it the whole buzzer driver - J15 pads, Q20 gate, D22 flyback, R33/R34
 # gate network - must be absent.
+# X1 (the Rev 1 32.000 kHz CLKIN oscillator) and its 100 nF cap C1 are removed in Rev 2: GPIO27 drives
+# ICM_CLKIN.
 # J9 (MAG pad row), J16 (the 2x6 spare-IO block) and the J12/J13/J14 servo block are absent: PWM5-8
 # are rows 7-10 of the IO block.  J7 and J8 are the power and GND columns of that block.
 _absent = {'U3','U5','D23','C16','C67','C68','C69','R31','R32','BZ1',
@@ -165,7 +166,8 @@ _absent = {'U3','U5','D23','C16','C67','C68','C69','R31','R32','BZ1',
             # C17, C23, C24 and the 0.1 % divider R8/R9) and the USB ESD array U8 must all be absent.
             # R52, R7 and R10 are live designators and are NOT in this set.
             'U8','U25','U26','L3','FB1','C12','C17','C23','C24','C70','C71','C72',
-            'C73','C74','C75','C76','C77','C80','R8','R9','R42','R43','R44','R45','R46','R47'}
+            'C73','C74','C75','C76','C77','C80','R8','R9','R42','R43','R44','R45','R46','R47',
+            'X1','C1'}
 _refs = {c.get('ref') for c in root.find('components')}
 assert not _absent & _refs, sorted(_absent & _refs)
 assert not {'R59','C82'} & _refs, 'INA226 support parts must be absent'
@@ -174,17 +176,11 @@ assert not {'SHUNT_P','SHUNT_N','BAT_INT'} & nets.keys(), 'INA226 nets must be a
 assert not [n for n in nets if n.upper().startswith('BUZZ')], sorted(
     n for n in nets if n.upper().startswith('BUZZ'))
 assert {'H1','H2','H3','H4'} <= _refs, 'mounting-hole group missing'
-# DO NOT POPULATE: the QSPI flash/PSRAM socket is an OPTIONAL back-side expansion, so U24 -- and U24
-# alone -- carries KiCad's (dnp yes) + (in_bom no) attributes -- which the kicadxml export emits as
-# <property name="dnp"/> and <property name="exclude_from_bom"/>.  Their NETS still exist and every
-# U24 pin mapping above is still checked: a DNP part owns its land pattern and its nets, it is simply
-# not fitted.  C62, its bypass, IS fitted, is the whole bypass, and is a 1 uF: the LAND IS BUILT
-# PSRAM-READY.  The APS6404L PSRAM option REQUIRES a low-ESR 1 uF on VDD (its datasheet Sec 16.4) and
-# the W25Q32JV flash names no supply capacitor at all, so one 1 uF serves both fits and nothing has to
-# be swapped when the socket is populated; there is no second 1 uF beside C62.
-# R35, the FLASH_CS1 pull-up, is NOT DNP -- GPIO0 must be held deselected whether or not
-# the socket is populated. U24 is the only DNP component in the current design.
-_DNP = {'U24'}
+# Rev 2 has NO do-not-populate part: U24 (the QSPI PSRAM, APS6404L-3SQN-SN) is fitted and in the BOM.  The
+# land still accepts a W25Q32JVSNIQ NOR flash as an alternative fit.  C62, its bypass, is a 1 uF: the
+# APS6404L REQUIRES a low-ESR 1 uF on VDD (its datasheet Sec 16.4) and the W25Q32JV names no supply
+# capacitor at all, so one 1 uF serves both fits.  R35, the FLASH_CS1 pull-up, holds GPIO0 deselected.
+_DNP = set()
 _props = {c.get('ref'): {p.get('name') for p in c.findall('property')}
           for c in root.find('components')}
 for _r in sorted(_DNP):
@@ -192,7 +188,8 @@ for _r in sorted(_DNP):
     assert 'dnp' in _props[_r], (_r, 'must carry (dnp yes)')
     assert 'exclude_from_bom' in _props[_r], (_r, 'must carry (in_bom no)')
 _unexpected = sorted(r for r, p in _props.items() if 'dnp' in p)
-assert _unexpected == sorted(_DNP), ('unexpected DNP parts', _unexpected)
+assert _unexpected == sorted(_DNP) == [], ('unexpected DNP parts', _unexpected)
+assert 'exclude_from_bom' not in _props.get('U24', set()), 'U24 (PSRAM) must be in the BOM'
 assert 'dnp' not in _props.get('R35', set()), 'R35 (FLASH_CS1 pull-up) must stay populated'
 # POWER CHAIN BOUNDARY (owner-requested module interface, 2026-10-22):
 #     ESC V -> J3.7 -> converter VIN / J17.3 (VBAT) [5 V converter] J17.1 -> 5V_IN
@@ -267,8 +264,8 @@ BUS_NODES = {
  'ICM_MISO': {_U20(16),('U21','1')},
  'ICM_CS': {_U20(20),('U21','12'),('R48','2')},
  'ICM_INT1': {_U20(15),('U21','4')},
- # ICM pin 9 (INT2/FSYNC/CLKIN) is the 32.000 kHz clock input driven by X1; it never reaches the MCU.
- 'ICM_CLKIN': {('U21','9'),('X1','3')},
+ # ICM pin 9 (INT2/FSYNC/CLKIN) is the 32.000 kHz clock input, driven by U20 GPIO27 (pad 28).
+ 'ICM_CLKIN': {('U21','9'),_U20(27)},
  'BARO_SCL': {_U20(23),('U22','2'),('R50','2')},
  'BARO_SDA': {_U20(22),('U22','4'),('R57','2')},
  'BARO_INT': {_U20(21),('U22','7')},
@@ -302,8 +299,9 @@ assert [PINOUT[g] for g in (12,13)] == ['MAG_SDA','MAG_SCL']
 assert [PINOUT[g] for g in (22,23)] == ['BARO_SDA','BARO_SCL']
 assert [PINOUT[g] for g in (24,25)] == ['ELRS_RX','ELRS_TX']
 assert [PINOUT[g] for g in (14,17)] == ['GPS_RX','GPS_TX']
-NC_SPARES = (1, 26, 27, 35)
-assert [PINOUT[g] for g in NC_SPARES] == [None]*4
+NC_SPARES = (1, 26, 35)
+assert [PINOUT[g] for g in NC_SPARES] == [None]*3
+assert PINOUT[27] == 'ICM_CLKIN'
 # UART function per RP2350 Table 645: GPS = UART0 (GPIO14 TX via F11 aux, GPIO17 RX via F2), ELRS = UART1 (GPIO24 TX, GPIO25 RX)
 UART_FUNC = {14: ('UART0', 'TX', 11), 17: ('UART0', 'RX', 2), 24: ('UART1', 'TX', 2), 25: ('UART1', 'RX', 2)}
 assert {PINOUT[g]: UART_FUNC[g][:2] for g in (14, 17)} == {'GPS_RX': ('UART0', 'TX'), 'GPS_TX': ('UART0', 'RX')}
@@ -331,11 +329,11 @@ for ref, value, rail in [('R48','10k','V3V3_ANA'),('R51','10k','V3V3_ANA'),
     assert pin_net[(ref,'1')] == rail, (ref, rail)
 assert components['R58'].findtext('value') == '22', 'SD source damping must be 22 ohm'
 assert 'ICM_INT2' not in nets, 'ICM pin 9 is CLKIN; there is no ICM_INT2 net'
-assert components['X1'].findtext('footprint') == 'MARV_Packages:Oscillator_SMD_HCI_1521H-4Pin_2.0x1.6mm'
-assert components['X1'].findtext('value').startswith('1521H-32K000J18DTSL 32.000kHz')
-assert any(f.get('name') == 'LCSC' and f.text == 'C19674133' for f in components['X1'].findall('./fields/field'))
-assert components['C1'].findtext('value').startswith('100n'), components['C1'].findtext('value')
+assert 'X1' not in components and 'C1' not in components, 'X1/C1 (Rev 1 CLKIN oscillator) must be absent'
 assert 'C2' not in components, 'C2 must be absent: the HCI part has no VIO pin to decouple'
+assert components['U24'].findtext('footprint') == 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm'
+assert components['U24'].findtext('value') == 'APS6404L-3SQN-SN', ('U24 is on V3V3_SYS and must be the 3 V -3SQN family', components['U24'].findtext('value'))
+assert any(f.get('name') == 'LCSC' and f.text == 'C3028887' for f in components['U24'].findall('./fields/field'))
 # Locking Molex 47219-2001 has eight card contacts and a shield, no detect switch.
 assert 'R41' not in components and 'SD_DET' not in nets
 assert {pin for ref,pin in pin_net if ref == 'J11'} == set(map(str, range(1,9))) | {'SH'}
@@ -358,7 +356,7 @@ for ref,c in components.items():
  assert used<=pads,(ref,fp,'pins absent in footprint',used-pads)
 
 # Validate the 48-GPIO pin plan: every GPIO must be on the expected net per PINOUT.  No GPIO is left
-# unconnected except the four no-connect spares GPIO1/26/27/35.
+# unconnected except the three no-connect spares GPIO1/26/35.
 for gpio_num in range(48):
  pad = PAD_OF_GPIO[gpio_num]
  expected_net = PINOUT[gpio_num]
@@ -368,7 +366,7 @@ for gpio_num in range(48):
   f"PINOUT.md violated: GPIO{gpio_num} (U20 pad {pad}) is on {actual_net}, plan says {expected_net}; update PINOUT.md and this table together"
 
 # Validate the spare GPIO split: FOUR spares are exposed on the IO block signal column (rows 11-14)
-# and FOUR carry no-connect flags (GPIO1, 26, 27, 35).  Moving one means editing PINOUT.md and this
+# and THREE carry no-connect flags (GPIO1, 26, 35); GPIO27 is the ICM CLKIN clock.  Moving one means editing PINOUT.md and this
 # table together.
 EXPOSED_SPARES = {44, 45, 46, 47}
 assert not (EXPOSED_SPARES & set(NC_SPARES))
@@ -394,12 +392,12 @@ assert components['R26'].findtext('value').split(',')[0].strip() == '4.7k'
 # ... and no IO_GPIO net survives for any other GPIO
 assert not [n for n in nets if n in ('IO_GPIO9','IO_GPIO12','IO_GPIO18','IO_GPIO21','IO_GPIO26','IO_GPIO27')], \
  sorted(n for n in nets if n.startswith('IO_GPIO'))
-# no GPIO pad of U20 other than the four no-connect spares is left unconnected
+# no GPIO pad of U20 other than the three no-connect spares is left unconnected
 assert [g for g in range(48) if pin_net.get(('U20', PAD_OF_GPIO[g]), 'unconnected-').startswith('unconnected-')] == list(NC_SPARES)
 
-print(f'PASS: 48-GPIO pin plan (GPS on hardware UART0 GPIO14/17, ELRS on UART1 GPIO24/25, 4 exposed spares on J6, 4 no-connect spares GPIO1/26/27/35, no other unconnected GPIO), {len(expected)} critical pin mappings,\n'
+print(f'PASS: 48-GPIO pin plan (GPS on hardware UART0 GPIO14/17, ELRS on UART1 GPIO24/25, GPIO27 clocking the ICM-45686 CLKIN, 4 exposed spares on J6, 3 no-connect spares GPIO1/26/35, no other unconnected GPIO), {len(expected)} critical pin mappings,\n'
       f'      USB supply pins, the BEC -> 5V_IN -> Q1/D1 -> V5_SYS -> U7 -> V3V3_SYS boundary and the\n'
       f'      VBAT module-feed/sense boundary, J17 pinout, the ESC pad-row order,\n'
-      f'      the U21 CLKIN oscillator X1 (HCI 1521H-32K000J18DTSL 32.000 kHz: Vcc and E/D on V3V3_ANA with C1, OUT on ICM_CLKIN, no ICM INT2),\n'
-      f'      J6/J7/J8 IO-block row map, the PWM1-4 / PWM5-8 split, the {len(_DNP)} DNP\n'
-      f'      flash-expansion socket (U24; the PSRAM-ready 1 uF C62 and R35 fitted) and footprint coverage for {len(components)} components.')
+      f'      ICM_CLKIN = U20.28 (GPIO27) + U21.9 only (X1 and C1 absent, no ICM INT2),\n'
+      f'      J6/J7/J8 IO-block row map, the PWM1-4 / PWM5-8 split, {len(_DNP)} DNP parts,\n'
+      f'      U24 populated (APS6404L-3SQN-SN PSRAM, LCSC C3028887; the 1 uF C62 and R35 fitted) and footprint coverage for {len(components)} components.')

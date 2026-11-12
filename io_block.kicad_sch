@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "BOARD 4 / IO array, status LED, mounting holes")
-		(date "2026-10-26")
-		(rev "1")
+		(date "2026-11-11")
+		(rev "2")
 	)
 	(lib_symbols
 		(symbol "Connector_Generic:Conn_01x14"

@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "BOARD 1 / RP2354B")
-		(date "2026-10-26")
-		(rev "1")
+		(date "2026-11-11")
+		(rev "2")
 	)
 	(lib_symbols
 		(symbol "Device:C"
@@ -2818,7 +2818,7 @@
 		)
 		(uuid "3f8528ce-df8d-5b98-9247-6e30201a64c2")
 	)
-	(text "SPARE IO: GPIO44-47 are on IO block J6 rows 11-14.\nGPIO1, GPIO26, GPIO27 and GPIO35 are spares with no-connect flags. GPIO26/27 F11 is UART1 aux\n(UART1 TX on 26 / RX on 27 is not usable alongside ELRS, which already uses UART1).\nGPIO budget: 40 assigned, 4 exposed spares (J6), 4 no-connect spares.\nSPI0: ICM-45686 only. SPI1: LSM6DSK320X only. I2C0: MAG (J6). I2C1: BMP581 only. UART1: ELRS.\nGPS: hardware UART0 on GPIO14 (TX, F11 aux) / GPIO17 (RX, F2). ICM pin 9 is reserved for CLKIN (no ICM INT2).\nNative SD: GPIO28-33, PIO + DMA (window 16-47). Independent sensor interrupts.\nSee PINOUT.md for the complete allocation."
+	(text "SPARE IO: GPIO44-47 are on IO block J6 rows 11-14.\nGPIO1, GPIO26 and GPIO35 are spares with no-connect flags. GPIO27 drives ICM_CLKIN (Rev 2). GPIO26 F11 is UART1 aux\n(UART1 TX on 26 is not usable alongside ELRS, which already uses UART1).\nGPIO budget: 41 assigned, 4 exposed spares (J6), 3 no-connect spares.\nSPI0: ICM-45686 only. SPI1: LSM6DSK320X only. I2C0: MAG (J6). I2C1: BMP581 only. UART1: ELRS.\nGPS: hardware UART0 on GPIO14 (TX, F11 aux) / GPIO17 (RX, F2). ICM pin 9 is CLKIN, clocked from GPIO27 (no ICM INT2).\nNative SD: GPIO28-33, PIO + DMA (window 16-47). Independent sensor interrupts.\nSee PINOUT.md for the complete allocation."
 		(exclude_from_sim no)
 		(at 140 254.922 0)
 		(effects
@@ -2873,7 +2873,7 @@
 		)
 		(uuid "9766288b-8f91-5fbb-903d-c00a10b60fd6")
 	)
-	(text "\nGPIO24   25  ELRS_RX      UART1 TX -> radio RX\nGPIO25   26  ELRS_TX      UART1 RX <- radio TX\nGPIO26   27  NC           spare, no-connect\nGPIO27   28  NC           spare, no-connect\nGPIO28   36  SD_DAT0  native SD DAT0\nGPIO29   37  SD_DAT1  native SD DAT1\nGPIO30   38  SD_DAT2  native SD DAT2\nGPIO31   39  SD_DAT3  native SD DAT3\nGPIO32   40  SD_CLK_MCU    PIO native SD clock -> R58 22R -> SD_CLK (window 16-47)\nGPIO33   42  SD_CMD        PIO native SD command (window 16-47)\nGPIO34   43  ESC_TELEM_RX ESC KISS telemetry in (PIO UART RX, window 16-47), 1k series R54\nGPIO35   44  NC           spare, no-connect\nGPIO36   45  PWM4         DShot via PIO (window 16-47)\nGPIO37   46  PWM3         DShot via PIO (window 16-47)\nGPIO38   47  PWM2         DShot via PIO (window 16-47)\nGPIO39   48  PWM1         DShot via PIO (window 16-47)\nGPIO40   49  VBUS_SENSE   ADC0, USB_VBUS 10k/15k divider\nGPIO41   52  CURR_SENSE   ADC1, ESC current sense, 1k + 100n\nGPIO42   53  VBAT_SENSE   ADC2, VBAT 100k/10k divider, 36.3 V FS\nGPIO43   54  LED_DATA      WS2812 data -> R55 (PIO, window 16-47)\nGPIO44   55  IO_GPIO44    ADC4 -> J6 row 11 (A44)\nGPIO45   56  IO_GPIO45    ADC5 -> J6 row 12 (A45)\nGPIO46   57  IO_GPIO46    ADC6 -> J6 row 13 (A46)\nGPIO47   58  IO_GPIO47    ADC7 -> J6 row 14 (A47)"
+	(text "\nGPIO24   25  ELRS_RX      UART1 TX -> radio RX\nGPIO25   26  ELRS_TX      UART1 RX <- radio TX\nGPIO26   27  NC           spare, no-connect\nGPIO27   28  ICM_CLKIN    ICM-45686 CLKIN (U21 pin 9) clock out, 32.000 kHz from firmware\nGPIO28   36  SD_DAT0  native SD DAT0\nGPIO29   37  SD_DAT1  native SD DAT1\nGPIO30   38  SD_DAT2  native SD DAT2\nGPIO31   39  SD_DAT3  native SD DAT3\nGPIO32   40  SD_CLK_MCU    PIO native SD clock -> R58 22R -> SD_CLK (window 16-47)\nGPIO33   42  SD_CMD        PIO native SD command (window 16-47)\nGPIO34   43  ESC_TELEM_RX ESC KISS telemetry in (PIO UART RX, window 16-47), 1k series R54\nGPIO35   44  NC           spare, no-connect\nGPIO36   45  PWM4         DShot via PIO (window 16-47)\nGPIO37   46  PWM3         DShot via PIO (window 16-47)\nGPIO38   47  PWM2         DShot via PIO (window 16-47)\nGPIO39   48  PWM1         DShot via PIO (window 16-47)\nGPIO40   49  VBUS_SENSE   ADC0, USB_VBUS 10k/15k divider\nGPIO41   52  CURR_SENSE   ADC1, ESC current sense, 1k + 100n\nGPIO42   53  VBAT_SENSE   ADC2, VBAT 100k/10k divider, 36.3 V FS\nGPIO43   54  LED_DATA      WS2812 data -> R55 (PIO, window 16-47)\nGPIO44   55  IO_GPIO44    ADC4 -> J6 row 11 (A44)\nGPIO45   56  IO_GPIO45    ADC5 -> J6 row 12 (A45)\nGPIO46   57  IO_GPIO46    ADC6 -> J6 row 13 (A46)\nGPIO47   58  IO_GPIO47    ADC7 -> J6 row 14 (A47)"
 		(exclude_from_sim no)
 		(at 63.5 222 0)
 		(effects
@@ -4320,6 +4320,16 @@
 	)
 	(wire
 		(pts
+			(xy 266.7 170.18) (xy 274.32 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e2d8e0a5-b1c2-408a-af9d-8460a86bd6a5")
+	)
+	(wire
+		(pts
 			(xy 175.26 96.52) (xy 175.26 101.6)
 		)
 		(stroke
@@ -5480,6 +5490,28 @@
 		(uuid "2c2943fc-643e-56d0-8440-920d10db8144")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 274.32 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "ICM_CLKIN"
+		(shape passive)
+		(at 274.32 170.18 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "95d5cb1d-f577-4048-8bf5-39f3fc0a11d5")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 274.32 170.18 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6877,10 +6909,6 @@
 	(no_connect
 		(at 266.7 167.64)
 		(uuid "1f986116-bf85-4cd8-9606-b23fafe30e91")
-	)
-	(no_connect
-		(at 266.7 170.18)
-		(uuid "82a3899b-58df-4216-b0cf-c8c2c8f1fa9d")
 	)
 	(no_connect
 		(at 266.7 190.5)

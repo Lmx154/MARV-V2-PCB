@@ -1,4 +1,4 @@
-# Customer-supplied V-cut frame — Rev 1
+# Customer-supplied V-cut frame — Rev 2
 
 The saved [MARV-V2-panel.kicad_pcb](../MARV-V2-panel.kicad_pcb) is a
 **72 × 72 mm, one-board manufacturing frame** for Standard assembly. The board
@@ -23,19 +23,19 @@ The four `V-CUT` labels are fabrication annotations, not printed silkscreen.
 
 The `production/` directory is generated locally and is not tracked; the refresh
 sequence in [tools/panel/README.md](../tools/panel/README.md) writes these files
-together with `SHA256SUMS` and `order-manifest.json` (regenerated 2026-10-27).
+together with `SHA256SUMS` and `order-manifest.json` (regenerated 2026-11-11 for Rev 2).
 
 Select **Standard**, **Top Side**, **Edge Rails/Fiducials: Added by Customer**.
 The panel contains one circuit design and one finished board. Keep the intended
 quantity of 5 boards/frames manufactured, 2 assembled. BOM and position CSVs
 are generated from the panel (same origin: panel centre, Y up). `bom.csv` has 35
-lines (34 distinct LCSC parts plus the J17 line without an LCSC number, 91 parts).
+lines (34 distinct LCSC parts plus the J17 line without an LCSC number, 90 parts).
 Tooling holes and fiducials are excluded from both assembly CSVs.
 
 Assembly selection follows the source: H1–H4, J3, J6–J8 and J10 are
 excluded from the BOM and position files (J6–J8 are hand-soldered by the owner).
 J17 (5 V converter module) is in `bom.csv` with no LCSC number and is excluded
-from `positions.csv`. `positions.csv` has 90 top-side parts and nothing on the
+from `positions.csv`. `positions.csv` has 89 top-side parts and nothing on the
 bottom side.
 
 Confirm JLC's CAM preview shows four straight V-scores and the routed corner
@@ -72,13 +72,14 @@ Depanel by bending each rail along its score **away from the components**
   V3V3_SYS inner-plane pours, all four scores) against JLC's 0.40 mm. Nearest
   non-pour copper is 0.60 mm (J3 pads, left score).
 - Panel DRC, using `MARV-V2-panel.kicad_pro`/`.kicad_dru` copied from the
-  source: 0 unconnected items and exactly the source's 206 violations (3 clearance,
-  1 courtyards_overlap SW1/J10, 18 hole_clearance, 184 warnings), with nothing
+  source: 0 unconnected items and exactly the source's 235 violations (3 clearance,
+  1 courtyards_overlap SW1/J10, 18 hole_clearance, 213 warnings), with nothing
   added or removed and no schematic-parity issues in the source.
 - Source file unchanged during the sync (SHA-256 in the manifest). The panel
   keeps every source item verbatim except the four straight Edge.Cuts segments:
-  104 source footprints identical in position, rotation and side, 867 tracks,
-  200 vias and 535 zones identical. No zones were modified or refilled.
+  103 source footprints identical in position, rotation and side, 866 tracks,
+  201 vias and 533 zones identical. No zones were modified or refilled on the panel;
+  the source board is refilled and saved before the sync (step 0 of the refresh sequence).
 - The USB-C pocket is derived from J4's courtyard (x 82.205–92.895) plus
   1.0 mm each side (pocket x 81.205–93.895 mm). J4's courtyard overhangs the
   board edge by 0.485 mm.
@@ -86,7 +87,7 @@ Depanel by bending each rail along its score **away from the components**
 - The exported outline Gerber contains all four full-span score lines
   (x = ±25.45 mm and y = ±22.85 mm from the panel centre).
 
-Evidence: the 2026-10-27 sync was produced with the scripts in
+Evidence: the 2026-11-11 sync was produced with the scripts in
 [tools/panel/](../tools/panel/README.md) (generator, verification scripts); their
 outputs go to `build/panel/`. Review JLC's assembly preview,
 particularly sensor rotations and L20 polarity.

@@ -26,6 +26,11 @@ untracked. Close the PCB editor first and save the source board.
 ```sh
 mkdir -p build/panel
 
+# 0. Refill the zones of the source board and save it. The panel copies these fills verbatim.
+#    Do not let the Fabrication Toolkit auto-fill the panel instead (no --autoFill): on the
+#    panel the inner planes would refill past the board, across the V-scores into the frame.
+kicad-cli pcb drc --refill-zones --save-board --severity-all --format json -o build/panel/drc-refill.json MARV-V2.kicad_pcb
+
 # 1. Sync the panel (overwrites MARV-V2-panel.kicad_pcb), then copy the rules
 python3 tools/panel/make_panel.py --apply
 cp MARV-V2.kicad_dru MARV-V2-panel.kicad_dru

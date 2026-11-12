@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "POWER 2 / 5 V OR - BEC P-FET and USB Schottky")
-		(date "2026-10-26")
-		(rev "1")
+		(date "2026-11-11")
+		(rev "2")
 	)
 	(lib_symbols
 		(symbol "Device:D_Schottky"

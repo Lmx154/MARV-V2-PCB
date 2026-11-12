@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "MARV-V2 - schematic index")
-		(date "2026-10-26")
-		(rev "1")
+		(date "2026-11-11")
+		(rev "2")
 	)
 	(lib_symbols)
 	(text "MARV V2 flight controller - schematic index.  One page per subsystem; on each page the IC is drawn\nwith its own decoupling, pull-ups, series resistors and connectors wired to it, and a\nglobal label is used only where a net leaves the page.  See DESIGN_SPEC.md for the design itself.\n\nInputs: ESC raw battery at J3.7 -> converter VIN / J17.3; regulated J17.1 output supplies 5V_IN, plus USB VBUS.\nESC V / J3.7 feeds converter VIN / J17.3; the voltage divider senses this VBAT net. J3 has eight pads.\nJ17: 1 OUT+ / 5V_IN, 2 GND, 3 IN+ / VBAT; no EN contact. DROK 24 V max excludes fully charged 6S.\nRails: 5V_IN OR USB through Q1/D1 feeds V5_SYS, then AP63203 -> V3V3_SYS and TPS7A20 -> V3V3_ANA.\nV3V3_SYS powers all IO headers. J17 is the converter module connector."
@@ -129,7 +129,7 @@
 			(color 0 0 0 0)
 		)
 		(uuid "211300b9-1883-5808-bf2c-eaad1403fcf5")
-		(property "Sheetname" "BOARD 3 / optional QSPI expansion socket (DNP)"
+		(property "Sheetname" "BOARD 3 / QSPI PSRAM"
 			(at 285 89 0)
 			(show_name no)
 			(do_not_autoplace no)
