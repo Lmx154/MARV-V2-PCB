@@ -59,6 +59,7 @@ tools/panel/                       manufacturing-frame sync and checks; README h
 simulations/                       input-power SPICE deck, README and generated results
 reports/                           decision and review records (table below)
 orders/rev1/                       Rev 1 JLCPCB order record: exact upload files, all order options, BOM as ordered
+orders/rev2/                       Rev 2 JLCPCB order package: upload files and the options to select (same as Rev 1)
 images/                            PCB renders used in this README
 site/                              results website (simulation, checks), built by tools/build_site.py
 .github/workflows/pages.yml        publishes site/ with GitHub Pages
@@ -200,6 +201,9 @@ and pads except the LGA sensors U21, U22 and U23.
 **Rev 1 was ordered from JLCPCB. The exact upload files and every PCB and PCBA option
 selected are archived in [orders/rev1/](orders/rev1/README.md). To reorder Rev 1, follow
 that record; it takes precedence over the general steps below.**
+
+**The Rev 2 order package (upload files and the options to select, the same settings as Rev 1) is in
+[orders/rev2/](orders/rev2/README.md). Rev 2 has not been ordered yet.**
 
 Use the installed [Fabrication Toolkit](https://github.com/bennymeg/Fabrication-Toolkit)
 from KiCad's PCB Editor. Project settings are saved in
