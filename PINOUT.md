@@ -9,14 +9,14 @@ Source: RP2350 Datasheet, Section 1.2.3, Table 3 "General Purpose Input/Output (
 ADC0-7 are GPIO40-47 on the RP2350B/RP2354B (QFN-80) only. All GPIO are 3.3 V, not 5 V tolerant.
 
 External IO leaves the board on the J6/J7/J8 IO block (right front edge, signal/power/GND columns), plus
-two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10. The four spare GPIOs that are not
-on J6 (GPIO1, 26, 27, 35) are no-connect.
+two solder-pad rows on the back (B.Cu): the ESC pad row J3 and the DBG pads J10. The three spare GPIOs that are not
+on J6 (GPIO1, 26, 35) are no-connect.
 
 ## Table A — every GPIO
 
 | GPIO | Net | Used as | Datasheet alternates (F1 SPI / F2 UART / F3 I2C / F4 PWM / F9-F11) | Status |
 | --- | --- | --- | --- | --- |
-| 0 | FLASH_CS1 | QMI CS1n (F9) | SPI0 RX, UART0 TX, I2C0 SDA, PWM0 A, USB OVCUR DET | assigned (flash/PSRAM socket U24) |
+| 0 | FLASH_CS1 | QMI CS1n (F9) | SPI0 RX, UART0 TX, I2C0 SDA, PWM0 A, USB OVCUR DET | assigned (QSPI PSRAM U24) |
 | 1 | NC | GPIO (spare, no-connect) | SPI0 CSn, UART0 RX, I2C0 SCL, PWM0 B, USB VBUS DET | spare, no-connect |
 | 2 | PWM8 | PWM1 A (F4) | SPI0 SCK, UART0 CTS, I2C1 SDA, USB VBUS EN, UART0 TX (F11) | assigned (servo S8, J6 row 10) |
 | 3 | PWM7 | PWM1 B (F4) | SPI0 TX, UART0 RTS, I2C1 SCL, USB OVCUR DET, UART0 RX (F11) | assigned (servo S7, J6 row 9) |
@@ -43,7 +43,7 @@ on J6 (GPIO1, 26, 27, 35) are no-connect.
 | 24 | ELRS_RX | UART1 TX (F2) | SPI1 RX, I2C0 SDA, PWM4 A, CLOCK GPOUT2, USB OVCUR DET | assigned (J6 row 1) |
 | 25 | ELRS_TX | UART1 RX (F2) | SPI1 CSn, I2C0 SCL, PWM4 B, CLOCK GPOUT3, USB VBUS DET | assigned (J6 row 2) |
 | 26 | NC | GPIO (spare, no-connect) | SPI1 SCK, UART1 CTS, I2C1 SDA, PWM5 A, USB VBUS EN, UART1 TX (F11) | spare, no-connect |
-| 27 | NC | GPIO (spare, no-connect) | SPI1 TX, UART1 RTS, I2C1 SCL, PWM5 B, USB OVCUR DET, UART1 RX (F11) | spare, no-connect |
+| 27 | ICM_CLKIN | GPIO output, 32.000 kHz clock (firmware-generated) | SPI1 TX, UART1 RTS, I2C1 SCL, PWM5 B, USB OVCUR DET, UART1 RX (F11) | assigned (ICM-45686 CLKIN, U21 pin 9) |
 | 28 | SD_DAT0 | PIO native SD DAT0 | SPI1 RX, UART0 TX, I2C0 SDA, PWM6 A, USB VBUS DET | assigned |
 | 29 | SD_DAT1 | PIO native SD DAT1 | SPI1 CSn, UART0 RX, I2C0 SCL, PWM6 B, USB VBUS EN | assigned |
 | 30 | SD_DAT2 | PIO native SD DAT2 | SPI1 SCK, UART0 CTS, I2C1 SDA, PWM7 A, USB OVCUR DET, UART0 TX (F11) | assigned |
@@ -68,8 +68,8 @@ on J6 (GPIO1, 26, 27, 35) are no-connect.
 
 ## Table B — spare GPIOs
 
-Eight GPIOs are spare. Four are exposed on J6 rows 11–14 (GPIO44–47). Four are no-connect
-(GPIO1, GPIO26, GPIO27, GPIO35). All other GPIOs have assigned functions.
+Seven GPIOs are spare. Four are exposed on J6 rows 11–14 (GPIO44–47). Three are no-connect
+(GPIO1, GPIO26, GPIO35). All other GPIOs have assigned functions.
 
 | GPIO | Exposed | Useful alternates | Constraint |
 | --- | --- | --- | --- |
@@ -79,7 +79,6 @@ Eight GPIOs are spare. Four are exposed on J6 rows 11–14 (GPIO44–47). Four a
 | 47 | J6 row 14 | ADC7, PWM11 B | PWM11 B is shared with GPIO39 |
 | 1 | No-connect | SPI0 CSn, UART0 RX, I2C0 SCL, PWM0 B, GPIO | Free GPIO; no schematic part attached |
 | 26 | No-connect | SPI1 SCK, I2C1 SDA, PWM5 A, UART1 TX (F11 aux) | UART1 is used by ELRS on GPIO24/25; F11 UART1 TX here is not usable alongside it |
-| 27 | No-connect | SPI1 TX, I2C1 SCL, PWM5 B, UART1 RX (F11 aux) | UART1 is used by ELRS on GPIO24/25; F11 UART1 RX here is not usable alongside it |
 | 35 | No-connect | PWM9 B, PIO, UART0 RX (F11 aux), GPIO | Free GPIO; PIO window 16–47 |
 
 GPS uses hardware UART0 on GPIO14 (TX, F11 aux) / GPIO17 (RX, F2); no PIO UART is used for GPS. SPI0 (ICM-45686), SPI1 (LSM6DSK320X), I2C0 (MAG),
@@ -94,7 +93,7 @@ I2C1 (BMP581) and UART1 (ELRS) are all in use. Pin alternate functions do not cr
 | I2C0 | SDA 12, SCL 13 | MAG on J6 rows 5/6; R25/R26 4.7k pull-ups to V3V3_SYS |
 | I2C1 | SDA 22, SCL 23 | BMP581 only; R57/R50 4.7k to V3V3_ANA; address 0x46 |
 | Native four-bit SD, PIO + DMA | DAT0–DAT3 28–31, CLK 32, CMD 33 | J11 only; R58 22 ohm between SD_CLK_MCU and SD_CLK; R36–R40 10k CMD/data pull-ups to V3V3_SYS |
-| Sensor interrupts | BARO INT 21; ICM INT1 15; LSM6DSK320X INT1 7 / INT2 6 | Four separate nets and GPIOs; no combining. ICM pin 9 is CLKIN, driven by the 32.000 kHz oscillator X1 (HCI 1521H-32K000J18DTSL, net ICM_CLKIN, on V3V3_ANA); the ICM interrupts on INT1 only, so there is no ICM INT2 on the MCU |
+| Sensor interrupts | BARO INT 21; ICM INT1 15; LSM6DSK320X INT1 7 / INT2 6 | Four separate nets and GPIOs; no combining. ICM pin 9 is CLKIN, driven by GPIO27 (net ICM_CLKIN; firmware generates the 32.000 kHz clock); the ICM interrupts on INT1 only, so there is no ICM INT2 on the MCU |
 | Card detect | — | Molex 47219-2001 has no detect switch; no GPIO is used |
 | UART0 | TX 14 (F11 aux, GPS_RX), RX 17 (F2, GPS_TX) | GPS on J6 rows 1/2; hardware UART, no PIO UART for GPS |
 | UART1 | TX 24, RX 25 | ELRS on J6 rows 3/4 |
@@ -102,8 +101,8 @@ I2C1 (BMP581) and UART1 (ELRS) are all in use. Pin alternate functions do not cr
 | ESC outputs | 39, 38, 37, 36 | PWM1–4 in J3 pad order; intended PIO DShot, unchanged external connections |
 | ADC | 40, 41, 42 | VBUS (ADC0), ESC current (ADC1), battery voltage (ADC2) |
 | Other PIO | ESC telemetry RX 34; RGB LED 43 | GPIO16–47 window |
-| QMI CS1 | 0 | Optional U24 expansion, unchanged |
-| Spare no-connect | 1, 26, 27, 35 | No-connect flags on U20 |
+| QMI CS1 | 0 | U24 QSPI PSRAM (APS6404L-3SQN-SN), unchanged |
+| Spare no-connect | 1, 26, 35 | No-connect flags on U20 |
 | USB, SWD | Dedicated pins | J4, J10, unchanged |
 
 ## Hardware constraints
@@ -122,13 +121,13 @@ I2C1 (BMP581) and UART1 (ELRS) are all in use. Pin alternate functions do not cr
 - Routing priority: ICM SPI, LSM6DSK320X SPI, SD clock/native bus, then BMP581 I2C.
   GPIO0–27 on the MCU's right side are grouped by destination (top to bottom: servo PWM GPIO2–5 to J6 rows 7–10,
   LSM6DSK320X GPIO6–11, MAG I2C GPIO12–13, ICM-45686 GPIO15–20, BMP581 GPIO21–23, ELRS GPIO24–25; GPS is on GPIO14/17 and leaves on an inner layer to J6 rows 1–2)
-  so each group can leave the MCU in straight runs; the spare pads GPIO1/26/27/35 sit between the groups.
+  so each group can leave the MCU in straight runs; the spare pads GPIO1/26/35 sit between the groups.
   Keep signals short over continuous GND. Avoid split references, switching-node
   copper, long parallel runs beside servo/pyro power, unnecessary vias and long stubs.
 - PWM frequency is shared per slice. Servo S5/S6 share slice 2 and S7/S8 share slice 1; the ESC hardware-PWM
   fallback puts M4/M3 on slice 10 (shared with IO_GPIO44/45) and M2/M1 on slice 11
   (shared with IO_GPIO46/47). PIO DShot does not use those PWM slices.
-- GPIO1, GPIO26, GPIO27 and GPIO35 are the only unconnected GPIOs; each carries a no-connect flag on U20. Update this document and the netlist checker together if any GPIO moves.
+- GPIO1, GPIO26 and GPIO35 are the only unconnected GPIOs; each carries a no-connect flag on U20. Update this document and the netlist checker together if any GPIO moves.
   J6 row order and external connector pin assignments are retained.
 
 ## Final-state notes
@@ -143,8 +142,8 @@ I2C1 (BMP581) and UART1 (ELRS) are all in use. Pin alternate functions do not cr
 - The sensor and external GPIOs are grouped by destination on the MCU's right side (Table A, Table C):
   LSM6DSK320X on SPI1, ICM-45686 on SPI0, the magnetometer on I2C0, BMP581 on I2C1, ELRS on UART1, and
   GPS on hardware UART0 at GPIO14 (GPS_RX, TX, F11 aux) / GPIO17 (GPS_TX, RX, F2); no PIO UART is used for
-  GPS. GPIO1, GPIO26, GPIO27 and GPIO35 are no-connect spares. ICM pin 9 is CLKIN, driven by the HCI 1521H
-  32.000 kHz oscillator X1 (net ICM_CLKIN), so the ICM interrupts on INT1 only and INT2 does not reach the
+  GPS. GPIO1, GPIO26 and GPIO35 are no-connect spares. ICM pin 9 is CLKIN, driven by GPIO27
+  (net ICM_CLKIN; firmware generates the 32.000 kHz clock), so the ICM interrupts on INT1 only and INT2 does not reach the
   MCU. Left-side GPIO28-47, net names and J6 row order are as in the tables above.
 
 References: [RP2350 datasheet](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf),

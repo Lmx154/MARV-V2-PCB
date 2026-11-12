@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "POWER 3 / 3.3 V system buck and analog LDO")
-		(date "2026-10-26")
-		(rev "1")
+		(date "2026-11-11")
+		(rev "2")
 	)
 	(lib_symbols
 		(symbol "Device:C"
@@ -1184,7 +1184,7 @@
 		)
 		(uuid "b9918cf1-e40b-5d09-9e33-ae2c311e5199")
 	)
-	(text "3V3_ANA feeds ICM-45686, BMP581, LSM6DSK320X, the X1 CLKIN oscillator and the RP2354B ADC_AVDD pin (100 nF at each pin on the MCU sheet); VREG_AVDD\n  is filtered\nfrom V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is tied to V3V3_SYS\n  itself:\nthe AP63203 has no power-good output, so the sequencing is done by the rail rather than by a status pin - the LDO\n  enables\nwhen the buck output is up and drops with it, which gives buck-before-LDO ordering with no extra\n  parts.\nThere is no \"in regulation\" qualifier: EN releases at U12's own ~0.9 V enable threshold on a rising\n  V3V3_SYS,\nnot at the point a comparator declares the buck settled. For a 10-20 mA sensor rail behind a 4 ms soft-start that is a\nfew hundred microseconds of difference, and the sensors are held in reset by firmware for far longer than that.\nC25 / C26, THE LDO'S OWN CAPACITORS (TPS7A20 datasheet SBVS338H): the part is \"stable with 1 uF minimum ceramic\noutput capacitor\", and Sec 7.1.1 says the recommended values already assume \"the effective capacitance to\ndecrease by as much as 50 %\" - i.e. the 1 uF is an EFFECTIVE floor, not a nameplate one. C26 is therefore\n2.2 uF / 16 V X5R in an 0603 (LCSC C23630, JLC Basic), not a 1 uF 0402: an 0402 1 uF biased at 3.3 V\nhas no headroom left against that floor, and the 16 V 0603 keeps well over 1 uF at 3.3 V. C25 is 1 uF 0402\nat the input, where the datasheet asks only for \"at least equal to the nominal value\" and nothing depends on it."
+	(text "3V3_ANA feeds ICM-45686, BMP581, LSM6DSK320X and the RP2354B ADC_AVDD pin (100 nF at each pin on the MCU sheet); VREG_AVDD\n  is filtered\nfrom V3V3_SYS instead, so the analog rail carries no core-regulator current. U12 EN (pin 3) is tied to V3V3_SYS\n  itself:\nthe AP63203 has no power-good output, so the sequencing is done by the rail rather than by a status pin - the LDO\n  enables\nwhen the buck output is up and drops with it, which gives buck-before-LDO ordering with no extra\n  parts.\nThere is no \"in regulation\" qualifier: EN releases at U12's own ~0.9 V enable threshold on a rising\n  V3V3_SYS,\nnot at the point a comparator declares the buck settled. For a 10-20 mA sensor rail behind a 4 ms soft-start that is a\nfew hundred microseconds of difference, and the sensors are held in reset by firmware for far longer than that.\nC25 / C26, THE LDO'S OWN CAPACITORS (TPS7A20 datasheet SBVS338H): the part is \"stable with 1 uF minimum ceramic\noutput capacitor\", and Sec 7.1.1 says the recommended values already assume \"the effective capacitance to\ndecrease by as much as 50 %\" - i.e. the 1 uF is an EFFECTIVE floor, not a nameplate one. C26 is therefore\n2.2 uF / 16 V X5R in an 0603 (LCSC C23630, JLC Basic), not a 1 uF 0402: an 0402 1 uF biased at 3.3 V\nhas no headroom left against that floor, and the 16 V 0603 keeps well over 1 uF at 3.3 V. C25 is 1 uF 0402\nat the input, where the datasheet asks only for \"at least equal to the nominal value\" and nothing depends on it."
 		(exclude_from_sim no)
 		(at 10 252.793 0)
 		(effects

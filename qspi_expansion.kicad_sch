@@ -5,9 +5,9 @@
 	(uuid "211300b9-1883-5808-bf2c-eaad1403fcf5")
 	(paper "A4")
 	(title_block
-		(title "BOARD 3 / optional QSPI expansion socket (DNP)")
-		(date "2026-10-26")
-		(rev "1")
+		(title "BOARD 3 / QSPI PSRAM")
+		(date "2026-11-11")
+		(rev "2")
 	)
 	(lib_symbols
 		(symbol "Device:C"
@@ -674,7 +674,7 @@
 		)
 		(uuid "462d1ab1-3f60-5a70-a529-1ea1ce74740f")
 	)
-	(text "An OPTIONAL QSPI expansion socket on the shared QSPI bus with GPIO0/QMI CS1n as its chip select, and a\nlatched microSD wired for PIO + DMA native 4-bit SD. Both on V3V3_SYS with local bulk, per the rail\nsplit in DESIGN_SPEC.\nU24 IS DNP - NOT FITTED BY DEFAULT AND NOT IN THE BOM; C62, its bypass, IS fitted, and is a 1 uF: the land is\nbuilt PSRAM-READY, so no cap has to change when the socket is populated. The land is on the BACK of the board\n(B.Cu) as a user expansion: firmware and logs use the RP2354B in-package 2 MB flash and the J11 microSD.\nU24 IS A SOCKET, NOT ONE PART: the 150-mil SOIC-8 land takes either a W25Q32JVSNIQ NOR flash or an\nAPS6404L-SQN-SN 8 MB QSPI PSRAM - see the U24 note below. FIT ONE PART ONLY. R35 is POPULATED."
+	(text "U24, a QSPI PSRAM on the shared QSPI bus with GPIO0/QMI CS1n as its chip select, and a\nlatched microSD wired for PIO + DMA native 4-bit SD. Both on V3V3_SYS with local bulk, per the rail\nsplit in DESIGN_SPEC.\nREV 2: U24 IS POPULATED with APS6404L-3SQN-SN (8 MB QSPI PSRAM, LCSC C3028887) AND IS IN THE BOM; C62, its\nbypass, is the 1 uF the PSRAM requires. U24, C62 and R35 are on the FRONT of the board (F.Cu).\nFirmware and logs still use the RP2354B in-package 2 MB flash and the J11 microSD.\nThe same 150-mil SOIC-8 land also takes a W25Q32JVSNIQ NOR flash as the alternative fit\n- see the U24 note below. FIT ONE PART ONLY. R35 is POPULATED."
 		(exclude_from_sim no)
 		(at 10 118 0)
 		(effects
@@ -685,7 +685,7 @@
 		)
 		(uuid "768598df-f5ae-5f8b-8a08-f1d47ecedb17")
 	)
-	(text "Socket bypass (fitted; the socket itself is not)"
+	(text "U24 bypass (1 uF, the value the PSRAM requires)"
 		(exclude_from_sim no)
 		(at 30.48 26.67 0)
 		(effects
@@ -696,7 +696,7 @@
 		)
 		(uuid "77f75e2a-a985-551d-90c7-d4c061ee4853")
 	)
-	(text "BOARD 3 - U24 OPTIONAL QSPI EXPANSION SOCKET, DNP, ON THE BACK (B.Cu).\nOne 150-mil SOIC-8 land: fit EITHER a W25Q32JVSNIQ NOR flash OR an APS6404L-SQN-SN PSRAM. R35 stays populated."
+	(text "BOARD 3 - U24 QSPI PSRAM, APS6404L-3SQN-SN (8 MB), POPULATED FROM REV 2, ON THE FRONT (F.Cu).\nThe 150-mil SOIC-8 land also takes a W25Q32JVSNIQ NOR flash as the alternative fit. R35 stays populated."
 		(exclude_from_sim no)
 		(at 10 7 0)
 		(effects
@@ -707,7 +707,7 @@
 		)
 		(uuid "94813fb4-f606-55ff-a5f8-030289458c51")
 	)
-	(text "U24 shares the dedicated QSPI pads with the RP2354B in-package flash die (datasheet Sec 14.3): CLK = QSPI_SCLK,\nDI/IO0 = QSPI_SD0, DO/IO1 = QSPI_SD1, WP/IO2 = QSPI_SD2, HOLD/IO3 = QSPI_SD3. Only the chip select differs -\nFLASH_CS1 comes from GPIO0 (QMI CS1n), pulled up to V3V3_SYS by R35 so the part is deselected before the MCU\ndrives it. QSPI_SS (the internal die) keeps its own strap on the MCU sheet.\nU24 SOCKET - OPTIONAL PSRAM OR SECOND FLASH. FIT ONE PART ONLY: this is one land, not two positions.\nNOTHING HAS TO CHANGE ON THE BOARD FOR EITHER PART: C62 is already the 1 uF the PSRAM requires (APS6404L\nSec 16.4), and the flash requires no supply capacitor at all, so the one fitted cap serves both fits.\nThe land is Package_SO:SOIC-8_3.9x4.9mm_P1.27mm, i.e. 150 mil / 3.9 mm SOIC-8 body. THE DEFAULT FIT IS\nW25Q32JVSNIQ (Winbond, 32 Mbit = 4 MB NOR flash, LCSC C5355146) or, for PSRAM, APS6404L-SQN-SN (AP Memory,\n64 Mbit = 8 MB QSPI pseudo-SRAM, LCSC C5360304). THE 64 Mbit W25Q64JVSSIQ DOES NOT\nFIT THIS LAND: Winbond package code SS is SOIC-8 208 mil (5.28 mm body), and the 150 mil member of that family\nis the SN suffix, W25Q64JVSNIQ, which is not stocked at JLCPCB. Package codes in this family are NOT\ninterchangeable by capacity, so check the SOIC-8 body width of any substitute. The two default parts are pin-identical on\nthis bus: 1 CE#/CS#, 2 SO/SIO1, 3 SIO2 (WP# on the flash), 4 VSS/GND, 5 SI/SIO0, 6 SCLK, 7 SIO3 (HOLD# on the\nflash), 8 VCC - so no board change is needed to swap them. The RP2350 QMI supports a PSRAM on CS1 with its own\ntiming/chip-select registers (RP2350 datasheet Sec 12.14 QMI, M1_TIMING/M1_RFMT/M1_WFMT), which is what makes\nthe alternative real rather than mechanical. Fit the flash for log space or the PSRAM for\nXIP-addressable RAM - neither is fitted at build.\nDNP / BACK SIDE. U24 alone carries (dnp yes) + (in_bom no): the land pattern, the nets, R35 and the C62\nbypass are on the board, the socket part itself is not bought and not placed. The socket and C62 sit on B.Cu\nunder the MCU, against U20 QSPI pads 70-75, so the QSPI stubs are the board thickness plus a via; the front stays\na single-sided assembly because nothing DNP is reflowed. A B.SilkS legend beside the land says what fits.\nC62 1 uF IS THE WHOLE FITTED BYPASS, AND IT IS THE PSRAM'S VALUE. The two alternative parts do not ask for the\nsame cap: the APS6404L datasheet Sec 16.4 \"Decoupling Capacitor Requirement\" REQUIRES a low-ESR 1 uF ceramic\nat VDD and calls the 0.1 uF the OPTIONAL one, while the W25Q32JV flash datasheet names no supply capacitor at\nall. ONE PART COVERS BOTH: a 1 uF is what the PSRAM requires and is more than the (silent) flash asks for, so\nthe land is built PSRAM-ready and whoever populates the socket fits the socket only - chosen in\npreference to a 100 nF that would have to be swapped. There is no second 1 uF beside C62 (no C63): it\nwould be the same cap as C62, not an additional one (same datasheet-only rule as the sensor pages). The value is the\n0402 1 uF / 10 V X7R line the board already buys (LCSC C52923, shared with C7/C25/C59).\nCONSEQUENCE FOR THE BUDGET: the 25 mA QSPI-flash burst is NOT in the V3V3_SYS load budget\n(DESIGN_SPEC \"Sources and loads\"); add it back if the socket is populated.\nSYMBOL: U24 uses Memory_Flash:W25Q32JVSS, which is the exact symbol for the default fit as well as being\npinout-identical across the whole W25Q JV family and to the APS6404L PSRAM on this bus; the Value field\ncarries the real MPN. See LIBRARIES.md."
+	(text "U24 shares the dedicated QSPI pads with the RP2354B in-package flash die (datasheet Sec 14.3): CLK = QSPI_SCLK,\nDI/IO0 = QSPI_SD0, DO/IO1 = QSPI_SD1, WP/IO2 = QSPI_SD2, HOLD/IO3 = QSPI_SD3. Only the chip select differs -\nFLASH_CS1 comes from GPIO0 (QMI CS1n), pulled up to V3V3_SYS by R35 so the part is deselected before the MCU\ndrives it. QSPI_SS (the internal die) keeps its own strap on the MCU sheet.\nU24 LAND - PSRAM (FITTED FROM REV 2) OR SECOND FLASH (ALTERNATIVE). FIT ONE PART ONLY: this is one land, not two positions.\nNOTHING HAS TO CHANGE ON THE BOARD FOR EITHER PART: C62 is already the 1 uF the PSRAM requires (APS6404L\nSec 16.4), and the flash requires no supply capacitor at all, so the one fitted cap serves both fits.\nThe land is Package_SO:SOIC-8_3.9x4.9mm_P1.27mm, i.e. 150 mil / 3.9 mm SOIC-8 body. THE REV 2 FIT IS\nAPS6404L-3SQN-SN (AP Memory, 64 Mbit = 8 MB QSPI pseudo-SRAM, LCSC C3028887); the alternative is\nW25Q32JVSNIQ (Winbond, 32 Mbit = 4 MB NOR flash, LCSC C5355146).\nU24 IS ON V3V3_SYS, SO THE PSRAM MUST BE THE 3 V FAMILY: -3SQN, VDD 2.7-3.6 V, rated 109 MHz at 3.3 V (133 MHz only at 3.0 V).\nNEVER FIT APS6404L-SQN-SN (LCSC C5360304): without the 3 it is the 1.8 V family (VDD 1.62-1.98 V, 2.45 V absolute maximum).\nTHE 64 Mbit W25Q64JVSSIQ DOES NOT\nFIT THIS LAND: Winbond package code SS is SOIC-8 208 mil (5.28 mm body), and the 150 mil member of that family\nis the SN suffix, W25Q64JVSNIQ, which is not stocked at JLCPCB. Package codes in this family are NOT\ninterchangeable by capacity, so check the SOIC-8 body width of any substitute. The two parts are pin-identical on\nthis bus: 1 CE#/CS#, 2 SO/SIO1, 3 SIO2 (WP# on the flash), 4 VSS/GND, 5 SI/SIO0, 6 SCLK, 7 SIO3 (HOLD# on the\nflash), 8 VCC - so no board change is needed to swap them. The RP2350 QMI supports a PSRAM on CS1 with its own\ntiming/chip-select registers (RP2350 datasheet Sec 12.14 QMI, M1_TIMING/M1_RFMT/M1_WFMT), which is what makes\nthe alternative real rather than mechanical. The PSRAM gives\nXIP-addressable RAM; the flash would give log space instead.\nPOPULATED / FRONT SIDE. From Rev 2 U24 carries (dnp no) + (in_bom yes) and LCSC C3028887, and is placed with the\nrest of the assembly. U24, C62 and R35 are all on F.Cu, so the board stays a single-sided (front) assembly.\nC62 1 uF IS THE WHOLE FITTED BYPASS, AND IT IS THE PSRAM'S VALUE. The two alternative parts do not ask for the\nsame cap: the APS6404L datasheet Sec 16.4 \"Decoupling Capacitor Requirement\" REQUIRES a low-ESR 1 uF ceramic\nat VDD and calls the 0.1 uF the OPTIONAL one, while the W25Q32JV flash datasheet names no supply capacitor at\nall. ONE PART COVERS BOTH: a 1 uF is what the PSRAM requires and is more than the (silent) flash asks for, so\nthe one cap serves either fit - chosen in\npreference to a 100 nF that would have to be swapped. There is no second 1 uF beside C62 (no C63): it\nwould be the same cap as C62, not an additional one (same datasheet-only rule as the sensor pages). The value is the\n0402 1 uF / 10 V X7R line the board already buys (LCSC C52923, shared with C7/C25/C59).\nCONSEQUENCE FOR THE BUDGET: U24 is populated from Rev 2, so its supply current belongs in the V3V3_SYS load budget\n(DESIGN_SPEC \"Sources and loads\").\nSYMBOL: U24 uses Memory_Flash:W25Q32JVSS, which is the exact symbol for the alternative flash fit and is\npinout-identical across the whole W25Q JV family and to the APS6404L PSRAM on this bus; the Value field\ncarries the real MPN (APS6404L-3SQN-SN). See LIBRARIES.md."
 		(exclude_from_sim no)
 		(at 10 134.461 0)
 		(effects
@@ -1462,10 +1462,10 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "ec775acc-0099-5916-b423-66776bd113f9")
 		(property "Reference" "U24"
 			(at 154.94 53.34 0)
@@ -1478,7 +1478,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "DNP: W25Q32JVSNIQ, 32 Mbit QSPI NOR or APS6404L-SQN-SN 8 MB PSRAM (optional back-side expansion)"
+		(property "Value" "APS6404L-3SQN-SN"
 			(at 154.94 55.54 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1501,7 +1501,7 @@
 				(justify left)
 			)
 		)
-		(property "Datasheet" "http://www.winbond.com/resource-files/w25q32jv%20revg%2003272018%20plus.pdf"
+		(property "Datasheet" ""
 			(at 165.1 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -1521,6 +1521,18 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC" "C3028887"
+			(at 165.1 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+				(justify left)
 			)
 		)
 		(pin "1"

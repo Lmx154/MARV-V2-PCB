@@ -18,7 +18,7 @@ def drc(n):
     d=json.loads((sc/n).read_text());c=collections.Counter(v['severity'] for v in d['violations']);return {'errors':c['error'],'warnings':c['warning'],'unconnected_items':len(d['unconnected_items'])}
 m=collections.OrderedDict()
 m['verified_at']=datetime.datetime.now().astimezone().isoformat()
-m['kicad_version']='10.0.7';m['exporter']=old['exporter'];m['source_board']='MARV-V2.kicad_pcb';m['export_board']='MARV-V2-panel.kicad_pcb'
+m['kicad_version']='10.0.8';m['exporter']=old['exporter'];m['source_board']='MARV-V2.kicad_pcb';m['export_board']='MARV-V2-panel.kicad_pcb'
 m['source_sha256']=src;m['panel_source_sha256']=panel;m['exporter_sha256']=exp
 m['rotation_database_sha256']=sha(plug/'transformations.csv')
 m['upload_sha256']={n:sha(root/'production'/n) for n in ['MARV-V2-panel.zip','bom.csv','positions.csv']}
@@ -32,7 +32,7 @@ m['source_erc_violations']=0;m['source_erc_warnings']=0;m['source_erc_note']='0 
 m['report']='reports/manufacturing-panel.md'
 m['order_settings']=old['order_settings']
 m['limitations']=['Synchronize manufacturing copy after source edits','JLCPCB must review V-score/outline CAM and assembly placement preview','Native 3D render does not model V-score grooves; see mechanical SVG','Scores leave a 0.10 mm lip on all four edges',
- 'Assembly selection: H1-H4, J3, J6-J8, J10 are excluded from BOM/position files, and U24 (optional memory, DNP) is excluded as do-not-populate; J17 (5V converter module) is in bom.csv without an LCSC number and excluded from positions.csv (hand-fitted). J6-J8 are hand-soldered by the owner.',
+ 'Assembly selection: H1-H4, J3, J6-J8, J10 are excluded from BOM/position files, and there are no DNP components; U24 (APS6404L-3SQN-SN PSRAM) is populated and in the BOM; J17 (5V converter module) is in bom.csv without an LCSC number and excluded from positions.csv (hand-fitted). J6-J8 are hand-soldered by the owner.',
  'Source DRC errors retained (22: 3 clearance, 1 courtyards_overlap, 18 hole_clearance); source ERC has 0 violations']
 m['export_options']=old['export_options']
 target=root/'production/order-manifest.json' if '--apply' in sys.argv else sc/'order-manifest.json'

@@ -275,8 +275,8 @@ Datasheets are listed with their manufacturer Source URLs in
   default for routing geometry. ICM SPI supports up to 24 MHz; short paths,
   decoupling and quiet returns matter more than making signal copper wide.
   The separate SPI buses (ICM on SPI0, LSM6DSK320X on SPI1) and interrupt nets
-  follow the schematic. ICM pin 9 (CLKIN, net ICM_CLKIN) is driven by the
-  32.000 kHz oscillator X1 on V3V3_ANA (C1 100 nF); the ICM interrupts on INT1 only.
+  follow the schematic. ICM pin 9 (CLKIN, net ICM_CLKIN) is driven by
+  MCU GPIO27 (firmware-generated 32.000 kHz clock); the ICM interrupts on INT1 only.
   [ICM](https://www.lcsc.com/datasheet/lcsc_datasheet_2411220643_TDK-InvenSense-ICM-45686_C22459454.pdf), [LSM6DSK320X](https://www.st.com/resource/en/datasheet/lsm6dsk320x.pdf)
 - **BMP581 exception:** Bosch asks for 0.20 mm pad spacing, no traces/vias beneath
   the sensor, and no mask under the sensor body with 20 µm horizontal mask

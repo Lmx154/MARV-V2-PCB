@@ -12,7 +12,7 @@ ESC V (raw battery) → J3.7 / VBAT → J17.3 VIN → module → J17.1 / 5V_IN
                                     ↓ Q1
 USB VBUS ──────────────────── D1 ──→ V5_SYS
                                       ├─ AP63203 buck → V3V3_SYS
-                                      │                  ├─ MCU, microSD, optional QSPI
+                                      │                  ├─ MCU, microSD, QSPI PSRAM
                                       │                  ├─ GPS/ELRS/MAG and spare IO
                                       │                  └─ LDO enable
                                       ├─ TPS7A2033 LDO → V3V3_ANA → onboard sensors / ADC_AVDD
@@ -52,8 +52,8 @@ charging and protection/cutoff belong to the external system.
 | 1S option | Boost supplies regulated 5 V. The cell is not wired directly to the OR. The suggested 480 mA module's low-cell output capability, transients and fit at J17 remain unverified. |
 | 18650, owner-provided specifications | 4.2 V charged / 3.6 V nominal / 2.5 V discharge cutoff; charge 3 A standard / 9 A maximum with 60 °C cutoff; discharge 30 A continuous with 80 °C cutoff / 36 A maximum rating. These are external-system specifications, not functions implemented by this PCB. |
 | USB | VBUS supplies the FC through D1. USB current availability must cover the attached electronics; the simulation does not implement negotiation or a host current limit. |
-| System 3.3 V | MCU, storage and external module/IO power. The AP63203 is a 2 A regulator; that rating is not a measured board load budget. |
-| Sensor 3.3 V | ICM-45686, its 32.000 kHz CLKIN oscillator X1 (HCI 1521H-32K000J18DTSL; Vcc and E/D), BMP581, LSM6DSK320X and MCU ADC_AVDD, supplied by U12. |
+| System 3.3 V | MCU, storage (microSD and QSPI PSRAM U24, APS6404L-3SQN-SN, the 3 V family, 7 mA maximum read/write and 250 µA maximum standby at 85 °C per its datasheet Rev. 2.7 Table 9) and external module/IO power. The AP63203 is a 2 A regulator; that rating is not a measured board load budget. |
+| Sensor 3.3 V | ICM-45686, BMP581, LSM6DSK320X and MCU ADC_AVDD, supplied by U12. |
 | Actuators | No servos, motors or actuators are powered from FC pads. Only their PWM/control signals use the FC. No actuator current is included in the FC trace budget. |
 
 The simulation uses an explicit **0.5 A combined demand at V5_SYS** as a
@@ -122,8 +122,8 @@ hardware SPI1 (SCK GPIO10, MOSI GPIO11, MISO GPIO8, CSn GPIO9). Its nets are IMU
 ICM-45686 has exclusive hardware SPI0 (SCK GPIO18, MOSI GPIO19, MISO GPIO16, CS GPIO20).
 Both selects have 10k pull-ups to the sensors' V3V3_ANA supply. Clock and data
 signals have no pull resistors. LSM6DSK320X INT1/INT2 (nets IMU2_INT1/2) use GPIO7/6; ICM INT1 uses
-GPIO15. ICM pin 9 is its CLKIN, driven by the 32.000 kHz oscillator X1 (HCI 1521H-32K000J18DTSL, Vcc and E/D on
-V3V3_ANA, 100 nF on Vcc, net ICM_CLKIN), so the ICM interrupts on INT1 only and INT2 does not reach the MCU. All
+GPIO15. ICM pin 9 is its CLKIN, driven by MCU GPIO27 (net ICM_CLKIN; firmware generates the 32.000 kHz clock, no
+series or pull resistor), so the ICM interrupts on INT1 only and INT2 does not reach the MCU. All
 interrupt nets remain independent.
 
 BMP581 uses I2C1 (SDA GPIO22, SCL GPIO23), each with a 4.7k pull-up to V3V3_ANA.
@@ -143,7 +143,7 @@ card-detect switch, so there is no R41.
 LED_DATA is on GPIO43. The ESC signals are ordered on the MCU's left edge to
 match J3 top to bottom: ESC_TELEM_RX GPIO34, PWM4–PWM1 GPIO36–39, then
 CURR_SENSE on ADC1 (GPIO41) and VBAT_SENSE on ADC2 (GPIO42); VBUS_SENSE stays
-on ADC0. GPIO1, GPIO26, GPIO27 and GPIO35 are spares with no-connect flags. External connector
+on ADC0. GPIO1, GPIO26 and GPIO35 are spares with no-connect flags. External connector
 assignments are retained. See [PINOUT.md](PINOUT.md) for every GPIO and routing priorities.
 
 This is a hardware allocation; no firmware is implemented. The board carries
@@ -166,9 +166,8 @@ congestion. The netclass rules live in `MARV-V2.kicad_pro` and `MARV-V2.kicad_dr
 and the actual quote remain required; project settings alone cannot guarantee price.
 
 RP2354B MCU; ICM-45686 IMU; BMP581 barometer; LSM6DSK320X secondary IMU with high-g channel;
-microSD; optional unpopulated backside QSPI expansion. Four copper layers,
-front-side SMT assembly, with backside solder pads and the DNP
-expansion land. The owner placed and routed the board manually in KiCad. Agents must not route,
+microSD; QSPI PSRAM (U24, APS6404L-3SQN-SN, 8 MB). Four copper layers,
+front-side SMT assembly, with backside solder pads. The owner placed and routed the board manually in KiCad. Agents must not route,
 autoroute, stitch planes or rebuild the layout.
 
 The active simulation checks **power arriving at V5_SYS only**. It does not
@@ -247,6 +246,6 @@ full-speed, and nothing else on the board is fast enough to need it.
 2.54 mm headers the owner solders; JLC assembles the front SMT side only. J10 is
 wired SWCLK–GND–SWDIO to match the Raspberry Pi Debug Probe's 3-pin cable.
 
-**Four spare GPIOs left no-connect.** GPIO1, 26, 27 and 35 carry no-connect flags
-so the IO block keeps a clean four-spare layout (GPIO44–47). GPS uses hardware UART0 on GPIO14/17,
+**Three spare GPIOs left no-connect.** GPIO1, 26 and 35 carry no-connect flags;
+the IO block keeps a clean four-spare layout (GPIO44–47) and GPIO27 drives the ICM CLKIN. GPS uses hardware UART0 on GPIO14/17,
 not a PIO UART. The netlist checker enforces the assignment.
